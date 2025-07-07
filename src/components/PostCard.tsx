@@ -49,8 +49,7 @@ export function PostCard({ post, author }: PostCardProps) {
   const handleViewImages = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const caseId = post.slug.replace(/[^a-zA-Z0-9]/g, '-');
-    navigate(`/viewer/${caseId}`);
+    navigate(`/cases/${post.slug}`);
   };
 
   const handleClosePreview = () => {

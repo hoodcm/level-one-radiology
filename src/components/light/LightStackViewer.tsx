@@ -8,9 +8,10 @@ interface LightStackViewerProps {
     slices: number;
   };
   onOpenFullViewer?: () => void;
+  interactive?: boolean;
 }
 
-export function LightStackViewer({ manifest, onOpenFullViewer }: LightStackViewerProps) {
+export function LightStackViewer({ manifest, onOpenFullViewer, interactive = true }: LightStackViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [currentSlice, setCurrentSlice] = useState(0);
@@ -221,10 +222,10 @@ export function LightStackViewer({ manifest, onOpenFullViewer }: LightStackViewe
       <div 
         ref={containerRef}
         className="w-full h-full relative overflow-hidden"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onDoubleClick={handleDoubleClick}
+        onTouchStart={interactive ? handleTouchStart : undefined}
+        onTouchMove={interactive ? handleTouchMove : undefined}
+        onTouchEnd={interactive ? handleTouchEnd : undefined}
+        onDoubleClick={interactive ? handleDoubleClick : undefined}
       >
         <canvas
           ref={canvasRef}
