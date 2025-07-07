@@ -10,9 +10,10 @@ interface LightStackViewerProps {
   };
   onOpenFullViewer?: () => void;
   interactive?: boolean;
+  fullScreen?: boolean;
 }
 
-export function LightStackViewer({ manifest, onOpenFullViewer, interactive = true }: LightStackViewerProps) {
+export function LightStackViewer({ manifest, onOpenFullViewer, interactive = true, fullScreen = false }: LightStackViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [currentSlice, setCurrentSlice] = useState(0);
@@ -249,9 +250,13 @@ export function LightStackViewer({ manifest, onOpenFullViewer, interactive = tru
     setPan({ x: 0, y: 0 });
   };
 
+  const containerStyle = fullScreen 
+    ? { position: 'fixed' as const, inset: 0, width: '100vw', height: '100vh' }
+    : { aspectRatio: '4/3', minHeight: '300px' };
+
   return (
-    <div className="fixed inset-0 bg-black">
-      {/* Full screen canvas container */}
+    <div className={`w-full bg-black relative ${fullScreen ? 'fixed inset-0' : ''}`} style={containerStyle}>
+      {/* Canvas container */}
       <div 
         ref={containerRef}
         className="w-full h-full relative overflow-hidden"

@@ -72,6 +72,7 @@ export function CaseViewerShell({ manifest, studyId, children }: CaseViewerShell
             <LightStackViewer 
               manifest={manifest}
               interactive={true}
+              fullScreen={true}
             />
           </div>
         )}
