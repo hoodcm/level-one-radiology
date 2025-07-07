@@ -72,6 +72,40 @@
   .safe-area-inset-left {
     padding-left: var(--safe-area-inset-left);
   }
+
+  /* Safe area extensions */
+  .safe-area-extend-top {
+    margin-top: calc(-1 * var(--safe-area-inset-top, 0px));
+    padding-top: var(--safe-area-inset-top, 0px);
+  }
+  
+  .safe-area-extend-bottom {
+    margin-bottom: calc(-1 * var(--safe-area-inset-bottom, 0px));
+    padding-bottom: var(--safe-area-inset-bottom, 0px);
+  }
+
+  /* Safe area backgrounds */
+  .safe-area-bg-seamless::before {
+    content: '';
+    position: absolute;
+    top: calc(-1 * var(--safe-area-inset-top, 0px));
+    left: 0;
+    right: 0;
+    height: var(--safe-area-inset-top, 0px);
+    background-color: inherit;
+    z-index: -1;
+  }
+  
+  .safe-area-bg-seamless::after {
+    content: '';
+    position: absolute;
+    bottom: calc(-1 * var(--safe-area-inset-bottom, 0px));
+    left: 0;
+    right: 0;
+    height: var(--safe-area-inset-bottom, 0px);
+    background-color: inherit;
+    z-index: -1;
+  }
   
   .safe-spacing-top {
     padding-top: var(--spacing-safe-top);
@@ -92,5 +126,16 @@
   /* Keyboard aware bottom spacing */
   .keyboard-aware-bottom {
     padding-bottom: calc(var(--spacing-safe-bottom) - var(--keyboard-height));
+  }
+
+  /* Prevent overscroll safe area opacity issues */
+  html {
+    background-color: hsl(var(--surface-bg));
+  }
+  
+  body {
+    background-color: hsl(var(--surface-bg));
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 }

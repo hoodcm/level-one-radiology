@@ -10,7 +10,7 @@ export function MainLayout() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface-bg safe-area-inset-left safe-area-inset-right">
+    <div className="min-h-screen min-h-dvh flex flex-col bg-surface-bg safe-area-inset-left safe-area-inset-right safe-area-bg-seamless">
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-0 focus:left-0 bg-surface-bg text-text-primary p-4 rounded-br-lg">
         Skip to main content
       </a>
