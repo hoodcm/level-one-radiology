@@ -6,13 +6,14 @@ import { authors } from "@/data/authors";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Activity, Users, BookOpen, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const Index = () => {
   const { posts, loading } = useAllPosts();
   const featuredPosts = posts.slice(0, 6);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +21,19 @@ const Index = () => {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
+
+  // Keyboard shortcut for search (Ctrl/Cmd + K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
   
   return (
     <div>
@@ -36,62 +50,64 @@ const Index = () => {
       />
       
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-surface-bg">
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20 lg:py-24">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="flex justify-center mb-6 sm:mb-8">
-              <div className="flex items-center gap-2 bg-accent text-accent-highlight-text px-4 sm:px-6 py-2 sm:py-3 border-2 sm:border-4 border-border rounded-lg shadow-[4px_4px_0px_0px_hsl(var(--shadow-hard))] sm:shadow-[8px_8px_0px_0px_hsl(var(--shadow-hard))]">
-                <Activity className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="text-xs sm:text-sm font-black uppercase tracking-wider">Advanced Radiology</span>
-              </div>
-            </div>
+      <section className="relative overflow-hidden bg-surface-bg min-h-[80vh] flex items-center justify-center">
+        {/* Grid overlay */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="h-full w-full bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:40px_40px]" />
+        </div>
+        
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+          <div className="max-w-3xl mx-auto text-center">
             
-            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black mb-6 sm:mb-8">
-              <span className="bg-surface-card text-text-primary px-3 sm:px-4 py-1 sm:py-2 border-2 sm:border-4 border-border rounded-lg shadow-[6px_6px_0px_0px_hsl(var(--shadow-hard))] sm:shadow-[12px_12px_0px_0px_hsl(var(--shadow-hard))] inline-block mb-2 sm:mb-4">
-                LEVEL ONE
-              </span>
-              <br />
-              <span className="bg-accent text-accent-highlight-text px-3 sm:px-4 py-1 sm:py-2 border-2 sm:border-4 border-border rounded-lg shadow-[6px_6px_0px_0px_hsl(var(--shadow-hard))] sm:shadow-[12px_12px_0px_0px_hsl(var(--shadow-hard))] inline-block">
-                RADIOLOGY
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-8 sm:mb-12">
+              <span className="bg-surface-card text-text-primary px-4 sm:px-6 py-2 sm:py-3 border-2 sm:border-4 border-border rounded-lg shadow-[6px_6px_0px_0px_hsl(var(--shadow-hard))] sm:shadow-[12px_12px_0px_0px_hsl(var(--shadow-hard))] inline-block">
+                LEVEL ONE RADIOLOGY
               </span>
             </h1>
             
-            <p className="text-base sm:text-xl md:text-2xl lg:text-3xl font-bold mb-8 sm:mb-12 max-w-3xl mx-auto leading-tight uppercase tracking-wide text-text-primary">
+            <p className="text-lg sm:text-2xl md:text-3xl font-bold mb-12 sm:mb-16 max-w-2xl mx-auto leading-tight uppercase tracking-wide text-text-primary">
               DECISIVE THINKING IN EMERGENCY IMAGING
             </p>
             
-            {/* Mobile-first Search Field */}
-            <div className="max-w-2xl mx-auto mb-6 sm:mb-8">
+            {/* Centered Search Field */}
+            <div className="max-w-xl mx-auto mb-8 sm:mb-12">
               <form onSubmit={handleSearchSubmit} className="relative">
                 <div className="bg-surface-card border-2 sm:border-4 border-border rounded-lg shadow-[8px_8px_0px_0px_hsl(var(--shadow-hard))] sm:shadow-[16px_16px_0px_0px_hsl(var(--shadow-hard))]">
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-0 p-3 sm:p-2">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-0 p-3 sm:p-4">
                     <div className="flex items-center flex-1 min-w-0">
                       <Search className="w-6 h-6 sm:w-8 sm:h-8 text-text-primary mr-3 sm:mr-4 flex-shrink-0" />
                       <input
+                        ref={searchInputRef}
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="SEARCH CASES, ESSAYS..."
-                        className="flex-1 bg-transparent text-text-primary text-sm sm:text-xl font-black placeholder:text-text-secondary placeholder:font-black focus:outline-none uppercase tracking-wide min-w-0"
+                        className="flex-1 bg-transparent text-text-primary text-base sm:text-xl font-black placeholder:text-text-secondary placeholder:font-black focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface-card uppercase tracking-wide min-w-0 rounded px-2 py-1"
                         autoComplete="off"
+                        tabIndex={1}
                       />
                     </div>
                     <button
                       type="submit"
-                      className="bg-accent text-accent-highlight-text px-4 sm:px-6 py-2 sm:py-3 border-2 sm:border-4 border-border font-black text-sm sm:text-lg uppercase tracking-wider rounded-md hover:shadow-[2px_2px_0px_0px_hsl(var(--shadow-hard))] sm:hover:shadow-[4px_4px_0px_0px_hsl(var(--shadow-hard))] hover:translate-x-0.5 hover:translate-y-0.5 sm:hover:translate-x-1 sm:hover:translate-y-1 transition-all duration-100 flex-shrink-0"
+                      tabIndex={2}
+                      className="bg-accent text-accent-highlight-text px-4 sm:px-6 py-2 sm:py-3 border-2 sm:border-4 border-border font-black text-sm sm:text-lg uppercase tracking-wider rounded-md hover:shadow-[2px_2px_0px_0px_hsl(var(--shadow-hard))] sm:hover:shadow-[4px_4px_0px_0px_hsl(var(--shadow-hard))] hover:translate-x-0.5 hover:translate-y-0.5 sm:hover:translate-x-1 sm:hover:translate-y-1 transition-all duration-100 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
                     >
                       GO
                     </button>
                   </div>
                 </div>
               </form>
+              <p className="text-xs sm:text-sm text-text-secondary mt-2 font-mono">
+                Press <kbd className="px-1 py-0.5 bg-surface-card border border-border rounded text-xs">Ctrl</kbd> + <kbd className="px-1 py-0.5 bg-surface-card border border-border rounded text-xs">K</kbd> to focus search
+              </p>
             </div>
 
             {/* Secondary action */}
             <div className="flex justify-center">
               <Link
                 to="/about"
-                className="bg-surface-card text-text-primary px-6 sm:px-8 py-3 sm:py-4 border-2 sm:border-4 border-border font-black text-sm sm:text-lg uppercase tracking-wider rounded-lg shadow-[4px_4px_0px_0px_hsl(var(--shadow-hard))] sm:shadow-[8px_8px_0px_0px_hsl(var(--shadow-hard))] hover:shadow-[2px_2px_0px_0px_hsl(var(--shadow-hard))] sm:hover:shadow-[4px_4px_0px_0px_hsl(var(--shadow-hard))] hover:translate-x-0.5 hover:translate-y-0.5 sm:hover:translate-x-1 sm:hover:translate-y-1 transition-all duration-100"
+                tabIndex={3}
+                className="bg-surface-card text-text-primary px-6 sm:px-8 py-3 sm:py-4 border-2 sm:border-4 border-border font-black text-sm sm:text-lg uppercase tracking-wider rounded-lg shadow-[4px_4px_0px_0px_hsl(var(--shadow-hard))] sm:shadow-[8px_8px_0px_0px_hsl(var(--shadow-hard))] hover:shadow-[2px_2px_0px_0px_hsl(var(--shadow-hard))] sm:hover:shadow-[4px_4px_0px_0px_hsl(var(--shadow-hard))] hover:translate-x-0.5 hover:translate-y-0.5 sm:hover:translate-x-1 sm:hover:translate-y-1 transition-all duration-100 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
               >
                 LEARN MORE
               </Link>
