@@ -15,7 +15,6 @@ import Tools from "./pages/Tools";
 import About from "./pages/About";
 import Search from "./pages/Search";
 import AuthorPage from "./pages/AuthorPage";
-import DicomViewer from "./pages/DicomViewer";
 import Learn from "./pages/Learn";
 import Cases from "./pages/Cases";
 import CasePage from "./pages/CasePage";
@@ -49,7 +48,7 @@ const App = () => (
                 <Route path="/authors/:slug" element={<AuthorPage />} />
                 <Route path="/spacing-guide" element={<SpacingGuide />} />
               </Route>
-              <Route path="/viewer/:caseId" element={<DicomViewer />} />
+              
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

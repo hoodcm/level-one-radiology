@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { ProgressiveImageLoader } from './ProgressiveImageLoader';
-import { ImagePreloader } from './ImagePreloader';
 
 interface ViewerCanvasProps {
   imageUrl: string;
