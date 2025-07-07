@@ -8,9 +8,9 @@ export function Header() {
   const navLinks = getNavigationItems();
 
   return (
-    <header className="relative safe-area-extend-top py-1 sm:py-1.5 lg:py-2 border-b-2 border-border sticky top-0 z-40 bg-surface-card backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-surface-card/60 safe-area-bg-seamless">
+    <header className="relative safe-area-extend-top py-1 sm:py-1.5 lg:py-2 border-b-2 border-border sticky top-0 z-40 bg-surface-card backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-surface-card/60 safe-area-bg-seamless shadow-[0_6px_0px_theme(colors.shadow-hard)]">
       <div 
-        className="absolute inset-0 bg-surface-card/90 -z-10 safe-area-extend-top"
+        className="absolute inset-0 bg-surface-card -z-10 safe-area-extend-top"
       />
       <div className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
         <Link to="/" className="font-jersey font-bold text-text-primary leading-none pr-4">
@@ -27,11 +27,11 @@ export function Header() {
               <Link
                 key={link.name}
                 to={link.href}
-                className="relative group text-xl lg:text-2xl leading-none font-jersey25 text-text-secondary hover:text-text-primary transition-colors duration-75 ease-in-out"
+                className="relative group text-xl lg:text-2xl leading-none font-jersey25 text-text-secondary hover:text-text-primary transition-all duration-150 ease-out hover:-translate-y-[1px]"
               >
-                <span className="opacity-0 group-hover:opacity-100 mr-1 text-text-primary">[</span>
+                <span className="opacity-0 group-hover:opacity-100 mr-1 text-text-primary transition-opacity duration-150 ease-out">[</span>
                 {link.name}
-                <span className="opacity-0 group-hover:opacity-100 ml-1 text-text-primary">]</span>
+                <span className="opacity-0 group-hover:opacity-100 ml-1 text-text-primary transition-opacity duration-150 ease-out">]</span>
               </Link>
             ))}
           </nav>
