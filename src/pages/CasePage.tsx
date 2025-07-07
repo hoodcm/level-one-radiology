@@ -159,7 +159,17 @@ export default function CasePage() {
                   <CaseViewerShell 
                     manifest={manifest}
                     studyId={post.slug}
-                  />
+                  >
+                    <div className="hidden md:block">
+                      <h3 className="text-xl font-serif font-bold text-text-primary mb-4">
+                        Analysis & Discussion
+                      </h3>
+                      <p className="text-text-secondary">
+                        Use the interactive viewer on the left to examine the imaging study. 
+                        Navigate through slices using touch gestures or mouse controls.
+                      </p>
+                    </div>
+                  </CaseViewerShell>
                 </div>
               </section>
             )}
