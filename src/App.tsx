@@ -18,6 +18,7 @@ import AuthorPage from "./pages/AuthorPage";
 import DicomViewer from "./pages/DicomViewer";
 import Learn from "./pages/Learn";
 import Cases from "./pages/Cases";
+import CasePage from "./pages/CasePage";
 import Codex from "./pages/Codex";
 import Signal from "./pages/Signal";
 import LevelUp from "./pages/LevelUp";
@@ -44,6 +45,7 @@ const App = () => (
                 <Route path="/tools" element={<Tools />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/posts/:slug" element={<PostPage />} />
+                <Route path="/cases/:slug" element={<CasePage />} />
                 <Route path="/authors/:slug" element={<AuthorPage />} />
                 <Route path="/spacing-guide" element={<SpacingGuide />} />
               </Route>

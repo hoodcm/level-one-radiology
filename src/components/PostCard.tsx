@@ -80,7 +80,7 @@ export function PostCard({ post, author }: PostCardProps) {
           aria-label={`Article: ${post.title}`}
         >
           <Link 
-            to={`/posts/${post.slug}`} 
+            to={isCaseStudy ? `/cases/${post.slug}` : `/posts/${post.slug}`} 
             className="flex-1 flex sm:flex-col h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-lg"
             aria-describedby={`post-${post.id}-description`}
           >
