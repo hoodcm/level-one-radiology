@@ -11,7 +11,7 @@ The imaging viewer system uses a two-layer architecture designed for progressive
 
 ### Core Components
 
-```
+```bash
 src/components/
 ├── CaseViewerShell.tsx        # Main coordinator component
 ├── light/
@@ -23,12 +23,14 @@ src/components/
 ### Component Responsibilities
 
 #### CaseViewerShell
+
 - Manages viewer state (light vs heavy)
 - Handles dynamic loading of heavy viewer
 - Provides modal interface for full viewer
 - Coordinates between viewer layers
 
 #### LightStackViewer
+
 - **Purpose**: Fast, mobile-first image stack navigation
 - **Features**:
   - Touch gesture support (swipe, pinch-to-zoom)
@@ -39,6 +41,7 @@ src/components/
 - **Performance**: Optimized for quick loading and smooth interactions
 
 #### FullDicomViewer
+
 - **Purpose**: Advanced medical imaging tools
 - **Features** (to be implemented):
   - Professional windowing controls
@@ -52,7 +55,7 @@ src/components/
 
 ### Directory Structure
 
-```
+```bash
 public/cases/
 ├── acute-appendicitis-case/
 │   ├── manifest.json
@@ -75,13 +78,15 @@ Each case requires a `manifest.json` file in `public/cases/{case-slug}/`:
 ```
 
 **Properties:**
+
 - `baseUrl`: Base URL for image loading (can be external or relative)
 - `slices`: Total number of image slices in the stack
 
 ### Image URL Generation
 
 The LightStackViewer generates image URLs using:
-```
+
+```bash
 {baseUrl}?w=800&h=600&fit=crop&auto=format&q=80&slice={sliceNumber}
 ```
 
@@ -91,12 +96,15 @@ For local images, implement a naming convention like `image-001.jpg`, `image-002
 ## Adding New Cases
 
 ### Step 1: Create Case Directory
+
 ```bash
 mkdir public/cases/your-case-slug
 ```
 
 ### Step 2: Create Manifest
+
 Create `public/cases/your-case-slug/manifest.json`:
+
 ```json
 {
   "baseUrl": "/cases/your-case-slug/images/image",
@@ -105,8 +113,10 @@ Create `public/cases/your-case-slug/manifest.json`:
 ```
 
 ### Step 3: Add Images
+
 For local images, organize as:
-```
+
+```bash
 public/cases/your-case-slug/
 ├── manifest.json
 └── images/
@@ -117,14 +127,17 @@ public/cases/your-case-slug/
 ```
 
 ### Step 4: Create Case Content
+
 Create markdown content in `content/your-case-slug.md` with category "Case Study".
 
 ### Step 5: Verify Integration
+
 The case will automatically be available at `/cases/your-case-slug` and include the interactive viewer.
 
 ## Routing Integration
 
 ### Case Pages
+
 - **Route**: `/cases/:slug`
 - **Component**: `CasePage.tsx`
 - **Features**:
@@ -134,6 +147,7 @@ The case will automatically be available at `/cases/your-case-slug` and include 
   - Provides case metadata and related cases
 
 ### Viewer Modal
+
 - **Trigger**: "Open Full Viewer" button in LightStackViewer
 - **Component**: FullDicomViewer (lazy-loaded)
 - **Features**: Full-screen modal with advanced tools
@@ -141,12 +155,14 @@ The case will automatically be available at `/cases/your-case-slug` and include 
 ## Performance Considerations
 
 ### Light Viewer Optimizations
+
 - Progressive image loading with quality tiers
 - Touch gesture optimization for mobile
 - Minimal bundle size impact
 - Fast initial render
 
 ### Heavy Viewer Loading
+
 - Code-splitting with React.lazy()
 - Load only when explicitly requested
 - Suspense boundary with loading state
@@ -155,18 +171,21 @@ The case will automatically be available at `/cases/your-case-slug` and include 
 ## Development Guidelines
 
 ### Adding Features to Light Viewer
+
 - Keep bundle size minimal
 - Focus on essential navigation and viewing
 - Maintain mobile-first approach
 - Ensure touch gesture compatibility
 
 ### Adding Features to Heavy Viewer
+
 - Professional medical imaging tools
 - Advanced measurements and annotations
 - Complex image processing
 - Desktop-optimized interfaces
 
 ### Testing New Cases
+
 1. Verify manifest.json loads correctly
 2. Test image URL generation
 3. Confirm gesture controls work
@@ -178,28 +197,33 @@ The case will automatically be available at `/cases/your-case-slug` and include 
 ### Common Issues
 
 **Images not loading:**
+
 - Check manifest.json syntax and location
 - Verify baseUrl accessibility
 - Confirm slice count matches available images
 - Check browser network tab for failed requests
 
 **Viewer not opening:**
+
 - Check for JavaScript errors in console
 - Verify CaseViewerShell is properly imported
 - Confirm lazy loading suspense boundaries
 
 **Performance issues:**
+
 - Optimize image sizes (recommended: 800x600 max)
 - Check network loading times
 - Consider image compression
 - Monitor memory usage with large stacks
 
 ### Debug Mode
+
 Enable console logging in LightStackViewer by setting `DEBUG=true` in the component for detailed interaction logging.
 
 ## Deployment Status
 
 ### ✅ Completed Components
+
 - **CaseViewerShell.tsx** - Main coordinator component
 - **LightStackViewer.tsx** - Mobile-first stack viewer
 - **FullDicomViewer.tsx** - Stub for advanced viewer
@@ -207,6 +231,7 @@ Enable console logging in LightStackViewer by setting `DEBUG=true` in the compon
 - **Public case structure** - Manifest system implemented
 
 ### ✅ Cleaned Up (Removed Legacy Components)
+
 - DicomViewer.tsx (old standalone viewer)
 - DicomViewerOverlay.tsx (old overlay system)
 - ResponsiveDicomViewer.tsx (old responsive wrapper)
@@ -217,7 +242,8 @@ Enable console logging in LightStackViewer by setting `DEBUG=true` in the compon
 - WindowingPresets.tsx (to be reimplemented in FullDicomViewer)
 
 ### 🔄 Current Architecture
-```
+
+```bash
 Cases Route (/cases/:slug)
     ↓
 CasePage.tsx (fetches manifest + renders content)
@@ -229,6 +255,7 @@ CaseViewerShell.tsx (manages light/heavy viewers)
 ```
 
 ### 🎯 Ready for Production
+
 The new viewer architecture is fully deployed and functional:
 
 1. **Performance Optimized**: Light viewer loads immediately
@@ -239,6 +266,7 @@ The new viewer architecture is fully deployed and functional:
 6. **Code Splitting**: Heavy viewer doesn't impact initial bundle size
 
 ### 📋 Deployment Checklist
+
 - [x] Remove old DICOM viewer components
 - [x] Update routing to use new case system
 - [x] Clean up unused imports and dependencies
