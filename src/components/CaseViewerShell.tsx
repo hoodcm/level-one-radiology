@@ -3,9 +3,7 @@ import { LightStackViewer } from './light/LightStackViewer';
 import { Dialog, DialogContent } from './ui/dialog';
 
 // Dynamically import the full DICOM viewer
-const FullDicomViewer = React.lazy(() => import('./dicom/DicomViewer').then(module => ({ 
-  default: module.DicomViewer 
-})));
+const FullDicomViewer = React.lazy(() => import('./heavy/FullDicomViewer'));
 
 interface CaseViewerShellProps {
   manifest: {
@@ -26,18 +24,6 @@ export function CaseViewerShell({ manifest, studyId }: CaseViewerShellProps) {
     setShowFull(false);
   };
 
-  // Mock DICOM data for full viewer - in production this would be fetched based on studyId
-  const mockDicomData = {
-    patientName: 'Patient Study',
-    studyDate: new Date().toISOString().split('T')[0],
-    modality: 'CT',
-    bodyPart: 'Abdomen',
-    images: Array.from({ length: manifest.slices }, (_, i) => ({
-      id: i + 1,
-      url: `${manifest.baseUrl}/${i + 1}.webp`,
-      name: `Slice ${String(i + 1).padStart(3, '0')}`
-    }))
-  };
 
   return (
     <>
@@ -62,7 +48,7 @@ export function CaseViewerShell({ manifest, studyId }: CaseViewerShellProps) {
             }
           >
             <FullDicomViewer 
-              dicomData={mockDicomData}
+              studyId={studyId || 'unknown'}
               onClose={handleCloseFull}
             />
           </Suspense>
