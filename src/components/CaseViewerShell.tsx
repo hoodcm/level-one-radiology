@@ -1,8 +1,10 @@
+
 import React, { useState, Suspense } from 'react';
 import { LightStackViewer } from './light/LightStackViewer';
-import { Dialog, DialogContent } from './ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
 import { Button } from './ui/button';
 import { useMobile } from '@/hooks/use-mobile';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 // Dynamically import the full DICOM viewer
 const FullDicomViewer = React.lazy(() => import('./heavy/FullDicomViewer'));
@@ -77,6 +79,12 @@ export function CaseViewerShell({ manifest, studyId, children }: CaseViewerShell
         {/* Full DICOM Viewer Modal */}
         <Dialog open={showFull} onOpenChange={setShowFull}>
           <DialogContent className="max-w-full max-h-full w-screen h-screen p-0 bg-black border-0">
+            <VisuallyHidden>
+              <DialogTitle>Advanced DICOM Viewer</DialogTitle>
+              <DialogDescription>
+                Full-featured medical imaging viewer with advanced tools and measurements
+              </DialogDescription>
+            </VisuallyHidden>
             <Suspense 
               fallback={
                 <div className="flex items-center justify-center w-full h-full bg-black text-white">
@@ -118,6 +126,12 @@ export function CaseViewerShell({ manifest, studyId, children }: CaseViewerShell
       {/* Full DICOM Viewer Modal */}
       <Dialog open={showFull} onOpenChange={setShowFull}>
         <DialogContent className="max-w-full max-h-full w-screen h-screen p-0 bg-black border-0">
+          <VisuallyHidden>
+            <DialogTitle>Advanced DICOM Viewer</DialogTitle>
+            <DialogDescription>
+              Full-featured medical imaging viewer with advanced tools and measurements
+            </DialogDescription>
+          </VisuallyHidden>
           <Suspense 
             fallback={
               <div className="flex items-center justify-center w-full h-full bg-black text-white">
