@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Eye } from 'lucide-react';
@@ -28,21 +27,10 @@ export function LightStackViewer({ manifest, onOpenFullViewer, interactive = tru
   // Image loading state
   const [loadedImages, setLoadedImages] = useState<Map<number, HTMLImageElement>>(new Map());
   const [currentImage, setCurrentImage] = useState<HTMLImageElement | null>(null);
-  const [imageLoadError, setImageLoadError] = useState(false);
 
   // Generate image URLs from manifest
   const getSliceUrl = (sliceIndex: number) => {
-    const sliceNumber = sliceIndex + 1;
-    
-    // Check if baseUrl is external (contains http)
-    if (manifest.baseUrl.includes('http')) {
-      // External URL (like Unsplash) - append slice as query parameter
-      return `${manifest.baseUrl}?w=800&h=600&fit=crop&auto=format&q=80&slice=${sliceNumber}`;
-    } else {
-      // Local file path - generate proper filename
-      const paddedNumber = sliceNumber.toString().padStart(3, '0');
-      return `${manifest.baseUrl}-${paddedNumber}.jpg`;
-    }
+    return `${manifest.baseUrl}/${sliceIndex + 1}.webp`;
   };
 
   // Preload images
@@ -56,14 +44,6 @@ export function LightStackViewer({ manifest, onOpenFullViewer, interactive = tru
         setLoadedImages(prev => new Map(prev).set(sliceIndex, img));
         if (sliceIndex === currentSlice) {
           setCurrentImage(img);
-          setImageLoadError(false);
-        }
-      };
-      img.onerror = (error) => {
-        console.error(`Failed to load image for slice ${sliceIndex}:`, error);
-        console.log(`Attempted URL: ${getSliceUrl(sliceIndex)}`);
-        if (sliceIndex === currentSlice) {
-          setImageLoadError(true);
         }
       };
       img.src = getSliceUrl(sliceIndex);
@@ -80,7 +60,6 @@ export function LightStackViewer({ manifest, onOpenFullViewer, interactive = tru
     const img = loadedImages.get(currentSlice);
     if (img) {
       setCurrentImage(img);
-      setImageLoadError(false);
     }
   }, [currentSlice, loadedImages]);
 
@@ -88,23 +67,11 @@ export function LightStackViewer({ manifest, onOpenFullViewer, interactive = tru
   const renderCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
+    if (!canvas || !ctx || !currentImage) return;
 
     // Clear canvas with black background
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    if (imageLoadError) {
-      // Show error message
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '16px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('Failed to load image', canvas.width / 2, canvas.height / 2);
-      ctx.fillText(`Slice ${currentSlice + 1}/${manifest.slices}`, canvas.width / 2, canvas.height / 2 + 25);
-      return;
-    }
-
-    if (!currentImage) return;
 
     // Calculate scaling to fit image in viewport while maintaining aspect ratio
     const canvasAspect = canvas.width / canvas.height;
@@ -134,7 +101,7 @@ export function LightStackViewer({ manifest, onOpenFullViewer, interactive = tru
     );
 
     ctx.restore();
-  }, [currentImage, zoom, pan, imageLoadError, currentSlice, manifest.slices]);
+  }, [currentImage, zoom, pan]);
 
   // Setup canvas
   useEffect(() => {
@@ -276,13 +243,10 @@ export function LightStackViewer({ manifest, onOpenFullViewer, interactive = tru
           {(zoom * 100).toFixed(0)}%
         </div>
         
-        {/* Loading/Error indicator */}
-        {!currentImage && !imageLoadError && (
+        {/* Loading indicator */}
+        {!currentImage && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center text-white">
-              <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-              <p>Loading slice {currentSlice + 1}...</p>
-            </div>
+            <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
           </div>
         )}
 
