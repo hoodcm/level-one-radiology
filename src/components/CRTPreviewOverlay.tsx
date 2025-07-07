@@ -89,15 +89,15 @@ export function CRTPreviewOverlay({
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-shadow-hard/80 pointer-events-auto"
+      className="fixed z-50 flex items-center justify-center bg-shadow-hard/80 pointer-events-auto safe-area-bg-seamless"
       style={{
         position: 'fixed',
-        top: '0',
-        left: '0',
-        right: '0',
-        bottom: '0',
-        height: '100vh',
-        width: '100vw'
+        top: 'calc(-1 * var(--safe-area-inset-top, 0px))',
+        left: 'calc(-1 * var(--safe-area-inset-left, 0px))',
+        right: 'calc(-1 * var(--safe-area-inset-right, 0px))',
+        bottom: 'calc(-1 * var(--safe-area-inset-bottom, 0px))',
+        height: 'calc(100vh + var(--safe-area-inset-top, 0px) + var(--safe-area-inset-bottom, 0px))',
+        width: 'calc(100vw + var(--safe-area-inset-left, 0px) + var(--safe-area-inset-right, 0px))'
       }}
       role="dialog"
       aria-modal="true"
@@ -106,18 +106,15 @@ export function CRTPreviewOverlay({
     >
       {/* Full screen scan line effect covering system areas */}
       <div
-        className="
-          pointer-events-none
-          fixed
-          z-10
-          bg-scanlines
-          bg-[length:100%_4px]
-          animate-scan
-          top-safe-top
-          bottom-safe-bottom
-          left-safe-left
-          right-safe-right
-        "
+        className="pointer-events-none fixed inset-0 z-10 bg-scanlines bg-[length:100%_4px] animate-scan"
+        style={{
+          top: 'calc(-1 * var(--safe-area-inset-top, 0px))',
+          bottom: 'calc(-1 * var(--safe-area-inset-bottom, 0px))',
+          left: 'calc(-1 * var(--safe-area-inset-left, 0px))',
+          right: 'calc(-1 * var(--safe-area-inset-right, 0px))',
+          height: 'calc(100vh + var(--safe-area-inset-top, 0px) + var(--safe-area-inset-bottom, 0px))',
+          width: 'calc(100vw + var(--safe-area-inset-left, 0px) + var(--safe-area-inset-right, 0px))'
+        }}
       />
       
       {phase !== 'exit' && (
