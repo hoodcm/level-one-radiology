@@ -21,7 +21,7 @@ interface DicomMainViewerProps {
   windowCenter: number;
   brightness: number;
   contrast: number;
-  activeTool: 'pan' | 'zoom' | 'windowing' | 'measure' | 'annotate';
+  activeTool: 'pan' | 'zoom' | 'windowing';
   showSidebar: boolean;
   onZoomChange: (zoom: number) => void;
   onPanChange: (pan: { x: number; y: number }) => void;
