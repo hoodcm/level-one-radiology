@@ -36,47 +36,49 @@ const Index = () => {
       />
       
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-black text-white">
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-24 lg:py-32">
+      <section className="relative overflow-hidden bg-surface-bg">
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20 lg:py-24">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="flex justify-center mb-8">
-              <div className="flex items-center gap-2 bg-accent px-6 py-3 border-4 border-white shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] transform -rotate-1">
-                <Activity className="w-5 h-5 text-black" />
-                <span className="text-sm font-black text-black uppercase tracking-wider">Advanced Radiology</span>
+            <div className="flex justify-center mb-6 sm:mb-8">
+              <div className="flex items-center gap-2 bg-accent text-accent-highlight-text px-4 sm:px-6 py-2 sm:py-3 border-2 sm:border-4 border-border rounded-lg shadow-[4px_4px_0px_0px_hsl(var(--shadow-hard))] sm:shadow-[8px_8px_0px_0px_hsl(var(--shadow-hard))]">
+                <Activity className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-xs sm:text-sm font-black uppercase tracking-wider">Advanced Radiology</span>
               </div>
             </div>
             
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-8 transform -rotate-1">
-              <span className="bg-white text-black px-4 py-2 border-4 border-white shadow-[12px_12px_0px_0px_rgba(206,206,206,1)] inline-block mb-4">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black mb-6 sm:mb-8">
+              <span className="bg-surface-card text-text-primary px-3 sm:px-4 py-1 sm:py-2 border-2 sm:border-4 border-border rounded-lg shadow-[6px_6px_0px_0px_hsl(var(--shadow-hard))] sm:shadow-[12px_12px_0px_0px_hsl(var(--shadow-hard))] inline-block mb-2 sm:mb-4">
                 LEVEL ONE
               </span>
               <br />
-              <span className="bg-accent text-black px-4 py-2 border-4 border-white shadow-[12px_12px_0px_0px_rgba(255,255,255,1)] inline-block transform rotate-1">
+              <span className="bg-accent text-accent-highlight-text px-3 sm:px-4 py-1 sm:py-2 border-2 sm:border-4 border-border rounded-lg shadow-[6px_6px_0px_0px_hsl(var(--shadow-hard))] sm:shadow-[12px_12px_0px_0px_hsl(var(--shadow-hard))] inline-block">
                 RADIOLOGY
               </span>
             </h1>
             
-            <p className="text-xl sm:text-2xl lg:text-3xl font-bold mb-12 max-w-3xl mx-auto leading-tight uppercase tracking-wide">
+            <p className="text-base sm:text-xl md:text-2xl lg:text-3xl font-bold mb-8 sm:mb-12 max-w-3xl mx-auto leading-tight uppercase tracking-wide text-text-primary">
               DECISIVE THINKING IN EMERGENCY IMAGING
             </p>
             
-            {/* Neo-brutalist Search Field */}
-            <div className="max-w-2xl mx-auto mb-8">
+            {/* Mobile-first Search Field */}
+            <div className="max-w-2xl mx-auto mb-6 sm:mb-8">
               <form onSubmit={handleSearchSubmit} className="relative">
-                <div className="bg-white border-8 border-black shadow-[16px_16px_0px_0px_rgba(206,206,206,1)] transform rotate-1">
-                  <div className="flex items-center p-2">
-                    <Search className="w-8 h-8 text-black mr-4 flex-shrink-0" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="SEARCH CASES, ESSAYS, ARTICLES..."
-                      className="flex-1 bg-transparent text-black text-xl font-black placeholder:text-gray-600 placeholder:font-black focus:outline-none uppercase tracking-wide"
-                      autoComplete="off"
-                    />
+                <div className="bg-surface-card border-2 sm:border-4 border-border rounded-lg shadow-[8px_8px_0px_0px_hsl(var(--shadow-hard))] sm:shadow-[16px_16px_0px_0px_hsl(var(--shadow-hard))]">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-0 p-3 sm:p-2">
+                    <div className="flex items-center flex-1 min-w-0">
+                      <Search className="w-6 h-6 sm:w-8 sm:h-8 text-text-primary mr-3 sm:mr-4 flex-shrink-0" />
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="SEARCH CASES, ESSAYS..."
+                        className="flex-1 bg-transparent text-text-primary text-sm sm:text-xl font-black placeholder:text-text-secondary placeholder:font-black focus:outline-none uppercase tracking-wide min-w-0"
+                        autoComplete="off"
+                      />
+                    </div>
                     <button
                       type="submit"
-                      className="bg-accent text-black px-6 py-3 border-4 border-black font-black text-lg uppercase tracking-wider hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:transform hover:translate-x-1 hover:translate-y-1 transition-all duration-100"
+                      className="bg-accent text-accent-highlight-text px-4 sm:px-6 py-2 sm:py-3 border-2 sm:border-4 border-border font-black text-sm sm:text-lg uppercase tracking-wider rounded-md hover:shadow-[2px_2px_0px_0px_hsl(var(--shadow-hard))] sm:hover:shadow-[4px_4px_0px_0px_hsl(var(--shadow-hard))] hover:translate-x-0.5 hover:translate-y-0.5 sm:hover:translate-x-1 sm:hover:translate-y-1 transition-all duration-100 flex-shrink-0"
                     >
                       GO
                     </button>
@@ -85,11 +87,11 @@ const Index = () => {
               </form>
             </div>
 
-            {/* Neo-brutalist secondary action */}
+            {/* Secondary action */}
             <div className="flex justify-center">
               <Link
                 to="/about"
-                className="bg-white text-black px-8 py-4 border-4 border-black font-black text-lg uppercase tracking-wider shadow-[8px_8px_0px_0px_rgba(206,206,206,1)] hover:shadow-[4px_4px_0px_0px_rgba(206,206,206,1)] hover:transform hover:translate-x-1 hover:translate-y-1 transition-all duration-100 transform -rotate-1"
+                className="bg-surface-card text-text-primary px-6 sm:px-8 py-3 sm:py-4 border-2 sm:border-4 border-border font-black text-sm sm:text-lg uppercase tracking-wider rounded-lg shadow-[4px_4px_0px_0px_hsl(var(--shadow-hard))] sm:shadow-[8px_8px_0px_0px_hsl(var(--shadow-hard))] hover:shadow-[2px_2px_0px_0px_hsl(var(--shadow-hard))] sm:hover:shadow-[4px_4px_0px_0px_hsl(var(--shadow-hard))] hover:translate-x-0.5 hover:translate-y-0.5 sm:hover:translate-x-1 sm:hover:translate-y-1 transition-all duration-100"
               >
                 LEARN MORE
               </Link>
