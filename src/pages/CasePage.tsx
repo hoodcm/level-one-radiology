@@ -142,7 +142,7 @@ export default function CasePage() {
             </header>
             
             <article
-              className="prose prose-slate dark:prose-invert prose-base sm:prose-lg lg:prose-xl max-w-none text-text-secondary prose-headings:font-serif prose-headings:text-text-primary prose-a:text-accent hover:prose-a:text-text-primary prose-a:focus-visible:ring-2 prose-a:focus-visible:ring-accent prose-a:focus-visible:ring-offset-2 mb-8 md:mb-12 lg:mb-16"
+              className="prose prose-slate dark:prose-invert prose-base sm:prose-lg leading-[1.2] tracking-tight max-w-none text-text-secondary prose-headings:font-serif prose-headings:text-text-primary prose-headings:tracking-normal prose-headings:font-medium prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-p:my-5 prose-li:my-2 prose-ul:pl-5 prose-ol:pl-5 prose-img:rounded prose-img:my-6 prose-blockquote:border-l-4 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-text-secondary/80 mb-12"
               role="article"
               aria-labelledby="article-title"
             >
