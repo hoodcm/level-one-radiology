@@ -32,7 +32,7 @@ export function Header() {
                   to={link.href}
                   className={`relative group text-xl lg:text-2xl leading-none font-jersey25 transition-all duration-150 ease-out ${
                     isActive 
-                      ? 'text-text-primary border-2 border-border bg-surface-card px-3 py-1 shadow-[6px_6px_0px_theme(colors.shadow-hard)]' 
+                      ? 'text-text-primary border-2 border-border bg-surface-card px-3 py-1 rounded-lg shadow-[4px_4px_0px_theme(colors.shadow-hard)]' 
                       : 'text-text-secondary hover:text-text-primary hover:-translate-y-[1px]'
                   }`}
                 >

@@ -73,7 +73,7 @@ export function SearchInput() {
     <div ref={containerRef} className="relative">
       <form
         onSubmit={handleSubmit}
-        className={`flex items-center justify-start transition-all duration-200 ease-in-out border-2 border-border bg-surface-card shadow-[6px_6px_0px_theme(colors.shadow-hard)] hover:shadow-[8px_8px_0px_theme(colors.shadow-hard)] hover:-translate-y-[1px] hover:translate-x-[-1px] rounded-none px-3 py-2 text-xs ${
+        className={`flex items-center justify-start transition-all duration-200 ease-in-out border-2 border-border bg-surface-card rounded-lg shadow-[4px_4px_0px_theme(colors.shadow-hard)] hover:shadow-[6px_6px_0px_theme(colors.shadow-hard)] hover:-translate-y-[1px] hover:translate-x-[-1px] px-3 py-2 text-xs ${
           isExpanded ? 'w-72' : 'w-32'
         }`}
       >
