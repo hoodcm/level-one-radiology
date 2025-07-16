@@ -1,11 +1,12 @@
 
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { DarkModeToggle } from './DarkModeToggle';
 import { SearchInput } from './SearchInput';
 import { getNavigationItems } from '@/config/navigation';
 
 export function Header() {
   const navLinks = getNavigationItems();
+  const location = useLocation();
 
   return (
     <header className="relative safe-area-extend-top py-1 sm:py-1.5 lg:py-2 border-b-2 border-border sticky top-0 z-40 bg-surface-card backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-surface-card/60 safe-area-bg-seamless shadow-[0_6px_0px_theme(colors.shadow-hard)]">
@@ -23,17 +24,28 @@ export function Header() {
         
         <div className="hidden md:flex items-center gap-2 lg:gap-3">
           <nav className="flex items-center h-5 space-x-3 lg:space-x-4">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.href}
-                className="relative group text-xl lg:text-2xl leading-none font-jersey25 text-text-secondary hover:text-text-primary transition-all duration-150 ease-out hover:-translate-y-[1px]"
-              >
-                <span className="opacity-0 group-hover:opacity-100 mr-1 text-text-primary transition-opacity duration-150 ease-out">[</span>
-                {link.name}
-                <span className="opacity-0 group-hover:opacity-100 ml-1 text-text-primary transition-opacity duration-150 ease-out">]</span>
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.href;
+              return (
+                <Link
+                  key={link.name}
+                  to={link.href}
+                  className={`relative group text-xl lg:text-2xl leading-none font-jersey25 transition-all duration-150 ease-out hover:-translate-y-[1px] ${
+                    isActive 
+                      ? 'text-text-primary border-2 border-border bg-surface-card px-3 py-1 shadow-[0_6px_0px_theme(colors.shadow-hard)]' 
+                      : 'text-text-secondary hover:text-text-primary'
+                  }`}
+                >
+                  <span className={`mr-1 transition-opacity duration-150 ease-out ${
+                    isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                  } text-text-primary`}>[</span>
+                  {link.name}
+                  <span className={`ml-1 transition-opacity duration-150 ease-out ${
+                    isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                  } text-text-primary`}>]</span>
+                </Link>
+              );
+            })}
           </nav>
           <SearchInput />
           <DarkModeToggle />

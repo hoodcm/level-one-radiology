@@ -73,7 +73,7 @@ export function SearchInput() {
     <div ref={containerRef} className="relative">
       <form
         onSubmit={handleSubmit}
-        className={`flex items-center justify-start transition-all duration-300 ease-in-out border-2 border-black dark:border-white rounded-full px-1 py-0.5 overflow-hidden focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-1 text-xs ${
+        className={`flex items-center justify-start transition-all duration-200 ease-in-out border-2 border-border bg-surface-card shadow-[0_4px_0px_theme(colors.shadow-hard)] hover:shadow-[0_6px_0px_theme(colors.shadow-hard)] hover:-translate-y-[2px] rounded-none px-3 py-2 text-xs ${
           isExpanded ? 'w-56' : 'w-28'
         }`}
       >
@@ -83,7 +83,7 @@ export function SearchInput() {
         <button
           type="button"
           onClick={() => inputRef.current?.focus()}
-          className="p-1 text-foreground flex items-center justify-center cursor-pointer hover:text-accent transition-colors flex-shrink-0"
+          className="text-text-primary flex items-center justify-center cursor-pointer hover:text-text-secondary transition-colors flex-shrink-0"
           aria-label="Focus search"
         >
           <Search className="h-4 w-4" />
@@ -97,17 +97,17 @@ export function SearchInput() {
           onChange={handleInputChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className="px-1 py-0 h-auto min-h-0 leading-tight bg-transparent border-none font-mono text-xs placeholder:italic placeholder:text-muted-foreground focus:outline-none focus:ring-0 w-full"
+          className="px-2 py-0 h-auto min-h-0 leading-tight bg-transparent border-none font-mono text-xs placeholder:italic placeholder:text-text-secondary text-text-primary focus:outline-none focus:ring-0 w-full"
           autoComplete="off"
         />
         {query && (
           <button
             type="button"
             onClick={handleClear}
-            className="px-1 text-muted-foreground hover:text-foreground transition-colors duration-75 flex items-center justify-center h-5 flex-shrink-0"
+            className="px-1 text-text-secondary hover:text-text-primary transition-colors duration-75 flex items-center justify-center h-5 flex-shrink-0"
             aria-label="Clear search"
           >
-            <X className="h-6 w-6" />
+            <X className="h-4 w-4" />
           </button>
         )}
       </form>
