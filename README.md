@@ -1,0 +1,118 @@
+# Level One Radiology
+
+*A one-person trade publication with educational depth*
+
+---
+
+## What This Is
+
+Level One Radiology is an independent platform combining the timeliness of Radiology Business with the educational rigor of RadioGraphics, executed with design sophistication and a singular authorial voice.
+
+**What it is:** Owned infrastructure for building national reputation and thought leadership in emergency radiology through substantive, well-designed content.
+
+**What it isn't:** An online CV, a wiki, a case repository, a forum, or a corporate website.
+
+**Core principle:** Complete independenceâ€”a platform where content, design, and editorial decisions are entirely self-determined.
+
+---
+
+## Documentation Structure
+
+This project uses a tiered documentation system organized by discipline and purpose.
+
+### Tier 1: Foundation
+
+Strategic identity and methodologyâ€”the "why" behind everything.
+
+| Document | Purpose |
+|----------|---------|
+| [BRAND-FOUNDATION.md](BRAND-FOUNDATION.md) | Brand identity, positioning, audience, content strategy |
+| [DESIGN-METHODOLOGY.md](DESIGN-METHODOLOGY.md) | Fictive Kin principles (immutable foundation) |
+
+### Tier 2: Design System
+
+Visual and UX specificationsâ€”the "what" of the design.
+
+| Document | Purpose |
+|----------|---------|
+| [DESIGN-PRINCIPLES.md](DESIGN-PRINCIPLES.md) | Design philosophy, visual identity, core principles |
+| [DESIGN-TOKENS.md](DESIGN-TOKENS.md) | Colors, typography, spacing specifications |
+| [COMPONENT-LIBRARY.md](COMPONENT-LIBRARY.md) | Module specs, component CSS, design language |
+
+### Tier 3: Implementation
+
+Technical architectureâ€”the "how" of building it.
+
+| Document | Purpose |
+|----------|---------|
+| [TECHNICAL-ARCHITECTURE.md](TECHNICAL-ARCHITECTURE.md) | Stack, CSS architecture, performance, workflows |
+| [PROJECT-INITIALIZATION.md](PROJECT-INITIALIZATION.md) | Quick-start guide, setup commands, code examples |
+
+### Tier 4: Content
+
+Writing and editorial guidelines.
+
+| Document | Purpose |
+|----------|---------|
+| [WRITING-STYLE.md](WRITING-STYLE.md) | Smart Brevity principles, voice, formatting |
+
+---
+
+## Quick Reference
+
+**Primary keystone metric:** Email subscribers
+
+**Design philosophy:** Tight, not cramped. Dark-first. Bespoke warmth.
+
+**Typography:** Utopia Std (display) Â· Lab Grotesque (body) Â· Eurostile LT Std (UI)
+
+**Color foundation:** Minimal warm bias (R+1, B-2), six-level surface hierarchy
+
+**Component primitives:** Base UI via shadcn/ui (Lyra or Nova style)
+
+**Framework:** Astro + React islands
+
+**Methodology:** Built on Fictive Kin's web systems approachâ€”see [DESIGN-METHODOLOGY.md](DESIGN-METHODOLOGY.md)
+
+---
+
+## Navigation Guide
+
+**Starting a new design decision?**
+â†’ Check [DESIGN-PRINCIPLES.md](DESIGN-PRINCIPLES.md) for philosophy, then [DESIGN-TOKENS.md](DESIGN-TOKENS.md) for specifications
+
+**Building a component?**
+â†’ See [COMPONENT-LIBRARY.md](COMPONENT-LIBRARY.md) for module specs and CSS patterns
+
+**Setting up the project?**
+â†’ See [PROJECT-INITIALIZATION.md](PROJECT-INITIALIZATION.md) for step-by-step setup with shadcn/ui and Base UI
+
+**Writing content strategy?**
+â†’ See [BRAND-FOUNDATION.md](BRAND-FOUNDATION.md) for content types, cadence, and audience
+
+**Technical implementation questions?**
+â†’ See [TECHNICAL-ARCHITECTURE.md](TECHNICAL-ARCHITECTURE.md) for stack and performance targets
+
+**Need to understand the foundational methodology?**
+â†’ See [DESIGN-METHODOLOGY.md](DESIGN-METHODOLOGY.md) for Fictive Kin principles
+
+---
+
+## Maintenance
+
+When syncing new insights from conversations:
+
+- **Brand/content decisions** â†’ BRAND-FOUNDATION.md
+- **Design philosophy changes** â†’ DESIGN-PRINCIPLES.md
+- **New tokens or values** â†’ DESIGN-TOKENS.md
+- **New components or modules** â†’ COMPONENT-LIBRARY.md
+- **Technical decisions** â†’ TECHNICAL-ARCHITECTURE.md
+- **Setup/initialization changes** â†’ PROJECT-INITIALIZATION.md
+- **Writing guidelines** â†’ WRITING-STYLE.md
+- **Methodology refinements** â†’ DESIGN-METHODOLOGY.md (with careâ€”these are foundational)
+
+---
+
+*Documentation refactored: December 2024*
+*Last updated: January 2025*
+*Built on Fictive Kin methodology*
