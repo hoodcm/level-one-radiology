@@ -1,0 +1,54 @@
+---
+import Tag from '@/components/shared/Tag.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  publishDate: string;
+  primaryTag: string;
+  contentType: string;
+  slug: string;
+  isLead?: boolean;
+}
+
+const { title, description, publishDate, primaryTag, contentType, slug, isLead = false } = Astro.props;
+
+const tagVariantMap: Record<string, 'default' | 'signal-red' | 'signal-cyan' | 'signal-violet' | 'signal-yellow' | 'signal-orange'> = {
+  'TRAUMA': 'signal-red',
+  'ABDOMEN': 'signal-cyan',
+  'CHEST': 'signal-orange',
+  'NEURO': 'signal-violet',
+  'MSK': 'signal-yellow',
+  'AI & POLICY': 'signal-violet',
+};
+
+const contentTypeVariantMap: Record<string, 'default' | 'signal-red' | 'signal-cyan' | 'signal-violet' | 'signal-yellow' | 'signal-orange'> = {
+  'educational': 'signal-cyan',
+  'commentary': 'signal-violet',
+  'case-analysis': 'signal-orange',
+};
+
+const tagVariant = tagVariantMap[primaryTag.toUpperCase()] || 'default';
+const contentTypeVariant = contentTypeVariantMap[contentType] || 'default';
+const contentTypeLabel = contentType.replace('-', ' ').toUpperCase();
+
+const formattedDate = new Date(publishDate).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+---
+
+<a href={`/articles/${slug}`} class:list={["article-card hud-frame", { "article-card--lead": isLead }]}>
+  <span class="hud-corner-bl" aria-hidden="true"></span>
+  <span class="hud-corner-br" aria-hidden="true"></span>
+  <div class="article-card__tags">
+    <Tag label={primaryTag.toUpperCase()} variant={tagVariant} />
+    <Tag label={contentTypeLabel} variant={contentTypeVariant} />
+  </div>
+  <h3 class="article-card__title">{title}</h3>
+  <p class="article-card__excerpt">{description}</p>
+  <div class="article-card__meta">
+    <span>{formattedDate}</span>
+  </div>
+</a>

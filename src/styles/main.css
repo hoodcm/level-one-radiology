@@ -15,6 +15,9 @@
 /* Base Styles */
 @import "./base/global.css";
 
+/* Component Styles */
+@import "./components/homepage.css";
+
 /* Tailwind v4 theme — expose tokens as utility classes */
 @theme inline {
   /* Surface colors */

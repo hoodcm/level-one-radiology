@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-02-06
+
+### Added
+- Homepage with 4 sections: sticky nav, hero with newsletter CTA, featured articles grid, footer
+- Header component (48px sticky nav, ARTICLES / ABOUT / SUBSCRIBE)
+- Footer component (3-column: navigate, connect, newsletter CTA with registration marks)
+- Tag component (Eurostile uppercase, colored indicator dot, signal color variants)
+- ArticleCard component (HUD framing, tag chips, hover states, lead variant)
+- NewsletterSignup React island (inline + section variants, Buttondown integration)
+- shadcn/ui Button and Input components (Base UI primitives, base-lyra style)
+- Component CSS: site-header, article-card, tag, HUD frame, featured-grid, newsletter, footer
+- 3 placeholder articles: splenic trauma, closed-loop obstruction, ACR AI guidelines
+- Self-hosted fonts placed (Utopia Std, Lab Grotesque, Eurostile LT Std — 3.8MB)
+
 ## [0.2.0] - 2026-02-06
 
 ### Added

@@ -1,0 +1,34 @@
+---
+const { pathname } = Astro.url;
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a href="/" class="branding"><span class="branding__level-one">Level One</span> <span class="branding__radiology">Radiology</span></a>
+    <nav aria-label="Main navigation">
+      <ul class="site-nav__list">
+        <li>
+          <a
+            href="/articles"
+            class:list={["site-nav__item", { "site-nav__item--active": pathname.startsWith("/articles") }]}
+          >
+            Articles
+          </a>
+        </li>
+        <li>
+          <a
+            href="/about"
+            class:list={["site-nav__item", { "site-nav__item--active": pathname === "/about" }]}
+          >
+            About
+          </a>
+        </li>
+        <li>
+          <a href="#subscribe" class="site-nav__item site-nav__item--cta">
+            Subscribe
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>

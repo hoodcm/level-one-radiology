@@ -1,0 +1,60 @@
+---
+import NewsletterSignup from '@/components/shared/NewsletterSignup.tsx';
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__grid">
+      <!-- Navigate -->
+      <div>
+        <h4 class="site-footer__section-title">Navigate</h4>
+        <ul class="site-footer__links">
+          <li><a href="/" class="site-footer__link">Home</a></li>
+          <li><a href="/articles" class="site-footer__link">Articles</a></li>
+          <li><a href="/about" class="site-footer__link">About</a></li>
+        </ul>
+      </div>
+
+      <!-- Connect -->
+      <div>
+        <h4 class="site-footer__section-title">Connect</h4>
+        <ul class="site-footer__links">
+          <li><a href="https://linkedin.com" class="site-footer__link" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          <li><a href="https://x.com" class="site-footer__link" target="_blank" rel="noopener noreferrer">X / Twitter</a></li>
+          <li><a href="/rss.xml" class="site-footer__link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <!-- Newsletter -->
+      <div>
+        <NewsletterSignup
+          client:load
+          variant="section"
+          headline="Stay current"
+          subhead="Weekly insights on emergency radiology. Educational depth, clinical utility, no filler."
+        />
+      </div>
+    </div>
+
+    <div class="site-footer__bottom">
+      <p class="site-footer__copyright">
+        &copy; {currentYear} Level One Radiology. All rights reserved.
+      </p>
+      <div style="display: flex; gap: 16px; align-items: center;">
+        <!-- Registration marks -->
+        <svg class="registration-mark" width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
+          <circle cx="4" cy="4" r="3" fill="none" stroke="currentColor" stroke-width="0.5"/>
+          <line x1="4" y1="0" x2="4" y2="8" stroke="currentColor" stroke-width="0.5"/>
+          <line x1="0" y1="4" x2="8" y2="4" stroke="currentColor" stroke-width="0.5"/>
+        </svg>
+        <svg class="registration-mark" width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
+          <circle cx="4" cy="4" r="3" fill="none" stroke="currentColor" stroke-width="0.5"/>
+          <line x1="4" y1="0" x2="4" y2="8" stroke="currentColor" stroke-width="0.5"/>
+          <line x1="0" y1="4" x2="8" y2="4" stroke="currentColor" stroke-width="0.5"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</footer>

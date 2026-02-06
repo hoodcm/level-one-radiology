@@ -100,7 +100,7 @@ Writing and editorial guidelines.
 
 ## Development
 
-The project is a working Astro 5 application with a dark "coming soon" homepage.
+The project is a working Astro 5 application with a fully built homepage.
 
 ```bash
 npm run dev        # Dev server → localhost:4321
@@ -108,7 +108,7 @@ npm run build      # Production build → dist/
 npm run preview    # Preview production build
 ```
 
-**Current state:** Project initialized with design token pipeline, base layout, content collection schema, and GitHub Pages deployment workflow. Next steps: font placement, navigation bar, article templates, homepage build-out.
+**Current state:** Homepage complete with sticky nav, hero + newsletter CTA, featured articles grid, and footer. Self-hosted fonts placed. 7 components built (Header, Footer, ArticleCard, Tag, NewsletterSignup, Button, Input). 3 placeholder articles. Next steps: article page template, article index, About page.
 
 ---
 

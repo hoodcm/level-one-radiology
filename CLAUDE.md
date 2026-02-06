@@ -86,6 +86,13 @@ Detailed specifications live in dedicated documents:
 - **Signal colors are functional:** Red=CTA/critical, Cyan=links, Yellow=caution, Violet=tech
 - **Primary metric:** Email subscribers. Every design choice serves conversion.
 
+## Technical Gotchas
+
+- **Tailwind v4**: Use `@tailwindcss/vite` plugin, NOT `@astrojs/tailwind`. No `tailwind.config.mjs`. Use `@theme` directives in CSS.
+- **shadcn/ui schema**: The schema combines style+library into one field. Use `"style": "base-lyra"` in components.json (NOT `"style": "lyra"` + `"library": "base-ui"` as separate fields).
+- **node_modules corruption**: If `ERR_MODULE_NOT_FOUND` on astro CLI, `rm -rf node_modules package-lock.json && npm install`.
+- **Astro 5 content collections**: Use `src/content.config.ts` (not `src/content/config.ts`), `glob` loader, `z` from `astro/zod`.
+
 ## Environment Variables
 
 | Variable | Purpose |

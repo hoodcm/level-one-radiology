@@ -5,59 +5,359 @@
    ============================================== */
 
 /* @font-face declarations — using .otf/.ttf for now, convert to .woff2 later */
+
+/* --- Utopia Std (display serif) --- */
 @font-face {
   font-family: "Utopia Std";
-  src: url("/fonts/utopia/UtopiaStd-Regular.otf") format("opentype");
+  src: url("/fonts/utopia/utopia-regular.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "Utopia Std";
-  src: url("/fonts/utopia/UtopiaStd-Bold.otf") format("opentype");
+  src: url("/fonts/utopia/utopia-italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std";
+  src: url("/fonts/utopia/utopia-semibold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std";
+  src: url("/fonts/utopia/utopia-semibold-italic.otf") format("opentype");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std";
+  src: url("/fonts/utopia/utopia-bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
-  font-family: "Lab Grotesque";
-  src: url("/fonts/lab-grotesque/LabGrotesque-Regular.otf") format("opentype");
-  font-weight: 400;
+  font-family: "Utopia Std";
+  src: url("/fonts/utopia/utopia-bold-italic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std";
+  src: url("/fonts/utopia/utopia-black-headline.otf") format("opentype");
+  font-weight: 900;
   font-style: normal;
   font-display: swap;
 }
 
+/* Utopia Std — Display optical size */
+@font-face {
+  font-family: "Utopia Std Display";
+  src: url("/fonts/utopia/utopia-display-regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Display";
+  src: url("/fonts/utopia/utopia-display-italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Display";
+  src: url("/fonts/utopia/utopia-display-semibold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Display";
+  src: url("/fonts/utopia/utopia-display-semibold-italic.otf") format("opentype");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Display";
+  src: url("/fonts/utopia/utopia-display-bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Display";
+  src: url("/fonts/utopia/utopia-display-bold-italic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Utopia Std — Caption optical size */
+@font-face {
+  font-family: "Utopia Std Caption";
+  src: url("/fonts/utopia/utopia-caption-regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Caption";
+  src: url("/fonts/utopia/utopia-caption-italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Caption";
+  src: url("/fonts/utopia/utopia-caption-semibold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Caption";
+  src: url("/fonts/utopia/utopia-caption-semibold-italic.otf") format("opentype");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Caption";
+  src: url("/fonts/utopia/utopia-caption-bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Caption";
+  src: url("/fonts/utopia/utopia-caption-bold-italic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Utopia Std — Subhead optical size */
+@font-face {
+  font-family: "Utopia Std Subhead";
+  src: url("/fonts/utopia/utopia-subhead-regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Subhead";
+  src: url("/fonts/utopia/utopia-subhead-italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Subhead";
+  src: url("/fonts/utopia/utopia-subhead-semibold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Subhead";
+  src: url("/fonts/utopia/utopia-subhead-semibold-italic.otf") format("opentype");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Subhead";
+  src: url("/fonts/utopia/utopia-subhead-bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Utopia Std Subhead";
+  src: url("/fonts/utopia/utopia-subhead-bold-italic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* --- Lab Grotesque (body sans) --- */
 @font-face {
   font-family: "Lab Grotesque";
-  src: url("/fonts/lab-grotesque/LabGrotesque-Medium.otf") format("opentype");
+  src: url("/fonts/lab-grotesque/lab-grotesque-light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Lab Grotesque";
+  src: url("/fonts/lab-grotesque/lab-grotesque-light-italic.ttf") format("truetype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Lab Grotesque";
+  src: url("/fonts/lab-grotesque/lab-grotesque-regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Lab Grotesque";
+  src: url("/fonts/lab-grotesque/lab-grotesque-italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Lab Grotesque";
+  src: url("/fonts/lab-grotesque/lab-grotesque-medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "Lab Grotesque";
-  src: url("/fonts/lab-grotesque/LabGrotesque-Bold.otf") format("opentype");
+  src: url("/fonts/lab-grotesque/lab-grotesque-medium-italic.ttf") format("truetype");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Lab Grotesque";
+  src: url("/fonts/lab-grotesque/lab-grotesque-bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: "Lab Grotesque";
+  src: url("/fonts/lab-grotesque/lab-grotesque-bold-italic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Lab Grotesque";
+  src: url("/fonts/lab-grotesque/lab-grotesque-black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Lab Grotesque";
+  src: url("/fonts/lab-grotesque/lab-grotesque-black-italic.ttf") format("truetype");
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
 
+/* --- Eurostile (UI tech) --- */
 @font-face {
   font-family: "Eurostile LT Std";
-  src: url("/fonts/eurostile/EurostileLTStd-Bold.otf") format("opentype");
+  src: url("/fonts/eurostile/eurostile-regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Eurostile LT Std";
+  src: url("/fonts/eurostile/eurostile-semibold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Eurostile — Extended width */
+@font-face {
+  font-family: "Eurostile Extended";
+  src: url("/fonts/eurostile/eurostile-ext-ultralight.otf") format("opentype");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Eurostile Extended";
+  src: url("/fonts/eurostile/eurostile-ext-ultralight-italic.otf") format("opentype");
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Eurostile Extended";
+  src: url("/fonts/eurostile/eurostile-ext-light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Eurostile Extended";
+  src: url("/fonts/eurostile/eurostile-ext-light-italic.otf") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Eurostile Extended";
+  src: url("/fonts/eurostile/eurostile-ext-regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Eurostile Extended";
+  src: url("/fonts/eurostile/eurostile-ext-italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Eurostile Extended";
+  src: url("/fonts/eurostile/eurostile-ext-semibold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Eurostile Extended";
+  src: url("/fonts/eurostile/eurostile-ext-semibold-italic.otf") format("opentype");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Eurostile Extended";
+  src: url("/fonts/eurostile/eurostile-ext-bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Eurostile Extended";
+  src: url("/fonts/eurostile/eurostile-ext-bold-italic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
   font-display: swap;
 }
 
 :root {
   /* Font Families */
   --ff-display: "Utopia Std", Georgia, serif;
+  --ff-display-optical: "Utopia Std Display", "Utopia Std", Georgia, serif;
+  --ff-subhead: "Utopia Std Subhead", "Utopia Std", Georgia, serif;
+  --ff-caption: "Utopia Std Caption", "Utopia Std", Georgia, serif;
   --ff-body: "Lab Grotesque", system-ui, sans-serif;
   --ff-ui: "Eurostile LT Std", "IBM Plex Mono", monospace;
+  --ff-ui-ext: "Eurostile Extended", "Eurostile LT Std", "IBM Plex Mono", monospace;
   --ff-mono: "IBM Plex Mono", "JetBrains Mono", monospace;
 
   /* Type Scale */
@@ -86,6 +386,10 @@
   --fz-ui: 0.6875rem;
   --lh-ui: 1.5;
   --ls-ui: 0.06em;
+
+  /* Nav */
+  --fz-branding: 1.125rem;
+  --fz-nav: 0.875rem;
 }
 
 /* Desktop scale adjustments */

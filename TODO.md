@@ -6,13 +6,10 @@ Actionable tasks and open questions. Check at session start, update frequently.
 
 ## Up Next
 
-- [ ] Place font files in public/fonts/ (Utopia Std, Lab Grotesque, Eurostile LT Std)
-- [ ] Build navigation bar (48px height, 4 items max, sticky)
+- [x] Place font files in public/fonts/ (Utopia Std, Lab Grotesque, Eurostile LT Std) — 2026-02-06
 - [ ] Build article page template ([slug].astro)
-- [ ] Build homepage with value proposition and newsletter CTA
+- [ ] Build article index page (/articles)
 - [ ] Build About page
-- [ ] Build article index page
-- [ ] Implement Newsletter CTA component (React island, Buttondown API)
 - [ ] Set up Plausible analytics
 - [ ] Configure GitHub Pages DNS
 - [ ] Write first article (educational deep-dive)
@@ -25,6 +22,14 @@ Actionable tasks and open questions. Check at session start, update frequently.
 
 ## Completed (Recent)
 
+- [x] Homepage built (all 4 sections) — 2026-02-06
+  - Sticky nav (Header.astro): ARTICLES / ABOUT / SUBSCRIBE
+  - Hero: tagline, value prop, inline newsletter signup
+  - Featured articles grid (lead + rest layout)
+  - Footer: 3-column with newsletter CTA and registration marks
+  - Components: Tag, ArticleCard, NewsletterSignup (React island)
+  - shadcn/ui Button + Input (Base UI, base-lyra style)
+  - 3 placeholder articles (splenic trauma, closed-loop, ACR AI guidelines)
 - [x] Astro project initialized (all 10 plan steps) — 2026-02-06
   - Astro 5 + React + Tailwind v4 via Vite plugin
   - shadcn/ui configured (Base UI, Lyra style)

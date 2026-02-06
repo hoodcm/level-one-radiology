@@ -1,5 +1,7 @@
 ---
 import '@/styles/main.css';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
 
 interface Props {
   title: string;
@@ -46,6 +48,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <link rel="icon" href="/favicon.ico" />
   </head>
   <body>
+    <Header />
     <slot />
+    <Footer />
   </body>
 </html>
