@@ -1,0 +1,48 @@
+/* ==============================================
+   COLORS — Level One Radiology Design Tokens
+   Warmth formula: R = G + 1, B = G - 2
+   Luminance step: 8 units between levels
+   ============================================== */
+
+:root {
+  /* Surface Hierarchy (Backgrounds) */
+  --color-bg-deepest: #0B0A08;
+  --color-bg-primary: #131210;
+  --color-bg-secondary: #1B1A18;
+  --color-bg-raised: #232220;
+  --color-bg-active: #2B2A28;
+  --color-bg-elevated: #333230;
+
+  /* Text Hierarchy */
+  --color-text-primary: #F9F3EB;
+  --color-text-ivory: #F5E6C2;
+  --color-text-secondary: #D8CFC3;
+  --color-text-muted: #9E9484;
+  --color-text-disabled: #6E6356;
+
+  /* Signal Colors (functional, not decorative) */
+  --color-signal-red: #D03454;
+  --color-signal-orange: #E85D2D;
+  --color-signal-yellow: #E8C547;
+  --color-signal-cyan: #2ACEC2;
+  --color-signal-violet: #A98BFF;
+  --color-signal-magenta: #D91CC3;
+
+  /* Borders (alpha transparency) */
+  --color-border-subtle: rgba(255, 255, 255, 0.04);
+  --color-border-default: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.15);
+  --color-border-accent: #232220;
+
+  /* Legacy (deprecated — use new tokens) */
+  --color-imaging-black: var(--color-bg-deepest);
+  --color-control-charcoal: var(--color-bg-secondary);
+  --color-console-white: var(--color-text-primary);
+  --color-textbook-ivory: var(--color-text-ivory);
+  --color-level-one-red: var(--color-signal-red);
+  --color-sunset-orange: var(--color-signal-orange);
+  --color-chroma-yellow: var(--color-signal-yellow);
+  --color-scanline-cyan: var(--color-signal-cyan);
+  --color-cosmic-violet: var(--color-signal-violet);
+  --color-burst-magenta: var(--color-signal-magenta);
+}

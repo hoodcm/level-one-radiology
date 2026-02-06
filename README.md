@@ -26,8 +26,8 @@ Strategic identity and methodologyâ€”the "why" behind everything.
 
 | Document | Purpose |
 |----------|---------|
-| [BRAND-FOUNDATION.md](BRAND-FOUNDATION.md) | Brand identity, positioning, audience, content strategy |
-| [DESIGN-METHODOLOGY.md](DESIGN-METHODOLOGY.md) | Fictive Kin principles (immutable foundation) |
+| [BRAND-FOUNDATION.md](docs/BRAND-FOUNDATION.md) | Brand identity, positioning, audience, content strategy |
+| [DESIGN-METHODOLOGY.md](docs/DESIGN-METHODOLOGY.md) | Fictive Kin principles (immutable foundation) |
 
 ### Tier 2: Design System
 
@@ -35,9 +35,9 @@ Visual and UX specificationsâ€”the "what" of the design.
 
 | Document | Purpose |
 |----------|---------|
-| [DESIGN-PRINCIPLES.md](DESIGN-PRINCIPLES.md) | Design philosophy, visual identity, core principles |
-| [DESIGN-TOKENS.md](DESIGN-TOKENS.md) | Colors, typography, spacing specifications |
-| [COMPONENT-LIBRARY.md](COMPONENT-LIBRARY.md) | Module specs, component CSS, design language |
+| [DESIGN-PRINCIPLES.md](docs/DESIGN-PRINCIPLES.md) | Design philosophy, visual identity, core principles |
+| [DESIGN-TOKENS.md](docs/DESIGN-TOKENS.md) | Colors, typography, spacing specifications |
+| [COMPONENT-LIBRARY.md](docs/COMPONENT-LIBRARY.md) | Module specs, component CSS, design language |
 
 ### Tier 3: Implementation
 
@@ -45,8 +45,8 @@ Technical architectureâ€”the "how" of building it.
 
 | Document | Purpose |
 |----------|---------|
-| [TECHNICAL-ARCHITECTURE.md](TECHNICAL-ARCHITECTURE.md) | Stack, CSS architecture, performance, workflows |
-| [PROJECT-INITIALIZATION.md](PROJECT-INITIALIZATION.md) | Quick-start guide, setup commands, code examples |
+| [TECHNICAL-ARCHITECTURE.md](docs/TECHNICAL-ARCHITECTURE.md) | Stack, CSS architecture, performance, workflows |
+| [PROJECT-INITIALIZATION.md](docs/PROJECT-INITIALIZATION.md) | Quick-start guide, setup commands, code examples |
 
 ### Tier 4: Content
 
@@ -54,7 +54,7 @@ Writing and editorial guidelines.
 
 | Document | Purpose |
 |----------|---------|
-| [WRITING-STYLE.md](WRITING-STYLE.md) | Smart Brevity principles, voice, formatting |
+| [WRITING-STYLE.md](docs/WRITING-STYLE.md) | Smart Brevity principles, voice, formatting |
 
 ---
 
@@ -68,33 +68,47 @@ Writing and editorial guidelines.
 
 **Color foundation:** Minimal warm bias (R+1, B-2), six-level surface hierarchy
 
-**Component primitives:** Base UI via shadcn/ui (Lyra or Nova style)
+**Component primitives:** Base UI via shadcn/ui (Lyra style)
 
 **Framework:** Astro + React islands
 
-**Methodology:** Built on Fictive Kin's web systems approachâ€”see [DESIGN-METHODOLOGY.md](DESIGN-METHODOLOGY.md)
+**Methodology:** Built on Fictive Kin's web systems approachâ€”see [DESIGN-METHODOLOGY.md](docs/DESIGN-METHODOLOGY.md)
 
 ---
 
 ## Navigation Guide
 
 **Starting a new design decision?**
-â†’ Check [DESIGN-PRINCIPLES.md](DESIGN-PRINCIPLES.md) for philosophy, then [DESIGN-TOKENS.md](DESIGN-TOKENS.md) for specifications
+â†’ Check [DESIGN-PRINCIPLES.md](docs/DESIGN-PRINCIPLES.md) for philosophy, then [DESIGN-TOKENS.md](docs/DESIGN-TOKENS.md) for specifications
 
 **Building a component?**
-â†’ See [COMPONENT-LIBRARY.md](COMPONENT-LIBRARY.md) for module specs and CSS patterns
+â†’ See [COMPONENT-LIBRARY.md](docs/COMPONENT-LIBRARY.md) for module specs and CSS patterns
 
 **Setting up the project?**
-â†’ See [PROJECT-INITIALIZATION.md](PROJECT-INITIALIZATION.md) for step-by-step setup with shadcn/ui and Base UI
+â†’ See [PROJECT-INITIALIZATION.md](docs/PROJECT-INITIALIZATION.md) for step-by-step setup with shadcn/ui and Base UI
 
 **Writing content strategy?**
-â†’ See [BRAND-FOUNDATION.md](BRAND-FOUNDATION.md) for content types, cadence, and audience
+â†’ See [BRAND-FOUNDATION.md](docs/BRAND-FOUNDATION.md) for content types, cadence, and audience
 
 **Technical implementation questions?**
-â†’ See [TECHNICAL-ARCHITECTURE.md](TECHNICAL-ARCHITECTURE.md) for stack and performance targets
+â†’ See [TECHNICAL-ARCHITECTURE.md](docs/TECHNICAL-ARCHITECTURE.md) for stack and performance targets
 
 **Need to understand the foundational methodology?**
-â†’ See [DESIGN-METHODOLOGY.md](DESIGN-METHODOLOGY.md) for Fictive Kin principles
+â†’ See [DESIGN-METHODOLOGY.md](docs/DESIGN-METHODOLOGY.md) for Fictive Kin principles
+
+---
+
+## Development
+
+The project is a working Astro 5 application with a dark "coming soon" homepage.
+
+```bash
+npm run dev        # Dev server → localhost:4321
+npm run build      # Production build → dist/
+npm run preview    # Preview production build
+```
+
+**Current state:** Project initialized with design token pipeline, base layout, content collection schema, and GitHub Pages deployment workflow. Next steps: font placement, navigation bar, article templates, homepage build-out.
 
 ---
 
@@ -114,5 +128,5 @@ When syncing new insights from conversations:
 ---
 
 *Documentation refactored: December 2024*
-*Last updated: January 2025*
+*Last updated: February 2026*
 *Built on Fictive Kin methodology*

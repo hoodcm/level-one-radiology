@@ -1,0 +1,63 @@
+/* ==============================================
+   SPACING — Level One Radiology Design Tokens
+   ============================================== */
+
+:root {
+  /* Relative Scale */
+  --space-0: 0.25rem;   /* 4px */
+  --space-1: 0.5rem;    /* 8px */
+  --space-2: 1rem;      /* 16px */
+  --space-3: 1.5rem;    /* 24px */
+  --space-4: 2rem;      /* 32px */
+  --space-5: 3rem;      /* 48px */
+  --space-6: 4rem;      /* 64px */
+  --space-7: 5rem;      /* 80px */
+  --space-8: 6rem;      /* 96px */
+
+  /* Fixed Spacing */
+  --space-fixed-1: 1.5rem;  /* 24px */
+  --space-fixed-2: 10rem;   /* 160px */
+
+  /* Semantic Spacing */
+  --space-gutter: var(--space-2);
+  --space-gutter-v: calc(var(--space-2) * 4);
+  --space-outer: 1.5rem;
+  --space-inner: var(--space-2);
+
+  /* Navigation */
+  --nav-height: 48px;
+  --nav-item-gap: 1rem;
+  --nav-padding-h: 0.5rem;
+
+  /* Grid */
+  --grid-columns: 4;
+  --grid-gap: var(--space-gutter);
+  --grid-max-width: 1440px;
+}
+
+@media (min-width: 37.5em) {
+  :root {
+    --grid-columns: 12;
+  }
+}
+
+@media (min-width: 60em) {
+  :root {
+    --space-outer: 3.5rem;
+  }
+}
+
+/* Grid utility */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(10px, 1fr));
+  gap: var(--space-gutter-v) var(--grid-gap);
+  width: 100%;
+}
+
+/* Container utility */
+.container {
+  max-width: var(--grid-max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-outer);
+}

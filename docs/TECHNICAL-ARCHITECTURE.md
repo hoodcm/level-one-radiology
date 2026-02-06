@@ -2,7 +2,7 @@
 
 *Stack, implementation, and operational workflows*
 
-**Navigation:** [README](README.md) Â· [Brand Foundation](BRAND-FOUNDATION.md) Â· [Design Methodology](DESIGN-METHODOLOGY.md) Â· [Design Principles](DESIGN-PRINCIPLES.md) Â· [Design Tokens](DESIGN-TOKENS.md) Â· [Component Library](COMPONENT-LIBRARY.md) Â· **Technical Architecture**
+**Navigation:** [README](../README.md) Â· [Brand Foundation](BRAND-FOUNDATION.md) Â· [Design Methodology](DESIGN-METHODOLOGY.md) Â· [Design Principles](DESIGN-PRINCIPLES.md) Â· [Design Tokens](DESIGN-TOKENS.md) Â· [Component Library](COMPONENT-LIBRARY.md) Â· **Technical Architecture**
 
 ---
 

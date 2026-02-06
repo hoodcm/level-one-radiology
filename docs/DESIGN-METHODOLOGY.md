@@ -2,7 +2,7 @@
 
 *Foundational principles from Fictive Kin's web systems approach*
 
-**Navigation:** [README](README.md) Â· [Brand Foundation](BRAND-FOUNDATION.md) Â· **Design Methodology** Â· [Design Principles](DESIGN-PRINCIPLES.md) Â· [Design Tokens](DESIGN-TOKENS.md) Â· [Component Library](COMPONENT-LIBRARY.md) Â· [Technical Architecture](TECHNICAL-ARCHITECTURE.md)
+**Navigation:** [README](../README.md) Â· [Brand Foundation](BRAND-FOUNDATION.md) Â· **Design Methodology** Â· [Design Principles](DESIGN-PRINCIPLES.md) Â· [Design Tokens](DESIGN-TOKENS.md) Â· [Component Library](COMPONENT-LIBRARY.md) Â· [Technical Architecture](TECHNICAL-ARCHITECTURE.md)
 
 ---
 

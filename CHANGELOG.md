@@ -6,13 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-02-06
+
 ### Added
+- Astro 5 project with React islands and Tailwind v4 (via @tailwindcss/vite)
+- shadcn/ui configuration (Base UI primitives, Lyra style)
+- CSS design token system: colors, typography, spacing from DESIGN-TOKENS.md
+- Base layout (Layout.astro) with SEO meta tags and OG tags
+- Minimal dark "coming soon" homepage verifying token pipeline
+- Content collection schema for articles (Astro 5 Content Layer API)
+- GitHub Pages deployment workflow (.github/workflows/deploy.yml)
+- Font directory structure and @font-face declarations (fonts not yet placed)
+- robots.txt and CNAME for custom domain
 
 ### Changed
-
-### Fixed
-
-### Removed
+- Documentation reorganized from project root into docs/ subdirectory
 
 ---
 

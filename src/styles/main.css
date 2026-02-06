@@ -1,0 +1,60 @@
+/* ==============================================
+   MAIN CSS — Level One Radiology
+   Import manifest: Tailwind + tokens + base
+   ============================================== */
+
+/* Tailwind v4 */
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Design Tokens */
+@import "./tokens/colors.css";
+@import "./tokens/typography.css";
+@import "./tokens/spacing.css";
+
+/* Base Styles */
+@import "./base/global.css";
+
+/* Tailwind v4 theme — expose tokens as utility classes */
+@theme inline {
+  /* Surface colors */
+  --color-bg-deepest: var(--color-bg-deepest);
+  --color-bg-primary: var(--color-bg-primary);
+  --color-bg-secondary: var(--color-bg-secondary);
+  --color-bg-raised: var(--color-bg-raised);
+  --color-bg-active: var(--color-bg-active);
+  --color-bg-elevated: var(--color-bg-elevated);
+
+  /* Text colors */
+  --color-text-primary: var(--color-text-primary);
+  --color-text-ivory: var(--color-text-ivory);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-disabled: var(--color-text-disabled);
+
+  /* Signal colors */
+  --color-signal-red: var(--color-signal-red);
+  --color-signal-orange: var(--color-signal-orange);
+  --color-signal-yellow: var(--color-signal-yellow);
+  --color-signal-cyan: var(--color-signal-cyan);
+  --color-signal-violet: var(--color-signal-violet);
+  --color-signal-magenta: var(--color-signal-magenta);
+
+  /* Border colors */
+  --color-border-subtle: var(--color-border-subtle);
+  --color-border-default: var(--color-border-default);
+  --color-border-strong: var(--color-border-strong);
+
+  /* Font families */
+  --font-display: "Utopia Std", Georgia, serif;
+  --font-body: "Lab Grotesque", system-ui, sans-serif;
+  --font-ui: "Eurostile LT Std", "IBM Plex Mono", monospace;
+  --font-mono: "IBM Plex Mono", "JetBrains Mono", monospace;
+}
+
+/* Base layer resets */
+@layer base {
+  * {
+    border-color: var(--color-border-default);
+  }
+}

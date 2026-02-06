@@ -1,0 +1,39 @@
+/* ==============================================
+   GLOBAL — Dark-first body defaults
+   ============================================== */
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-bg-deepest);
+  color: var(--color-text-primary);
+  font-family: var(--ff-body);
+  font-size: var(--fz-base);
+  line-height: var(--lh-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Focus indicators — Signal Cyan */
+:focus-visible {
+  outline: 2px solid var(--color-signal-cyan);
+  outline-offset: 2px;
+}
+
+/* Links default to Signal Cyan */
+a {
+  color: var(--color-signal-cyan);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Selection */
+::selection {
+  background: var(--color-signal-cyan);
+  color: var(--color-bg-deepest);
+}

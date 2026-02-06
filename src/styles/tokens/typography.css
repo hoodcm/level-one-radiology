@@ -1,0 +1,155 @@
+/* ==============================================
+   TYPOGRAPHY — Level One Radiology Design Tokens
+   Display: Utopia Std | Body: Lab Grotesque
+   UI: Eurostile LT Std | Mono: IBM Plex Mono
+   ============================================== */
+
+/* @font-face declarations — using .otf/.ttf for now, convert to .woff2 later */
+@font-face {
+  font-family: "Utopia Std";
+  src: url("/fonts/utopia/UtopiaStd-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Utopia Std";
+  src: url("/fonts/utopia/UtopiaStd-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lab Grotesque";
+  src: url("/fonts/lab-grotesque/LabGrotesque-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lab Grotesque";
+  src: url("/fonts/lab-grotesque/LabGrotesque-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lab Grotesque";
+  src: url("/fonts/lab-grotesque/LabGrotesque-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Eurostile LT Std";
+  src: url("/fonts/eurostile/EurostileLTStd-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Font Families */
+  --ff-display: "Utopia Std", Georgia, serif;
+  --ff-body: "Lab Grotesque", system-ui, sans-serif;
+  --ff-ui: "Eurostile LT Std", "IBM Plex Mono", monospace;
+  --ff-mono: "IBM Plex Mono", "JetBrains Mono", monospace;
+
+  /* Type Scale */
+  --fz-base: 1rem;
+  --lh-base: 1.5;
+
+  /* Body variants */
+  --fz-body: 1rem;
+  --lh-body: 1.5;
+  --fz-body-s: 0.875rem;
+  --lh-body-s: 1.5;
+  --fz-body-xs: 0.6875rem;
+  --lh-body-xs: 1.45;
+
+  /* Display */
+  --fz-display-l: 2.25rem;
+  --lh-display-l: 1.1;
+  --fz-display: 1.75rem;
+  --lh-display: 1.15;
+
+  /* Headlines */
+  --fz-headline: 1.5rem;
+  --lh-headline: 1.2;
+
+  /* UI */
+  --fz-ui: 0.6875rem;
+  --lh-ui: 1.5;
+  --ls-ui: 0.06em;
+}
+
+/* Desktop scale adjustments */
+@media (min-width: 60em) {
+  :root {
+    --fz-display-l: 3rem;
+    --fz-display: 2rem;
+    --fz-headline: 1.5rem;
+  }
+}
+
+/* Typography utility classes */
+.type-display-l {
+  font-family: var(--ff-display);
+  font-size: var(--fz-display-l);
+  line-height: var(--lh-display-l);
+  letter-spacing: -0.01em;
+  color: var(--color-text-ivory);
+}
+
+.type-display {
+  font-family: var(--ff-display);
+  font-size: var(--fz-display);
+  line-height: var(--lh-display);
+  letter-spacing: -0.01em;
+  color: var(--color-text-ivory);
+}
+
+.type-headline {
+  font-family: var(--ff-body);
+  font-size: var(--fz-headline);
+  line-height: var(--lh-headline);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.type-body {
+  font-family: var(--ff-body);
+  font-size: var(--fz-body);
+  line-height: var(--lh-body);
+  color: var(--color-text-primary);
+}
+
+.type-body-secondary {
+  font-family: var(--ff-body);
+  font-size: var(--fz-body);
+  line-height: var(--lh-body);
+  color: var(--color-text-secondary);
+}
+
+.type-ui {
+  font-family: var(--ff-ui);
+  font-size: var(--fz-ui);
+  line-height: var(--lh-ui);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.type-meta {
+  font-family: var(--ff-mono);
+  font-size: var(--fz-body-xs);
+  line-height: var(--lh-body-xs);
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+}

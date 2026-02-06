@@ -13,7 +13,7 @@ Website for leveloneradiology.com — an independent emergency radiology publica
 | Styling | Tailwind CSS + CSS custom properties |
 | Components | shadcn/ui (Base UI primitives, Lyra style) |
 | Content | Markdown + YAML frontmatter (git-managed) |
-| Hosting | Vercel |
+| Hosting | GitHub Pages |
 | Newsletter | Buttondown |
 | Analytics | Plausible |
 | Search | Pagefind (deferred — add at 15+ articles) |
@@ -31,31 +31,35 @@ Website for leveloneradiology.com — an independent emergency radiology publica
 
 ```
 src/
+  content.config.ts       # Content schema (Zod, Astro 5 Content Layer API)
   content/
-    articles/           # Markdown files with frontmatter
-    config.ts           # Content schema (Zod)
+    articles/             # Markdown files with frontmatter
   components/
-    layout/             # Header, Footer, Container (.astro)
-    article/            # TableOfContents, KeyPoints (.astro), NewsletterCTA (.jsx)
-    case/               # CaseViewer (.jsx) — custom, not shadcn
-    shared/             # tag, article-card (.astro)
-    ui/                 # shadcn/ui auto-generated components
+    layout/               # Header, Footer, Container (.astro)
+    article/              # TableOfContents, KeyPoints (.astro), NewsletterCTA (.jsx)
+    case/                 # CaseViewer (.jsx) — custom, not shadcn
+    shared/               # tag, article-card (.astro)
+    ui/                   # shadcn/ui auto-generated components
+  lib/
+    utils.ts              # Utility functions (cn helper, etc.)
   pages/
     articles/
-      [slug].astro      # Article template
-      index.astro       # Article listing
-    index.astro         # Homepage
+      [slug].astro        # Article template
+      index.astro         # Article listing
+    index.astro           # Homepage
   layouts/
-    Layout.astro        # Base layout
+    Layout.astro          # Base layout
   styles/
-    tokens/             # colors.css, typography.css, spacing.css
-    base/               # reset.css, global.css
-    components/         # Per-component CSS
-    main.css            # Import manifest
+    tokens/               # colors.css, typography.css, spacing.css
+    base/                 # reset.css, global.css
+    components/           # Per-component CSS
+    main.css              # Import manifest
 
 public/
-  images/articles/      # Images organized by article slug
-  fonts/                # Self-hosted: Utopia Std, Lab Grotesque, Eurostile LT Std
+  CNAME                   # Custom domain for GitHub Pages
+  robots.txt              # Search engine directives
+  images/articles/        # Images organized by article slug
+  fonts/                  # Self-hosted: Utopia Std, Lab Grotesque, Eurostile LT Std
 ```
 
 **Pattern:** Static Astro pages by default. React islands (`client:load`) only for interactive components (newsletter form, case viewer, search).
@@ -66,13 +70,13 @@ Detailed specifications live in dedicated documents:
 
 | Document | Use When |
 |----------|----------|
-| [BRAND-FOUNDATION.md](BRAND-FOUNDATION.md) | Content strategy, audience, conversion flow |
-| [DESIGN-METHODOLOGY.md](DESIGN-METHODOLOGY.md) | Foundational Fictive Kin principles (modify with care) |
-| [DESIGN-PRINCIPLES.md](DESIGN-PRINCIPLES.md) | Design philosophy, aesthetic decisions |
-| [DESIGN-TOKENS.md](DESIGN-TOKENS.md) | Exact color/typography/spacing values for CSS |
-| [COMPONENT-LIBRARY.md](COMPONENT-LIBRARY.md) | Module specs, component CSS patterns |
-| [TECHNICAL-ARCHITECTURE.md](TECHNICAL-ARCHITECTURE.md) | Stack decisions, performance targets, workflows |
-| [WRITING-STYLE.md](WRITING-STYLE.md) | Smart Brevity structure, voice, content types |
+| [BRAND-FOUNDATION.md](docs/BRAND-FOUNDATION.md) | Content strategy, audience, conversion flow |
+| [DESIGN-METHODOLOGY.md](docs/DESIGN-METHODOLOGY.md) | Foundational Fictive Kin principles (modify with care) |
+| [DESIGN-PRINCIPLES.md](docs/DESIGN-PRINCIPLES.md) | Design philosophy, aesthetic decisions |
+| [DESIGN-TOKENS.md](docs/DESIGN-TOKENS.md) | Exact color/typography/spacing values for CSS |
+| [COMPONENT-LIBRARY.md](docs/COMPONENT-LIBRARY.md) | Module specs, component CSS patterns |
+| [TECHNICAL-ARCHITECTURE.md](docs/TECHNICAL-ARCHITECTURE.md) | Stack decisions, performance targets, workflows |
+| [WRITING-STYLE.md](docs/WRITING-STYLE.md) | Smart Brevity structure, voice, content types |
 
 ## Key Design Decisions
 
