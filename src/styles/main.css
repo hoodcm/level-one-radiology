@@ -17,6 +17,7 @@
 
 /* Component Styles */
 @import "./components/homepage.css";
+@import "./components/prose.css";
 
 /* Tailwind v4 theme — expose tokens as utility classes */
 @theme inline {

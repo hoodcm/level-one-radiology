@@ -21,11 +21,12 @@
   /* Semantic Spacing */
   --space-gutter: var(--space-2);
   --space-gutter-v: calc(var(--space-2) * 4);
-  --space-outer: 1.5rem;
+  --space-outer: 2rem;          /* 32px mobile gutter (Anthropic-style); grows 40 → 56 */
   --space-inner: var(--space-2);
 
   /* Navigation */
-  --nav-height: 48px;
+  --nav-height: 4rem;        /* 64px header bar (Anthropic-style); grows to 68px ≥960px */
+  --logo-height: 1.625rem;   /* 26px brand mark (grows to 28px ≥960px) */
   --nav-item-gap: 1rem;
   --nav-padding-h: 0.5rem;
 
@@ -33,17 +34,54 @@
   --grid-columns: 4;
   --grid-gap: var(--space-gutter);
   --grid-max-width: 1440px;
+
+  /* Nested content widths — prose / media / page shell are capped
+     independently so figures can breathe wider than text (Anthropic model). */
+  --reading-column: 40rem;   /* 640px — long-form prose measure */
+  --media-column: 55rem;     /* 880px — figures, media, code */
+  /* page shell = --grid-max-width (1440px) */
+
+  /* Radius scale — cards/buttons anchor at 8px, large media at 16px */
+  --radius-xs: 0.25rem;   /* 4px  — chips, small controls */
+  --radius-sm: 0.5rem;    /* 8px  — cards, buttons */
+  --radius-md: 0.75rem;   /* 12px */
+  --radius-lg: 1rem;      /* 16px — large media panels */
+  --radius-pill: 100vw;
+
+  /* Card padding (grows at breakpoints below) */
+  --card-padding-sm: 1rem;     /* 16px — code, compact */
+  --card-padding-md: 1.5rem;   /* 24px — standard card */
+  --card-padding-lg: 2rem;     /* 32px — feature / lead card */
+
+  /* Section rhythm — large vertical pauses between major blocks (grow at desktop) */
+  --section-spacer: var(--space-6);      /* 64px */
+  --section-spacer-sm: var(--space-4);   /* 32px */
+
+  /* Component gaps */
+  --gap-md: var(--space-3);   /* 24px */
+  --gap-lg: var(--space-4);   /* 32px */
 }
 
+/* Token values change at shared breakpoints — components reference the
+   tokens and never restate per-viewport measurements (Anthropic pattern). */
 @media (min-width: 37.5em) {
   :root {
     --grid-columns: 12;
+    --space-outer: 2.5rem;       /* 40px — page gutter grows */
+    --card-padding-lg: 2.5rem;   /* 40px */
   }
 }
 
 @media (min-width: 60em) {
   :root {
-    --space-outer: 3.5rem;
+    --space-outer: 3.5rem;                 /* 56px */
+    --card-padding-md: 2rem;               /* 32px */
+    --card-padding-lg: 3rem;               /* 48px */
+    --section-spacer: var(--space-8);      /* 96px */
+    --section-spacer-sm: var(--space-5);   /* 48px */
+    --gap-lg: var(--space-5);              /* 48px */
+    --nav-height: 4.25rem;                 /* 68px — header bar grows */
+    --logo-height: 1.75rem;                /* 28px */
   }
 }
 

@@ -23,30 +23,37 @@
   padding: 0 var(--space-outer);
 }
 
-.branding {
+.site-logo {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.site-logo:hover {
+  color: var(--color-text-ivory);
+  text-decoration: none;
+}
+
+.site-logo__mark {
+  height: var(--logo-height);
+  width: auto;
+  display: block; /* mobile: icon mark */
+}
+
+/* Wordmark — desktop only; replaces the icon ≥ 600px */
+.site-logo__wordmark {
+  display: none;
+  align-items: center;
+  gap: 0.5em;
   font-family: var(--ff-ui-ext);
   font-size: var(--fz-branding);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-text-primary);
-  text-decoration: none;
-  display: inline-flex;
-  gap: 0.5em;
 }
-
-.branding:hover {
-  text-decoration: none;
-  color: var(--color-text-primary);
-}
-
-.branding__level-one {
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-.branding__radiology {
-  font-weight: 600;
-}
+.site-logo__level-one { font-weight: 700; letter-spacing: 0.04em; }
+.site-logo__radiology { font-weight: 600; }
 
 .site-nav__list {
   display: flex;
@@ -64,7 +71,7 @@
   letter-spacing: var(--ls-ui);
   text-transform: uppercase;
   padding: 6px var(--nav-padding-h);
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   color: var(--color-text-muted);
   text-decoration: none;
   transition: all 0.15s ease;
@@ -85,7 +92,7 @@
   background: var(--color-signal-red);
   border: 1px solid var(--color-signal-red);
   color: #ffffff;
-  border-radius: 3px;
+  border-radius: var(--radius-xs);
   padding: 7px 12px 5px;
 }
 
@@ -93,6 +100,128 @@
   background: var(--color-text-primary);
   border-color: var(--color-text-primary);
   color: var(--color-signal-red);
+}
+
+/* --- Mobile hamburger toggle (Anthropic-style: thin, asymmetric) --- */
+.nav-toggle {
+  display: none; /* shown < 600px */
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: var(--space-1);
+  margin-right: calc(var(--space-1) * -1);
+  cursor: pointer;
+  color: var(--color-text-primary);
+}
+
+.nav-toggle__bars {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 14px;
+}
+
+.nav-toggle__line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform 0.2s ease, opacity 0.2s ease, width 0.2s ease;
+}
+.nav-toggle__line:nth-child(1) { top: 0; }
+.nav-toggle__line:nth-child(2) { top: 50%; transform: translateY(-50%); }
+.nav-toggle__line:nth-child(3) { bottom: 0; width: 65%; }
+
+/* Hamburger → X on open */
+:root.is-nav-open .nav-toggle__line:nth-child(1) {
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+}
+:root.is-nav-open .nav-toggle__line:nth-child(2) { opacity: 0; }
+:root.is-nav-open .nav-toggle__line:nth-child(3) {
+  bottom: auto;
+  top: 50%;
+  width: 100%;
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+/* --- Full-screen mobile overlay menu --- */
+.mobile-menu {
+  position: fixed;
+  inset: 0;                    /* full viewport — the sticky header sits on top (z-50) */
+  z-index: 40;
+  background: var(--color-bg-deepest);
+  padding: calc(var(--nav-height) + var(--space-2)) var(--space-outer) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+:root.is-nav-open .mobile-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.mobile-menu__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mobile-menu__item {
+  display: block;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-default);
+  font-family: var(--ff-body);
+  font-size: var(--fz-display);
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+.mobile-menu__item.is-active { color: var(--color-text-ivory); }
+.mobile-menu__item:hover { color: var(--color-text-ivory); text-decoration: none; }
+
+.mobile-menu__cta {
+  margin-top: auto;            /* push the CTA to the bottom, Anthropic-style */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px var(--space-3);
+  background: var(--color-signal-red);
+  color: #ffffff;
+  font-family: var(--ff-ui);
+  font-size: var(--fz-nav);
+  font-weight: 700;
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  border-radius: var(--radius-xs);
+  text-decoration: none;
+}
+.mobile-menu__cta:hover { text-decoration: none; }
+
+/* No overflow:hidden scroll-lock — it breaks the sticky header. The opaque
+   full-viewport overlay hides the (harmlessly still-scrollable) page behind it. */
+
+/* Header responsive: hamburger < 768px, inline nav ≥ 768px */
+/* Header switches at 768px: below = icon + hamburger (mobile);
+   at/above = wordmark + inline nav (the wide wordmark needs the room). */
+@media (max-width: 47.9375em) {
+  .site-nav { display: none; }
+  .nav-toggle { display: inline-flex; }
+}
+
+@media (min-width: 48em) {
+  .mobile-menu { display: none; }
+  .site-logo__mark { display: none; }
+  .site-logo__wordmark { display: inline-flex; }
 }
 
 /* --- Tag / Chip --- */
@@ -107,7 +236,7 @@
   gap: 5px;
   padding: 2px 7px;
   border: 1px solid currentColor;
-  border-radius: 2px;
+  border-radius: var(--radius-xs);
   color: var(--color-text-muted);
   transition: all 0.15s ease;
   text-decoration: none;
@@ -154,8 +283,8 @@
   display: block;
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-border-subtle);
-  border-radius: 8px;
-  padding: 20px 24px;
+  border-radius: var(--radius-sm);
+  padding: var(--card-padding-md);
   transition: all 0.2s ease;
   text-decoration: none;
   color: inherit;
@@ -169,30 +298,38 @@
 
 .article-card__tags {
   display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
 }
 
+/* Title: SANS (Lab Grotesque) — structural voice, warm-white ink. */
 .article-card__title {
+  font-family: var(--ff-body);
   font-size: var(--fz-headline);
   font-weight: 600;
-  line-height: 1.3;
-  color: var(--color-text-primary);
-  margin-bottom: 8px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--color-text-ivory);
+  margin-bottom: var(--space-1);
+}
+
+/* Lead card: larger sans title + feature padding (the "equalised zones"
+   archetype — title carries more weight, the box gets more room). */
+.article-card--lead {
+  padding: var(--card-padding-lg);
 }
 
 .article-card--lead .article-card__title {
-  font-family: var(--ff-display);
   font-size: var(--fz-display);
   line-height: var(--lh-display);
-  color: var(--color-text-ivory);
+  font-weight: 700;
 }
 
 .article-card__excerpt {
   font-size: var(--fz-body-s);
   line-height: 1.5;
   color: var(--color-text-secondary);
-  margin-bottom: 16px;
+  margin-bottom: var(--space-2);
 }
 
 .article-card__meta {
@@ -200,7 +337,7 @@
   font-size: 10px;
   color: var(--color-text-muted);
   display: flex;
-  gap: 16px;
+  gap: var(--space-2);
 }
 
 /* --- HUD Frame (four-corner brackets) --- */
@@ -246,12 +383,13 @@
 .featured-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-gutter);
+  gap: var(--gap-md);
 }
 
 @media (min-width: 60em) {
   .featured-grid {
     grid-template-columns: 7fr 5fr;
+    gap: var(--gap-lg);
   }
 }
 
@@ -310,7 +448,7 @@
 .site-footer {
   background: var(--color-bg-primary);
   border-top: 1px solid var(--color-border-subtle);
-  padding: var(--space-6) 0 var(--space-4);
+  padding: var(--section-spacer) 0 var(--space-4);
 }
 
 .site-footer__inner {
@@ -393,7 +531,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: var(--space-6) 0;
+  padding: var(--section-spacer) 0;
   background: var(--color-bg-deepest);
 }
 
@@ -422,7 +560,7 @@
 /* --- Featured Section --- */
 .featured-section {
   background: var(--color-bg-secondary);
-  padding: var(--space-6) 0;
+  padding: var(--section-spacer) 0;
 }
 
 .featured-section__inner {

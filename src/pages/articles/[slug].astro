@@ -1,0 +1,81 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '@/layouts/Layout.astro';
+import Tag from '@/components/shared/Tag.astro';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles');
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+
+const { title, description, publishDate, primaryTag, contentType, keyPoints } = article.data;
+
+const tagVariantMap: Record<string, 'default' | 'signal-red' | 'signal-cyan' | 'signal-violet' | 'signal-yellow' | 'signal-orange'> = {
+  'TRAUMA': 'signal-red',
+  'ABDOMEN': 'signal-cyan',
+  'CHEST': 'signal-orange',
+  'NEURO': 'signal-violet',
+  'MSK': 'signal-yellow',
+  'AI & POLICY': 'signal-violet',
+};
+
+const contentTypeVariantMap: Record<string, 'default' | 'signal-red' | 'signal-cyan' | 'signal-violet' | 'signal-yellow' | 'signal-orange'> = {
+  'educational': 'signal-cyan',
+  'commentary': 'signal-violet',
+  'case-analysis': 'signal-orange',
+};
+
+const tagVariant = tagVariantMap[primaryTag.toUpperCase()] || 'default';
+const contentTypeVariant = contentTypeVariantMap[contentType] || 'default';
+const contentTypeLabel = contentType.replace('-', ' ').toUpperCase();
+
+const formattedDate = new Date(publishDate).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<Layout title={`${title} — Level One Radiology`} description={description}>
+  <article class="article">
+    <div class="container">
+      <!-- Header: SANS title (structure) over a SERIF deck (editorial voice) -->
+      <header class="article__header reading-column">
+        <div class="article__tags">
+          <Tag label={primaryTag.toUpperCase()} variant={tagVariant} />
+          <Tag label={contentTypeLabel} variant={contentTypeVariant} />
+        </div>
+        <h1 class="article__title">{title}</h1>
+        <p class="article__deck">{description}</p>
+        <div class="article__meta">
+          <span>Published {formattedDate}</span>
+        </div>
+      </header>
+
+      <!-- Key Points: reference apparatus → sans, quiet card -->
+      {keyPoints && keyPoints.length > 0 && (
+        <aside class="key-points reading-column">
+          <h2 class="key-points__label">Key Points</h2>
+          <ul class="key-points__list">
+            {keyPoints.map((point) => <li>{point}</li>)}
+          </ul>
+        </aside>
+      )}
+
+      <!-- Body: SERIF (Utopia) at reading line-height, 640px measure -->
+      <div class="prose reading-column">
+        <Content />
+      </div>
+
+      <footer class="article__footer reading-column">
+        <a href="/" class="article__back">← Back to Level One Radiology</a>
+      </footer>
+    </div>
+  </article>
+</Layout>

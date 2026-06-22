@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- Article page template (`src/pages/articles/[slug].astro`) — full editorial reading view; all homepage cards now link through
+- `prose.css` long-form reading system: type metrics mirror Anthropic's live article (body 17px, sans headings, 640px reading column, exact paragraph/heading vertical rhythm), expressed in Level One's fonts (Utopia serif body, Lab Grotesque sans titles/headings) and dark palette
+- Self-hosted favicon (`public/favicon.svg`, the Level One mark) — also the mobile header logo
+- Full-screen mobile nav overlay (icon + hamburger → ✕, Anthropic-style rows, bottom CTA)
+- Semantic tokens: nested content widths (`--reading-column`/`--media-column`), radius scale (`--radius-xs/sm/md/lg`), card-padding, section-spacer, gap, reading line-height, inline-link metrics — values flip at shared breakpoints
+
+### Changed
+- Header: icon + hamburger on mobile (<768px), wordmark + inline nav on desktop (≥768px); bar height grows 48→56px
+- Article type roles parallel Anthropic — sans title + sans deck + serif body
+- Warm-white text ramp de-yellowed (`--color-text-ivory` `#F5E6C2` → `#FAF6EE`, etc.); consistent subtle warm bias. Dark surfaces unchanged — site stays dark-first
+- Mobile page gutter 24 → 32px (Anthropic-style); homepage card titles → sans; radii / card padding / section spacing now token-driven
+
+### Fixed
+- Mobile menu broke when opened while scrolled: the `overflow:hidden` scroll-lock was killing the sticky header (and jumping scroll). Replaced with a full-viewport overlay, no lock
+- Removed the `/favicon.ico` 404 (SVG favicon only)
+
 ## [0.3.0] - 2026-02-06
 
 ### Added

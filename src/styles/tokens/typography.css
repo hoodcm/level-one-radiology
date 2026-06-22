@@ -387,6 +387,15 @@
   --lh-ui: 1.5;
   --ls-ui: 0.06em;
 
+  /* Long-form reading. Anthropic uses 155%, but Utopia (serif) has a taller
+     line box than Anthropic Sans, so it reads looser at the same multiplier —
+     tightened to 1.45 to match Anthropic's visual leading. */
+  --lh-reading: 1.45;
+
+  /* Inline links — visible but controlled underline (Anthropic metrics) */
+  --link-underline-offset: 0.18em;
+  --link-underline-thickness: 0.08em;
+
   /* Nav */
   --fz-branding: 1.125rem;
   --fz-nav: 0.875rem;

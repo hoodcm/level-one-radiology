@@ -13,12 +13,15 @@
   --color-bg-active: #2B2A28;
   --color-bg-elevated: #333230;
 
-  /* Text Hierarchy */
-  --color-text-primary: #F9F3EB;
-  --color-text-ivory: #F5E6C2;
-  --color-text-secondary: #D8CFC3;
-  --color-text-muted: #9E9484;
-  --color-text-disabled: #6E6356;
+  /* Text Hierarchy — warm whites on dark, gentle consistent warm bias.
+     De-yellowed: the old `ivory` (#F5E6C2) carried a ~51-unit R−B spread
+     (visibly cream); this ramp holds a subtle ~10–16 spread so it reads
+     as warm white, scaling evenly like Anthropic's ivory family. */
+  --color-text-primary: #F4F0E9;    /* warm white — body, UI */
+  --color-text-ivory: #FAF6EE;      /* bright warm white — headlines/display */
+  --color-text-secondary: #D7D1C7;  /* warm light gray — bylines, excerpts */
+  --color-text-muted: #9D9489;      /* warm gray — metadata, captions */
+  --color-text-disabled: #6D655B;   /* warm gray — disabled */
 
   /* Signal Colors (functional, not decorative) */
   --color-signal-red: #D03454;

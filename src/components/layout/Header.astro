@@ -1,34 +1,102 @@
 ---
 const { pathname } = Astro.url;
+
+const navItems: { href: string; label: string; active: boolean }[] = [
+  { href: '/articles', label: 'Articles', active: pathname.startsWith('/articles') },
+  { href: '/about', label: 'About', active: pathname === '/about' },
+];
 ---
 
-<header class="site-header">
+<header class="site-header" data-site-header>
   <div class="site-header__inner">
-    <a href="/" class="branding"><span class="branding__level-one">Level One</span> <span class="branding__radiology">Radiology</span></a>
-    <nav aria-label="Main navigation">
+    <a href="/" class="site-logo" aria-label="Level One Radiology — home">
+      <!-- Mobile: icon mark -->
+      <svg class="site-logo__mark" viewBox="0 0 439 522" fill="currentColor" aria-hidden="true" focusable="false">
+        <path d="M0.251099 393L105.568 0H209.913L132.746 287.956H238.251L210.101 393H0.251099Z" />
+        <path d="M438.251 129L332.935 522H228.589L305.756 234.044H200.251L228.401 129L438.251 129Z" />
+      </svg>
+      <!-- Desktop: wordmark -->
+      <span class="site-logo__wordmark" aria-hidden="true">
+        <span class="site-logo__level-one">Level One</span> <span class="site-logo__radiology">Radiology</span>
+      </span>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="site-nav" aria-label="Main navigation">
       <ul class="site-nav__list">
+        {navItems.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class:list={["site-nav__item", { "site-nav__item--active": item.active }]}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
         <li>
-          <a
-            href="/articles"
-            class:list={["site-nav__item", { "site-nav__item--active": pathname.startsWith("/articles") }]}
-          >
-            Articles
-          </a>
-        </li>
-        <li>
-          <a
-            href="/about"
-            class:list={["site-nav__item", { "site-nav__item--active": pathname === "/about" }]}
-          >
-            About
-          </a>
-        </li>
-        <li>
-          <a href="#subscribe" class="site-nav__item site-nav__item--cta">
-            Subscribe
-          </a>
+          <a href="#subscribe" class="site-nav__item site-nav__item--cta">Subscribe</a>
         </li>
       </ul>
     </nav>
+
+    <!-- Mobile hamburger -->
+    <button
+      class="nav-toggle"
+      type="button"
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      data-nav-toggle
+    >
+      <span class="nav-toggle__bars" aria-hidden="true">
+        <span class="nav-toggle__line"></span>
+        <span class="nav-toggle__line"></span>
+        <span class="nav-toggle__line"></span>
+      </span>
+    </button>
   </div>
 </header>
+
+<!-- Full-screen mobile overlay menu — sibling of the header so its fixed
+     positioning resolves against the viewport, not the backdrop-filtered bar. -->
+<nav class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation" data-mobile-menu>
+  <ul class="mobile-menu__list">
+    {navItems.map((item) => (
+      <li>
+        <a
+          href={item.href}
+          class:list={["mobile-menu__item", { "is-active": item.active }]}
+        >
+          {item.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+  <a href="#subscribe" class="mobile-menu__cta">Subscribe</a>
+</nav>
+
+<script>
+  const root = document.documentElement;
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+
+  if (toggle) {
+    const setOpen = (open: boolean) => {
+      root.classList.toggle('is-nav-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    };
+
+    toggle.addEventListener('click', () => {
+      setOpen(!root.classList.contains('is-nav-open'));
+    });
+
+    // Close when a destination is chosen or on Escape.
+    document.querySelectorAll('[data-mobile-menu] a').forEach((link) =>
+      link.addEventListener('click', () => setOpen(false))
+    );
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') setOpen(false);
+    });
+  }
+</script>
