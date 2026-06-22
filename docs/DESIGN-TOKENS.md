@@ -8,7 +8,7 @@
 
 ## About This Document
 
-This is the implementation reference for all design tokens. For the philosophy behind these decisions, see [DESIGN-PRINCIPLES.md](DESIGN-PRINCIPLES.md).
+This is the implementation reference for all design tokens. For the philosophy behind these decisions, see [DESIGN-PRINCIPLES.md](DESIGN-PRINCIPLES.md). For the research that informed the 6-level surface hierarchy and the warmth formula, see [archive/dark-mode-palette-research.md](archive/dark-mode-palette-research.md) (historical — superseded by this doc but useful context).
 
 **Use this document when:**
 - Writing CSS

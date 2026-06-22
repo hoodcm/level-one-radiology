@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>X-Ray HUD - Auto-Sampling Background</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* --- GLOBAL LAYOUT --- */
+        body {
+            background-color: #050505;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            font-family: monospace;
+            user-select: none; 
+        }
+
+        /* --- CONSOLE FRAME --- */
+        .console-frame {
+            position: relative;
+            width: 85vh;
+            height: 85vh;
+            background-color: #000; /* Fallback */
+            border: 24px solid #1a1a1a;
+            border-radius: 12px;
+            box-shadow: 
+                0 0 0 2px #333,
+                0 20px 50px rgba(0,0,0,0.8),
+                inset 0 0 40px rgba(0,0,0,0.8);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: grab; 
+            z-index: 0;
+        }
+        
+        .console-frame:active {
+            cursor: grabbing;
+        }
+
+        /* --- LAYERS --- */
+
+        /* 0. Dynamic Background (The "Infinite Pixel") */
+        .dynamic-bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            
+            /* IMAGE SOURCE: Matches the main image */
+            background-image: url('http://bones.getthediagnosis.org/images/hand_15_1.png');
+            
+            /* KEY MECHANIC: 
+               1. Anchor to Top Left (0% 0%)
+               2. Zoom by 20,000%. This makes the top-left pixel huge, covering the whole div.
+               3. No repeat.
+            */
+            background-position: 0% 0%;
+            background-size: 20000%; 
+            background-repeat: no-repeat;
+
+            /* Ensure the zoomed pixel isn't blurry, so it looks like a solid color */
+            image-rendering: pixelated; 
+            
+            /* Sync opacity animation with the main image */
+            opacity: 0;
+            animation: fade-in 400ms cubic-bezier(0.7, 0, 0.84, 0) forwards;
+            animation-delay: 250ms;
+        }
+        
+        /* 1. X-Ray Image */
+        .xray-image {
+            height: 100%;
+            width: auto;
+            object-fit: contain;
+            opacity: 0;
+            
+            /* Initial Filter */
+            filter: grayscale(100%) contrast(1.0) brightness(1.0);
+            
+            animation: fade-in 400ms cubic-bezier(0.7, 0, 0.84, 0) forwards;
+            animation-delay: 250ms; 
+            pointer-events: none; 
+            position: relative;
+            z-index: 2; /* Must sit ON TOP of the background layer */
+        }
+
+        /* 2. HUD Container */
+        .hud-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.4));
+            pointer-events: none; 
+        }
+
+        /* --- ANIMATIONS --- */
+
+        .exit-group-early { animation: fade-out 400ms cubic-bezier(0.7, 0, 0.84, 0) forwards; animation-delay: 350ms; }
+        .exit-group-late { animation: fade-out 400ms cubic-bezier(0.7, 0, 0.84, 0) forwards; animation-delay: 450ms; }
+
+        @keyframes fade-out { 0% { opacity: 1; } 100% { opacity: 0; } }
+        @keyframes fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+        /* HUD Physics (Retained) */
+        @keyframes slow-flicker { 0% { opacity: 0; } 30% { opacity: .6; } 50% { opacity: 0; } 60% { opacity: .9; } 100% { opacity: .9; } }
+        @keyframes cut-in { 0% { opacity: 0; } 100% { opacity: 0.6; } }
+        @keyframes snap-tl { 0% { transform: translate(-40px, -40px); opacity: 0; } 10% { opacity: 1; } 30% { opacity: 0; } 40% { opacity: 1; } 100% { transform: translate(0, 0); opacity: 1; } }
+        @keyframes snap-tr { 0% { transform: translate(40px, -40px); opacity: 0; } 10% { opacity: 1; } 30% { opacity: 0; } 40% { opacity: 1; } 100% { transform: translate(0, 0); opacity: 1; } }
+        @keyframes snap-bl { 0% { transform: translate(-40px, 40px); opacity: 0; } 10% { opacity: 1; } 30% { opacity: 0; } 40% { opacity: 1; } 100% { transform: translate(0, 0); opacity: 1; } }
+        @keyframes snap-br { 0% { transform: translate(40px, 40px); opacity: 0; } 10% { opacity: 1; } 30% { opacity: 0; } 40% { opacity: 1; } 100% { transform: translate(0, 0); opacity: 1; } }
+
+        .hud-element { opacity: 0; }
+        .anim-grid { animation: cut-in 100ms steps(1, jump-end) forwards; animation-delay: 50ms; }
+        .anim-center-1 { animation: slow-flicker 400ms steps(1, jump-start) forwards; animation-delay: 0ms; }
+        .anim-center-2 { animation: slow-flicker 400ms steps(1, jump-start) forwards; animation-delay: 75ms; }
+        .anim-panels { animation: slow-flicker 400ms steps(1, jump-start) forwards; animation-delay: 100ms; }
+        .anim-bracket-tl { animation: snap-tl 350ms cubic-bezier(0.1, 1.5, 0.92, 1.0) forwards; animation-delay: 100ms; }
+        .anim-bracket-tr { animation: snap-tr 350ms cubic-bezier(0.1, 1.5, 0.92, 1.0) forwards; animation-delay: 100ms; }
+        .anim-bracket-bl { animation: snap-bl 350ms cubic-bezier(0.1, 1.5, 0.92, 1.0) forwards; animation-delay: 100ms; }
+        .anim-bracket-br { animation: snap-br 350ms cubic-bezier(0.1, 1.5, 0.92, 1.0) forwards; animation-delay: 100ms; }
+
+    </style>
+</head>
+<body>
+
+<div class="console-frame" id="interactiveFrame">
+    
+    <div id="dynamicBg" class="dynamic-bg-layer"></div>
+
+    <img src="http://bones.getthediagnosis.org/images/hand_15_1.png" class="xray-image" id="xrayImage" alt="Xray Scan">
+
+    <svg class="hud-container" fill="none" stroke="white" stroke-width="2" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <g class="exit-group-early">
+            <g id="grid-system" class="anim-grid">
+                <line stroke-dasharray="60 40" stroke-dashoffset="18" x1="0" x2="1024" y1="512" y2="512"></line>
+                <line stroke-dasharray="60 40" stroke-dashoffset="18" x1="512" x2="512" y1="0" y2="1024"></line>
+            </g>
+            <g id="centerModule">
+                <rect class="anim-center-1 hud-element" height="130" width="80" x="472" y="372" fill="none" stroke="white" stroke-width="2"></rect>
+                <rect class="anim-center-2 hud-element" height="130" width="80" x="472" y="522" fill="none" stroke="white" stroke-width="2"></rect>
+            </g>
+            <g id="leftPanel" class="anim-panels hud-element">
+                <rect height="190" width="110" x="312" y="260" fill="none" stroke="white" stroke-width="2"></rect>
+            </g>
+            <g id="rightPanel" class="anim-panels hud-element">
+                <rect height="190" width="110" x="602" y="260" fill="none" stroke="white" stroke-width="2"></rect>
+            </g>
+        </g>
+
+        <g class="exit-group-late">
+            <g id="bracketsTL" class="anim-bracket-tl hud-element">
+                <path d="M 140 240 L 140 80 L 230 80" stroke-linecap="square"></path>
+                <path d="M 270 190 L 270 130 L 310 130" stroke-linecap="square"></path>
+            </g>
+            <g id="bracketsTR" class="anim-bracket-tr hud-element">
+                <path d="M 884 240 L 884 80 L 794 80" stroke-linecap="square"></path>
+                <path d="M 754 190 L 754 130 L 714 130" stroke-linecap="square"></path>
+            </g>
+            <g id="bracketsBL" class="anim-bracket-bl hud-element">
+                <path d="M 140 784 L 140 944 L 230 944" stroke-linecap="square"></path>
+                <path d="M 270 834 L 270 894 L 310 894" stroke-linecap="square"></path>
+            </g>
+            <g id="bracketsBR" class="anim-bracket-br hud-element">
+                <path d="M 884 784 L 884 944 L 794 944" stroke-linecap="square"></path>
+                <path d="M 754 834 L 754 894 L 714 894" stroke-linecap="square"></path>
+            </g>
+        </g>
+    </svg>
+</div>
+
+<script>
+    // --- DYNAMIC WINDOW/LEVEL LOGIC ---
+
+    const frame = document.getElementById('interactiveFrame');
+    const xray = document.getElementById('xrayImage');
+    const bgLayer = document.getElementById('dynamicBg');
+
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    let currentContrast = 1.0;
+    let currentBrightness = 1.0;
+
+    let dragStartContrast = 1.0;
+    let dragStartBrightness = 1.0;
+
+    // Sensitivity Config
+    const SENSITIVITY_X = -0.002; 
+    const SENSITIVITY_Y = 0.008; 
+
+    frame.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        
+        dragStartContrast = currentContrast;
+        dragStartBrightness = currentBrightness;
+        
+        e.preventDefault(); 
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+
+        currentContrast = dragStartContrast + (deltaX * SENSITIVITY_X);
+        currentBrightness = dragStartBrightness - (deltaY * SENSITIVITY_Y);
+
+        currentContrast = Math.max(0, Math.min(currentContrast, 5));     
+        currentBrightness = Math.max(0, Math.min(currentBrightness, 3)); 
+
+        updateFilters();
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+
+    function updateFilters() {
+        const filterString = `grayscale(100%) contrast(${currentContrast}) brightness(${currentBrightness})`;
+        
+        // 1. Apply to the main X-Ray
+        xray.style.filter = filterString;
+        
+        // 2. Apply to the Background Layer
+        // Because the background layer is literally the image zoomed in on the top-left pixel,
+        // applying the exact same filter ensures the "frame" matches the image perfectly.
+        bgLayer.style.filter = filterString;
+    }
+</script>
+
+</body>
+</html>
