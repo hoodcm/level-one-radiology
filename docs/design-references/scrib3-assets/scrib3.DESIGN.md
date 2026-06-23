@@ -1,6 +1,6 @@
 # DESIGN.md — SCRIB3
 
-Full-site rip of **https://scrib3.co** — captured 2026-04-19 via Playwright (live DOM, computed styles, CSS custom properties, and screenshot audit). Structured to Stitch's [DESIGN.md format](https://stitch.withgoogle.com/docs/design-md/format): Overview → Colors → Typography → Elevation → Components → Do's and Don'ts, followed by site-specific sections for micrographics, motion, and page anatomies.
+Full-site rip of **https://scrib3.co** — captured 2026-04-19 via Playwright (live DOM, computed styles, CSS custom properties, and screenshot audit). **Re-verified 2026-06-22** against live CSS (token + grid greps and a multi-width responsive sweep); the Colors, Typography, and Grid sections below now reflect the site's current **two-state (800px breakpoint)** system. Structured to Stitch's [DESIGN.md format](https://stitch.withgoogle.com/docs/design-md/format): Overview → Colors → Typography → Elevation → Components → Do's and Don'ts, followed by site-specific sections for micrographics, motion, and page anatomies.
 
 ---
 
@@ -31,7 +31,7 @@ Full-site rip of **https://scrib3.co** — captured 2026-04-19 via Playwright (l
 **Voice:** sentence-case display lines ("We build + grow crypto brands") paired with UPPERCASE mono body ("WE'RE A CRYPTO-NATIVE TEAM..."). In-jokes allowed ("READY TO SAY GM", "WAGMI").
 **Audience:** crypto-native founders. The site flatters an insider; it does not explain itself to outsiders.
 
-![Hero — MARKETING FOR WEB3 BUILDERS](scrib3-assets/scrib3-01-hero.png)
+![Hero — MARKETING FOR WEB3 BUILDERS](scrib3-01-hero.png)
 
 ---
 
@@ -46,12 +46,13 @@ Two-color base, one variable accent. The **accent re-themes per case study** —
 | `--black` | `#000` | Page ground. The default canvas. |
 | `--white` / `--grey-one` | `#ECECEC` | Warm off-white. Body text, inverse panels, form fields on dark. |
 | `--grey-two` | `#A3A3A3` | Muted secondary mono-caps body copy. |
-| `--theme-primary` | `#000` | Semantic primary (inherits `--black`). |
-| `--theme-secondary` | `#ECECEC` | Semantic secondary (inherits `--white`). |
-| `--theme-primary-transparent` | `transparent` | Fade-out counterpart for `--theme-primary`. |
-| `--theme-secondary-transparent` | `hsla(0,0%,93%,0)` | Fade-out counterpart for `--theme-secondary`. |
+| `--black-transparent` | `transparent` | Fade twin for `--black`. |
+| `--white-transparent` / `--grey-one-transparent` | `hsla(0,0%,93%,0)` | Fade twin for the off-white. |
+| `--grey-two-transparent` | `hsla(0,0%,64%,0)` | Fade twin for `--grey-two`. |
 
-Every color also has a `-transparent` twin used for fade-in/out transitions so the compositor never has to interpolate between color and transparency.
+Every base neutral has a `-transparent` twin used for fade-in/out transitions so the compositor never has to interpolate between a color and transparency.
+
+**Contextual theme slots.** `--theme-primary` / `--theme-secondary` (and their `-transparent` twins) are *not* set at `:root` — they resolve empty on the homepage root and are assigned **per section / per case page** to drive the black ⇆ off-white ground swaps (see [Elevation](#elevation)). They are the mechanism behind the contrast-ground depth model, not fixed colors.
 
 ### Accent palette (swappable per page)
 
@@ -97,15 +98,19 @@ Three custom faces. No system fallbacks visible in production; Times is the fina
 Headlines and body do not share a family. The contrast between **Pack's** squat slab display and **Stardust's** shrunken utility mono is the primary hierarchy signal. Owners Wide mediates between them for card titles.
 ```
 
-### Heading scale (homepage, observed)
+### Heading scale (fluid `vw`, two-state at 800px)
 
-| Level | Family | Size | LH | Transform | Color |
-|---|---|---|---|---|---|
-| `h1` | Pack | 130 px | 122.2 px | uppercase | accent (`#D7ABC5`) |
-| `h2` | Pack | 66.67 px | 66.67 px | uppercase | `#ECECEC` |
-| `h5` | Pack | 130 px | 122.2 px | uppercase | `#000` |
-| `h6` | Owners Wide | 26.67 px | 26.67 px | uppercase (tracking `0.8 px`) | `#ECECEC` |
-| `p` | NT Stardust | 10 px | 11 px | uppercase | `#A3A3A3` |
+Every size is a `vw` unit — it scales **continuously** with viewport width and steps to a second value at the 800px breakpoint. The `px @1200` column resolves the desktop value at the original 1200px capture width; the mobile `vw` is the value below 800px. See [How the layout changes with width](#how-the-layout-changes-with-width) for what this means in practice.
+
+| Level | Family | Mobile `vw` (<800) | Desktop `vw` (≥800) | px @1200 | LH | Transform | Color |
+|---|---|---|---|---|---|---|---|
+| `h1` | Pack | `10.9333vw` | `10.8333vw` | 130px | ≈0.94 | uppercase | accent (`#D7ABC5`) |
+| `h2` | Pack | `8.5333vw` | `5.5556vw` | 66.7px | 1.0 | uppercase | `#ECECEC` |
+| `h5` | Pack | `10.9333vw` | `10.8333vw` | 130px | ≈0.94 | uppercase | `#000` |
+| `h6` | Owners Wide | `5.3333vw` | `2.2222vw` | 26.7px | 1.0 | uppercase (tracking `0.8px`) | `#ECECEC` |
+| `p` | NT Stardust | `3.2vw` | `0.8333vw` | 10px | 1.1 | uppercase | `#A3A3A3` |
+
+**Read the two columns together:** the Pack display (`h1`/`h5`) barely changes proportion across the breakpoint (≈11% of viewport width either way — poster-scale at every size), while everything secondary *compresses sharply* at 800px. The mono body (`p`) is the extreme case: 3.2vw on mobile (≈12.5px at 390px, kept legible) collapsing to the signature 0.8333vw (10px) on desktop.
 
 ### Hero double-treatment
 
@@ -239,33 +244,67 @@ Not observed. If added, match the input cartridge shell at miniature scale: 1 px
 
 ## Grid & spacing
 
-Fluid-viewport system. Every spatial value is `desktop-vw(Npx)` — a helper that resolves `Npx` at the 1500-px design baseline and scales linearly with viewport width below that.
+Fluid-viewport system with a **single breakpoint at 800px** (the *only* `@media` width in the entire stylesheet). Every spatial value is a raw `vw` unit, so the layout scales linearly with viewport width *within* each state and then snaps to a new set of values at 800px. There is no upper cap — values keep growing with `vw` past any width. The grid count, gutters, and header height are all **redefined** across the breakpoint; they are what actually restructures with horizontal span.
 
 ```css
---layout-columns-count: 4;
---layout-columns-gap: 2.1333333333vw;      /* ≈ 32 px at 1500vw baseline */
---layout-margin: 2.1333333333vw;           /* same; gutter == outer margin */
+/* Mobile — below 800px */
+:root {
+  --layout-columns-count: 4;
+  --layout-columns-gap:   2.1333333333vw;   /* ≈ 32px  @1500 */
+  --layout-margin:        2.1333333333vw;   /* gutter == outer margin */
+  --header-height:        15.4666666667vw;  /* ≈ 232px @1500 — tall mobile bar */
+}
+
+/* Desktop — 800px and up */
+@media (min-width: 800px) {
+  :root {
+    --layout-columns-count: 12;             /* 4 → 12 columns */
+    --layout-columns-gap:   1.1111111111vw; /* ≈ 16.7px @1500 — gutters tighten */
+    --layout-margin:        1.1111111111vw;
+    --header-height:        6.8055555556vw; /* ≈ 102px  @1500 — bar ~halves */
+  }
+}
+
+/* derived in both states */
 --layout-width: calc(100vw - (2 * var(--layout-margin)));
 --layout-column-width: calc(
   (var(--layout-width) - ((var(--layout-columns-count) - 1) * var(--layout-columns-gap)))
   / var(--layout-columns-count)
 );
---header-height: 15.4666666667vw;          /* ≈ 232 px at 1500vw baseline */
 ```
 
-**Spacing scale** (derived from observed values): all spacing resolves through `desktop-vw(Npx)`. Observed primitives: `8 / 16 / 24 / 32 / 48 / 64 / 96 / 128 px`.
+**Spacing scale:** all spacing resolves through the same `vw` helper. Observed primitives (at the 1500px reference): `8 / 16 / 24 / 32 / 48 / 64 / 96 / 128 px`.
 
-**Column minimum:** 4 columns at desktop. Mobile collapses to 1–2 columns; client rail and press list remain full-bleed.
+### How the layout changes with width
+
+Scrib3 is a **two-state** responsive system — one breakpoint (800px) — so it has a "mobile" composition and a "desktop" composition and nothing in between. Everything below is from a live multi-width sweep (390 / 600 / 799 / 800 / 1024 / 1200 / 1440 / 1680px).
+
+| Aspect | Mobile (< 800px) | Desktop (≥ 800px) |
+|---|---|---|
+| Grid columns | **4** | **12** |
+| Gutter / outer margin | `2.1333vw` (≈32px @1500) | `1.1111vw` (≈16.7px @1500) |
+| Header height | `15.4667vw` (≈232px @1500) | `6.8056vw` (≈102px @1500) |
+| Display type (Pack `h1`/`h5`) | `10.9333vw` | `10.8333vw` |
+| Section head (Pack `h2`) | `8.5333vw` | `5.5556vw` |
+| Eyebrow (Owners Wide `h6`) | `5.3333vw` | `2.2222vw` |
+| Mono body (Stardust `p`) | `3.2vw` (≈12.5px @390) | `0.8333vw` (≈10px @1200) |
+
+Two things to read from this:
+
+- **The poster headline barely moves.** Pack display type holds at ≈11% of viewport width in *both* states (`10.93vw` → `10.83vw`), so the hero stays poster-scale at every width — 42.6px @390, 130px @1200, 182px @1680. Horizontal span changes how *much* of an overflowing headline you see, not its proportion.
+- **Everything secondary compresses at 800px.** Section heads, eyebrows, and especially the mono body shrink hard at the breakpoint (`p` drops from 3.2vw to 0.83vw). The 10px console body would be unreadable on a phone, so it is bumped to ≈12.5px below 800px and returns to its signature 10px above. Simultaneously the grid triples (4 → 12 columns) and gutters and the header bar roughly halve. Below 800px the multi-column modules (team grid, client rail, press list) collapse toward 1–2 visible columns and run full-bleed.
+
+![Mobile composition — cases & careers (< 800px)](scrib3-mobile-cases.png)
 
 ---
 
 ## Motion
 
-A full library of Robert-Penner-style cubic-beziers is exposed as CSS variables. Default duration: **400 ms**.
+A full library of Robert-Penner cubic-beziers is exposed as CSS variables; `--ease-scribe` is the house curve. Component durations cluster at **0.3–0.6 s**. All motion is CSS (no GSAP / Webflow / Lottie); a single `<canvas>` paints the halftone/CRT surface, and the accordion is **Radix UI** (its keyframes animate `--radix-accordion-content-height`).
 
 ```css
---transition-duration: 400ms;
 --ease-scribe: cubic-bezier(0.4, 0, 0, 1);   /* house curve — Material-ish, asymmetric snap */
+--transition-duration: /* contextual — set per component, empty at :root */;
 
 /* plus the full Penner suite, verbatim: */
 --ease-in-quad / -cubic / -quart / -quint / -expo / -circ
@@ -273,14 +312,60 @@ A full library of Robert-Penner-style cubic-beziers is exposed as CSS variables.
 --ease-in-out-quad / -cubic / -quart / -quint / -expo / -circ
 ```
 
-### Observed choreography
+Everything below was re-confirmed against live CSS on 2026-06-22 (**◆**), except first-load-only beats marked **≈** (seen once at original capture, not re-run).
 
-- **Load sequence** (first visit): a "LOADING / 0%" overlay counts up with an animated small icon centered, then resolves to the hero — 1–2 s beat.
-- **Hero**: quill mascot floats with subtle Y-axis drift (no rotation). Accent-fill headline rows perform a one-time letter-by-letter entry; outline rows draw their strokes in.
-- **Marquee tracks**: continuous X-translate loops at ~40 s per cycle for the SERVICES / CASES / TEAM / READY TO SAY GM banners. Constant velocity — `linear`, not eased.
-- **Carousel / case cards**: dashed-arrow button triggers a `--ease-scribe` horizontal slide, 400 ms.
-- **Scroll**: smooth scroll is disabled; native. The floating bottom pill nav fades in after ~600 px of scroll.
-- **Hover on press row**: 150 ms `--ease-out-quart` crossfade of the underline rule and reveal of sub-label.
+> **Animated captures.** The `scrib3-anim-*.gif` files below were recorded live via frame-burst screenshots at an iPhone viewport (402×874) — except `arrow-button` and `press-hover`, captured at a desktop viewport where those hover targets live. CSS transitions are slowed during capture for legibility, so each clip's *smoothness and shape* are faithful while absolute speed is illustrative.
+
+### Autonomous & ambient
+
+- **Custom trailing cursor ◆** — `.cursor` chases the pointer with `transform .6s var(--ease-out-expo)`; the long eased lag is the console-pointer feel.
+- **Bidirectional marquees ◆** — `@keyframes marquee` and `marquee-inverted` `translate3d` an offset-based track for a seamless loop; adjacent banner rows (SERVICES / CASES / TEAM / READY TO SAY GM) scroll in **opposite directions**, constant-velocity `linear`, ~40 s/cycle ≈.
+- **Surface halftone ◆** — a `<canvas>` renders the CRT dot field over the black ground.
+- **Hero quill ≈** — subtle Y-axis drift, no rotation.
+
+![bidirectional marquee — the "WE WORK WITH" client rail scrolling](scrib3-anim-marquee.gif)
+
+### On load ≈
+
+A "LOADING / 0%" overlay counts up with a small animated icon, then resolves to the hero (1–2 s). Accent-fill headline rows do a one-time letter-by-letter entry; outline rows draw their strokes in. (First visit only.)
+
+### On scroll ◆
+
+- **Cases & press "drop-and-flip"** — the signature reveal. `@keyframes cases_bounce-in` / `press_bounce-in` translate the row down `90%` and **swap its color at the midpoint** (`--grey-one` → `--theme-contrast` across the 50→51 % step), then settle — `0.4 s var(--ease-scribe)`. Scrolling back out plays the matching `bounce-out`, so reveals **reverse** (a flap opening and closing).
+- **Sticky-nav reveal** — past the hero, `.header_fixedNav` gains `.header_showNav` and eases in (`opacity 0.2 s, transform 0.4 s`); the bottom section-jumper pill rides the same trigger (~600 px).
+- Native scroll — no smooth-scroll hijack.
+
+![cases & press drop-and-flip reveal on scroll](scrib3-anim-bounce-reveal.gif)
+
+### On hover ◆
+
+- **Cartridge dashed-arrow swap** — `.arrow-button` slides the resting arrow out (`translateX(250%)`) while a second enters from the opposite side, `transform .6 s var(--ease-scribe)`; left variants mirror with `scaleX(-1)`. The `◀---- / ----▶` buttons *animate*, not just recolor — this also drives the services carousel.
+- **Press row** — the `↗` flings up-and-out (`translate(100%, -100%)`) as a replacement arrow slots in, and the article sub-label `span` slides in.
+- **Case card** — reveals the client logo: `.hoverLogo` animates `height / transform / opacity` over `.4 s var(--ease-scribe)`.
+- **Links / nav / socials** — color → `--theme-contrast`; top-nav links specifically warm to the page accent (`#D7ABC5` on the homepage). Services cards shift `transform .3 s`.
+
+![cartridge dashed-arrow swap on hover](scrib3-anim-arrow-button.gif)
+![press row — the ↗ arrow flings out and is replaced](scrib3-anim-press-hover.gif)
+
+### Page (route) transitions ◆
+
+Client-side navigation cross-fades the main column — `.layout_main.page-enter-active { transition: opacity 0.4 s }` — a soft swap between pages, not a hard cut.
+
+### Mobile: hamburger & menu ◆
+
+- **Hamburger → X morph** — the two bars (`.hamburger_menu::before / ::after`) rotate and translate on `0.3 s cubic-bezier(0.23, 1, 0.32, 1)` with **staggered delays** (position animates, then rotation; the order swaps between open and close) — a precise two-step morph, not a cross-dissolve.
+- **Menu panel** — `.mobile-menu` slides in with `transform .4 s var(--ease-out-quad)`; the mobile logo's SVG paths animate `opacity .3 s, transform .5 s var(--ease-scribe)`.
+
+![hamburger → X morph](scrib3-anim-hamburger.gif)
+![mobile menu slide-in](scrib3-anim-mobile-menu.gif)
+
+### Reduced motion ◆
+
+A `@media (prefers-reduced-motion: reduce)` block is present.
+
+### Micro-detail ◆
+
+Form inputs set `transition: background-color 5000s` so the browser's autofill highlight never flashes — motion *prevention* as polish.
 
 ---
 
@@ -319,8 +404,8 @@ The distinguishing layer. Tiny chrome glyphs that make the site feel like a devk
 - **Contact form corner notches:** each field's top-left and top-right corners use a 3-dot ⋮ grill cluster as anchor chrome. Pure ornament — no functional affordance.
 - **Case-hero icon frame:** a 4-corner bracket square surrounds each client's monochrome mark on its case-study hero, floating to the right of the overview prose.
 
-![Client grid — "We Work With" rail](scrib3-assets/scrib3-micro-clients-grid.png)
-![Isometric cubes & team strip](scrib3-assets/scrib3-micro-cubes.png)
+![Client grid — "We Work With" rail](scrib3-micro-clients-grid.png)
+![Isometric cubes & team strip](scrib3-micro-cubes.png)
 
 ---
 
@@ -383,8 +468,9 @@ Approaches that would break the brand if introduced:
 
 ## Capture notes
 
-- **Tool:** `@playwright/mcp` (Chrome 147), 1200 × 900 viewport for token capture, 1400 × 900 for micrographic crops.
-- **Data collected:** `--*` CSS custom properties via `CSSStyleSheet` iteration; computed styles for `h1 h2 h5 h6 p body button nav main`; observed theme accent on `/case/mantle-network` (`rgb(0,205,192)`).
+- **Original capture:** `@playwright/mcp` (Chrome 147), 1200 × 900 viewport for tokens, 1400 × 900 for micrographic crops.
+- **Re-verification (2026-06-22):** live CSS bundles pulled and grepped for the responsive grid rules; `--layout-*`, `--header-height`, and `h1/h2/h5/h6/p` sizes swept at 390 / 600 / 799 / 800 / 1024 / 1200 / 1440 / 1680px (Chrome for Testing). Confirmed: a single 800px breakpoint, grid 4 → 12 columns, fonts (`Pack` / `Owners Wide` / `NT Stardust`) and base neutrals all unchanged, and the per-case accent re-theme on `/case/mantle-network` (`rgb(0,205,192)`) vs. homepage (`rgb(215,171,197)`). **Corrected:** the grid/typography values previously documented were the **mobile (< 800px)** state; the desktop (≥ 800px) state is now shown alongside.
+- **Data collected:** `--*` CSS custom properties via computed style + stylesheet iteration; computed styles for `h1 h2 h5 h6 p`.
 - **Pages traversed:** `/`, `/case/mantle-network`.
 - **Unobserved but implied:** `/case/gains-network`, `/case/axelar-network` (linked cards follow the same template, re-skinned to their brands).
-- **Screenshots:** `scrib3-assets/scrib3-01-hero.png` through `scrib3-micro-cubes.png` (14 files).
+- **Screenshots:** `scrib3-01-hero.png` … `scrib3-micro-cubes.png`, plus `scrib3-mobile-cases.png` (15 files).

@@ -1,0 +1,73 @@
+---
+// Full-bleed feature band: the homepage's one signature scroll moment.
+// Contained at rest; expands edge-to-edge as it scrolls into view (and
+// contracts on the way back out), mirroring Anthropic's full-bleed globe.
+// The expansion is a progressive enhancement: visible and readable without JS,
+// and held contained under prefers-reduced-motion. Driven by `data-expand`
+// (observed by the global IntersectionObserver in Layout.astro).
+---
+
+<section class="feature-band" aria-labelledby="feature-band-heading">
+  <div class="feature-band__surface" data-expand>
+    <div class="feature-band__visual" aria-hidden="true">
+      <svg viewBox="0 0 1440 480" preserveAspectRatio="xMidYMid slice" role="presentation">
+        <defs>
+          <pattern id="fb-grid" width="48" height="48" patternUnits="userSpaceOnUse">
+            <path d="M48 0H0V48" fill="none" stroke="var(--color-border-subtle)" stroke-width="1" />
+          </pattern>
+          <linearGradient id="fb-scan" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="var(--color-signal-cyan)" stop-opacity="0" />
+            <stop offset="0.5" stop-color="var(--color-signal-cyan)" stop-opacity="0.9" />
+            <stop offset="1" stop-color="var(--color-signal-cyan)" stop-opacity="0" />
+          </linearGradient>
+          <radialGradient id="fb-bore" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0.7" stop-color="var(--color-bg-deepest)" stop-opacity="0" />
+            <stop offset="1" stop-color="var(--color-bg-deepest)" stop-opacity="0.6" />
+          </radialGradient>
+        </defs>
+
+        <!-- technical-drawing grid -->
+        <rect width="1440" height="480" fill="url(#fb-grid)" opacity="0.5" />
+
+        <!-- CT-bore aperture, right of the text column -->
+        <g transform="translate(1080 240)" fill="none" stroke="var(--color-border-strong)">
+          <circle r="200" stroke-width="1" opacity="0.7" />
+          <circle r="150" stroke-width="1" opacity="0.5" />
+          <circle r="92"  stroke-width="1" opacity="0.85" />
+          <circle r="200" fill="url(#fb-bore)" stroke="none" />
+          <!-- crosshair -->
+          <g stroke="var(--color-signal-cyan)" stroke-width="1" opacity="0.8">
+            <line x1="-230" y1="0" x2="230" y2="0" />
+            <line x1="0" y1="-230" x2="0" y2="230" />
+          </g>
+          <!-- aperture tick ring -->
+          <g stroke="var(--color-text-muted)" stroke-width="1" opacity="0.6">
+            <line x1="0" y1="-200" x2="0" y2="-184" />
+            <line x1="0" y1="200"  x2="0" y2="184" />
+            <line x1="-200" y1="0" x2="-184" y2="0" />
+            <line x1="200" y1="0"  x2="184" y2="0" />
+          </g>
+        </g>
+
+        <!-- horizontal scanline -->
+        <rect x="0" y="239" width="1440" height="2" fill="url(#fb-scan)" />
+
+        <!-- corner registration brackets -->
+        <g fill="none" stroke="var(--color-border-strong)" stroke-width="1" opacity="0.8">
+          <path d="M24 12H12V24" /><path d="M1416 12H1428V24" />
+          <path d="M24 468H12V456" /><path d="M1416 468H1428V456" />
+        </g>
+      </svg>
+    </div>
+
+    <div class="feature-band__content">
+      <p class="type-ui feature-band__eyebrow">Why Level One</p>
+      <h2 id="feature-band-heading" class="feature-band__headline">
+        Emergency radiology, read with the rigor it deserves and the timeliness it demands.
+      </h2>
+      <a href="#subscribe" class="feature-band__cta">
+        Subscribe <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>

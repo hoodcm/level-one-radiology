@@ -22,7 +22,7 @@ This is owned infrastructure for building a national reputation and thought lead
 
 ## Architecture Overview
 
-**Astro static site** with React islands for interactivity. Content authored in Markdown with YAML frontmatter, stored in the git repository. shadcn/ui provides accessible component primitives (Base UI under the hood, Lyra visual style). Tailwind CSS for utility classes, CSS custom properties for design tokens. Deployed to Vercel with automatic deploys on push. Newsletter via Buttondown API, analytics via Plausible.
+**Astro static site** with React islands for interactivity. Content authored in Markdown with YAML frontmatter, stored in the git repository. shadcn/ui provides accessible component primitives (Base UI under the hood, Lyra visual style). Tailwind CSS for utility classes, CSS custom properties for design tokens. Deployed to GitHub Pages via a GitHub Actions workflow (`.github/workflows/deploy.yml`) on push, custom domain via `public/CNAME`. Newsletter via Buttondown API, analytics via Plausible.
 
 **MVP scope:** 3-5 articles, working newsletter signup, functional case viewer in at least 1 article, homepage, about page, article index. No search, comments, user accounts, or light mode at launch.
 
@@ -30,10 +30,10 @@ This is owned infrastructure for building a national reputation and thought lead
 
 - **Buttondown** — Email newsletter service (API for subscriber management)
 - **Plausible** — Privacy-respecting analytics
-- **Vercel** — Hosting and deployment platform
+- **GitHub Pages** — Hosting and deployment (GitHub Actions workflow; custom domain via `public/CNAME`)
 - **shadcn/ui** — Component abstraction layer (Base UI primitives, Lyra style)
-- **Fonts** — Self-hosted: Utopia Std (display serif), Lab Grotesque (body sans), Eurostile LT Std (UI tech)
+- **Fonts** — Self-hosted: Utopia Std (display serif), Lab Grotesque (body sans), Eurostile Next W1G (extended-width branding/wordmark) + Eurostile LT Std (normal-width UI labels)
 
 ---
 
-*Last updated: 2026-02-06*
+*Last updated: 2026-06-23*

@@ -9,7 +9,7 @@ const navItems: { href: string; label: string; active: boolean }[] = [
 
 <header class="site-header" data-site-header>
   <div class="site-header__inner">
-    <a href="/" class="site-logo" aria-label="Level One Radiology — home">
+    <a href="/" class="site-logo" aria-label="Level One Radiology, home">
       <!-- Mobile: icon mark -->
       <svg class="site-logo__mark" viewBox="0 0 439 522" fill="currentColor" aria-hidden="true" focusable="false">
         <path d="M0.251099 393L105.568 0H209.913L132.746 287.956H238.251L210.101 393H0.251099Z" />
@@ -58,7 +58,7 @@ const navItems: { href: string; label: string; active: boolean }[] = [
   </div>
 </header>
 
-<!-- Full-screen mobile overlay menu — sibling of the header so its fixed
+<!-- Full-screen mobile overlay menu, sibling of the header so its fixed
      positioning resolves against the viewport, not the backdrop-filtered bar. -->
 <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation" data-mobile-menu>
   <ul class="mobile-menu__list">
@@ -79,6 +79,45 @@ const navItems: { href: string; label: string; active: boolean }[] = [
 <script>
   const root = document.documentElement;
   const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+
+  // Desktop wordmark → icon-mark collapse: flag once the page scrolls past a
+  // small threshold. rAF-throttled, passive. CSS owns the actual crossfade.
+  const SCROLL_THRESHOLD = 32;
+  let ticking = false;
+  const syncScrolled = () => {
+    root.classList.toggle('is-scrolled', window.scrollY > SCROLL_THRESHOLD);
+    ticking = false;
+  };
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(syncScrolled);
+      }
+    },
+    { passive: true }
+  );
+  syncScrolled();
+
+  // Measure the wordmark's rendered width so the desktop shrink-collapse can
+  // animate width → 0 cleanly (no max-width guesswork). Re-measured after fonts
+  // load and on resize; the value is read by CSS as `--wordmark-w`.
+  const logo = document.querySelector<HTMLElement>('.site-logo');
+  const wordmark = document.querySelector<HTMLElement>('.site-logo__wordmark');
+  const desktop = window.matchMedia('(min-width: 48em)');
+  const measureWordmark = () => {
+    if (!logo || !wordmark || !desktop.matches) return;
+    const w = Math.ceil(wordmark.getBoundingClientRect().width || wordmark.scrollWidth);
+    if (w > 0) logo.style.setProperty('--wordmark-w', `${w}px`);
+  };
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(measureWordmark);
+  } else {
+    measureWordmark();
+  }
+  window.addEventListener('resize', measureWordmark);
+  desktop.addEventListener('change', measureWordmark);
 
   if (toggle) {
     const setOpen = (open: boolean) => {

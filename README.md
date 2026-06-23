@@ -108,7 +108,7 @@ npm run build      # Production build → dist/
 npm run preview    # Preview production build
 ```
 
-**Current state:** Homepage complete with sticky nav, hero + newsletter CTA, featured articles grid, and footer. Self-hosted fonts placed. 7 components built (Header, Footer, ArticleCard, Tag, NewsletterSignup, Button, Input). 3 placeholder articles. Next steps: article page template, article index, About page.
+**Current state:** Homepage and the article page template are built (cards link through to full article views), carrying an Anthropic-derived design system: self-hosted fonts, scroll/feature animations, and dark-first editorial typography. 3 placeholder articles. Next steps: article index, About page, Plausible analytics.
 
 ---
 

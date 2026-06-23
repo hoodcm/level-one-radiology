@@ -1,7 +1,8 @@
 /* ==============================================
    TYPOGRAPHY — Level One Radiology Design Tokens
    Display: Utopia Std | Body: Lab Grotesque
-   UI: Eurostile LT Std | Mono: IBM Plex Mono
+   UI: Eurostile Next LT Pro (normal) / Eurostile Next W1G (extended, branding)
+   Mono: IBM Plex Mono
    ============================================== */
 
 /* @font-face declarations — using .otf/.ttf for now, convert to .woff2 later */
@@ -261,7 +262,7 @@
   font-display: swap;
 }
 
-/* --- Eurostile (UI tech) --- */
+/* --- Eurostile Next LT Pro (normal-width UI/tech labels) --- */
 @font-face {
   font-family: "Eurostile LT Std";
   src: url("/fonts/eurostile/eurostile-regular.otf") format("opentype");
@@ -277,73 +278,76 @@
   font-display: swap;
 }
 
-/* Eurostile — Extended width */
+/* --- Eurostile Next W1G — Extended width (branding / wordmark) ---
+   The W1G ("World 1 Glyph set") cut carries the extended-width formats the
+   brand needs. Internal family name is "Eurostile Next W1G"; the subfamily
+   carries the width+weight (Extended / Extended Bold / …). */
 @font-face {
-  font-family: "Eurostile Extended";
-  src: url("/fonts/eurostile/eurostile-ext-ultralight.otf") format("opentype");
+  font-family: "Eurostile Next W1G";
+  src: url("/fonts/eurostile/eurostile-next-w1g-ext-ultlt.otf") format("opentype");
   font-weight: 200;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Eurostile Extended";
-  src: url("/fonts/eurostile/eurostile-ext-ultralight-italic.otf") format("opentype");
+  font-family: "Eurostile Next W1G";
+  src: url("/fonts/eurostile/eurostile-next-w1g-ext-ultlt-italic.otf") format("opentype");
   font-weight: 200;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
-  font-family: "Eurostile Extended";
-  src: url("/fonts/eurostile/eurostile-ext-light.otf") format("opentype");
+  font-family: "Eurostile Next W1G";
+  src: url("/fonts/eurostile/eurostile-next-w1g-ext-light.otf") format("opentype");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Eurostile Extended";
-  src: url("/fonts/eurostile/eurostile-ext-light-italic.otf") format("opentype");
+  font-family: "Eurostile Next W1G";
+  src: url("/fonts/eurostile/eurostile-next-w1g-ext-light-italic.otf") format("opentype");
   font-weight: 300;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
-  font-family: "Eurostile Extended";
-  src: url("/fonts/eurostile/eurostile-ext-regular.otf") format("opentype");
+  font-family: "Eurostile Next W1G";
+  src: url("/fonts/eurostile/eurostile-next-w1g-ext.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Eurostile Extended";
-  src: url("/fonts/eurostile/eurostile-ext-italic.otf") format("opentype");
+  font-family: "Eurostile Next W1G";
+  src: url("/fonts/eurostile/eurostile-next-w1g-ext-italic.otf") format("opentype");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
-  font-family: "Eurostile Extended";
-  src: url("/fonts/eurostile/eurostile-ext-semibold.otf") format("opentype");
+  font-family: "Eurostile Next W1G";
+  src: url("/fonts/eurostile/eurostile-next-w1g-ext-smbd.otf") format("opentype");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Eurostile Extended";
-  src: url("/fonts/eurostile/eurostile-ext-semibold-italic.otf") format("opentype");
+  font-family: "Eurostile Next W1G";
+  src: url("/fonts/eurostile/eurostile-next-w1g-ext-smbd-italic.otf") format("opentype");
   font-weight: 600;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
-  font-family: "Eurostile Extended";
-  src: url("/fonts/eurostile/eurostile-ext-bold.otf") format("opentype");
+  font-family: "Eurostile Next W1G";
+  src: url("/fonts/eurostile/eurostile-next-w1g-ext-bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Eurostile Extended";
-  src: url("/fonts/eurostile/eurostile-ext-bold-italic.otf") format("opentype");
+  font-family: "Eurostile Next W1G";
+  src: url("/fonts/eurostile/eurostile-next-w1g-ext-bold-italic.otf") format("opentype");
   font-weight: 700;
   font-style: italic;
   font-display: swap;
@@ -357,7 +361,7 @@
   --ff-caption: "Utopia Std Caption", "Utopia Std", Georgia, serif;
   --ff-body: "Lab Grotesque", system-ui, sans-serif;
   --ff-ui: "Eurostile LT Std", "IBM Plex Mono", monospace;
-  --ff-ui-ext: "Eurostile Extended", "Eurostile LT Std", "IBM Plex Mono", monospace;
+  --ff-ui-ext: "Eurostile Next W1G", "Eurostile LT Std", "IBM Plex Mono", monospace;
   --ff-mono: "IBM Plex Mono", "JetBrains Mono", monospace;
 
   /* Type Scale */
@@ -388,9 +392,9 @@
   --ls-ui: 0.06em;
 
   /* Long-form reading. Anthropic uses 155%, but Utopia (serif) has a taller
-     line box than Anthropic Sans, so it reads looser at the same multiplier —
-     tightened to 1.45 to match Anthropic's visual leading. */
-  --lh-reading: 1.45;
+     line box than Anthropic Sans, so it reads looser at the same multiplier.
+     Tightened to 1.38 for a denser, less airy serif column. */
+  --lh-reading: 1.38;
 
   /* Inline links — visible but controlled underline (Anthropic metrics) */
   --link-underline-offset: 0.18em;
@@ -399,6 +403,10 @@
   /* Nav */
   --fz-branding: 1.125rem;
   --fz-nav: 0.875rem;
+  /* Hero brand wordmark (mobile-only lockup) */
+  --fz-wordmark-hero: 1.5rem;
+  /* Homepage article-card title */
+  --fz-card-title: 1.25rem;   /* 20px */
 }
 
 /* Desktop scale adjustments */

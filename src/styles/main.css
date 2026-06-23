@@ -14,6 +14,7 @@
 
 /* Base Styles */
 @import "./base/global.css";
+@import "./base/motion.css";
 
 /* Component Styles */
 @import "./components/homepage.css";

@@ -8,7 +8,7 @@ the transferable patterns to our own (dark-first) tokens.
 > Level One is *dark-first*. Do not paste these hex values into our CSS. What
 > transfers is the **structure**: the two-voice type system, the three nested
 > content widths, token-driven responsive spacing, the card "zone" pattern, and
-> functional (never decorative) accent color. The Level One mapping is in §7.
+> functional (never decorative) accent color. The Level One mapping is in §8.
 
 ## Sources & confidence
 
@@ -25,6 +25,14 @@ Confidence is flagged inline: **◆ confirmed in live CSS** · **≈ measured fr
 screenshot** · **○ inferred**. When a screenshot estimate was later corrected by
 source, only the corrected value appears here — this document is the reconciled
 result, not the investigation log.
+
+**Re-verified 2026-06-22** against live CSS (Webflow brand stylesheet re-pulled;
+engineering article + homepage swept at 390 / 768 / 992 / 1024 / 1280px via Chrome
+for Testing). Reproduced **exactly**: the full engineering responsive token table
+(§4), all brand swatches (§3), the radius scales, and both breakpoint sets (§5).
+**One change since first capture:** the marketing container/margin tokens have gone
+*fluid* — `--site--margin` is now a `clamp()` (32→80px), not a fixed 64px — updated
+in §4 below.
 
 ### Two implementations, one language
 
@@ -164,14 +172,18 @@ makes captions feel like apparatus and summaries feel like writing.
 ### Families ◆
 
 ```css
-/* Marketing (Webflow) */
+/* Marketing (Webflow) — the generic fallback keyword is literally `sans-serif`
+   on ALL five vars (a Webflow quirk, even for the serif/mono families); the
+   first named family is what carries the design. */
 --_typography---font--display-sans:          "Anthropic Sans",  Arial,   sans-serif;
---_typography---font--display-serif-family:  "Anthropic Serif", Georgia, serif;
---_typography---font--paragraph-text:        "Anthropic Serif", Georgia, serif;  /* body is serif */
+--_typography---font--display-serif-family:  "Anthropic Serif", Georgia, sans-serif;
+--_typography---font--paragraph-text:        "Anthropic Serif", Georgia, sans-serif;  /* body is serif */
 --_typography---font--detail:                "Anthropic Sans",  Arial,   sans-serif;  /* labels/meta */
---_typography---font--mono:                  "Anthropic Mono",  Arial,   monospace;
+--_typography---font--mono:                  "Anthropic Mono",  Arial,   sans-serif;
 
-/* Engineering (Next.js) — same roles, JetBrains Mono for code */
+/* Engineering (Next.js) — same roles, JetBrains Mono for code. The Next font
+   loader resolves these to "anthropicSans" / "anthropicSerif" / "anthropicMono",
+   each paired with an "… Fallback" metric-matched face. */
 --anthropic-sans;  --anthropic-serif;  --anthropic-mono;
 ```
 
@@ -256,7 +268,7 @@ draft's `#f7f6f2 / #171716 / #c36a49` were close but not exact).
 Surfaces are a **warm-neutral family** — ivory page, slightly deeper ivory cards,
 near-black ink — with terracotta as the one branded warm accent. The whole palette
 sits a hair to the warm side of neutral; nothing is pure gray. (This is the same
-*method* Level One uses in dark — see §7.)
+*method* Level One uses in dark — see §8.)
 
 **Card surfaces vary by surface, on purpose:** the engineering reference card
 (`article-4`) is a cooler stone, while the marketing release cards (`home-2/4`)
@@ -277,7 +289,7 @@ reads warm.
 --sp-2 … --sp-200:  2 4 6 8 12 16 20 24 32 40 48 56 64 80 96 128 200;  /* px */
 ```
 
-### Responsive semantic tokens ◆
+### Responsive semantic tokens ◆ (re-verified 2026-06-22 — reproduced exactly)
 
 Components never hard-code these — they reference the token, and the *token's
 value* changes at the breakpoint (see §5).
@@ -304,12 +316,20 @@ The Webflow side proves the same pattern with its own names — independent
 confirmation that this is a *brand* convention, not one codebase's habit:
 
 ```css
---container--main:  89.5rem;   /* 1432px overall max */
---container--small: 56.25rem;  /* 900px  */
---site--margin:     64px;      /* desktop gutter */
---radius--small / --main / --large:  0.25 / 0.5 / 1rem;   /* 4 / 8 / 16px */
---_spacing---section-space--*:  2 / 4 / 6 / 10 / 14rem;   /* 32 / 64 / 96 / 160 / 224px */
+/* Content still caps at 1432px, but the side margin is now FLUID (was a fixed 64px). */
+--site--margin:     clamp(2rem, 1.08rem + 3.92vw, 5rem);                  /* 32px → 80px */
+--container--main:  calc(min(89.5rem, 100vw) - var(--site--margin) * 2);  /* ≤ 1432px content */
+--container--small: 56.25rem;  /* 900px base; redefined to an 8-of-12-column width on small screens */
+--radius--small / --main / --large:  0.25 / 0.5 / 1rem;                   /* 4 / 8 / 16px */
+--_spacing---section-space--*:  2 / 4 / 6 / 10 / 12 / 14rem;   /* 32/64/96/160/192(page-top)/224px */
 ```
+
+**Margin, updated (2026-06-22):** the marketing gutter moved from a fixed `64px`
+to a fluid `clamp(32px → 80px)`, and `--container--main` is now *computed* from it
+(`min(89.5rem, 100vw) − 2·margin`) rather than declared as a flat `89.5rem`. The
+engineering side still uses the stepped `--page-margins` (32/48/64) — same intent,
+two mechanisms. Net effect is unchanged on a phone (≈32px both sides); they only
+diverge on the path up to desktop.
 
 **Radius, reconciled:** both implementations anchor **cards and buttons at 8px**
 and **large media panels at 16px**. The middle step differs (engineering 12, Webflow
@@ -502,7 +522,122 @@ component-specific breakpoint earns its place when *relationships* change:
 
 ---
 
-## 7. Applying this to Level One Radiology
+## 7. Motion & interaction
+
+Captured live 2026-06-22 (Chrome for Testing): runtime infra detection, Webflow
+IX2 interaction store, CSS `@keyframes`/transition inventory, and hover/scroll/click
+probes on both surfaces. Motion here is **sparse and functional** — the opposite of
+the spring-heavy illustration entrances on Component Gallery.
+
+> **Animated captures.** The `*-anim-*.gif` files below were recorded live at an
+> iPhone viewport (402×874) via frame-burst screenshots, assembled into GIFs. Where a
+> CSS transition was involved the duration is slowed during capture for legibility —
+> so the *smoothness and shape* of each motion is faithful, but absolute speed is
+> illustrative, not timed.
+
+### Two engines again ◆
+
+| | Marketing (Webflow) | Engineering (Next.js) |
+|---|---|---|
+| Library | **GSAP 3.15.0** + `SplitText`, `TextPlugin`, `ScrollTrigger`; **Webflow IX2** (25 interactions, 19 action lists) | **None** — all motion is CSS `transition` + `@keyframes` |
+| 3D / canvas | None (no WebGL/`<canvas>`/Three; no `<video>`) | None |
+| Lottie | One only — the animated nav wordmark (`nav_logo_lottie`, 143×16) | — |
+| Reduced motion | `@media (prefers-reduced-motion)` ×3 | ×2 |
+
+The split mirrors the type/token story: the marketing site scripts motion; the
+article keeps it to declarative CSS.
+
+### Autonomous (plays on its own) ◆
+
+- **Logo marquee** — `.logo_marquee_logo_component`, `translateX(0 → -100%)`, **48s
+  linear infinite**. The client-logo rail scrolls continuously, constant velocity.
+- **Globe + typed quote** — the globe is a large inline **SVG** (~1145×976), slowly
+  animated by GSAP ○. Beside it a geographic pill ("MOROCCO") and a **quote that
+  types out character-by-character with a blinking block caret** — GSAP
+  `SplitText`/`TextPlugin` driving the text, `@keyframes sf-tw-blink` (0.9s
+  `step-end`, hard on/off) driving the caret ◆≈ (caret + live quote
+  *"We've found a unicorn and are using it to pull a plow."* both captured).
+- **Nav wordmark** — a one-shot **Lottie** (`nav_logo_lottie`) ◆.
+- **Lightbox spinner** — `@keyframes spin` 0.8s linear infinite (Webflow default).
+
+### On load ◆
+
+One IX2 **`PAGE_START`** action list fires at load. The hero headline is wrapped by
+`SplitText` (lines/words/chars) for a staggered entrance ○. Opened modals fade in
+via `@keyframes fadein`, **400ms ease-out forwards**.
+
+### On scroll — the dominant interaction ◆
+
+IX2 carries **10 `SCROLL_INTO_VIEW`** and **5 `SCROLL_OUT_OF_VIEW`** action lists
+(plus 2 GSAP ScrollTriggers). Content reveals (fade / translate) as it enters the
+viewport, and a *subset reverses* on the way back out — confirmed on `.divider_wrap`
+and `.nav_logo_trigger` (the nav logo swaps compact ↔ full as you scroll past the
+hero). This reversibility is the marketing site's signature scroll behavior.
+
+![scroll reveals on the marketing homepage](anthropic-anim-scroll-reveal.gif)
+
+**The engineering article is the opposite — near-static:** a below-fold sweep found
+**0 of 8** prose blocks animating on scroll. Long-form reading gets no reveal motion.
+
+### On hover ◆
+
+| Element | Effect | Timing |
+|---|---|---|
+| Buttons (`.btn_main_wrap`) | border + text + background color swap | **0.2s** |
+| Nav CTA ("Log in to Claude") | background **`#c6613f` accent → `#d97757` clay**, label stays ivory | 0.2s |
+| Inline links (`a`) | `color` → `--…link--text-hover` | (color) |
+| Release / feature card | scripted IX2 `MOUSE_OVER` / `MOUSE_OUT` on `.launch_hero_card` (subtle lift/media shift ○) | IX2 |
+| Carousel dots (`.w-slider-dot`) | background + color | 0.1s |
+| Nav dropdown chevron (`.nav_links_svg`) | `transform` (rotates when its menu opens) | 0.2s |
+| Article Copy/Expand control | label ink → muted (`#0f0f0e → #5e5d59`) | **0.15s** `cubic-bezier(.77,0,.175,1)` |
+
+### On click / tap ◆
+
+- **Accordion** (`.accordion_trigger`) — IX2 `MOUSE_CLICK` + `MOUSE_SECOND_CLICK`, an
+  open/close toggle (the FAQ pattern).
+- **Tabs** — IX2 `TAB_ACTIVE`.
+- **Globe quote carousel** — dots advance the rotating, re-typed quotes.
+
+### Mobile nav overlay ◆ (runtime-confirmed)
+
+Opens with a **clip-path polygon wipe**, not a slide or fade: `@keyframes menuOpen`
+expands `clip-path` from a zero-height top strip to the full panel
+(`polygon(0 0, 100% 0, 100% 100%, 0 100%)`), **400ms ease-in-out**
+(`--nav--menu-open-duration: 400ms`); `menuClose` reverses it. Parent rows disclose
+**inline** (no nested box — see `nav-2-menu-expanded.png`); the chevron rotates over
+`transform 0.2s`.
+
+![mobile menu overlay — static](nav-1-menu.png)
+![mobile nav overlay clip-path wipe](anthropic-anim-nav-overlay.gif)
+*The hamburger tap → the overlay wipes open via the expanding `clip-path` polygon.*
+
+### Easing & reduced motion ◆
+
+- Marketing UI transitions cluster at **0.2s** (buttons/chevrons) and **0.1s**
+  (dots); keyframe loops are `linear` (marquee, spin); reveals/modals are ease-out /
+  ease-in-out.
+- Engineering control hovers use **`cubic-bezier(0.77, 0, 0.175, 1)`**
+  (ease-in-out-quart). Its CSS bundle also carries a library of *figure* animations —
+  `fade-in`, `tooltip-fade-in`, `ball-move/spin/pucker`, `bookend-move`,
+  `arrow-flow`, `slide-down` — scoped to interactive explanatory diagrams
+  (SectionHero, PingPongBookend, LoopTimeline, TreeMap); they run only where such a
+  figure is embedded, not in running prose.
+- **Both surfaces gate motion behind `prefers-reduced-motion: reduce`.**
+
+### For Level One
+
+Two moves are worth stealing; the rest is restraint. (1) **Scroll-into-view reveals
+with reversibility** — content fades/translates in on entry and can animate back out
+— is the marketing site's whole personality, done with one IX2 pattern. (2) The
+**typed quote + blinking caret** is a cheap, high-character autonomous loop for a
+single featured line. Everything else is **0.2s color/background hovers** and a
+**400ms clip-path nav wipe**. Keep ours equally sparse, cluster on a 0.2s house
+duration, and gate it all behind `prefers-reduced-motion` (as both Anthropic
+surfaces do).
+
+---
+
+## 8. Applying this to Level One Radiology
 
 Our stack is dark-first (`#0B0A08` deepest) with our own families. So the move is
 **translate the system into our tokens**, never copy Anthropic's surface colors.

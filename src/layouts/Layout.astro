@@ -50,5 +50,27 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <Header />
     <slot />
     <Footer />
+
+    <script>
+      // Scroll-into-view reveals. Toggles `is-revealed` on entry AND exit so
+      // reveals reverse on the way back out (Anthropic's signature). CSS owns
+      // the transition and the prefers-reduced-motion opt-out.
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const els = document.querySelectorAll<HTMLElement>('[data-reveal], [data-expand]');
+      if (els.length && !reduce.matches && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              entry.target.classList.toggle('is-revealed', entry.isIntersecting);
+            }
+          },
+          { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
+        );
+        els.forEach((el) => io.observe(el));
+      } else {
+        // No IntersectionObserver / reduced motion: show everything immediately.
+        els.forEach((el) => el.classList.add('is-revealed'));
+      }
+    </script>
   </body>
 </html>

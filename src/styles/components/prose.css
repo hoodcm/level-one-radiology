@@ -3,7 +3,7 @@
 
    Type metrics MIRROR Anthropic's engineering article exactly
    (measured live, mobile + desktop):
-     body  17px / 1.55,   ¶-gap 16px
+     body  17px / 1.38,   ¶-gap 16px
      h1    32 → 44 → 52px / 1.0  / 700
      h2    20 → 25px      / 1.2  / 600,  mt 24→32, mb 8
      h3    17 → 19px      / 1.2  / 600,  mt 24→32, mb 8
@@ -222,4 +222,154 @@
   font-size: var(--fz-body-s);
   line-height: 1.5;
   color: var(--color-text-secondary);
+}
+
+/* ==============================================
+   EXTENDED PROSE ELEMENTS (Anthropic-style apparatus)
+
+   Reference/structural elements read in the SANS voice (apparatus); the
+   running serif prose is the human voice. Authors compose these in a Markdown
+   article with raw HTML, e.g.:
+
+     <div class="callout callout--critical">
+       <p class="callout__label">Do not wait</p>
+       <p>Pneumatosis is a late sign…</p>
+     </div>
+   ============================================== */
+
+/* --- Lead paragraph (opt-in via class on the first <p>) --- */
+.prose .lead {
+  font-size: 1.1875rem;        /* 19px */
+  line-height: 1.5;
+  color: var(--color-text-ivory);
+}
+
+/* --- Data tables — sans apparatus, hairline rules --- */
+.prose table {
+  width: 100%;
+  margin: var(--space-4) 0;
+  border-collapse: collapse;
+  font-family: var(--ff-body);
+  font-size: var(--fz-body-s);
+  line-height: 1.4;
+}
+.prose thead th {
+  text-align: left;
+  font-family: var(--ff-ui);
+  font-size: var(--fz-ui);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding: var(--space-1) var(--space-2);
+  border-bottom: 1px solid var(--color-border-strong);
+}
+.prose tbody td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-border-default);
+  color: var(--color-text-secondary);
+  vertical-align: top;
+}
+.prose tbody tr:last-child td { border-bottom: 0; }
+
+/* --- Callout / note box — note (cyan) · caution (yellow) · critical (red) --- */
+.callout {
+  margin: var(--space-4) 0;
+  padding: var(--card-padding-sm) var(--card-padding-md);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--color-signal-cyan);
+  background: color-mix(in srgb, var(--color-signal-cyan) 7%, var(--color-bg-secondary));
+  font-family: var(--ff-body);
+  font-size: var(--fz-body-s);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.callout > :last-child { margin-bottom: 0; }
+.callout__label {
+  font-family: var(--ff-ui);
+  font-size: var(--fz-ui);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  color: var(--color-signal-cyan);
+  margin: 0 0 var(--space-1);
+}
+.callout--caution {
+  border-left-color: var(--color-signal-yellow);
+  background: color-mix(in srgb, var(--color-signal-yellow) 7%, var(--color-bg-secondary));
+}
+.callout--caution .callout__label { color: var(--color-signal-yellow); }
+.callout--critical {
+  border-left-color: var(--color-signal-red);
+  background: color-mix(in srgb, var(--color-signal-red) 8%, var(--color-bg-secondary));
+}
+.callout--critical .callout__label { color: var(--color-signal-red); }
+
+/* --- Reference / data card — the Anthropic "stone card": all sans,
+   title → sublabel groups → bullets. Reads as apparatus, not narrative. --- */
+.reference-card {
+  margin: var(--space-5) 0;
+  padding: var(--card-padding-md);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  font-family: var(--ff-body);
+}
+.reference-card__title {
+  font-family: var(--ff-body);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text-ivory);
+  margin: 0;
+}
+.reference-card__group { margin-top: var(--space-3); }
+.reference-card__label {
+  font-family: var(--ff-ui);
+  font-size: var(--fz-ui);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-1);
+}
+.reference-card p,
+.reference-card li {
+  font-size: var(--fz-body-s);
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+.reference-card ul { margin: 0; padding-left: var(--space-3); }
+.reference-card li + li { margin-top: var(--space-1); }
+
+/* --- Definition list — term / definition pairs (sans) --- */
+.prose dl {
+  margin: var(--space-4) 0;
+  font-family: var(--ff-body);
+}
+.prose dt {
+  font-weight: 700;
+  color: var(--color-text-ivory);
+  margin-top: var(--space-2);
+}
+.prose dd {
+  margin: 0;
+  font-size: var(--fz-body-s);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+/* --- Inline keyboard + highlight --- */
+.prose kbd {
+  font-family: var(--ff-mono);
+  font-size: 0.85em;
+  padding: 0.1em 0.4em;
+  border: 1px solid var(--color-border-default);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-xs);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+.prose mark {
+  background: color-mix(in srgb, var(--color-signal-yellow) 28%, transparent);
+  color: inherit;
+  padding: 0 0.15em;
+  border-radius: 2px;
 }

@@ -1,6 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import ArticleCard from '@/components/shared/ArticleCard.astro';
+import FeatureBand from '@/components/shared/FeatureBand.astro';
 import NewsletterSignup from '@/components/shared/NewsletterSignup.tsx';
 import { getCollection } from 'astro:content';
 
@@ -13,18 +14,26 @@ const leadArticle = featuredArticles[0];
 const restArticles = featuredArticles.slice(1);
 ---
 
-<Layout title="Level One Radiology — Independent Emergency Radiology">
+<Layout title="Level One Radiology: Independent Emergency Radiology">
   <!-- Hero -->
   <section class="hero">
     <div class="hero__inner">
+      <!-- Brand wordmark, mobile only; on desktop the header carries it. -->
+      <a href="/" class="hero__wordmark" aria-label="Level One Radiology, home">
+        <span class="hero__wordmark-level">Level One</span>
+        <span class="hero__wordmark-radiology">Radiology</span>
+      </a>
       <p class="type-ui hero__label">Independent Emergency Radiology</p>
       <h1 class="type-display-l hero__tagline">Timely coverage meets educational rigor.</h1>
       <p class="type-body-secondary hero__value-prop">
-        Substantive analysis of emergency radiology — clinical deep-dives, case-based education, and field commentary from a practicing radiologist. One article at a time.
+        Substantive analysis of emergency radiology: clinical deep-dives, case-based education, and field commentary from a practicing radiologist. One article at a time.
       </p>
       <NewsletterSignup client:load variant="inline" />
     </div>
   </section>
+
+  <!-- Signature full-bleed feature band (expands on scroll) -->
+  <FeatureBand />
 
   <!-- Featured Content -->
   {featuredArticles.length > 0 && (

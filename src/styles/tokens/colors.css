@@ -16,9 +16,12 @@
   /* Text Hierarchy — warm whites on dark, gentle consistent warm bias.
      De-yellowed: the old `ivory` (#F5E6C2) carried a ~51-unit R−B spread
      (visibly cream); this ramp holds a subtle ~10–16 spread so it reads
-     as warm white, scaling evenly like Anthropic's ivory family. */
-  --color-text-primary: #F4F0E9;    /* warm white — body, UI */
-  --color-text-ivory: #FAF6EE;      /* bright warm white — headlines/display */
+     as warm white, scaling evenly like Anthropic's ivory family.
+     Peak luminance pulled down from near-white (#FAF6EE/#F4F0E9) to reduce
+     halation ("bloom") of bright text on the near-black ground; still ~15:1
+     contrast, well above AAA, but the high-contrast serif shimmers less. */
+  --color-text-primary: #E5E1DB;    /* warm white — body, UI */
+  --color-text-ivory: #EFEAE0;      /* bright warm white — headlines/display */
   --color-text-secondary: #D7D1C7;  /* warm light gray — bylines, excerpts */
   --color-text-muted: #9D9489;      /* warm gray — metadata, captions */
   --color-text-disabled: #6D655B;   /* warm gray — disabled */

@@ -24,6 +24,7 @@
 }
 
 .site-logo {
+  position: relative;
   display: inline-flex;
   align-items: center;
   color: var(--color-text-primary);
@@ -127,23 +128,35 @@
   width: 100%;
   height: 1.5px;
   background: currentColor;
-  transition: transform 0.2s ease, opacity 0.2s ease, width 0.2s ease;
+  /* Two-step morph (Scrib3-style): on CLOSE, the bars un-rotate first (no
+     delay), THEN slide back to their resting positions (delayed). */
+  transition:
+    top 0.15s ease 0.15s,
+    width 0.15s ease 0.15s,
+    transform 0.15s ease 0s,
+    opacity 0.12s ease 0s;
 }
 .nav-toggle__line:nth-child(1) { top: 0; }
 .nav-toggle__line:nth-child(2) { top: 50%; transform: translateY(-50%); }
-.nav-toggle__line:nth-child(3) { bottom: 0; width: 65%; }
+.nav-toggle__line:nth-child(3) { top: calc(100% - 1.5px); width: 65%; }
 
-/* Hamburger → X on open */
+/* Hamburger → X: slide the bars to center first, THEN rotate into the X. */
+:root.is-nav-open .nav-toggle__line {
+  transition:
+    top 0.15s ease 0s,
+    width 0.15s ease 0s,
+    transform 0.15s ease 0.15s,
+    opacity 0.12s ease 0.04s;
+}
 :root.is-nav-open .nav-toggle__line:nth-child(1) {
-  top: 50%;
-  transform: translateY(-50%) rotate(45deg);
+  top: calc(50% - 0.75px);
+  transform: rotate(45deg);
 }
 :root.is-nav-open .nav-toggle__line:nth-child(2) { opacity: 0; }
 :root.is-nav-open .nav-toggle__line:nth-child(3) {
-  bottom: auto;
-  top: 50%;
+  top: calc(50% - 0.75px);
   width: 100%;
-  transform: translateY(-50%) rotate(-45deg);
+  transform: rotate(-45deg);
 }
 
 /* --- Full-screen mobile overlay menu --- */
@@ -155,18 +168,28 @@
   padding: calc(var(--nav-height) + var(--space-2)) var(--space-outer) var(--space-6);
   display: flex;
   flex-direction: column;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-6px);
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
   overflow-y: auto;
   overscroll-behavior: contain;
+  /* Clip-path wipe (Anthropic-style): collapsed to a zero-height strip at the
+     top when closed, wipes open downward to the full panel. visibility lags on
+     close so the panel stays interactive/visible through the wipe-out. */
+  clip-path: inset(0 0 100% 0);
+  visibility: hidden;
+  transition: clip-path 0.25s ease-in-out, visibility 0s linear 0.25s;
 }
 
 :root.is-nav-open .mobile-menu {
-  opacity: 1;
+  clip-path: inset(0 0 0 0);
   visibility: visible;
-  transform: translateY(0);
+  transition: clip-path 0.25s ease-in-out, visibility 0s;
+}
+
+/* Reduced motion: no wipe, no hamburger morph timing — instant open/close. */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu,
+  :root.is-nav-open .mobile-menu { transition: visibility 0s; }
+  .nav-toggle__line,
+  :root.is-nav-open .nav-toggle__line { transition: none; }
 }
 
 .mobile-menu__list {
@@ -220,8 +243,35 @@
 
 @media (min-width: 48em) {
   .mobile-menu { display: none; }
-  .site-logo__mark { display: none; }
-  .site-logo__wordmark { display: inline-flex; }
+
+  /* Desktop logo: SHRINK-COLLAPSE (iteration 2). The wordmark's measured width
+     (`--wordmark-w`, set by JS after fonts load) animates to 0 as the page
+     scrolls, contracting horizontally into the icon mark, which fades in at the
+     left. The mark overlays absolutely so the contracting box reveals it. */
+  .site-logo__wordmark {
+    display: inline-flex;
+    width: var(--wordmark-w, auto);
+    overflow: hidden;
+    white-space: nowrap;
+    transition: width 0.4s ease, opacity 0.3s ease;
+  }
+  .site-logo__mark {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  :root.is-scrolled .site-logo__wordmark { width: 0; opacity: 0; }
+  :root.is-scrolled .site-logo__mark { opacity: 1; pointer-events: auto; }
+}
+
+@media (min-width: 48em) and (prefers-reduced-motion: reduce) {
+  .site-logo__wordmark,
+  .site-logo__mark { transition: none; }
 }
 
 /* --- Tag / Chip --- */
@@ -279,10 +329,13 @@
 }
 
 /* --- Article Card --- */
+/* Cards are a raised surface sitting ON the section ground (Anthropic-style):
+   the featured section is bg-primary, the cards lift to bg-raised so they read
+   as distinct panels, not a flat list. */
 .article-card {
   display: block;
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-sm);
   padding: var(--card-padding-md);
   transition: all 0.2s ease;
@@ -291,8 +344,8 @@
 }
 
 .article-card:hover {
-  background: var(--color-bg-raised);
-  border-color: var(--color-border-default);
+  background: var(--color-bg-active);
+  border-color: var(--color-border-strong);
   text-decoration: none;
 }
 
@@ -305,7 +358,7 @@
 /* Title: SANS (Lab Grotesque) — structural voice, warm-white ink. */
 .article-card__title {
   font-family: var(--ff-body);
-  font-size: var(--fz-headline);
+  font-size: var(--fz-card-title);
   font-weight: 600;
   line-height: 1.25;
   letter-spacing: -0.01em;
@@ -320,7 +373,7 @@
 }
 
 .article-card--lead .article-card__title {
-  font-size: var(--fz-display);
+  font-size: var(--fz-headline);
   line-height: var(--lh-display);
   font-weight: 700;
 }
@@ -340,10 +393,12 @@
   gap: var(--space-2);
 }
 
-/* --- HUD Frame (four-corner brackets) --- */
+/* --- HUD Frame (four-corner brackets) ---
+   Decorative bracket overlay only; it must NOT set padding (the corner brackets
+   are absolutely positioned, so they frame the corners regardless). The host
+   component (e.g. .article-card) owns its own content padding. */
 .hud-frame {
   position: relative;
-  padding: 2px;
 }
 
 .hud-frame::before,
@@ -416,10 +471,11 @@
   gap: var(--space-1);
 }
 
+/* Privacy line rides the body voice (Lab Grotesque), not mono — the hero's
+   reading text stays one family. Mono is reserved for article metadata. */
 .newsletter-inline__privacy {
-  font-family: var(--ff-mono);
-  font-size: 9px;
-  letter-spacing: 0.02em;
+  font-family: var(--ff-body);
+  font-size: var(--fz-body-xs);
   color: var(--color-text-disabled);
 }
 
@@ -542,6 +598,30 @@
   width: 100%;
 }
 
+/* Brand wordmark in the hero — shown only on mobile, where the header
+   carries just the icon mark. Hidden ≥ 48em (header wordmark takes over). */
+.hero__wordmark {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4em;
+  margin-bottom: var(--space-4);
+  font-family: var(--ff-ui-ext);
+  font-size: var(--fz-wordmark-hero);
+  line-height: 1.05;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-ivory);
+  text-decoration: none;
+}
+.hero__wordmark:hover { text-decoration: none; }
+.hero__wordmark-level { font-weight: 700; letter-spacing: 0.03em; }
+.hero__wordmark-radiology { font-weight: 400; color: var(--color-text-secondary); }
+
+@media (min-width: 48em) {
+  .hero__wordmark { display: none; }
+}
+
 .hero__label {
   margin-bottom: var(--space-3);
 }
@@ -557,9 +637,102 @@
   margin-bottom: var(--space-5);
 }
 
+/* --- Feature Band (full-bleed scroll-expand) --- */
+.feature-band {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-block: var(--section-spacer);
+  background: var(--color-bg-deepest);
+}
+
+/* Contained at rest (centered card with gutters + radius); expands to the full
+   viewport width when scrolled into view. width/max-width animate the breakout;
+   it reverses when the band leaves the viewport. */
+.feature-band__surface {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: calc(100% - var(--space-outer) * 2);
+  max-width: var(--grid-max-width);
+  min-height: 320px;
+  overflow: hidden;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-secondary);
+  transition:
+    width 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    max-width 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 0.6s ease,
+    border-color 0.6s ease;
+}
+
+.feature-band__surface.is-revealed {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 0;
+  border-color: transparent;
+}
+
+.feature-band__visual {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.feature-band__visual svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.feature-band__content {
+  position: relative;
+  max-width: 44ch;
+  padding: var(--card-padding-lg) var(--space-outer);
+}
+
+.feature-band__eyebrow {
+  margin-bottom: var(--space-2);
+}
+
+.feature-band__headline {
+  font-family: var(--ff-display);
+  font-size: var(--fz-display);
+  line-height: var(--lh-display);
+  letter-spacing: -0.01em;
+  color: var(--color-text-ivory);
+  margin-bottom: var(--space-3);
+}
+
+.feature-band__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-family: var(--ff-ui);
+  font-size: var(--fz-nav);
+  font-weight: 700;
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  color: var(--color-signal-cyan);
+  text-decoration: none;
+}
+.feature-band__cta:hover { text-decoration: none; color: var(--color-text-ivory); }
+
+/* Reduced motion: keep the band contained, no expand, no transition. */
+@media (prefers-reduced-motion: reduce) {
+  .feature-band__surface,
+  .feature-band__surface.is-revealed {
+    width: calc(100% - var(--space-outer) * 2);
+    max-width: var(--grid-max-width);
+    border-radius: var(--radius-lg);
+    border-color: var(--color-border-default);
+    transition: none;
+  }
+}
+
 /* --- Featured Section --- */
 .featured-section {
-  background: var(--color-bg-secondary);
+  background: var(--color-bg-primary);
   padding: var(--section-spacer) 0;
 }
 

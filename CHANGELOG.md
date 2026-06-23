@@ -6,22 +6,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-06-23
+
 ### Added
+- Extended article prose elements (`prose.css`): data tables, callouts (note / caution / critical), reference/data card, definition lists, run-in lead-ins, opt-in lead paragraph, and inline kbd + highlight. Apparatus reads sans, narrative stays serif (Anthropic voice split); authored in Markdown via raw HTML and demonstrated in the closed-loop article
+- Full-bleed feature band (`FeatureBand.astro`): the homepage's one signature scroll moment — a contained card that expands edge-to-edge as it scrolls into view (and contracts on exit), mirroring Anthropic's full-bleed globe. Bespoke HUD "scanner/aperture" SVG visual (grid, CT-bore rings, cyan crosshair + scanline, registration brackets) using design tokens; inset serif statement + Subscribe CTA. Progressive enhancement — readable without JS, held contained under `prefers-reduced-motion`
+- Scroll-reveal engine (`src/styles/base/motion.css` + global IntersectionObserver in `Layout.astro`): toggles a state class on entry/exit for `[data-reveal]` (fade/translate utility) and `[data-expand]` (the feature band), gated behind `prefers-reduced-motion`. Reserved for specific feature moments (Anthropic-style), not blanket-applied to body content
+- Desktop wordmark → icon-mark collapse on scroll: past a 32px scroll threshold (`is-scrolled`, rAF-throttled) the wordmark's JS-measured width animates to 0, contracting horizontally into the compact icon mark
+- Mobile hero brand wordmark (`hero__wordmark`): shows the "Level One Radiology" lockup on mobile, where the header carries only the icon mark; hidden ≥48em. New `--fz-wordmark-hero` token
 - Article page template (`src/pages/articles/[slug].astro`) — full editorial reading view; all homepage cards now link through
 - `prose.css` long-form reading system: type metrics mirror Anthropic's live article (body 17px, sans headings, 640px reading column, exact paragraph/heading vertical rhythm), expressed in Level One's fonts (Utopia serif body, Lab Grotesque sans titles/headings) and dark palette
 - Self-hosted favicon (`public/favicon.svg`, the Level One mark) — also the mobile header logo
 - Full-screen mobile nav overlay (icon + hamburger → ✕, Anthropic-style rows, bottom CTA)
 - Semantic tokens: nested content widths (`--reading-column`/`--media-column`), radius scale (`--radius-xs/sm/md/lg`), card-padding, section-spacer, gap, reading line-height, inline-link metrics — values flip at shared breakpoints
+- Live-motion GIFs (11) and mobile-viewport screenshots (6) across the Scrib3, Component Gallery, and Anthropic design references — embedded inline beside each description
+- Motion & interaction documentation for the three design references — autonomous, scroll, hover, click, and load animations captured live (Anthropic §7 new; Scrib3 + Component Gallery Motion sections expanded)
+- Responsive / horizontal-span documentation across the three design references — per-breakpoint behavior, fluid type, and what restructures at each width
 
 ### Changed
+- Reduced peak text luminance to cut halation ("bloom") of bright text on the near-black ground: `--color-text-ivory` #FAF6EE → #EFEAE0, `--color-text-primary` #F4F0E9 → #E5E1DB. Contrast stays ~15:1 (well above AAA); warm bias preserved
+- Article body leading tightened for a denser serif column: `--lh-reading` 1.45 → 1.38
+- Article editorial pass: removed the `###` subheader level and all bold run-ins across the three articles, folding them into flowing prose. Leaves each article with `##` section headers + body only (plus callout/table/reference-card apparatus), cutting the font-size/weight variety that read as chaotic
+- Removed em dashes from all site copy (article content, hero, feature band, page titles, aria-labels), replaced with colon / comma / semicolon per context
+- Homepage featured articles now read as raised cards on a distinct ground: the section moved to `bg-primary` and cards to `bg-raised` (both were `bg-secondary`, so cards did not separate); hover lifts to `bg-active`
+- Homepage card titles reduced: standard cards 24 → 20px (new `--fz-card-title` token), lead card 28/32 → 24px, so titles read as card labels rather than dominating the card
+- Hero typography unified to three voices (was four): the "No spam" privacy line moved off IBM Plex Mono onto the body voice (Lab Grotesque), so all hero reading text shares one family. Hero now reads Utopia (headline) · Lab Grotesque (value-prop, email field, privacy) · Eurostile (kicker, Subscribe, mobile wordmark); mono is reserved for article metadata
+- Eurostile import corrected: the extended-width branding face is now declared under its true family name **"Eurostile Next W1G"** (was the generic "Eurostile Extended"), sourced from the W1G Extended OTFs (UltraLight→Bold + italics); `--ff-ui-ext` points at it. Old `eurostile-ext-*.otf` duplicates removed
+- Mobile nav overlay opens via a clip-path wipe (0.25s) instead of a plain fade; hamburger→✕ is a staggered two-step morph (slide-to-center, then rotate, 0.15s). Both gated behind `prefers-reduced-motion`
 - Header: icon + hamburger on mobile (<768px), wordmark + inline nav on desktop (≥768px); bar height grows 48→56px
 - Article type roles parallel Anthropic — sans title + sans deck + serif body
 - Warm-white text ramp de-yellowed (`--color-text-ivory` `#F5E6C2` → `#FAF6EE`, etc.); consistent subtle warm bias. Dark surfaces unchanged — site stays dark-first
 - Mobile page gutter 24 → 32px (Anthropic-style); homepage card titles → sans; radii / card padding / section spacing now token-driven
+- Refreshed the three design-reference docs against live site CSS — corrected Scrib3 to its two-state 800px grid, refreshed token/grid systems, updated the Component Gallery example count, noted Anthropic's now-fluid marketing margin
 
 ### Fixed
+- Homepage cards rendered with only 2px content padding: `.hud-frame { padding: 2px }` (the decorative corner-bracket utility) overrode `.article-card`'s padding by later source order at equal specificity, so the padding token never applied. Removed padding from `.hud-frame`; cards now use their own `--card-padding-md` (24/32) / `--card-padding-lg`
 - Mobile menu broke when opened while scrolled: the `overflow:hidden` scroll-lock was killing the sticky header (and jumping scroll). Replaced with a full-viewport overlay, no lock
 - Removed the `/favicon.ico` 404 (SVG favicon only)
+- Broken relative image paths in `scrib3.DESIGN.md` (asset-folder prefix → bare filenames, since the doc lives inside its asset folder)
 
 ## [0.3.0] - 2026-02-06
 

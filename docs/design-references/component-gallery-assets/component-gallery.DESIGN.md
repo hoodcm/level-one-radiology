@@ -1,6 +1,6 @@
 # DESIGN.md — The Component Gallery
 
-Comprehensive rip of **https://component.gallery** — captured 2026-04-19 via Playwright (live DOM, computed styles, raw CSS bundles, and inline SVG). Covers light and dark themes, all pages (home, components listing, component detail, design systems, about), responsive behavior, motion, and asset library.
+Comprehensive rip of **https://component.gallery** — captured 2026-04-19 via Playwright (live DOM, computed styles, raw CSS bundles, and inline SVG). Covers light and dark themes, all pages (home, components listing, component detail, design systems, about), responsive behavior, motion, and asset library. **Re-verified 2026-06-22:** the live CSS bundles are byte-for-byte unchanged (identical content-hashed filenames `about.DWRP1ZB6.css` / `about.wjXDArHt.css`), so every color token, `@font-face`, grid formula, and motion curve below remains current. Only the live example count and the mobile screenshots were refreshed.
 
 ## Table of contents
 
@@ -49,7 +49,7 @@ Pulled from the page footer and bundle analysis:
 ## Brand & voice
 
 - **Copy posture:** reference, catalog, library. Third-person factual. Short, declarative.
-- **Hero as specimen:** "60 components, 95 design systems, 2,676 examples." — enumeration as headline.
+- **Hero as specimen:** "60 components, 95 design systems, 2,671 examples." — enumeration as headline. (The example count is a live Airtable figure that drifts over time — 2,676 at first capture, 2,671 on 2026-06-22; the *pattern*, counting-as-headline, is the constant.)
 - **Component names:** single-word or two-word nouns ("Accordion", "Tree view"), followed by a "**Also known as:**" alias list, then a one-paragraph plainspoken definition.
 - **Emoji allowed only in `<title>` tag** (`🪗 Accordion | The Component Gallery`). Never in body.
 - **No marketing tropes:** no testimonials, no "powered by", no badges, no social proof.
@@ -304,6 +304,23 @@ Uses standard Tailwind breakpoints (`sm: 640, md: 768, lg: 1024, xl: 1280, 2xl: 
 
 Translation: full-width on mobile, halves at 640+, thirds at 1024+, quarters at 1280+.
 
+### What changes with horizontal span (re-verified 2026-06-22)
+
+A **three-state** grid. The fluid unit (`--grid-display-size`) scales continuously *within* each state; the column count, page padding, and fade width step at the breakpoints, and the hero decorations are gated entirely on width.
+
+| Width | Grid columns | Page padding | `--fade-size` | Hero illustrations | Card preview / row |
+|---|---|---|---|---|---|
+| < 768px (mobile) | 24 | 3rem | 24px | **hidden** | 1 (`col-span-full`) |
+| ≥ 768px | 24 | 6rem | 48px | **hidden** | 2 (`sm:col-span-6`) |
+| ≥ 1024px (desktop) | **36** | 9rem | 72px | **4 shown** | 3 (`lg:col-span-4`) |
+| ≥ 1280px | 36 | 9rem | 72px | 4 shown | 4 (`xl:col-span-3`) |
+| ≥ 1680px | 36 (capped) | 9rem | 72px | 4 shown | 4 |
+
+- **The four isometric hero illustrations are desktop-only** (`hidden lg:block`). Confirmed by a live sweep: 0 rendered at 390 / 640 / 768px, all 4 at 1024 / 1280 / 1680px. Mobile gets the graph-paper hero *without* the floating 3D decor.
+- **The grid densifies at 1024px** (24 → 36 columns) — a *column-count* change, not just a scale change — while the card grid climbs 1 → 2 → 3 → 4 across mobile / 640 / 1024 / 1280 via the `col-span` ladder above.
+- **Edge fades widen with the page padding** (`--fade-size` 24 → 48 → 72px), so the newspaper-hairline overhang grows with the gutter.
+- **Above 1680px the unit freezes** at `calc(1534px / 36)` ≈ 42.6px: the layout stops growing and centers.
+
 ---
 
 ## Spacing & layout
@@ -365,6 +382,8 @@ Used for cards and section header rows. **Depth is always this 1px ring, never a
 
 Motion is sparse, functional, and distinctive where it appears.
 
+> **Animated captures.** The `component-gallery-anim-*.gif` files below were recorded live via frame-burst screenshots at an iPhone viewport (402×874) — except `illustration-spring`, captured at a desktop viewport (≥1024px) where the hero illustrations render. Transition timing is slowed for legibility, so each clip's *smoothness and shape* are faithful while absolute speed is illustrative.
+
 ### Card hover — exact spec
 
 ```css
@@ -387,6 +406,8 @@ Motion is sparse, functional, and distinctive where it appears.
 ```
 
 **Four simultaneous transitions**, all 300ms, all easing `cubic-bezier(.22, 1, .36, 1)` (a gentle "ease-out-quart"-like curve). The card simultaneously: brightens, darkens its ring, lifts/nudges, and rounds. The round-on-hover is the signature.
+
+![card hover — rounds, lifts, brightens, ring darkens](component-gallery-anim-card-hover.gif)
 
 Whole-card click area via:
 
@@ -439,6 +460,8 @@ Values go **up to 1.25** before settling back near 1 — that's the "overshoot t
 
 **Reduced motion is respected.**
 
+![hero illustrations spring-fade in on load (desktop ≥1024px)](component-gallery-anim-illustration-spring.gif)
+
 ### Icon hover (card external links)
 
 ```html
@@ -450,6 +473,20 @@ GitHub/Figma/Storybook icons scale to 110% on card hover, 200ms.
 ### Global transition hook
 
 Tailwind's `transition-all duration-200` is applied broadly but only matters where a property also changes.
+
+### Interaction taxonomy — what moves, and when (re-verified 2026-06-22)
+
+Captured live (Chrome for Testing): infra detection + a below-fold scroll sweep + hover probes. The system is **pure CSS** — no GSAP, Webflow, Lottie, canvas, or video.
+
+- **Autonomous:** exactly one — the load-time illustration spring (above). It plays once, staggered, and **only on desktop (≥1024px)**, where the four illustrations render; below `lg` there is no autonomous motion at all. Nothing loops.
+- **On scroll: nothing.** A 60-element below-fold sweep found **0** scroll-triggered animations — the page stays deliberately still as you read. (The opposite of Anthropic, whose personality *is* scroll reveals.)
+- **On hover:** the card is the headline gesture; everything else is a small Tailwind swap — section "View all" and prose links transition `color` / `background-color` over **~0.15 s** (`cubic-bezier(0.4, 0, 0.2, 1)`); card external-link icons scale to **110%** (`group-hover:scale-110`, 200 ms); prose footnote-refs take a `--color-bg-secondary` background on hover.
+- **Theme toggle:** the light/dark swap is **instant** — token values change with no cross-fade (transition-duration 0 on the root). A deliberate non-animation.
+- **Reduced motion:** the illustration entrance is gated behind `@media (prefers-reduced-motion: reduce)` (1 block).
+
+The whole motion budget is spent on **one** gesture — the card that rounds, lifts, brightens, and darkens its ring on hover. That restraint is the brand.
+
+![theme toggle — the light/dark swap is instant, no cross-fade](component-gallery-anim-theme-toggle.gif)
 
 ---
 
@@ -649,9 +686,13 @@ The Component Gallery is a project by Iain Bean, built with Astro, hosted on Clo
 5. "DESIGN SYSTEMS" section header row → 8-card preview grid (each card has TECH + FEATURES metadata)
 6. Footer
 
+![Home — mobile (graph-paper hero, no 3D decor, single-column cards)](component-gallery-mobile-home.png)
+
 ### Components listing (/components)
 
 60 cards in a 12-col subgrid. Each card = sketch illustration thumbnail + component name + single-sentence definition.
+
+![Components listing — mobile](component-gallery-mobile-components.png)
 
 ### Component detail (/components/accordion)
 
@@ -675,13 +716,19 @@ Paragraph definition.      └─────────┘
 - Sidebar "ON THIS PAGE" is sticky on desktop.
 - "101 EXAMPLES" grid shows design-system screenshots (scraped via Puppeteer).
 
+![Component detail (Tree view) — mobile, scrolled to the name-distribution chart and footer/colophon](component-gallery-mobile-component-detail.png)
+
 ### Design systems listing (/design-systems)
 
 Same card grid pattern; each card has TECH and FEATURES metadata blocks and external links (GitHub / Figma / Storybook via the icon sprite).
 
+![Design systems listing — mobile](component-gallery-mobile-design-systems.png)
+
 ### About (/about)
 
 Long-form body-text page. Uses `body-text body-text--constrain-width p-4 text-base variable-font-wdth-90` wrapper. Sections use all the prose rules (h2 + h3 + lists + strong with weight 590, etc.).
+
+![About — mobile](component-gallery-mobile-about.png)
 
 ---
 
@@ -799,6 +846,11 @@ Plus top-level screenshots:
 - `component-gallery-screenshot-light.png` — homepage, full page, light
 - `component-gallery-screenshot-dark.png` — homepage, viewport, dark
 - `component-gallery-article-dark.png` — `/components/accordion/`, dark
+- `component-gallery-mobile-home.png` — homepage, mobile (≈402px CSS width)
+- `component-gallery-mobile-components.png` — `/components` listing, mobile
+- `component-gallery-mobile-component-detail.png` — component detail (Tree view + footer/colophon), mobile
+- `component-gallery-mobile-design-systems.png` — `/design-systems` listing, mobile
+- `component-gallery-mobile-about.png` — `/about`, mobile
 
 ### Font preloads to replicate
 
