@@ -22,7 +22,7 @@ These guidelines attempt to bring order to the chaos.
 
 The most consequential change is site-specific validation. The ACR now explicitly states that vendor-provided performance data is insufficient for deployment decisions: each site must validate AI tools against its own patient population, workflow, and imaging protocols. For emergency departments running 24/7 with heterogeneous scanners, this is both welcome and burdensome: welcome because emergency populations are underrepresented in most training datasets, burdensome because validation infrastructure requires resources many departments lack.
 
-Continuous performance monitoring is no longer a suggestion; it is a defined expectation, with minimum requirements for tracking sensitivity, specificity, and false positive rates over time. The unspoken challenge is who does this work, and in most departments the answer is unclear.
+Continuous performance monitoring is no longer a suggestion. It is a defined expectation, with minimum requirements for tracking sensitivity, specificity, and false positive rates over time. The unspoken challenge is who does this work, and in most departments the answer is unclear.
 
 The guidelines also introduce documentation requirements when radiologists override AI recommendations. The stated purpose is quality improvement, but the medicolegal implications are obvious and unaddressed.
 
@@ -38,4 +38,4 @@ Cost goes unmentioned: per-study AI licensing fees are nontrivial at emergency r
 
 ## The Bottom Line
 
-These guidelines are a step forward in formalizing what responsible AI deployment looks like. But they create new obligations without addressing the resource constraints that make compliance difficult. Emergency radiology departments should begin planning validation infrastructure now; the expectation is set, even if the timeline is not.
+These guidelines are a step forward in formalizing what responsible AI deployment looks like. But they create new obligations without addressing the resource constraints that make compliance difficult. Emergency radiology departments should begin planning validation infrastructure now. The expectation is set, even if the timeline is not.

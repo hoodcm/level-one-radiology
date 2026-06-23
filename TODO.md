@@ -24,6 +24,7 @@ Actionable tasks and open questions. Check at session start, update frequently.
 ## Later
 
 - **Build Case Viewer showstopper module**
+- **Decide and verify FeatureBand detector desktop behavior**
 - **Write first educational article (deep-dive)**
 
 ## Someday
@@ -43,10 +44,9 @@ Actionable tasks and open questions. Check at session start, update frequently.
 <!-- todo:friction:start -->
 
 ## Friction worth addressing
-
 _Refreshed 2026-06-23 by end-session janitor · project store_
 
-No project-store items need action right now. The one open project item (`headless-uncapturable-animations`) is in a 90-day observation window, not yet actionable. (This session's two friction items routed to the global store.)
+_No actionable project friction this run — backlog is groomed (2 open items intentionally kept open: feature-band sizing notes, headless-uncapturable animations)._
 
 <!-- todo:friction:end -->
 
@@ -57,17 +57,15 @@ No project-store items need action right now. The one open project item (`headle
 _Last session: 2026-06-23_
 
 **Accomplished:**
-- Shipped a large Anthropic-derived design-polish pass across the homepage and article template — fonts, motion, typography, cards, prose (see CHANGELOG [Unreleased] ### Added / ### Changed)
-- New: full-bleed `FeatureBand` component, scroll-reveal engine, mobile nav clip-path wipe + two-step hamburger morph, desktop wordmark→mark scroll-collapse
-- Fixed the card-padding override bug (`.hud-frame` was stealing `.article-card` padding) — CHANGELOG ### Fixed
-- Trimmed all three articles (removed `###` subheaders + bold run-ins) and removed em dashes from all site copy
+- Reworked the homepage feature band into a scroll-linked X-ray detector panel — blank → peek → widen → boot → fade, mobile-tuned (see CHANGELOG ### Changed)
+- Rebuilt the hero mobile-first: larger two-line wordmark with a baseline mask reveal, smaller serif subtitle, dropped the kicker + inline newsletter
+- Converted all 47 fonts to woff2 and preloaded above-the-fold faces (fixed the on-load text flicker)
+- Standardized featured cards, centered all pill text, recolored the scanline to yellow
 
 **Start by reading:** TODO.md, CONTEXT.md, CHANGELOG.md
 
-**Priorities:** see the worklist `## Now` / `## Next` bands above (About page + article index → Plausible + GitHub Pages DNS).
+**Priorities:** see the worklist `## Now` / `## Next` bands.
 
-**Open questions:** see `## Open questions` above (font licensing; domain DNS).
-
-**Time-sensitive:** none.
+**Time-sensitive:** see the worklist `## Time-sensitive` view.
 
 <!-- todo:continuation:end -->

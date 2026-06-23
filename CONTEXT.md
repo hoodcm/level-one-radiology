@@ -32,7 +32,7 @@ This is owned infrastructure for building a national reputation and thought lead
 - **Plausible** — Privacy-respecting analytics
 - **GitHub Pages** — Hosting and deployment (GitHub Actions workflow; custom domain via `public/CNAME`)
 - **shadcn/ui** — Component abstraction layer (Base UI primitives, Lyra style)
-- **Fonts** — Self-hosted: Utopia Std (display serif), Lab Grotesque (body sans), Eurostile Next W1G (extended-width branding/wordmark) + Eurostile LT Std (normal-width UI labels)
+- **Fonts** — Self-hosted woff2: Utopia Std (display serif), Lab Grotesque (body sans), Eurostile Next W1G (extended-width branding/wordmark) + Eurostile LT Std (normal-width UI labels). Above-the-fold faces preloaded in `Layout.astro`
 
 ---
 

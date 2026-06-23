@@ -77,6 +77,7 @@ export default function NewsletterSignup({
                   fontWeight: 700,
                   letterSpacing: "var(--ls-ui)",
                   textTransform: "uppercase" as const,
+                  lineHeight: 1,
                 }}
               >
                 {status === "loading" ? "..." : "Subscribe"}
@@ -125,6 +126,7 @@ export default function NewsletterSignup({
                 fontWeight: 700,
                 letterSpacing: "var(--ls-ui)",
                 textTransform: "uppercase" as const,
+                lineHeight: 1,
               }}
             >
               {status === "loading" ? "..." : "Subscribe"}

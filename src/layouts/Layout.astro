@@ -45,6 +45,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Preload above-the-fold fonts so they're ready before first paint,
+         avoiding the swap-reflow ("jitter") on the hero text. -->
+    <link rel="preload" href="/fonts/eurostile/eurostile-next-w1g-ext.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/eurostile/eurostile-next-w1g-ext-bold.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/utopia/utopia-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/lab-grotesque/lab-grotesque-regular.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
     <Header />

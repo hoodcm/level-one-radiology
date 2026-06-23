@@ -281,8 +281,10 @@
   font-weight: 700;
   letter-spacing: var(--ls-ui);
   text-transform: uppercase;
+  line-height: 1;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 5px;
   padding: 2px 7px;
   border: 1px solid currentColor;
@@ -366,18 +368,6 @@
   margin-bottom: var(--space-1);
 }
 
-/* Lead card: larger sans title + feature padding (the "equalised zones"
-   archetype — title carries more weight, the box gets more room). */
-.article-card--lead {
-  padding: var(--card-padding-lg);
-}
-
-.article-card--lead .article-card__title {
-  font-size: var(--fz-headline);
-  line-height: var(--lh-display);
-  font-weight: 700;
-}
-
 .article-card__excerpt {
   font-size: var(--fz-body-s);
   line-height: 1.5;
@@ -455,7 +445,8 @@
 .featured-grid__rest {
   display: flex;
   flex-direction: column;
-  gap: var(--space-gutter);
+  /* Match the grid gap so spacing between all featured cards is uniform. */
+  gap: var(--gap-md);
 }
 
 /* --- Newsletter Inline (hero) --- */
@@ -583,7 +574,12 @@
 
 /* --- Hero Section --- */
 .hero {
-  min-height: calc(100vh - var(--nav-height));
+  /* Leave ~30svh at the bottom for the detector peek: min-height stays the
+     binding constraint (subtracting header + the band's small top gap), so on a
+     short phone the card peeks viewport-relative instead of being shoved off.
+     Vertical padding is restored for breathing room above the wordmark — it sits
+     inside min-height (border-box), so it doesn't eat the peek. */
+  min-height: calc(70svh - var(--nav-height) - var(--space-3));
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -602,39 +598,61 @@
    carries just the icon mark. Hidden ≥ 48em (header wordmark takes over). */
 .hero__wordmark {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.4em;
-  margin-bottom: var(--space-4);
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: var(--space-5);
   font-family: var(--ff-ui-ext);
   font-size: var(--fz-wordmark-hero);
-  line-height: 1.05;
+  line-height: 0.92;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-text-ivory);
   text-decoration: none;
 }
 .hero__wordmark:hover { text-decoration: none; }
-.hero__wordmark-level { font-weight: 700; letter-spacing: 0.03em; }
-.hero__wordmark-radiology { font-weight: 400; color: var(--color-text-secondary); }
+
+/* Baseline mask reveal: each line is a clip window; its text rises from below
+   the baseline on load, staggered (Anthropic hero / Scribe card style). The
+   padding/negative-margin pair adds clip-safe room above the caps (the tight
+   0.92 line-height would otherwise shave glyph tops) without shifting layout. */
+.hero__wordmark-line {
+  display: block;
+  overflow: hidden;
+  padding-top: 0.14em;
+  margin-top: -0.14em;
+}
+.hero__wordmark-level,
+.hero__wordmark-radiology {
+  display: block;
+  transform: translateY(105%);
+  animation: hero-wordmark-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.hero__wordmark-level { font-weight: 700; letter-spacing: 0.03em; animation-delay: 0.12s; }
+.hero__wordmark-radiology { font-weight: 400; color: var(--color-text-secondary); animation-delay: 0.26s; }
+
+@keyframes hero-wordmark-rise {
+  from { transform: translateY(105%); }
+  to   { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__wordmark-level,
+  .hero__wordmark-radiology { transform: none; animation: none; }
+}
 
 @media (min-width: 48em) {
   .hero__wordmark { display: none; }
 }
 
-.hero__label {
-  margin-bottom: var(--space-3);
-}
-
+/* Subtitle: a short serif statement of what the site is (Anthropic-style
+   supporting paragraph under the headline). */
 .hero__tagline {
-  max-width: 20ch;
-  margin-bottom: var(--space-3);
-  font-weight: 500;
-}
-
-.hero__value-prop {
-  max-width: 42ch;
-  margin-bottom: var(--space-5);
+  max-width: 34ch;
+  font-family: var(--ff-display);
+  font-size: var(--fz-hero-subtitle);
+  line-height: 1.2;
+  font-weight: 400;
+  color: var(--color-text-secondary);
 }
 
 /* --- Feature Band (full-bleed scroll-expand) --- */
@@ -642,91 +660,157 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  padding-block: var(--section-spacer);
+  /* Small top gap (matches the hero min-height math so the peek lands at 30svh);
+     normal section spacing below. */
+  padding-top: var(--space-3);
+  padding-bottom: var(--section-spacer);
   background: var(--color-bg-deepest);
 }
 
-/* Contained at rest (centered card with gutters + radius); expands to the full
-   viewport width when scrolled into view. width/max-width animate the breakout;
-   it reverses when the band leaves the viewport. */
+/* Contained card that WIDENS to full-bleed as it scrolls up the viewport. The
+   widen is scroll-LINKED: `--fb-progress` (0→1, set per frame by the component
+   script) interpolates width / max-width / radius / border, so the card sits at
+   page-width gutters at rest and only reaches the edges as it scrolls in. The
+   DETECTOR (not the card) falls away at the top via `fb-faded`. */
 .feature-band__surface {
+  --fb-progress: 0;
   position: relative;
   display: flex;
   align-items: center;
-  width: calc(100% - var(--space-outer) * 2);
-  max-width: var(--grid-max-width);
-  min-height: 320px;
+  width: calc(100% - var(--space-outer) * 2 * (1 - var(--fb-progress)));
+  max-width: calc(var(--grid-max-width) + (100% - var(--grid-max-width)) * var(--fb-progress));
+  min-height: var(--fb-card-min-h);
   overflow: hidden;
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-lg);
-  background: var(--color-bg-secondary);
-  transition:
-    width 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    max-width 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    border-radius 0.6s ease,
-    border-color 0.6s ease;
-}
-
-.feature-band__surface.is-revealed {
-  width: 100%;
-  max-width: 100%;
-  border-radius: 0;
-  border-color: transparent;
+  border: 1px solid rgba(255, 255, 255, calc(0.08 * (1 - var(--fb-progress))));
+  border-radius: calc(var(--radius-lg) * (1 - var(--fb-progress)));
+  background: var(--color-bg-primary);
 }
 
 .feature-band__visual {
   position: absolute;
   inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
+  /* The detector just fades out (card stays) when fb-faded is set at the top —
+     subtle, no fall. */
+  transition: opacity 0.7s ease;
+}
+.feature-band__surface.fb-faded .feature-band__visual {
+  opacity: 0;
 }
 .feature-band__visual svg {
-  width: 100%;
-  height: 100%;
+  /* Square panel sized to the DEFAULT (contained) card width and held there:
+     it fills the card at rest and does NOT scale or shift as the card widens on
+     scroll, so it reads as a steady X-ray panel rather than stretching lines.
+     Capped by the card height so the square never overflows vertically. */
+  width: min(calc(100vw - var(--space-outer) * 2), var(--fb-card-min-h));
+  height: auto;
+  aspect-ratio: 1 / 1;
   display: block;
+  /* glow so the bright HUD strokes read crisply on the dark panel */
+  filter: drop-shadow(0 0 2px rgba(239, 234, 224, 0.45));
 }
 
-.feature-band__content {
-  position: relative;
-  max-width: 44ch;
-  padding: var(--card-padding-lg) var(--space-outer);
+/* --- Boot-up sequence ---
+   The HUD is hidden by default (opacity 0) so it never flashes on first paint —
+   the card reads as blank at rest until you scroll. `is-booted` runs the boot
+   choreography (forwards fill holds the resolved state until toggled off on the
+   top-reset). Under reduced motion the static HUD is shown instead (below). */
+.feature-band__surface .fb-grid,
+.feature-band__surface .fb-panel-l,
+.feature-band__surface .fb-panel-r,
+.feature-band__surface .fb-center-1,
+.feature-band__surface .fb-center-2,
+.feature-band__surface .fb-scan,
+.feature-band__surface .fb-bk {
+  opacity: 0;
 }
 
-.feature-band__eyebrow {
-  margin-bottom: var(--space-2);
+.feature-band__surface.is-booted .fb-grid {
+  animation: fb-cut 200ms linear 200ms forwards;
+}
+.feature-band__surface.is-booted .fb-panel-l {
+  animation: fb-flicker 320ms steps(1, jump-start) 350ms forwards;
+}
+.feature-band__surface.is-booted .fb-panel-r {
+  animation: fb-flicker 320ms steps(1, jump-start) 420ms forwards;
+}
+.feature-band__surface.is-booted .fb-center-1 {
+  animation: fb-flicker 300ms steps(1, jump-start) 500ms forwards;
+}
+.feature-band__surface.is-booted .fb-center-2 {
+  animation: fb-flicker 300ms steps(1, jump-start) 580ms forwards;
+}
+.feature-band__surface.is-booted .fb-bk-tl { animation: fb-snap-tl 420ms cubic-bezier(0.1, 1.5, 0.92, 1) 300ms forwards; }
+.feature-band__surface.is-booted .fb-bk-tr { animation: fb-snap-tr 420ms cubic-bezier(0.1, 1.5, 0.92, 1) 300ms forwards; }
+.feature-band__surface.is-booted .fb-bk-bl { animation: fb-snap-bl 420ms cubic-bezier(0.1, 1.5, 0.92, 1) 300ms forwards; }
+.feature-band__surface.is-booted .fb-bk-br { animation: fb-snap-br 420ms cubic-bezier(0.1, 1.5, 0.92, 1) 300ms forwards; }
+.feature-band__surface.is-booted .fb-scan {
+  animation: fb-sweep 820ms cubic-bezier(0.4, 0, 0.2, 1) 500ms forwards;
 }
 
-.feature-band__headline {
-  font-family: var(--ff-display);
-  font-size: var(--fz-display);
-  line-height: var(--lh-display);
-  letter-spacing: -0.01em;
-  color: var(--color-text-ivory);
-  margin-bottom: var(--space-3);
+@keyframes fb-cut { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fb-flicker {
+  0% { opacity: 0; }
+  25% { opacity: 0.6; }
+  40% { opacity: 0; }
+  55% { opacity: 1; }
+  70% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+@keyframes fb-sweep {
+  0%   { transform: translateY(-512px); opacity: 0; }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { transform: translateY(512px); opacity: 0; }
+}
+@keyframes fb-snap-tl {
+  0%   { transform: translate(-40px, -40px); opacity: 0; }
+  10%  { opacity: 1; }
+  30%  { opacity: 0; }
+  40%  { opacity: 1; }
+  100% { transform: translate(0, 0); opacity: 1; }
+}
+@keyframes fb-snap-tr {
+  0%   { transform: translate(40px, -40px); opacity: 0; }
+  10%  { opacity: 1; }
+  30%  { opacity: 0; }
+  40%  { opacity: 1; }
+  100% { transform: translate(0, 0); opacity: 1; }
+}
+@keyframes fb-snap-bl {
+  0%   { transform: translate(-40px, 40px); opacity: 0; }
+  10%  { opacity: 1; }
+  30%  { opacity: 0; }
+  40%  { opacity: 1; }
+  100% { transform: translate(0, 0); opacity: 1; }
+}
+@keyframes fb-snap-br {
+  0%   { transform: translate(40px, 40px); opacity: 0; }
+  10%  { opacity: 1; }
+  30%  { opacity: 0; }
+  40%  { opacity: 1; }
+  100% { transform: translate(0, 0); opacity: 1; }
 }
 
-.feature-band__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-  font-family: var(--ff-ui);
-  font-size: var(--fz-nav);
-  font-weight: 700;
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
-  color: var(--color-signal-cyan);
-  text-decoration: none;
-}
-.feature-band__cta:hover { text-decoration: none; color: var(--color-text-ivory); }
-
-/* Reduced motion: keep the band contained, no expand, no transition. */
+/* Reduced motion: the script never runs, so --fb-progress stays 0 and the card
+   is contained. Pin border-color (the alpha calc above resolves to the same
+   value at progress 0) and drop the fade transition for safety. */
 @media (prefers-reduced-motion: reduce) {
-  .feature-band__surface,
-  .feature-band__surface.is-revealed {
-    width: calc(100% - var(--space-outer) * 2);
-    max-width: var(--grid-max-width);
-    border-radius: var(--radius-lg);
+  .feature-band__surface {
     border-color: var(--color-border-default);
     transition: none;
+  }
+  /* No boot runs, so reveal the static HUD (sans the sweep scanline). */
+  .feature-band__surface .fb-grid,
+  .feature-band__surface .fb-panel-l,
+  .feature-band__surface .fb-panel-r,
+  .feature-band__surface .fb-center-1,
+  .feature-band__surface .fb-center-2,
+  .feature-band__surface .fb-bk {
+    opacity: 1;
   }
 }
 
@@ -747,4 +831,10 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--space-4);
+}
+
+/* "Featured" label: Eurostile extended, larger than the default UI label. */
+.featured-section__header h2 {
+  font-family: var(--ff-ui-ext);
+  font-size: var(--fz-card-title);
 }

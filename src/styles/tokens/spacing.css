@@ -48,6 +48,9 @@
   --radius-lg: 1rem;      /* 16px — large media panels */
   --radius-pill: 100vw;
 
+  /* Feature-band detector card */
+  --fb-card-min-h: 23.125rem;  /* 370px — card height; kept just above the HUD width so the panel fills it with a little vertical padding */
+
   /* Card padding (grows at breakpoints below) */
   --card-padding-sm: 1rem;     /* 16px — code, compact */
   --card-padding-md: 1.5rem;   /* 24px — standard card */

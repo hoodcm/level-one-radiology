@@ -8,10 +8,9 @@ interface Props {
   primaryTag: string;
   contentType: string;
   slug: string;
-  isLead?: boolean;
 }
 
-const { title, description, publishDate, primaryTag, contentType, slug, isLead = false } = Astro.props;
+const { title, description, publishDate, primaryTag, contentType, slug } = Astro.props;
 
 const tagVariantMap: Record<string, 'default' | 'signal-red' | 'signal-cyan' | 'signal-violet' | 'signal-yellow' | 'signal-orange'> = {
   'TRAUMA': 'signal-red',
@@ -39,7 +38,7 @@ const formattedDate = new Date(publishDate).toLocaleDateString('en-US', {
 });
 ---
 
-<a href={`/articles/${slug}`} class:list={["article-card hud-frame", { "article-card--lead": isLead }]}>
+<a href={`/articles/${slug}`} class="article-card hud-frame">
   <span class="hud-corner-bl" aria-hidden="true"></span>
   <span class="hud-corner-br" aria-hidden="true"></span>
   <div class="article-card__tags">

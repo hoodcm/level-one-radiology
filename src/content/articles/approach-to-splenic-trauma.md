@@ -8,7 +8,7 @@ contentType: "educational"
 featured: true
 keyPoints:
   - "Active extravasation on CT does not always mandate surgery: contained vs. free extravasation matters"
-  - "AAST grade alone is insufficient; vascular findings drive management decisions"
+  - "AAST grade alone is insufficient. Vascular findings drive management decisions"
   - "Delayed splenic rupture is a real entity: 48-72 hour imaging follow-up is not optional"
 ---
 
@@ -18,17 +18,17 @@ Splenic injury is the most common solid organ injury in blunt abdominal trauma. 
 
 ## The Systematic Approach
 
-Start with identification. Look for perisplenic fluid, parenchymal disruption, and subcapsular collections; the spleen's homogeneous enhancement on portal venous phase makes lacerations and hematomas relatively conspicuous.
+Start with identification. Look for perisplenic fluid, parenchymal disruption, and subcapsular collections. The spleen's homogeneous enhancement on portal venous phase makes lacerations and hematomas relatively conspicuous.
 
 Then grade the injury. The AAST Organ Injury Scale provides a common language, but it was designed for operative findings, not CT, so imaging-based grading correlates imperfectly with surgical grade.
 
-The vascular survey is where the critical decisions are made. Active extravasation, pseudoaneurysm, and arteriovenous fistula all represent vascular injuries, but they carry different implications. Active extravasation appears as a focus of contrast that increases in attenuation from arterial to portal venous phase; the key distinction is whether it is contained within the splenic parenchyma or free in the peritoneal cavity.
+The vascular survey is where the critical decisions are made. Active extravasation, pseudoaneurysm, and arteriovenous fistula all represent vascular injuries, but they carry different implications. Active extravasation appears as a focus of contrast that increases in attenuation from arterial to portal venous phase. The key distinction is whether it is contained within the splenic parenchyma or free in the peritoneal cavity.
 
 Finally, assess for associated injuries. Splenic injury rarely occurs in isolation: evaluate the left hemidiaphragm, left kidney, pancreatic tail, and left lower ribs.
 
 ## Decision Framework
 
-The management algorithm integrates hemodynamic status, injury grade, and vascular findings. No single imaging feature dictates management; it is the combination that matters.
+The management algorithm integrates hemodynamic status, injury grade, and vascular findings. No single imaging feature dictates management. It is the combination that matters.
 
 ## Key Takeaway
 

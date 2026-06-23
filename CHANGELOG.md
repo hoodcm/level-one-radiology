@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-06-23
+
+### Added
+- Above-the-fold font preloads (`Layout.astro`): Eurostile ext regular/bold, Utopia regular, Lab Grotesque regular — eliminates the hero font-swap reflow flash on load
+
+### Changed
+- Converted the full self-hosted font library (47 faces) from `.otf`/`.ttf` to woff2 (~50% smaller); every `@font-face` repointed, originals moved out of the repo
+- Homepage hero rebuilt mobile-first: dropped the kicker line and inline newsletter, enlarged the two-line wordmark (`--fz-wordmark-hero` → 2.5rem, 0.92 leading), replaced the tagline with a smaller serif statement (`--fz-hero-subtitle`)
+- Hero wordmark animates in via a staggered baseline mask reveal (lines rise from clip windows); held static under `prefers-reduced-motion`
+- Feature band reworked into a scroll-linked X-ray detector panel — blank at rest, peeks ~30svh on load, widens contained→full-bleed on scroll (`--fb-progress`), boots its HUD once scrolled past the peek, detector fades out (card stays) ~1.5s after returning to top
+- Feature-band HUD is a fixed-size square panel (sized to the contained card width via `--fb-card-min-h`) that does not scale as the card widens; scanline recolored cyan → yellow
+- Featured cards render uniformly (lead-card special formatting removed, gaps unified to `--gap-md`); "Featured" label set in Eurostile W1G extended, larger
+- All pill text vertically centered (`line-height: 1` on tags + the Subscribe button) — uppercase Eurostile was sitting high in the boxes
+- Removed semicolons from the three seed articles' body copy, per the site's no-semicolon copy rule
+
 ## [0.4.0] - 2026-06-23
 
 ### Added

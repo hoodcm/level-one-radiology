@@ -2,7 +2,6 @@
 import Layout from '@/layouts/Layout.astro';
 import ArticleCard from '@/components/shared/ArticleCard.astro';
 import FeatureBand from '@/components/shared/FeatureBand.astro';
-import NewsletterSignup from '@/components/shared/NewsletterSignup.tsx';
 import { getCollection } from 'astro:content';
 
 const allArticles = await getCollection('articles');
@@ -20,15 +19,10 @@ const restArticles = featuredArticles.slice(1);
     <div class="hero__inner">
       <!-- Brand wordmark, mobile only; on desktop the header carries it. -->
       <a href="/" class="hero__wordmark" aria-label="Level One Radiology, home">
-        <span class="hero__wordmark-level">Level One</span>
-        <span class="hero__wordmark-radiology">Radiology</span>
+        <span class="hero__wordmark-line"><span class="hero__wordmark-level">Level One</span></span>
+        <span class="hero__wordmark-line"><span class="hero__wordmark-radiology">Radiology</span></span>
       </a>
-      <p class="type-ui hero__label">Independent Emergency Radiology</p>
-      <h1 class="type-display-l hero__tagline">Timely coverage meets educational rigor.</h1>
-      <p class="type-body-secondary hero__value-prop">
-        Substantive analysis of emergency radiology: clinical deep-dives, case-based education, and field commentary from a practicing radiologist. One article at a time.
-      </p>
-      <NewsletterSignup client:load variant="inline" />
+      <h1 class="hero__tagline">An independent emergency radiology publication. Clinical deep-dives, teaching cases, and field notes from a practicing radiologist.</h1>
     </div>
   </section>
 
@@ -52,7 +46,6 @@ const restArticles = featuredArticles.slice(1);
                 primaryTag={leadArticle.data.primaryTag}
                 contentType={leadArticle.data.contentType}
                 slug={leadArticle.id}
-                isLead={true}
               />
             </div>
           )}

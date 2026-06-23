@@ -9,7 +9,7 @@ featured: true
 keyPoints:
   - "The C-sign or U-sign of converging mesenteric vessels at the transition point is pathognomonic"
   - "Reduced wall enhancement is the most specific sign of ischemia, not wall thickening"
-  - "Pneumatosis and portal venous gas are late findings; waiting for them delays surgery"
+  - "Pneumatosis and portal venous gas are late findings. Waiting for them delays surgery"
 ---
 
 ## The Clinical Problem
