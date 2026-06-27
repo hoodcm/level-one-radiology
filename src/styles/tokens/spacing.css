@@ -21,7 +21,6 @@
   /* Semantic Spacing */
   --space-gutter: var(--space-2);
   --space-gutter-v: calc(var(--space-2) * 4);
-  --space-outer: 2rem;          /* 32px mobile gutter (Anthropic-style); grows 40 → 56 */
   --space-inner: var(--space-2);
 
   /* Navigation */
@@ -30,9 +29,13 @@
   --nav-item-gap: 1rem;
   --nav-padding-h: 0.5rem;
 
-  /* Grid */
-  --grid-columns: 4;
-  --grid-gap: var(--space-gutter);
+  /* Grid — three first-class layout roles, breakpoint-aware:
+     margin  = page edge → content   (grows 32 → 40 → 56)
+     gutter  = between columns        (constant 16px)
+     columns = track count            (6 → 12 → 18; 1 mobile col = 2 tablet = 3 desktop) */
+  --grid-columns: 6;
+  --grid-gutter: var(--space-2);   /* 16px */
+  --grid-margin: 2rem;             /* 32px */
   --grid-max-width: 1440px;
 
   /* Nested content widths — prose / media / page shell are capped
@@ -70,14 +73,15 @@
 @media (min-width: 37.5em) {
   :root {
     --grid-columns: 12;
-    --space-outer: 2.5rem;       /* 40px — page gutter grows */
+    --grid-margin: 2.5rem;       /* 40px — page margin grows */
     --card-padding-lg: 2.5rem;   /* 40px */
   }
 }
 
 @media (min-width: 60em) {
   :root {
-    --space-outer: 3.5rem;                 /* 56px */
+    --grid-columns: 18;
+    --grid-margin: 3.5rem;                 /* 56px */
     --card-padding-md: 2rem;               /* 32px */
     --card-padding-lg: 3rem;               /* 48px */
     --section-spacer: var(--space-8);      /* 96px */
@@ -88,17 +92,11 @@
   }
 }
 
-/* Grid utility */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(var(--grid-columns), minmax(10px, 1fr));
-  gap: var(--space-gutter-v) var(--grid-gap);
-  width: 100%;
-}
-
-/* Container utility */
+/* Container utility — used by the article template ([slug].astro). Multi-column
+   layout is owned by <Grid>/<Col>; there is no `.grid` utility (it would diverge
+   from <Grid>'s gutter model). */
 .container {
   max-width: var(--grid-max-width);
   margin: 0 auto;
-  padding: 0 var(--space-outer);
+  padding: 0 var(--grid-margin);
 }

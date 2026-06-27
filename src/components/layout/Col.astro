@@ -1,0 +1,46 @@
+---
+/**
+ * Col — a child of <Grid> spanning N columns of the active tier. Author a
+ * desktop layout as explicitly as a mobile one: pass a scalar for all tiers,
+ * or a per-tier object { base, md, lg } (mobile / ≥600px / ≥960px). Each tier
+ * inherits the next-smaller value when omitted. Span counts are read against
+ * the active --grid-columns (6 / 12 / 18), so an 11/18 lg span ≈ 61% width.
+ *
+ * Default (no span) = full width: a bare <Col> stacks — the mobile-first base.
+ */
+interface Props {
+  span?: number | { base?: number; md?: number; lg?: number };
+  class?: string;
+}
+const { span, class: className } = Astro.props;
+const spans = typeof span === 'number' ? { base: span } : (span ?? {});
+const styleDecls = [
+  spans.base != null && `--_col-base: ${spans.base};`,
+  spans.md != null && `--_col-md: ${spans.md};`,
+  spans.lg != null && `--_col-lg: ${spans.lg};`,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<div class:list={['l1-col', className]} style={styleDecls || undefined}>
+  <slot />
+</div>
+
+<style>
+  /* Fallback chain: each tier inherits the next-smaller span, then the full
+     grid width when nothing is set (mobile-first stack). */
+  .l1-col {
+    grid-column: span var(--_col-base, var(--grid-columns));
+  }
+  @media (min-width: 37.5em) {
+    .l1-col {
+      grid-column: span var(--_col-md, var(--_col-base, var(--grid-columns)));
+    }
+  }
+  @media (min-width: 60em) {
+    .l1-col {
+      grid-column: span var(--_col-lg, var(--_col-md, var(--_col-base, var(--grid-columns))));
+    }
+  }
+</style>

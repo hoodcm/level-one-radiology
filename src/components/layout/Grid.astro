@@ -1,0 +1,29 @@
+---
+/**
+ * Grid — the responsive column track. Lays out children across
+ * --grid-columns (6 mobile → 12 tablet → 18 desktop). The column gutter is the
+ * constant --grid-gutter (16px). The row gap (between wrapped/stacked rows)
+ * defaults to the same gutter but is a separate axis — pass `rowGap` (any CSS
+ * length or token) when stacked content needs more vertical rhythm, e.g. a
+ * footer collapsing to one column on mobile. Children are <Col> elements.
+ * Never hand-roll `grid-template-columns`.
+ */
+interface Props {
+  rowGap?: string;
+  class?: string;
+}
+const { rowGap, class: className } = Astro.props;
+---
+
+<div class:list={['l1-grid', className]} style={rowGap ? `--_grid-row-gap: ${rowGap};` : undefined}>
+  <slot />
+</div>
+
+<style>
+  .l1-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+    column-gap: var(--grid-gutter);
+    row-gap: var(--_grid-row-gap, var(--grid-gutter));
+  }
+</style>

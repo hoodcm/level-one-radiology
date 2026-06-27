@@ -73,6 +73,7 @@ Detailed specifications live in dedicated documents:
 | [BRAND-FOUNDATION.md](docs/BRAND-FOUNDATION.md) | Content strategy, audience, conversion flow |
 | [DESIGN-METHODOLOGY.md](docs/DESIGN-METHODOLOGY.md) | Foundational Fictive Kin principles (modify with care) |
 | [DESIGN-PRINCIPLES.md](docs/DESIGN-PRINCIPLES.md) | Design philosophy, aesthetic decisions |
+| [principles/](docs/principles/README.md) | Reasoning layer — *how* to choose a token (spacing tier, column span, measure) when a spec is silent. Tokens-first; tokens win on conflict |
 | [DESIGN-TOKENS.md](docs/DESIGN-TOKENS.md) | Exact color/typography/spacing values for CSS |
 | [COMPONENT-LIBRARY.md](docs/COMPONENT-LIBRARY.md) | Module specs, component CSS patterns |
 | [TECHNICAL-ARCHITECTURE.md](docs/TECHNICAL-ARCHITECTURE.md) | Stack decisions, performance targets, workflows |
@@ -81,8 +82,9 @@ Detailed specifications live in dedicated documents:
 ## Key Design Decisions
 
 - **Dark-first:** `#0B0A08` deepest background, warm bias (R+1, B-2)
-- **Typography:** Utopia Std (display) / Lab Grotesque (body) / Eurostile LT Std (UI)
+- **Typography:** Newsreader (display) / DM Sans (body) / Michroma (UI/brand) / Chivo Mono (mono) — OFL faces; the prior self-hosted faces (Utopia / Lab Grotesque / Eurostile / IBM Plex Mono) are retained as CSS fallbacks
 - **Density:** "Tight, not cramped" — 48px nav, 16px body, 11px UI text
+- **Layout uses the grid primitive:** page shells use `<Container>`; multi-column layouts use `<Grid>`/`<Col span>` (6/12/18 columns mobile/tablet/desktop). **Never** hand-roll `grid-template-columns` or re-declare `max-width + margin:auto + padding` container shells in component CSS — that duplication is what the primitive removes. New margin/gutter/column needs are tokens (`--grid-margin`/`--grid-gutter`/`--grid-columns`), never literals. See [docs/principles/layout-principles.md](docs/principles/layout-principles.md).
 - **Signal colors are functional:** Red=CTA/critical, Cyan=links, Yellow=caution, Violet=tech
 - **Primary metric:** Email subscribers. Every design choice serves conversion.
 

@@ -19,6 +19,7 @@ This is owned infrastructure for building a national reputation and thought lead
 - **Smart Brevity** — Writing structure from Axios: headline, lede, why it matters, go deeper. Combined with a human teaching voice.
 - **Case Viewer** — The "showstopper module." PACS-like image viewer for clinical cases, embedded within articles. Custom-built, not using shadcn primitives.
 - **Surface hierarchy** — Six-level background system from near-black (#0B0A08) to mid-gray (#333230), using warm bias formula (R=G+1, B=G-2).
+- **Layout grid primitive** — Page layout goes through `<Container>`/`<Grid>`/`<Col>` (`src/components/layout/`), backed by first-class margin/gutter/column tokens with a responsive column count (mobile → tablet → desktop). Hand-rolling `grid-template-columns` or container shells is disallowed (CLAUDE.md rule). The *reasoning* layer — how to choose a token when a spec is silent — lives in `docs/principles/` and sits above the concrete values in DESIGN-TOKENS.md (application order: tokens → principles → polish; tokens win on conflict).
 
 ## Architecture Overview
 
@@ -36,4 +37,4 @@ This is owned infrastructure for building a national reputation and thought lead
 
 ---
 
-*Last updated: 2026-06-23*
+*Last updated: 2026-06-26*

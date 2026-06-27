@@ -15,6 +15,9 @@ Actionable tasks and open questions. Check at session start, update frequently.
 
 ## Next
 
+- **Decide the font-swap trial**
+  The working tree holds an uncommitted trial swapping the four font slots to OFL faces (Newsreader←Utopia, DM Sans←Lab Grotesque, Michroma←Eurostile, Chivo Mono←IBM Plex Mono), loaded from the Google Fonts CDN with the originals kept as fallbacks. Decide the direction: commit as the new typography, revert, or pursue a legitimately-licensed Eurostile equivalent (Square 721 / Zekton) or license real Eurostile Next for the brand/UI slot — the user felt none of the free faces matched Eurostile as well. Baseline restore point is commit 0c7448a (`git reset --hard 0c7448a` discards the trial). Done: the trial is committed, reverted, or superseded by a chosen licensed-font direction.
+  ↳ links: src/layouts/Layout.astro, src/styles/tokens/typography.css
 - **Configure GitHub Pages DNS**
   Configure DNS so leveloneradiology.com resolves to GitHub Pages (A/AAAA + CNAME records at the registrar; enable Pages custom domain + HTTPS). `public/CNAME` already holds `leveloneradiology.com` and the deploy workflow exists — the remaining work is the registrar-side DNS, an external/infra step. Stated priority #2. Related open question: whether the domain is registered yet (see is-domain-dns-configured). Done: leveloneradiology.com serves the deployed site over HTTPS.
 - **Set up Plausible analytics**
@@ -26,6 +29,8 @@ Actionable tasks and open questions. Check at session start, update frequently.
 - **Build Case Viewer showstopper module**
 - **Decide and verify FeatureBand detector desktop behavior**
 - **Write first educational article (deep-dive)**
+- **Enforce the grid primitive with a hook**
+- **Self-host the trial-font woff2 if the trial is kept** — blocked on Decide the font-swap trial
 
 ## Someday
 
@@ -44,9 +49,13 @@ Actionable tasks and open questions. Check at session start, update frequently.
 <!-- todo:friction:start -->
 
 ## Friction worth addressing
-_Refreshed 2026-06-23 by end-session janitor · project store_
+_Refreshed 2026-06-27 by end-session janitor · project store_
 
-_No actionable project friction this run — backlog is groomed (2 open items intentionally kept open: feature-band sizing notes, headless-uncapturable animations)._
+**Quick fixes (0)** — apply directly:
+_None this run._
+
+**Needs design (0)**:
+_None this run._
 
 <!-- todo:friction:end -->
 
@@ -54,18 +63,18 @@ _No actionable project friction this run — backlog is groomed (2 open items in
 
 ## Continuation
 
-_Last session: 2026-06-23_
+_Last session: 2026-06-27_
 
 **Accomplished:**
-- Reworked the homepage feature band into a scroll-linked X-ray detector panel — blank → peek → widen → boot → fade, mobile-tuned (see CHANGELOG ### Changed)
-- Rebuilt the hero mobile-first: larger two-line wordmark with a baseline mask reveal, smaller serif subtitle, dropped the kicker + inline newsletter
-- Converted all 47 fonts to woff2 and preloaded above-the-fold faces (fixed the on-load text flicker)
-- Standardized featured cards, centered all pill text, recolored the scanline to yellow
+- Ran an uncommitted font-swap trial — Newsreader←Utopia, DM Sans←Lab Grotesque, Michroma←Eurostile, Chivo Mono←IBM Plex Mono (token-level, originals kept as fallbacks, loaded from Google Fonts).
+- Built a text-stroke faux-bold for single-weight Michroma (`--wordmark-stroke-*` tokens); tuned the mobile hero "LEVEL ONE / RADIOLOGY" lockup (size, stroke, tracking, line-height, left-edge alignment).
+- Created baseline restore commit `0c7448a` before the trial (`git reset --hard 0c7448a` discards the whole experiment).
+- Explored and rejected Saira (semi-expanded/expanded) and Orbitron for the Eurostile slot.
 
 **Start by reading:** TODO.md, CONTEXT.md, CHANGELOG.md
 
-**Priorities:** see the worklist `## Now` / `## Next` bands.
+**Priorities:** see the worklist `## Now` / `## Next` bands — the font-trial decision is queued there.
 
-**Time-sensitive:** see the worklist `## Time-sensitive` view.
+**Time-sensitive:** none.
 
 <!-- todo:continuation:end -->

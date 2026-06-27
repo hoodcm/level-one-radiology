@@ -6,7 +6,7 @@ first_surfaced: 2026-06-23
 last_touched: 2026-06-23
 depends_on: []
 links: [src/pages/]
-assessed: 2026-06-23
+assessed: 2026-06-26
 ---
 Build the About page (the nav already links ABOUT; no page exists yet). MVP-core
 (CONTEXT names "about page" in MVP scope) and stated priority #1 for next

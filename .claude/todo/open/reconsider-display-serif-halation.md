@@ -6,7 +6,7 @@ first_surfaced: 2026-06-23
 last_touched: 2026-06-23
 depends_on: []
 links: [src/styles/tokens/typography.css]
-assessed: 2026-06-23
+assessed: 2026-06-27
 ---
 Possibly switch the display/body serif away from Utopia Std to a lower-contrast
 face if text halation (high-contrast stroke shimmer on the dark-first

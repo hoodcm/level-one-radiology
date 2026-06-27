@@ -6,7 +6,7 @@ first_surfaced: 2026-06-23
 last_touched: 2026-06-23
 depends_on: []
 links: [src/pages/articles/]
-assessed: 2026-06-23
+assessed: 2026-06-26
 ---
 Build the `/articles` listing page at `src/pages/articles/index.astro` — the
 index that lists all articles (the homepage cards now link through to the

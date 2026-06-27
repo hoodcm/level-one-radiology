@@ -52,6 +52,18 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <link rel="preload" href="/fonts/eurostile/eurostile-next-w1g-ext-bold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/utopia/utopia-regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/lab-grotesque/lab-grotesque-regular.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- TRIAL: candidate replacement faces (Google Fonts, OFL).
+         Newsreader↔Utopia, DM Sans↔Lab Grotesque, Michroma↔Eurostile,
+         Chivo Mono↔IBM Plex Mono. Michroma is single-weight; its bold state is
+         synthesized via -webkit-text-stroke (see --wordmark-stroke in
+         typography.css). Remove this block to revert. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Chivo+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Michroma&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&display=swap"
+    />
   </head>
   <body>
     <Header />

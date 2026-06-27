@@ -1,4 +1,6 @@
 ---
+import Container from '@/components/layout/Container.astro';
+
 const { pathname } = Astro.url;
 
 const navItems: { href: string; label: string; active: boolean }[] = [
@@ -8,7 +10,7 @@ const navItems: { href: string; label: string; active: boolean }[] = [
 ---
 
 <header class="site-header" data-site-header>
-  <div class="site-header__inner">
+  <Container class="site-header__inner">
     <a href="/" class="site-logo" aria-label="Level One Radiology, home">
       <!-- Mobile: icon mark -->
       <svg class="site-logo__mark" viewBox="0 0 439 522" fill="currentColor" aria-hidden="true" focusable="false">
@@ -55,7 +57,7 @@ const navItems: { href: string; label: string; active: boolean }[] = [
         <span class="nav-toggle__line"></span>
       </span>
     </button>
-  </div>
+  </Container>
 </header>
 
 <!-- Full-screen mobile overlay menu, sibling of the header so its fixed

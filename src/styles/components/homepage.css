@@ -13,14 +13,13 @@
   backdrop-filter: blur(12px);
 }
 
+/* Shell (max-width / centering / page margin) comes from <Container>; this
+   rule adds only the header bar's flex layout. */
 .site-header__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 100%;
-  max-width: var(--grid-max-width);
-  margin: 0 auto;
-  padding: 0 var(--space-outer);
 }
 
 .site-logo {
@@ -53,8 +52,18 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-.site-logo__level-one { font-weight: 700; letter-spacing: 0.04em; }
-.site-logo__radiology { font-weight: 600; }
+/* Michroma has one weight — synthesize bold/semibold via text-stroke
+   (font-weight kept at 400 so the browser doesn't add inconsistent synthetic
+   bold on top of the stroke). */
+.site-logo__level-one {
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  -webkit-text-stroke: var(--wordmark-stroke-bold) currentColor;
+}
+.site-logo__radiology {
+  font-weight: 400;
+  -webkit-text-stroke: var(--wordmark-stroke-semi) currentColor;
+}
 
 .site-nav__list {
   display: flex;
@@ -165,7 +174,7 @@
   inset: 0;                    /* full viewport — the sticky header sits on top (z-50) */
   z-index: 40;
   background: var(--color-bg-deepest);
-  padding: calc(var(--nav-height) + var(--space-2)) var(--space-outer) var(--space-6);
+  padding: calc(var(--nav-height) + var(--space-2)) var(--grid-margin) var(--space-6);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -425,27 +434,12 @@
 }
 
 /* --- Featured Grid --- */
-.featured-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--gap-md);
-}
-
-@media (min-width: 60em) {
-  .featured-grid {
-    grid-template-columns: 7fr 5fr;
-    gap: var(--gap-lg);
-  }
-}
-
-.featured-grid__lead {
-  /* Lead card takes the wider column */
-}
-
+/* Layout (columns 11/7 desktop, stacked mobile) is owned by <Grid>/<Col>;
+   these rules style only the cards inside each column. */
 .featured-grid__rest {
   display: flex;
   flex-direction: column;
-  /* Match the grid gap so spacing between all featured cards is uniform. */
+  /* Vertical gap between the stacked non-lead cards within this column. */
   gap: var(--gap-md);
 }
 
@@ -498,25 +492,8 @@
   padding: var(--section-spacer) 0 var(--space-4);
 }
 
-.site-footer__inner {
-  max-width: var(--grid-max-width);
-  margin: 0 auto;
-  padding: 0 var(--space-outer);
-}
-
-.site-footer__grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-5);
-}
-
-@media (min-width: 37.5em) {
-  .site-footer__grid {
-    grid-template-columns: 1fr 1fr 1.5fr;
-    gap: var(--space-4);
-  }
-}
-
+/* Footer shell + columns are owned by <Container>/<Grid>/<Col>
+   (spans 3/3/6 tablet, 5/5/8 desktop; stacked mobile). */
 .site-footer__section-title {
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
@@ -587,13 +564,6 @@
   background: var(--color-bg-deepest);
 }
 
-.hero__inner {
-  max-width: var(--grid-max-width);
-  margin: 0 auto;
-  padding: 0 var(--space-outer);
-  width: 100%;
-}
-
 /* Brand wordmark in the hero — shown only on mobile, where the header
    carries just the icon mark. Hidden ≥ 48em (header wordmark takes over). */
 .hero__wordmark {
@@ -603,7 +573,7 @@
   margin-bottom: var(--space-5);
   font-family: var(--ff-ui-ext);
   font-size: var(--fz-wordmark-hero);
-  line-height: 0.92;
+  line-height: 1.1;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-text-ivory);
@@ -627,8 +597,25 @@
   transform: translateY(105%);
   animation: hero-wordmark-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.hero__wordmark-level { font-weight: 700; letter-spacing: 0.03em; animation-delay: 0.12s; }
-.hero__wordmark-radiology { font-weight: 400; color: var(--color-text-secondary); animation-delay: 0.26s; }
+/* Michroma is single-weight; bold "Level One" via text-stroke (font-weight 400
+   so the browser adds no inconsistent synthetic bold on top). */
+.hero__wordmark-level {
+  font-weight: 400;
+  /* Tracking opened slightly to offset the heavy stroke crowding the stems. */
+  letter-spacing: 0.16em;
+  animation-delay: 0.12s;
+  -webkit-text-stroke: var(--wordmark-stroke-hero) currentColor;
+  /* Cancel the stroke's leftward bleed (stroke is centered on the outline, so
+     it overhangs the left edge by half its width) to keep the L aligned. */
+  padding-left: calc(var(--wordmark-stroke-hero) / 2);
+}
+.hero__wordmark-radiology {
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  animation-delay: 0.26s;
+  -webkit-text-stroke: var(--wordmark-stroke-hero-semi) currentColor;
+  padding-left: calc(var(--wordmark-stroke-hero-semi) / 2);
+}
 
 @keyframes hero-wordmark-rise {
   from { transform: translateY(105%); }
@@ -677,7 +664,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  width: calc(100% - var(--space-outer) * 2 * (1 - var(--fb-progress)));
+  width: calc(100% - var(--grid-margin) * 2 * (1 - var(--fb-progress)));
   max-width: calc(var(--grid-max-width) + (100% - var(--grid-max-width)) * var(--fb-progress));
   min-height: var(--fb-card-min-h);
   overflow: hidden;
@@ -705,7 +692,7 @@
      it fills the card at rest and does NOT scale or shift as the card widens on
      scroll, so it reads as a steady X-ray panel rather than stretching lines.
      Capped by the card height so the square never overflows vertically. */
-  width: min(calc(100vw - var(--space-outer) * 2), var(--fb-card-min-h));
+  width: min(calc(100vw - var(--grid-margin) * 2), var(--fb-card-min-h));
   height: auto;
   aspect-ratio: 1 / 1;
   display: block;
@@ -818,12 +805,6 @@
 .featured-section {
   background: var(--color-bg-primary);
   padding: var(--section-spacer) 0;
-}
-
-.featured-section__inner {
-  max-width: var(--grid-max-width);
-  margin: 0 auto;
-  padding: 0 var(--space-outer);
 }
 
 .featured-section__header {

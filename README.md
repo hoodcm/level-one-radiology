@@ -64,7 +64,7 @@ Writing and editorial guidelines.
 
 **Design philosophy:** Tight, not cramped. Dark-first. Bespoke warmth.
 
-**Typography:** Utopia Std (display) Â· Lab Grotesque (body) Â· Eurostile LT Std (UI)
+**Typography:** Newsreader (display) · DM Sans (body) · Michroma (UI/brand) · Chivo Mono (mono)
 
 **Color foundation:** Minimal warm bias (R+1, B-2), six-level surface hierarchy
 
@@ -108,7 +108,7 @@ npm run build      # Production build → dist/
 npm run preview    # Preview production build
 ```
 
-**Current state:** Homepage and the article page template are built (cards link through to full article views), carrying an Anthropic-derived design system: self-hosted fonts, scroll/feature animations, and dark-first editorial typography. 3 placeholder articles. Next steps: article index, About page, Plausible analytics.
+**Current state:** Homepage and the article page template are built (cards link through to full article views), carrying an Anthropic-derived design system: a 6/12/18 grid primitive, OFL webfonts (via Google Fonts), scroll/feature animations, and dark-first editorial typography. 3 placeholder articles. Next steps: self-host the webfonts, article index, About page, Plausible analytics.
 
 ---
 

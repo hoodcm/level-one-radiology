@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-06-27
+
+### Added
+- Layout grid primitive (`src/components/layout/`): `<Container>` (page shell — width cap + centering + page margin; `width` prop maps to `--grid-max-width`/`--media-column`/`--reading-column`), `<Grid>` (responsive column track with constant `--grid-gutter` column gap + separate overridable `rowGap`), `<Col span>` (spans the active tier's columns; scalar or per-tier `{base,md,lg}`, mobile-first full-width default). Replaces hand-rolled `grid-template-columns` and re-declared container shells
+- Design-system reasoning layer (`docs/principles/`): `README.md` (application order — tokens → principles → polish, tokens win on conflict), plus `layout-`, `spacing-`, `typography-principles.md` and `accessibility.md`, adapted from the typeui `fundamentals/` model and wired to Level One's own tokens/methodology. Linked from CLAUDE.md
+- CLAUDE.md "Key Design Decisions" rule forbidding hand-rolled `grid-template-columns`/container shells; layout must go through the primitive
+- Text-stroke faux-bold for single-weight Michroma (`--wordmark-stroke-*` tokens) — synthesizes heavier weights on a one-weight display face; mobile hero wordmark tuned for size/stroke/tracking/line-height and left-edge alignment
+
+### Changed
+- Grid tokens promoted to three first-class, breakpoint-aware roles: `--grid-margin` (page edge → content, 32→40→56), `--grid-gutter` (between columns, constant 16px; renamed from `--grid-gap`), `--grid-columns` (6→12→18 at mobile/≥600px/≥960px; was 4→12). The tiers nest: 1 mobile col = 2 tablet = 3 desktop
+- Migrated the homepage hero/featured-section/header shells and the footer onto `<Container>`/`<Grid>`/`<Col>`; the four duplicated container shells and two hand-rolled grids removed. Featured grid is now an 11/7 desktop split (was 7fr/5fr); footer is 3/3/6 tablet → 5/5/8 desktop (was 1fr/1fr/1.5fr). Column gaps are now the systematic 16px gutter (featured grid was 48px, footer 32px); footer keeps its 48px stacked-mobile rhythm via `<Grid rowGap>`
+- Retired the `--space-outer` token; all consumers (mobile-menu, FeatureBand) now reference `--grid-margin`
+- Typography swapped to OFL faces — Newsreader (display, was Utopia Std), DM Sans (body, was Lab Grotesque), Michroma (UI/brand, was Eurostile), Chivo Mono (mono, was IBM Plex Mono); originals retained as CSS fallbacks. **Gotcha:** loaded from the Google Fonts CDN, not self-hosted like the rest — self-hosting still pending
+
 ## [0.4.1] - 2026-06-23
 
 ### Added

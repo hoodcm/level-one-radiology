@@ -12,6 +12,7 @@ body {
   font-family: var(--ff-body);
   font-size: var(--fz-base);
   line-height: var(--lh-base);
+  letter-spacing: var(--ls-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -6,7 +6,7 @@ first_surfaced: 2026-06-23
 last_touched: 2026-06-23
 depends_on: []
 links: [src/components/case/, docs/COMPONENT-LIBRARY.md]
-assessed: 2026-06-23
+assessed: 2026-06-26
 ---
 Build the Case Viewer — the "showstopper module," a PACS-like image viewer for
 clinical cases embedded within articles. Custom-built React island, not shadcn
