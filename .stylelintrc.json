@@ -1,0 +1,42 @@
+{
+  "plugins": ["stylelint-declaration-strict-value"],
+  "rules": {
+    "scale-unlimited/declaration-strict-value": [
+      [
+        "/color$/",
+        "fill",
+        "stroke",
+        "background",
+        "background-color",
+        "border-color",
+        "border-top-color",
+        "border-right-color",
+        "border-bottom-color",
+        "border-left-color",
+        "outline-color",
+        "grid-template-columns"
+      ],
+      {
+        "ignoreValues": [
+          "/var\\(/",
+          "/color-mix\\(/",
+          "/repeat\\(\\s*var\\(/",
+          "transparent",
+          "currentColor",
+          "currentcolor",
+          "inherit",
+          "initial",
+          "unset",
+          "none"
+        ],
+        "message": "Hard-coded value for `${property}` — use a token from src/styles/tokens/ (e.g. var(--color-…) / var(--grid-…)). See CLAUDE.md and docs/principles/layout-principles.md."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/styles/tokens/**/*.css"],
+      "rules": { "scale-unlimited/declaration-strict-value": null }
+    }
+  ]
+}

@@ -4,6 +4,16 @@
 
 Website for leveloneradiology.com — an independent emergency radiology publication combining the timeliness of Radiology Business with the educational rigor of RadioGraphics. Dark-first, content-driven platform with a singular authorial voice.
 
+## Single Source of Truth (non-negotiable)
+
+Every value that defines how the site looks or behaves is **defined once and referenced everywhere** — never hard-coded inline. Colors, spacing, type sizes and line-heights, grid columns/margins/gutters, radii, font families, breakpoints: each lives in exactly one place — design values in `src/styles/tokens/**` — and every consumer references the token. A literal in a component is a defect even when it renders correctly, because it is the thing that drifts out of sync.
+
+- Need a value that doesn't exist yet? **Add a token, then reference it** — never inline a literal "just this once."
+- Literals belong in exactly one place: the token definitions in `src/styles/tokens/**`.
+- Enforced by `npm run lint` (stylelint + inline-color check, CI-gated) and the PostToolUse token hook. The automated gate hard-blocks colors and `grid-template-columns`; the principle governs **all** style values, including those a linter can't mechanically catch.
+
+This is the project's expression of the global documentation-hygiene single-source-of-truth rule, applied to code tokens.
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -11,7 +21,7 @@ Website for leveloneradiology.com — an independent emergency radiology publica
 | Language | TypeScript |
 | Framework | Astro + React islands |
 | Styling | Tailwind CSS + CSS custom properties |
-| Components | shadcn/ui (Base UI primitives, Lyra style) |
+| Components | shadcn/ui (Base UI primitives, Mira style) |
 | Content | Markdown + YAML frontmatter (git-managed) |
 | Hosting | GitHub Pages |
 | Newsletter | Buttondown |
@@ -25,7 +35,15 @@ Website for leveloneradiology.com — an independent emergency radiology publica
 | `npm run dev` | Dev server (localhost:4321) |
 | `npm run build` | Production build |
 | `npm run preview` | Preview production build |
+| `npm run lint` | Enforce design tokens (no hard-coded colors/grid) — `lint:css` (stylelint) + `lint:markup` (inline-color check). Runs in CI; a violation fails the deploy |
 | `npx shadcn add [name]` | Add shadcn/ui component |
+
+## Documentation Lookups (context7)
+
+When you need current API/usage docs for a library — **Astro 5, Tailwind v4, shadcn/Base UI, or React 19** — use the **context7 MCP server**, not web search or training memory. These libraries move fast and the design tokens, content-collection schema, and `@theme` setup depend on *current* APIs; stale web results have caused wrong turns here before.
+
+- context7 is installed as a **user-scope plugin** (`context7@claude-plugins-official`) — available in every session, no per-project setup. Do **not** add it to a project `.mcp.json`; that just duplicates the plugin.
+- Flow: resolve the library id first (`resolve-library-id`), then fetch docs for the specific topic (`get-library-docs`). Prefer this over `WebSearch`/`WebFetch` for framework questions.
 
 ## Architecture
 
@@ -51,7 +69,7 @@ src/
     Layout.astro          # Base layout
   styles/
     tokens/               # colors.css, typography.css, spacing.css
-    base/                 # reset.css, global.css
+    base/                 # global.css, motion.css
     components/           # Per-component CSS
     main.css              # Import manifest
 
@@ -59,39 +77,60 @@ public/
   CNAME                   # Custom domain for GitHub Pages
   robots.txt              # Search engine directives
   images/articles/        # Images organized by article slug
-  fonts/                  # Self-hosted: Utopia Std, Lab Grotesque, Eurostile LT Std
+  fonts/                  # Self-hosted woff2 fallback faces (active faces load via Google Fonts)
 ```
 
 **Pattern:** Static Astro pages by default. React islands (`client:load`) only for interactive components (newsletter form, case viewer, search).
 
-## Design System Reference
+## Documentation
 
-Detailed specifications live in dedicated documents:
+All project docs are mapped in **[docs/README.md](docs/README.md)** — start there. The design system has
+its own map at **[docs/design/README.md](docs/design/README.md)** (philosophy · tokens · components ·
+reasoning). The single-source-of-truth discipline above governs the docs themselves: **values live in the
+CSS tokens; docs describe and point to them, never restate them. One fact, one home — when you find
+overlap, pick the canonical doc and replace the copy with a link.**
 
-| Document | Use When |
-|----------|----------|
-| [BRAND-FOUNDATION.md](docs/BRAND-FOUNDATION.md) | Content strategy, audience, conversion flow |
-| [DESIGN-METHODOLOGY.md](docs/DESIGN-METHODOLOGY.md) | Foundational Fictive Kin principles (modify with care) |
-| [DESIGN-PRINCIPLES.md](docs/DESIGN-PRINCIPLES.md) | Design philosophy, aesthetic decisions |
-| [principles/](docs/principles/README.md) | Reasoning layer — *how* to choose a token (spacing tier, column span, measure) when a spec is silent. Tokens-first; tokens win on conflict |
-| [DESIGN-TOKENS.md](docs/DESIGN-TOKENS.md) | Exact color/typography/spacing values for CSS |
-| [COMPONENT-LIBRARY.md](docs/COMPONENT-LIBRARY.md) | Module specs, component CSS patterns |
-| [TECHNICAL-ARCHITECTURE.md](docs/TECHNICAL-ARCHITECTURE.md) | Stack decisions, performance targets, workflows |
-| [WRITING-STYLE.md](docs/WRITING-STYLE.md) | Smart Brevity structure, voice, content types |
+**Writing & maintaining docs — keep it this way.** This operationalizes the global documentation-hygiene
+rule (one fact, one home; describe-and-point, never restate a value; current-state-only; one concept per
+doc). In this repo that means:
+
+- **A map at every level** — each directory has a README that indexes it in a one-line-per-doc table, and
+  every doc opens with a single `← parent` backlink, never a heavy breadcrumb bar.
+- **Group by concern** — related docs share a folder (`design/`); supersede a whole doc into `archive/`
+  with a date suffix rather than deleting it or narrating its history inline.
+- **Tight, plain, clean UTF-8** — tables for indexes, short declarative sentences, no filler, no dated
+  per-fact footers. Elegance is the absence of duplication.
+- **Even the rules point, never copy** — a `.claude/rules/` file references the canonical doc; it never
+  restates the doc's content, because a copy is just a second thing to drift.
+
+**Consult the docs as you work — don't go from memory.** Path-scoped rules in `.claude/rules/` auto-surface
+the right guide when you touch the relevant files, and they *point* to the docs rather than copy them:
+
+- Editing site styles / components (`.css` / `.astro` / `.tsx`) → `design-system.md` → the design system.
+- Writing article content (`src/content/**`) → `content.md` → `writing.md` + `brand.md`.
+
+Open the cited doc before making the change.
 
 ## Key Design Decisions
 
-- **Dark-first:** `#0B0A08` deepest background, warm bias (R+1, B-2)
-- **Typography:** Newsreader (display) / DM Sans (body) / Michroma (UI/brand) / Chivo Mono (mono) — OFL faces; the prior self-hosted faces (Utopia / Lab Grotesque / Eurostile / IBM Plex Mono) are retained as CSS fallbacks
-- **Density:** "Tight, not cramped" — 48px nav, 16px body, 11px UI text
-- **Layout uses the grid primitive:** page shells use `<Container>`; multi-column layouts use `<Grid>`/`<Col span>` (6/12/18 columns mobile/tablet/desktop). **Never** hand-roll `grid-template-columns` or re-declare `max-width + margin:auto + padding` container shells in component CSS — that duplication is what the primitive removes. New margin/gutter/column needs are tokens (`--grid-margin`/`--grid-gutter`/`--grid-columns`), never literals. See [docs/principles/layout-principles.md](docs/principles/layout-principles.md).
-- **Signal colors are functional:** Red=CTA/critical, Cyan=links, Yellow=caution, Violet=tech
-- **Primary metric:** Email subscribers. Every design choice serves conversion.
+The load-bearing design facts — palette and the warmth formula, the type families, density, the 6/12/18
+grid, signal-color meanings, the gold primary CTA, the keystone metric — live in the design system
+([docs/design/README.md](docs/design/README.md) → philosophy + tokens) and the CSS tokens in
+`src/styles/tokens/`. They are **not** restated here, because a copy drifts; open those docs when the work
+touches them.
+
+One enforceable rule earns an always-on spot:
+
+- **Layout goes through the grid primitive** — page shells use `<Container>`, multi-column layouts use
+  `<Grid>`/`<Col>`. Never hand-roll `grid-template-columns` or re-declare a `max-width + margin + padding`
+  container shell. The rule and its reasoning live in
+  [docs/design/reasoning/layout.md](docs/design/reasoning/layout.md) (the `grid-template-columns` ban is
+  lint-enforced).
 
 ## Technical Gotchas
 
 - **Tailwind v4**: Use `@tailwindcss/vite` plugin, NOT `@astrojs/tailwind`. No `tailwind.config.mjs`. Use `@theme` directives in CSS.
-- **shadcn/ui schema**: The schema combines style+library into one field. Use `"style": "base-lyra"` in components.json (NOT `"style": "lyra"` + `"library": "base-ui"` as separate fields).
+- **shadcn/ui schema**: The schema combines style+library into one field. Use `"style": "base-mira"` in components.json (NOT `"style": "mira"` + `"library": "base-ui"` as separate fields). Base UI styles are `base-<name>` (vega/nova/maia/lyra/mira/luma/sera/rhea).
 - **node_modules corruption**: If `ERR_MODULE_NOT_FOUND` on astro CLI, `rm -rf node_modules package-lock.json && npm install`.
 - **Astro 5 content collections**: Use `src/content.config.ts` (not `src/content/config.ts`), `glob` loader, `z` from `astro/zod`.
 
@@ -111,26 +150,16 @@ Detailed specifications live in dedicated documents:
 | `CHANGELOG.md` | Change history | After substantive changes |
 | `TODO.md` | Actionable tasks | Frequently |
 
-## Session Startup
+## Session Workflow
 
-At the start of each session:
+**Start of session:** check `TODO.md` (current tasks + open questions), read `CONTEXT.md` (background),
+scan recent `CHANGELOG.md` entries.
 
-1. **Check `TODO.md`** for current tasks and open questions
-2. **Read `CONTEXT.md`** for background understanding
-3. **Scan recent `CHANGELOG.md`** entries for recent changes
+**As you work and at session end, update the file that owns the change:**
 
-## Session Shutdown
-
-At the end of each session:
-
-1. **Update `TODO.md`** — check off completed items, add new tasks discovered
-2. **Update `CHANGELOG.md`** — log substantive changes under `[Unreleased]`
-
-## File Responsibilities
-
-| If you... | Update... |
-|-----------|-----------|
+| If you… | Update… |
+|---------|---------|
 | Complete a task | `TODO.md` — check it off |
 | Add a new task or question | `TODO.md` — add it |
-| Make substantive changes | `CHANGELOG.md` — log under [Unreleased] |
-| Learn something that changes understanding | `CONTEXT.md` — update reference |
+| Make substantive changes | `CHANGELOG.md` — log under `[Unreleased]` |
+| Learn something that changes understanding | `CONTEXT.md` — update the reference |

@@ -1,9 +1,11 @@
 # Spacing Principles
 
+> [← Design system](../README.md)
+
 > The reasoning layer for **whitespace, proximity, and rhythm** — how to choose gaps and padding when the
-> spec is silent. Concrete values live in [DESIGN-TOKENS.md](../DESIGN-TOKENS.md); when a principle here
+> spec is silent. Concrete values live in [tokens.md](../tokens.md); when a principle here
 > conflicts with a token, **the token wins** — flag it. Pairs with the methodology principle
-> *"Tight, Not Cramped"* ([DESIGN-METHODOLOGY.md](../DESIGN-METHODOLOGY.md) §7).
+> *"Tight, Not Cramped"* ([philosophy.md](../philosophy.md) §7).
 
 ---
 
@@ -72,7 +74,7 @@ cramped layouts.
 - **Unrelated regions** (brand ↔ nav ↔ utilities): medium–loose.
 
 Column gutters are **not** a §4 concern — they're the constant `--grid-gutter`, owned by `<Grid>` (see
-[layout-principles.md](layout-principles.md) §0).
+[layout.md](layout.md) §0).
 
 ---
 

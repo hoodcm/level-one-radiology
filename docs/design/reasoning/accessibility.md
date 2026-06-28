@@ -1,10 +1,12 @@
 # Accessibility
 
+> [← Design system](../README.md)
+
 > The **non-negotiable floor**. Unlike the other reasoning docs, accessibility overrides aesthetic
 > preference everywhere — if a design choice and an accessibility requirement conflict, accessibility
 > wins (it does **not** yield to a token). Concrete contrast ratios and target sizes live in
-> [DESIGN-TOKENS.md](../DESIGN-TOKENS.md) §Accessibility and the methodology's Module Standards
-> ([DESIGN-METHODOLOGY.md](../DESIGN-METHODOLOGY.md)).
+> [tokens.md](../tokens.md) §Accessibility and the methodology's Module Standards
+> ([philosophy.md](../philosophy.md)).
 
 Target: **WCAG 2.1 AA** across every module (the methodology's Module Standard).
 
@@ -14,7 +16,7 @@ Target: **WCAG 2.1 AA** across every module (the methodology's Module Standard).
 
 - **Body text ≥ 4.5:1** against its surface; large text (≥24px, or ≥19px bold) ≥ 3:1.
 - The text-on-surface combinations and their measured ratios are tabulated in
-  [DESIGN-TOKENS.md](../DESIGN-TOKENS.md) §Accessibility — pick text/surface pairs from there rather than
+  [tokens.md](../tokens.md) §Accessibility — pick text/surface pairs from there rather than
   eyeballing a new combination. `--color-text-muted` and below are **not** safe for body copy on every
   surface; check the table.
 - Don't place signal colors as text on arbitrary surfaces without checking contrast.
@@ -35,9 +37,12 @@ Never remove focus outlines without an equivalent visible replacement. Focus ord
 
 - Minimum touch target **44 × 44px**.
 - Keep ≥ `--space-1` between adjacent interactive targets so they're separately tappable (see
-  [spacing-principles.md](spacing-principles.md) §6).
+  [spacing.md](spacing.md) §6).
 
 ## 5. Motion
+
+The reduced-motion **floor** lives here; the broader reasoning on *when and how* to animate is
+[motion.md](motion.md).
 
 - Honor `prefers-reduced-motion`: scroll-linked and decorative animation (the FeatureBand detector, nav
   morphs, reveals) must have a reduced/none path.

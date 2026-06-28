@@ -2,7 +2,7 @@
 
 *Smart Brevity structure with human voice*
 
-**Navigation:** [README](../README.md) Â· [Brand Foundation](BRAND-FOUNDATION.md) Â· [Design Methodology](DESIGN-METHODOLOGY.md) Â· [Design Principles](DESIGN-PRINCIPLES.md) Â· [Design Tokens](DESIGN-TOKENS.md) Â· [Component Library](COMPONENT-LIBRARY.md) Â· [Technical Architecture](TECHNICAL-ARCHITECTURE.md) Â· **Writing Style**
+[← Docs](README.md)
 
 ---
 
@@ -10,7 +10,7 @@
 
 > **Brevity is confidence. Length is fear. Short, not shallow.**
 
-Writing style follows the same "tight, not cramped" principle as design. Professional density with human warmthâ€”not sparse, not padded, not performed.
+Writing style follows the same "tight, not cramped" principle as design. Professional density with human warmth—not sparse, not padded, not performed.
 
 Smart Brevity provides the structure. The human layer provides the voice. Structure without voice feels like a textbook. Voice without structure wastes the reader's time. You need both.
 
@@ -18,7 +18,7 @@ Smart Brevity provides the structure. The human layer provides the voice. Struct
 
 ## Part One: The Human Layer
 
-These principles define how Level One sounds. They're drawn from how an experienced radiologist actually teachesâ€”not how textbooks are written or how medical educators perform expertise.
+These principles define how Level One sounds. They're drawn from how an experienced radiologist actually teaches—not how textbooks are written or how medical educators perform expertise.
 
 ### Ground the Learner First
 
@@ -26,7 +26,7 @@ Before teaching a concept, orient the learner. Start with what they've experienc
 
 #### 1. Start with shared experience
 
-Don't open with the conceptâ€”open with the confusion or observation that makes the concept necessary. Put the reader in a situation they recognize.
+Don't open with the concept—open with the confusion or observation that makes the concept necessary. Put the reader in a situation they recognize.
 
 | Abstract opening | Grounded opening |
 |------------------|------------------|
@@ -48,17 +48,17 @@ Acknowledge the general feeling of being lost, not just specific confusions. Thi
 
 Technical concepts feel arbitrary unless learners understand what problem they solve. State the problem explicitly, let it sit for a moment, then introduce the solution as inevitable.
 
-> "Since there's such a big range of densities to represent, we have a problem. Your monitor can only display a few hundred shades of gray. And even more, your eye can only distinguish a few dozen shades. So, how do we represent all these values? The answer is, we can'tâ€”at least not all at once."
+> "Since there's such a big range of densities to represent, we have a problem. Your monitor can only display a few hundred shades of gray. And even more, your eye can only distinguish a few dozen shades. So, how do we represent all these values? The answer is, we can't—at least not all at once."
 
 The solution (windowing) now feels like *the obvious answer to an obvious problem* rather than an arbitrary technical feature someone invented.
 
 #### 4. Ground teaching points in physical reality
 
-Ensure learners build their understanding on a clear foundation of physics, anatomy, and pathophysiologyâ€”not just pattern recognition. Don't use measurements or concepts as given. Explain what they capture physically.
+Ensure learners build their understanding on a clear foundation of physics, anatomy, and pathophysiology—not just pattern recognition. Don't use measurements or concepts as given. Explain what they capture physically.
 
 | Ungrounded | Grounded |
 |------------|----------|
-| "CT scanners measure density in Hounsfield units." | "When we describe something as dense in x-ray or CT terms, we're saying how effectively that material reduces the intensity of a radiation beamâ€”the linear attenuation coefficient. Hounsfield units are the standardized scale for this." |
+| "CT scanners measure density in Hounsfield units." | "When we describe something as dense in x-ray or CT terms, we're saying how effectively that material reduces the intensity of a radiation beam—the linear attenuation coefficient. Hounsfield units are the standardized scale for this." |
 | "Look for a T2 hyperintense lesion." | "T2 signal reflects how quickly protons lose their transverse magnetization. Fluid loses it slowly, so it stays bright. This lesion is holding onto signal like fluid does." |
 | "The AAST grade determines management." | "The grading system is really asking: how much of the spleen is devascularized? That's what predicts whether it will heal or keep bleeding." |
 
@@ -76,26 +76,26 @@ Explain what the thing *is* before listing what to look for. Once the mental mod
 > Look for the double beak sign, mesenteric swirl, and hub-and-spoke edema pattern.
 
 **Do this:**
-> A closed-loop obstruction means a segment of bowel where both the afferent and efferent ends are obstructedâ€”often at the same point, usually from an adhesive band. The bowel can't decompress in either direction.
+> A closed-loop obstruction means a segment of bowel where both the afferent and efferent ends are obstructed—often at the same point, usually from an adhesive band. The bowel can't decompress in either direction.
 
 The framework does the heavy lifting. Once someone understands the anatomy, the signs make sense as manifestations of it.
 
 #### 6. Explain what signs represent
 
-Don't just describe appearancesâ€”teach the underlying mechanism. This makes findings *findable* rather than just *recognizable*.
+Don't just describe appearances—teach the underlying mechanism. This makes findings *findable* rather than just *recognizable*.
 
 | Sign | What to write |
 |------|---------------|
-| Hub-and-spoke mesenteric edema | "This represents venous congestionâ€”the mesenteric veins are obstructed before the arteries, so fluid backs up into the mesentery." |
+| Hub-and-spoke mesenteric edema | "This represents venous congestion—the mesenteric veins are obstructed before the arteries, so fluid backs up into the mesentery." |
 | Double beak sign | "What this actually represents is the single point where the segment is being pinched off." |
 | Thick sections less grainy | "We take the geometric average of multiple thin sections, which improves the signal-to-noise ratio." |
 
 #### 7. Use physical analogies
 
-If someone can imagine holding it or doing it, the concept sticks. These aren't literary metaphorsâ€”they're mental models with physical logic.
+If someone can imagine holding it or doing it, the concept sticks. These aren't literary metaphors—they're mental models with physical logic.
 
-- "Think of twisting a balloon animalâ€”you create one twist, but it obstructs the balloon on both sides of it."
-- "Think of the foot as an arched tic-tac-toe boardâ€”two longitudinal arches and two struts supporting them."
+- "Think of twisting a balloon animal—you create one twist, but it obstructs the balloon on both sides of it."
+- "Think of the foot as an arched tic-tac-toe board—two longitudinal arches and two struts supporting them."
 - "The patient goes through the donut, gets scanned, and the raw output is converted into thin-sliced sections."
 
 #### 8. Give concrete scenarios
@@ -106,7 +106,7 @@ Specific situations are more memorable than categories.
 |----------|----------|
 | High-energy mechanism | Foot pressing against the footboard in a head-on MVC |
 | Axial loading injury | Falling from a height and landing directly on your midfoot |
-| Incidental finding | You're reading a trauma CT and there's a tiny focus of free fluid in the pelvisâ€”no solid organ injury, no other findings |
+| Incidental finding | You're reading a trauma CT and there's a tiny focus of free fluid in the pelvis—no solid organ injury, no other findings |
 
 #### 9. Technical terms come second
 
@@ -116,11 +116,11 @@ Build intuitive understanding first, then name it. The term becomes a label for 
 > The spatial resolution is higher on thin sections, but contrast resolution suffers due to increased noise.
 
 **Do this:**
-> When we scroll on the thin sections, we get great spatial resolution, but they are grainy. On the thicks, it's much easier to see the difference between structuresâ€”the signal-to-noise ratio is better.
+> When we scroll on the thin sections, we get great spatial resolution, but they are grainy. On the thicks, it's much easier to see the difference between structures—the signal-to-noise ratio is better.
 
 #### 10. Show tradeoffs unfolding
 
-Don't just state that a choice has consequencesâ€”demonstrate the consequence by showing what happens when you make the choice.
+Don't just state that a choice has consequences—demonstrate the consequence by showing what happens when you make the choice.
 
 > "Now see the trade-off that we accept with this window. We can differentiate the very similarly dense tissues here, but look at the calvarium. We can't make out any detail in it at all. It's all pure white. Now watch as I widen the window and the brain parenchyma converges on a single shade of gray, but more cortical and trabecular detail come into view."
 
@@ -132,7 +132,7 @@ This teaches *why* the tradeoff exists, not just *that* it exists.
 
 #### 11. Name the learner's confusion
 
-Acknowledge what the reader is probably experiencing. This isn't performative empathyâ€”it's accurate, and naming it builds trust.
+Acknowledge what the reader is probably experiencing. This isn't performative empathy—it's accurate, and naming it builds trust.
 
 - "You might open one of these studies and wonder why there are so many sequences. Which one do I look at?"
 - "A common question is: Is this hyperdense pixel on this head CT actually subarachnoid hemorrhage?"
@@ -231,7 +231,7 @@ Name objections before others raise them. This shows intellectual honesty and di
 
 #### 22. Use rhetorical questions that work
 
-Not empty rhetoricâ€”these should carry argumentative weight. They invite the reader to answer honestly, and the honest answer supports your point.
+Not empty rhetoric—these should carry argumentative weight. They invite the reader to answer honestly, and the honest answer supports your point.
 
 - "Does that really make you less certain that it's a benign adenoma?"
 - "Do you really want to be responsible for the really complicated case?"
@@ -251,7 +251,7 @@ Not how they're supposed to work. Operational honesty helps learners navigate re
 
 #### 24. Clarify role and responsibility
 
-Help learners understand not just what to see, but what's theirs to decideâ€”and what isn't.
+Help learners understand not just what to see, but what's theirs to decide—and what isn't.
 
 > "Remember that the decision to take a patient to the OR is entirely the surgeon's, not yours. You may make findings on an exam that necessitate going to the OR because the surgeon has performed a clinical exam and agrees. But if they disagree with you, they are not going to."
 
@@ -267,7 +267,7 @@ Extract what's actually valuable from hyped or flawed ideas. Don't dismiss whole
 
 #### 26. Appeal to shared experience
 
-"We all know this is mostly true"â€”but only when you've earned it by showing you understand the nuance first.
+"We all know this is mostly true"—but only when you've earned it by showing you understand the nuance first.
 
 > "Practically, you should be able to tell when there's a real bleed. If you're having to equivocate on a pixel, then perhaps it's not real enough to matter, if you know what I mean."
 
@@ -295,11 +295,11 @@ These are formatting tools, not templates. Use them to organize your human voice
 
 ### The Core 4 Framework
 
-Every piece of Level One content can use this architectureâ€”but hold it loosely.
+Every piece of Level One content can use this architecture—but hold it loosely.
 
 | Component | Specification |
 |-----------|---------------|
-| **Headline** | â‰¤6 words. Strong, specific. |
+| **Headline** | ≤6 words. Strong, specific. |
 | **Lede** | One or two sentences. Tell me something useful immediately. |
 | **Why it matters** | Connect finding to clinical action or consequence. |
 | **Go deeper** | Optional expansion. The reader's choice. |
@@ -308,7 +308,7 @@ Every piece of Level One content can use this architectureâ€”but hold it lo
 
 ### Axiom Labels
 
-Use these as signposts when they helpâ€”not as mandatory headers.
+Use these as signposts when they help—not as mandatory headers.
 
 | Label | Use when... |
 |-------|-------------|
@@ -338,7 +338,7 @@ Bullets are for genuinely parallel items that benefit from visual separation. No
 
 ### Bold for Scanning
 
-Bold the phrases a skimmer needs to catch. Not every key termâ€”just the ones that orient the reader.
+Bold the phrases a skimmer needs to catch. Not every key term—just the ones that orient the reader.
 
 > **Two transition points, not one.** This is the key. Simple SBO has a single point where dilated meets decompressed. Closed-loop has two.
 
@@ -360,7 +360,7 @@ These are the SEO workhorses. Written with search intent in mind.
 - Practical section (what do I do with this?)
 - Go deeper (references, related content)
 
-**Length:** 1,500â€“3,000 words. Long enough to be comprehensive, tight enough to respect time.
+**Length:** 1,500–3,000 words. Long enough to be comprehensive, tight enough to respect time.
 
 ### Attractors (Commentary)
 
@@ -374,7 +374,7 @@ These are LinkedIn fuel. Timely response to guidelines, papers, field trends.
 - 2-3 paragraphs of argument
 - Actionable implication
 
-**Length:** 600â€“1,200 words. Speed mattersâ€”respond within days, not weeks.
+**Length:** 600–1,200 words. Speed matters—respond within days, not weeks.
 
 ### Newsletter
 
@@ -383,29 +383,29 @@ These are LinkedIn fuel. Timely response to guidelines, papers, field trends.
 LEVEL ONE WEEKLY
 
 THE BIG THING
-[Most important itemâ€”2-3 paragraphs max]
+[Most important item—2-3 paragraphs max]
 
 ALSO THIS WEEK
 [1-2 shorter items]
 
 QUICK PEARLS
-â€¢ [Pearl 1]
-â€¢ [Pearl 2]
-â€¢ [Pearl 3]
+• [Pearl 1]
+• [Pearl 2]
+• [Pearl 3]
 
 ONE MORE THING
-[Humanizing closerâ€”casual, personal, or funny]
+[Humanizing closer—casual, personal, or funny]
 ```
 
 **Voice:** Slightly more casual than articles. First person. Conversational transitions.
 
-**Length:** 600â€“900 words total. Respect the inbox.
+**Length:** 600–900 words total. Respect the inbox.
 
 ### Social (LinkedIn)
 
 **Format:**
 ```
-[One-line hookâ€”the take, not a teaser]
+[One-line hook—the take, not a teaser]
 
 [2-3 sentences of context or argument]
 
@@ -427,7 +427,7 @@ ONE MORE THING
 
 ### The Syllable Rule
 
-One-syllable words beat two-syllable words beat three-syllable wordsâ€”when meaning is equivalent.
+One-syllable words beat two-syllable words beat three-syllable words—when meaning is equivalent.
 
 | Weak | Strong |
 |------|--------|
@@ -456,7 +456,7 @@ The finding did something. Say so.
 |---------|--------|
 | "A laceration was identified extending to the hilum" | "The laceration extends to the hilum" |
 | "Enhancement is noted within the lesion" | "The lesion enhances" |
-| "The examination was performed" | [Deleteâ€”we know it was performed] |
+| "The examination was performed" | [Delete—we know it was performed] |
 
 ---
 
@@ -468,7 +468,7 @@ The finding did something. Say so.
 > Closed-loop small bowel obstruction is a surgical emergency characterized by obstruction of both the afferent and efferent limbs of a bowel segment, resulting in a closed system that cannot decompress. This entity is associated with rapid progression to strangulation and requires prompt recognition. The following imaging findings should be sought...
 
 **After (human voice):**
-> This is an important diagnosis because it's a surgical emergency. A closed-loop obstruction means a segment of bowel where both the afferent and efferent ends are obstructedâ€”often at the same point, usually from an adhesive band. The bowel can't decompress in either direction, so it strangulates faster than a simple obstruction.
+> This is an important diagnosis because it's a surgical emergency. A closed-loop obstruction means a segment of bowel where both the afferent and efferent ends are obstructed—often at the same point, usually from an adhesive band. The bowel can't decompress in either direction, so it strangulates faster than a simple obstruction.
 >
 > Here are some concrete things to look for.
 

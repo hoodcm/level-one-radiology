@@ -5,7 +5,7 @@ band: question
 first_surfaced: 2026-06-23
 last_touched: 2026-06-23
 depends_on: []
-assessed: 2026-06-23
+assessed: 2026-06-28
 ---
 Open question: are Utopia Std, Lab Grotesque, and Eurostile LT Std properly
 licensed for web use? The font files are placed in `public/fonts/` and self-

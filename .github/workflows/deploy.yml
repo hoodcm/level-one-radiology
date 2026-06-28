@@ -30,6 +30,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint — enforce design tokens (no hard-coded colors/grid)
+        run: npm run lint
+
       - name: Build with Astro
         uses: withastro/action@v5
 

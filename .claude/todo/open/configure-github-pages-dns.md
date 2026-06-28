@@ -5,7 +5,7 @@ band: next
 first_surfaced: 2026-06-23
 last_touched: 2026-06-23
 depends_on: []
-assessed: 2026-06-23
+assessed: 2026-06-28
 ---
 Configure DNS so leveloneradiology.com resolves to GitHub Pages (A/AAAA +
 CNAME records at the registrar; enable Pages custom domain + HTTPS).

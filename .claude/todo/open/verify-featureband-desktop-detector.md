@@ -6,7 +6,7 @@ first_surfaced: 2026-06-23
 last_touched: 2026-06-23
 depends_on: []
 links: [src/components/shared/FeatureBand.astro, src/styles/components/homepage.css]
-assessed: 2026-06-27
+assessed: 2026-06-28
 ---
 The homepage FeatureBand detector card was tuned entirely for mobile this
 session — on-load ~30svh peek, scroll-linked widen (contained→full-bleed via

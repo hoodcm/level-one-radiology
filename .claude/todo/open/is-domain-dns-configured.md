@@ -5,7 +5,7 @@ band: question
 first_surfaced: 2026-06-23
 last_touched: 2026-06-23
 depends_on: []
-assessed: 2026-06-23
+assessed: 2026-06-28
 ---
 Open question: is leveloneradiology.com registered, and is it pointed at GitHub
 Pages? `public/CNAME` declares the domain but that does not confirm registrar

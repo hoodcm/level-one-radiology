@@ -1,102 +1,33 @@
-# Level One Radiology: Component Library
+# Components
 
-*Module specifications and component CSS*
+> [← Design system](README.md) · [Docs](../README.md)
 
-**Navigation:** [README](../README.md) Â· [Brand Foundation](BRAND-FOUNDATION.md) Â· [Design Methodology](DESIGN-METHODOLOGY.md) Â· [Design Principles](DESIGN-PRINCIPLES.md) Â· [Design Tokens](DESIGN-TOKENS.md) Â· **Component Library** Â· [Technical Architecture](TECHNICAL-ARCHITECTURE.md)
-
----
-
-## About This Document
-
-This is the implementation reference for all modules and components. For the philosophy behind the module system, see [DESIGN-METHODOLOGY.md](DESIGN-METHODOLOGY.md). For design token values used in these components, see [DESIGN-TOKENS.md](DESIGN-TOKENS.md).
-
-**Primitive Library Note:** Components in this document work with either Radix or Base UI as the underlying primitive layer. shadcn/ui provides an abstraction that keeps your component API consistent regardless of which primitive library you choose. See the Primitive Library Architecture section below.
+*The module catalog and component specs.*
 
 ---
 
-## Primitive Library Architecture
+## About this document
 
-### The Abstraction Layer
-
-Level One uses shadcn/ui as an abstraction over headless component primitives:
-
-```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚  Your Components (Case Viewer, Article UI)  â”‚
-â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
-â”‚  shadcn/ui (abstraction + styling)          â”‚
-â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
-â”‚  Primitive Layer (Base UI or Radix)         â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-```
-
-**What primitives provide:**
-- Accessibility (ARIA attributes, focus management)
-- Behavior logic (open/close states, keyboard navigation)
-- Zero stylingâ€”just raw functionality
-
-**What shadcn/ui adds:**
-- Unified API regardless of primitive choice
-- Tailwind-based styling
-- Copy-paste ownership (code lives in your project)
-
-### Choosing When to Use What
-
-| Scenario | Approach |
-|----------|----------|
-| **Standard UI** (dialogs, dropdowns, tooltips) | Use shadcn/ui components |
-| **shadcn doesn't have it** | Import directly from Base UI or Radix |
-| **Need fine-grained control** | Use primitives Ã  la carte |
-| **Highly custom interaction** (Case Viewer) | Build from scratch, primitives optional |
-
-### Mixing Approaches
-
-Since shadcn copies code to your project, you can mix freely:
-
-```tsx
-// shadcn component (uses your configured primitive)
-import { Dialog } from "@/components/ui/dialog"
-
-// Direct Base UI import for specific feature
-import { Tooltip } from "@base-ui-components/react"
-
-// Direct Radix import if needed
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
-
-// Fully custom component
-import { CaseViewer } from "@/components/case/CaseViewer"
-```
+The catalog of modules and their specs. **The CSS shown here is illustrative** — the authoritative styles live in `src/styles/` (`components/*.css` + `tokens/*.css`); where a snippet here disagrees with the stylesheet, the stylesheet wins. The module *system* (tiers, standards, showstopper discipline) is defined in [philosophy.md](philosophy.md); token values in [tokens.md](tokens.md).
 
 ---
 
-## Module Tiers
+## Primitive library
 
-### Workhorse Modules (8-10 total)
+Level One uses **shadcn/ui** as a styling/abstraction layer over **Base UI** primitives, with Radix
+and custom code available where needed. The full primitive-layer architecture — what primitives
+provide, when to use shadcn vs. direct imports, and how to mix them — lives in
+[engineering.md](../engineering.md).
 
-Used constantly. High investment in getting these right.
+## Modules by tier
 
-1. Article Header
-2. Body Text
-3. Inline Figure
-4. Callout Block
-5. Block Quote
-6. Reference Section
-7. Author Block
-8. Newsletter CTA
-9. Related Content
-10. Article Index Card
+Tier definitions, module standards, and showstopper discipline live in
+[philosophy.md](philosophy.md#the-module-system). The modules themselves:
 
-### High-Touch Modules
-
-Custom but reusable. Plan for iteration.
-
-- Comparison Slider
-- Timeline/Sequence
-- Data Visualization
-
-### Showstopper Module
-
-The signature differentiator: **Case Viewer**
+- **Workhorse** — Article Header, Body Text, Inline Figure, Callout Block, Block Quote, Reference Section,
+  Author Block, Newsletter CTA, Related Content, Article Index Card.
+- **High-touch** — Comparison Slider, Timeline/Sequence, Data Visualization.
+- **Showstopper** — Case Viewer.
 
 ---
 
@@ -370,11 +301,11 @@ Technical ornament inspired by print production and vintage electronics.
 ### 4. Callout Block
 
 **Types:**
-- Key Point â€” Signal Cyan
-- Clinical Pearl â€” Ivory
-- Caution/Warning â€” Signal Yellow
-- Critical â€” Signal Red
-- Technical Note â€” Signal Violet
+- Key Point — Signal Cyan
+- Clinical Pearl — Ivory
+- Caution/Warning — Signal Yellow
+- Critical — Signal Red
+- Technical Note — Signal Violet
 
 ```css
 .callout {
@@ -449,9 +380,9 @@ Technical ornament inspired by print production and vintage electronics.
 - Mid-article (optional, after ~50% scroll)
 - Sticky footer bar (optional, dismissable)
 
-**Design:** Solid Signal Red button. High-contrast. No ghost buttons.
+**Design:** Solid gold button (`--color-primary`), foreground near-black. High-contrast. No ghost buttons.
 
-**Implementation:** Use shadcn/ui `Button` and `Input` components. See [PROJECT-INITIALIZATION.md](PROJECT-INITIALIZATION.md) for code example.
+**Implementation:** shadcn/ui `Button` + `Input`. See `src/components/shared/NewsletterSignup.tsx`.
 
 ### 9. Related Content
 
@@ -652,16 +583,16 @@ Uses shadcn/ui `Button` as base. Custom styling applied via Tailwind classes and
 
 /* Primary CTA - solid, not ghost */
 .button--primary {
-  background: var(--color-signal-red);
-  border-color: var(--color-signal-red);
-  color: #ffffff;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
 }
 
 .button--primary:hover,
 .button--primary:focus {
   background: var(--color-text-primary);
   border-color: var(--color-text-primary);
-  color: var(--color-signal-red);
+  color: var(--color-primary);
 }
 
 /* Ghost button */
@@ -723,9 +654,9 @@ Should feel native to a radiologist. Familiar interaction patterns, clinical-app
 
 The Case Viewer is likely **custom-built rather than using shadcn/ui**, because:
 
-1. **Domain-specific interactions** â€” PACS-like navigation doesn't map to standard primitives
-2. **Full control needed** â€” Window/level, zoom, pan require custom implementation
-3. **Performance critical** â€” Image stack handling needs specialized optimization
+1. **Domain-specific interactions** — PACS-like navigation doesn't map to standard primitives
+2. **Full control needed** — Window/level, zoom, pan require custom implementation
+3. **Performance critical** — Image stack handling needs specialized optimization
 
 However, you may use primitive components internally:
 
@@ -733,12 +664,10 @@ However, you may use primitive components internally:
 - **Base UI Tooltip** with "detached triggers" for annotation popups that follow cursor
 - **Base UI ScrollArea** for thumbnail strip navigation
 
-### Development Discipline
+### Development discipline
 
-Do not build a second showstopper until:
-- 20+ articles published
-- Data on Case Viewer engagement collected
-- Clear need identified for new feature
+Don't build a second showstopper until the criteria in
+[philosophy.md](philosophy.md#the-module-system) are met (20+ articles, engagement data, a clear need).
 
 ---
 
@@ -755,11 +684,6 @@ When implementing a component, verify:
 - [ ] Dark mode compatible
 - [ ] Typography scale (uses defined classes)
 - [ ] Spacing (uses spacing tokens)
-- [ ] Touch targets (44Ã—44px minimum)
+- [ ] Touch targets (44×44px minimum)
 - [ ] HUD framing applied where appropriate
 - [ ] Works with chosen primitive library (Base UI or Radix)
-
----
-
-*Document created: December 2024*
-*Last updated: January 2025*

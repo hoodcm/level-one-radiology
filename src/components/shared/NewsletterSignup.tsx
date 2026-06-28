@@ -69,9 +69,9 @@ export default function NewsletterSignup({
                 type="submit"
                 disabled={status === "loading"}
                 style={{
-                  background: "var(--color-signal-red)",
-                  borderColor: "var(--color-signal-red)",
-                  color: "#ffffff",
+                  background: "var(--color-primary)",
+                  borderColor: "var(--color-primary)",
+                  color: "var(--color-on-primary)",
                   fontFamily: "var(--ff-ui)",
                   fontSize: "var(--fz-ui)",
                   fontWeight: 700,
@@ -118,9 +118,9 @@ export default function NewsletterSignup({
               type="submit"
               disabled={status === "loading"}
               style={{
-                background: "var(--color-signal-red)",
-                borderColor: "var(--color-signal-red)",
-                color: "#ffffff",
+                background: "var(--color-primary)",
+                borderColor: "var(--color-primary)",
+                color: "var(--color-on-primary)",
                 fontFamily: "var(--ff-ui)",
                 fontSize: "var(--fz-ui)",
                 fontWeight: 700,

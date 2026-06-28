@@ -2,7 +2,7 @@
 
 *Strategic identity, positioning, and content architecture*
 
-**Navigation:** [README](../README.md) Â· **Brand Foundation** Â· [Design Methodology](DESIGN-METHODOLOGY.md) Â· [Design Principles](DESIGN-PRINCIPLES.md) Â· [Design Tokens](DESIGN-TOKENS.md) Â· [Component Library](COMPONENT-LIBRARY.md) Â· [Technical Architecture](TECHNICAL-ARCHITECTURE.md)
+[← Docs](README.md)
 
 ---
 
@@ -10,7 +10,7 @@
 
 ### What Level One Is
 
-A one-person trade publication with educational depthâ€”a platform that combines the timeliness of Radiology Business with the educational rigor of RadioGraphics, executed with design sophistication and a singular authorial voice.
+A one-person trade publication with educational depth—a platform that combines the timeliness of Radiology Business with the educational rigor of RadioGraphics, executed with design sophistication and a singular authorial voice.
 
 ### What Level One Is Not
 
@@ -22,7 +22,7 @@ A one-person trade publication with educational depthâ€”a platform that com
 
 ### Core Principle
 
-This is owned infrastructure. Unlike journal publications, institutional affiliations, or social media presence, Level One Radiology is completely independentâ€”a platform where content, design, and editorial decisions are entirely self-determined.
+This is owned infrastructure. Unlike journal publications, institutional affiliations, or social media presence, Level One Radiology is completely independent—a platform where content, design, and editorial decisions are entirely self-determined.
 
 ### Primary Function
 
@@ -34,19 +34,19 @@ Build national reputation and thought leadership in emergency radiology through 
 
 *In priority order:*
 
-1. **National reputation as thought leader** â€” Become a recognizable voice in emergency radiology, invited to speak, write editorials, and shape discourse
+1. **National reputation as thought leader** — Become a recognizable voice in emergency radiology, invited to speak, write editorials, and shape discourse
 
-2. **Educational impact** â€” Create content that concretely helps readers' understanding and practice
+2. **Educational impact** — Create content that concretely helps readers' understanding and practice
 
-3. **Academic advancement within Harvard/Partners** â€” Build a scholarly portfolio that supports promotion and leadership positions
+3. **Academic advancement within Harvard/Partners** — Build a scholarly portfolio that supports promotion and leadership positions
 
-4. **Future revenue potential** â€” Establish a platform that could eventually support courses, consulting, or subscriptions (secondary, not immediate)
+4. **Future revenue potential** — Establish a platform that could eventually support courses, consulting, or subscriptions (secondary, not immediate)
 
 ---
 
 ## Positioning
 
-Emergency radiology is the generalist fieldâ€”coverage extends to radiology-wide content when relevant.
+Emergency radiology is the generalist field—coverage extends to radiology-wide content when relevant.
 
 The platform occupies a unique position: **authored depth with clinical utility and design sophistication**. No existing publication combines these elements.
 
@@ -77,7 +77,7 @@ Practicing radiologist. Trainees learn from this; non-radiologists self-filter.
 
 ## Keystone Metrics
 
-*Based on Fictive Kin principle: One keystone metric, maximum two. Everything else is diagnostic. See [DESIGN-METHODOLOGY.md](DESIGN-METHODOLOGY.md).*
+*Based on Fictive Kin principle: One keystone metric, maximum two. Everything else is diagnostic. See [philosophy](design/philosophy.md).*
 
 ### Primary Keystone: Email Subscribers
 
@@ -96,7 +96,7 @@ Signals that content is valuable enough to come back for. Indicates building loy
 
 - Traffic by source (Google vs. LinkedIn vs. direct)
 - Top articles by views
-- Conversion rate (visitors â†’ subscribers)
+- Conversion rate (visitors → subscribers)
 - Time on site
 - Social shares
 
@@ -116,7 +116,7 @@ Content is created by collating literature, cases, lecture transcripts, and text
 
 ### Content Types (Job Map)
 
-*Based on Fictive Kin's page type framework. See [DESIGN-METHODOLOGY.md](DESIGN-METHODOLOGY.md).*
+*Based on Fictive Kin's page type framework. See [philosophy](design/philosophy.md).*
 
 #### Collectors (SEO workhorses, long-term value)
 
@@ -155,7 +155,7 @@ These are LinkedIn fuel. They drive traffic spikes. The article itself doesn't n
 #### Converters
 
 - Newsletter signup (embedded in every article + standalone landing page)
-- About page (soft conversionâ€”builds trust, ends with CTA)
+- About page (soft conversion—builds trust, ends with CTA)
 
 **Job:** Turn visitors into subscribers.
 
@@ -174,7 +174,7 @@ These are LinkedIn fuel. They drive traffic spikes. The article itself doesn't n
 | Page | One Job | Success Metric |
 |------|---------|----------------|
 | Article | Get reader to subscribe (or read another article) | % who subscribe or click to related content |
-| Case Gallery | Get reader into a case â†’ article â†’ subscribe | % who click into a case |
+| Case Gallery | Get reader into a case → article → subscribe | % who click into a case |
 | About | Build trust, then subscribe | % who subscribe after visiting |
 | Subscribe (landing) | Subscribe | Conversion rate |
 | Homepage | Route to content that leads to subscription | % who click to an article |
@@ -237,7 +237,7 @@ That's it. Three actions, one outcome.
 - Show popup that interrupts reading
 
 **CTA design:**
-- Solid button, Signal Red background
+- Solid **gold** button (`--color-primary`), foreground near-black
 - Label: "Subscribe" not "Submit"
 - Value proposition visible: "Weekly insights on emergency radiology"
 - Privacy reassurance: "No spam. Unsubscribe anytime." (small text, muted)
@@ -285,9 +285,9 @@ Include:
 
 This document will grow to include:
 
-- **Brand Voice & Tone** â€” How Level One sounds
-- **Editorial Standards** â€” Writing guidelines, style decisions
-- **Visual Brand Guidelines** â€” Logo usage, brand applications
+- **Brand Voice & Tone** — How Level One sounds (now covered in [writing](writing.md))
+- **Editorial Standards** — Writing guidelines, style decisions (now covered in [writing](writing.md))
+- **Visual Brand Guidelines** — Logo usage, brand applications
 
 These additions will complement the design system documents with the verbal and editorial dimensions of brand identity.
 

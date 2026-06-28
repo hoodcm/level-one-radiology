@@ -6,6 +6,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-06-28
+
+### Added
+- `@astrojs/sitemap` integration (`astro.config.mjs`) — build now emits `sitemap-index.xml`, the path `public/robots.txt` already advertised (previously a 404)
+- Design-token enforcement gate so "colors/grid come from central tokens, never hard-coded" is enforced, not just documented:
+  - `.stylelintrc.json` — `stylelint-declaration-strict-value` requires color properties (`/color$/`, `fill`, `stroke`, `background(-color)`, `*-border-color`, `outline-color`) and `grid-template-columns` to be a `var(…)`/`color-mix(…)` token; `src/styles/tokens/**` exempt (the one legitimate home for literals)
+  - `scripts/check-inline-colors.mjs` — catches hex literals in `.tsx`/`.jsx`/`.astro` inline styles, which stylelint can't see (this is where the pre-existing `#ffffff` literals lived)
+  - `npm run lint` (`lint:css` + `lint:markup`); wired as a CI step in `deploy.yml` — a violation now fails the Pages deploy
+  - `.claude/hooks/check-tokens.sh` (PostToolUse, advisory exit 2) — lints just-edited style files so Claude self-corrects in-session
+- `--color-primary` / `--color-on-primary` semantic tokens (`colors.css`) — brand accent (gold, → `--color-signal-yellow`) + its legible near-black foreground
+- CLAUDE.md guidance: a "Single Source of Truth" rule (no hard-coded style values) and a context7 section (it's a user-scope plugin — don't re-add via `.mcp.json`)
+- Motion reasoning doc `docs/design/reasoning/motion.md` (whether/when to animate, easing & duration, enter/exit, performance, reduced-motion) — adapted to Base UI + the CSS-first reveal system; plus `--ease-out`/`--ease-in-out` easing tokens in `motion.css`
+- `.claude/rules/` path-scoped referrer rules that auto-surface the right guide while editing — `design-system.md` (CSS/components) and `content.md` (articles) — both pointers to the canonical docs, never restating them
+- CLAUDE.md "Documentation" doctrine: the docs-map pointer plus the describe-and-point / one-fact-one-home method for writing and maintaining docs
+
+### Changed
+- **Reorganized `docs/` for single source of truth.** Top level is now `brand.md` · `engineering.md` · `writing.md` + a `design/` folder (`philosophy.md`, `tokens.md`, `components.md`, `reasoning/`), each behind a README map with `← parent` backlinks (no more per-doc breadcrumb bars). Merged DESIGN-METHODOLOGY + DESIGN-PRINCIPLES → `philosophy.md`; rewrote `tokens.md` as a map that points to `src/styles/tokens/*` instead of pasting now-stale value tables; component CSS marked illustrative (`src/styles/` is authoritative); `principles/` → `design/reasoning/`. Archived the obsolete PROJECT-INITIALIZATION; moved inspiration assets + prototypes out of `docs/` to top-level `design-assets/`
+- Aligned the docs to current code (the reorg surfaced the drift): typefaces (→ Newsreader/DM Sans/Michroma/Chivo), CTA color (→ gold), warmth bias (→ minimal R+1/B-2), grid (→ 6/12/18), hosting (→ GitHub Pages). Repaired all repo-root README + CLAUDE.md doc links; fixed cp1252 mojibake across the moved docs
+- Replaced 3 live `transition: all` in `homepage.css` (nav item, tag, article card) with explicit animatable properties
+- Removed unused dependencies `radix-ui` (the app uses Base UI; it appeared only in doc examples) and `lucide-react` (the configured icon library is `tabler`); node_modules pruned, 14 → 12 direct deps
+- `tsconfig.json`: removed the deprecated `baseUrl` (the TS 7 migration) — `paths` (`@/*`) now resolve relative to the config file; build unaffected
+- Archived `DESIGN.md` (33KB consolidated monolith — superseded by `docs/design/` + the CSS tokens) → `docs/archive/`; removed a stray `.DS_Store`
+- shadcn style set to **Mira** (`base-mira` in `components.json`); `button.tsx`/`input.tsx` regenerated on Base UI, and the style name aligned across CLAUDE.md/README/CONTEXT/`engineering.md` (docs had said Lyra, config said Nova)
+- Deepened `--color-signal-yellow` (`#E8C547` → `#D8A82C`, a richer goldenrod) — flows to both the gold CTAs (via `--color-primary`) and the caution signal, since they share the token
+- **Brand primary is now gold, not red.** Repointed every *brand* use of `--color-signal-red` → `--color-primary`: nav + mobile Subscribe CTAs, both newsletter buttons, pull-quote stripe. CTA text flipped white→`--color-on-primary` (white-on-gold fails contrast); nav-CTA hover now inverts to gold-on-near-black. Functional signal reds left intact (critical callouts, TRAUMA tag, form error text) — there red is semantic, not brand
+
 ## [0.5.0] - 2026-06-27
 
 ### Added

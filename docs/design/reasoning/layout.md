@@ -1,8 +1,10 @@
 # Layout Principles
 
+> [← Design system](../README.md)
+
 > The reasoning layer for **columns, gutters, and margins** — how to lay out a page so a desktop layout
 > is specified as systematically as a mobile one. Concrete values live in
-> [DESIGN-TOKENS.md](../DESIGN-TOKENS.md); when a principle here conflicts with a token, **the token wins** — flag it.
+> [tokens.md](../tokens.md); when a principle here conflicts with a token, **the token wins** — flag it.
 
 ---
 
@@ -78,7 +80,7 @@ Long-form text wants a short measure; figures want to breathe wider; the page sh
 | `reading` | `--reading-column` (640px) | Long-form prose measure |
 
 Never invent a new width cap inline — these three cover every case (per
-[typography-principles.md](typography-principles.md) §measure).
+[typography.md](typography.md) §measure).
 
 ---
 
@@ -88,7 +90,7 @@ The gutter (`--grid-gutter`) is **horizontal** — between columns. When `<Col>`
 between rows is a **different** decision: use `<Grid rowGap>` with a vertical spacing token when stacked
 content needs more breathing room than the 16px gutter (a footer collapsing to one column on mobile is
 the canonical case). Section-to-section rhythm uses `--section-spacer` / `--section-spacer-sm`, not the
-gutter. See [spacing-principles.md](spacing-principles.md) §sections.
+gutter. See [spacing.md](spacing.md) §sections.
 
 ---
 

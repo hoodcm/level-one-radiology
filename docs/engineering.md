@@ -2,7 +2,7 @@
 
 *Stack, implementation, and operational workflows*
 
-**Navigation:** [README](../README.md) Â· [Brand Foundation](BRAND-FOUNDATION.md) Â· [Design Methodology](DESIGN-METHODOLOGY.md) Â· [Design Principles](DESIGN-PRINCIPLES.md) Â· [Design Tokens](DESIGN-TOKENS.md) Â· [Component Library](COMPONENT-LIBRARY.md) Â· **Technical Architecture**
+[← Docs](README.md)
 
 ---
 
@@ -11,10 +11,10 @@
 *Based on Fictive Kin: Simplicity, Stability, Security, Speed*
 
 The technical stack should be:
-- **Simple** â€” Easy to understand and maintain by a solo operator
-- **Stable** â€” Minimal dependencies, proven technologies
-- **Secure** â€” No unnecessary attack surface
-- **Fast** â€” Performance is a feature
+- **Simple** — Easy to understand and maintain by a solo operator
+- **Stable** — Minimal dependencies, proven technologies
+- **Secure** — No unnecessary attack surface
+- **Fast** — Performance is a feature
 
 ---
 
@@ -44,19 +44,18 @@ The technical stack should be:
 - Headless components with accessibility built in
 - shadcn/ui provides abstraction layer + styling
 - Active development backed by MUI
-- Not locked inâ€”can mix with Radix or custom code
-
-See [PROJECT-INITIALIZATION.md](PROJECT-INITIALIZATION.md) for detailed primitive library guidance.
+- Not locked in—can mix with Radix or custom code
+- This document is the canonical home for primitive-library guidance (see [Primitive Library Flexibility](#primitive-library-flexibility) below)
 
 ### Hosting
 
-**Netlify or Vercel**
+**GitHub Pages**
 
-- Simple deployment
-- Good performance
-- Free tier sufficient initially
-- Automatic HTTPS
-- Branch previews for testing
+- Static deploy from the repository—no server to run
+- Custom domain via `CNAME` file in `public/` (committed; served at the apex domain)
+- Automatic HTTPS once the custom domain is verified
+- Free for public repositories
+- Deploys on push to the Pages branch via GitHub Actions
 
 ### Email Service
 
@@ -165,44 +164,24 @@ import { CaseViewer } from "@/components/case-viewer"
 
 ### Approach
 
-CSS custom properties (variables) for design tokens, component-scoped styles. shadcn/ui components adapt to your chosen visual style (Lyra, Nova, etc.) and can be further customized via Tailwind classes.
+CSS custom properties (variables) for design tokens, component-scoped styles. shadcn/ui components adapt to your chosen visual style (this project uses Mira) and can be further customized via Tailwind classes.
 
 ### File Structure
 
-```
-styles/
-â”œâ”€â”€ tokens/
-â”‚   â”œâ”€â”€ colors.css      # Surface hierarchy, text hierarchy, signals
-â”‚   â”œâ”€â”€ typography.css  # Font families, scale, classes
-â”‚   â””â”€â”€ spacing.css     # Spacing scale, semantic tokens
-â”œâ”€â”€ base/
-â”‚   â”œâ”€â”€ reset.css       # Minimal reset
-â”‚   â””â”€â”€ global.css      # Body, root styles
-â”œâ”€â”€ components/
-â”‚   â”œâ”€â”€ button.css
-â”‚   â”œâ”€â”€ tag.css
-â”‚   â”œâ”€â”€ nav.css
-â”‚   â”œâ”€â”€ callout.css
-â”‚   â”œâ”€â”€ hud-frame.css
-â”‚   â”œâ”€â”€ article-card.css
-â”‚   â”œâ”€â”€ article-header.css
-â”‚   â”œâ”€â”€ prose.css
-â”‚   â””â”€â”€ ...
-â””â”€â”€ main.css            # Imports all
-```
+The stylesheet entry point is `src/styles/main.css`, the import manifest that pulls in every layer (`tokens/`, `base/`, `components/`). See `main.css` for the authoritative file list and the Architecture section of `CLAUDE.md` for the directory layout.
 
 ### Token Organization
 
-See [DESIGN-TOKENS.md](DESIGN-TOKENS.md) for complete token specifications.
+See [design/tokens.md](design/tokens.md) for complete token specifications.
 
 Tokens are organized in three layers:
-1. **Primitive tokens** â€” Raw values (hex codes, pixel values)
-2. **Semantic tokens** â€” Purpose-named (--color-bg-deepest, --space-gutter)
-3. **Component tokens** â€” Component-specific (--nav-height, --callout-color)
+1. **Primitive tokens** — Raw values (hex codes, pixel values)
+2. **Semantic tokens** — Purpose-named (--color-bg-deepest, --space-gutter)
+3. **Component tokens** — Component-specific (--nav-height, --callout-color)
 
 ### CSS Rules
 
-1. Never use hardcoded values â€” always reference tokens
+1. Never use hardcoded values — always reference tokens
 2. Component styles are self-contained
 3. Avoid nesting beyond 2 levels
 4. Mobile-first media queries
@@ -214,11 +193,11 @@ Tokens are organized in three layers:
 
 ### Content Pipeline
 
-1. **Draft** â€” Initial writing, rough ideas
-2. **Review** â€” Self-editing, fact-checking
-3. **Stage** â€” Final formatting, image optimization
-4. **Publish** â€” Git commit, automatic deploy
-5. **Promote** â€” LinkedIn sharing, newsletter mention
+1. **Draft** — Initial writing, rough ideas
+2. **Review** — Self-editing, fact-checking
+3. **Stage** — Final formatting, image optimization
+4. **Publish** — Git commit, automatic deploy
+5. **Promote** — LinkedIn sharing, newsletter mention
 
 ### Workflow Steps
 
@@ -234,16 +213,7 @@ Tokens are organized in three layers:
 
 ### Content Maintenance
 
-**Quarterly:**
-- Review analytics
-- Update outdated articles
-- Check for broken links
-- Plan next quarter's content
-
-**Annually:**
-- Full content audit
-- Performance review
-- Stack evaluation
+For the review cadence (quarterly and annual audits), see [design/philosophy.md](design/philosophy.md).
 
 ---
 
@@ -261,7 +231,7 @@ Tokens are organized in three layers:
 | **Homepage** | Clear value proposition, featured articles, newsletter CTA |
 | **About** | Bio, site mission, ends with CTA |
 | **Article Index** | Simple list, sorted by date |
-| **Design** | Complete and polishedâ€”not "coming soon" feel |
+| **Design** | Complete and polished—not "coming soon" feel |
 | **Analytics** | Basic tracking in place |
 
 ### Not in MVP (add later)
@@ -277,7 +247,7 @@ Tokens are organized in three layers:
 ### Launch Criteria
 
 - [ ] Would be proud to share any page with respected colleague
-- [ ] Core flow (land â†’ read â†’ subscribe) works on mobile and desktop
+- [ ] Core flow (land → read → subscribe) works on mobile and desktop
 - [ ] Lighthouse score 85+
 - [ ] No broken links, no placeholder content
 
@@ -340,26 +310,10 @@ Tokens are organized in three layers:
 
 ## Accessibility Requirements
 
-### WCAG 2.1 AA Compliance
+**Target: WCAG 2.1 AA.**
 
-**Color contrast:**
-- Body text: 4.5:1 minimum (we exceed this)
-- Large text: 3:1 minimum
-- UI components: 3:1 minimum
-
-**Keyboard navigation:**
-- All interactive elements focusable
-- Visible focus indicators
-- Logical tab order
-
-**Screen readers:**
-- Semantic HTML
-- ARIA labels where needed
-- Alt text on all images
-
-**Motion:**
-- Respect `prefers-reduced-motion`
-- No auto-playing animations
+- The accessibility floor and its reasoning (contrast, keyboard, screen readers, motion) live in [design/reasoning/accessibility.md](design/reasoning/accessibility.md).
+- Measured contrast ratios for the palette live in [design/tokens.md](design/tokens.md) (Accessibility section).
 
 ---
 
@@ -421,7 +375,7 @@ Tokens are organized in three layers:
 - Form submission failures
 
 **Analytics:**
-- Keystone metrics (see [BRAND-FOUNDATION.md](BRAND-FOUNDATION.md))
+- Keystone metrics (see [brand.md](brand.md))
 - Traffic sources
 - Top content
 

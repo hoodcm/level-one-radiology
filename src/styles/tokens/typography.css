@@ -399,7 +399,14 @@
   /* Long-form reading. Anthropic uses 155%, but Utopia (serif) has a taller
      line box than Anthropic Sans, so it reads looser at the same multiplier.
      Tightened to 1.38 for a denser, less airy serif column. */
-  --lh-reading: 1.38;
+  --lh-reading: 1.36;
+
+  /* Body reading optical size — Newsreader's `opsz` axis (6–72). Lower selects
+     the sturdier, more open text-grade cut (a more substantial, slightly
+     broader feel); higher is the delicate display cut. Pins what
+     `font-optical-sizing: auto` would otherwise derive from the pixel size.
+     Font-supported — not a transform. Knob: lower = chunkier/sturdier. */
+  --reading-opsz: 15;
 
   /* Inline links — visible but controlled underline (Anthropic metrics) */
   --link-underline-offset: 0.18em;

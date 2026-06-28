@@ -26,10 +26,18 @@
   --color-text-muted: #9D9489;      /* warm gray — metadata, captions */
   --color-text-disabled: #6D655B;   /* warm gray — disabled */
 
+  /* Brand Primary — the accent identity color used for CTAs and brand accents.
+     Points at the gold. Distinct from the functional signal reds below, which
+     keep their clinical/error meaning (critical, trauma, validation errors).
+     --color-on-primary is the legible foreground ON the gold (near-black —
+     white on gold fails contrast). Re-point both to restyle the brand. */
+  --color-primary: var(--color-signal-yellow);
+  --color-on-primary: var(--color-bg-deepest);
+
   /* Signal Colors (functional, not decorative) */
   --color-signal-red: #D03454;
   --color-signal-orange: #E85D2D;
-  --color-signal-yellow: #E8C547;
+  --color-signal-yellow: #D8A82C;
   --color-signal-cyan: #2ACEC2;
   --color-signal-violet: #A98BFF;
   --color-signal-magenta: #D91CC3;

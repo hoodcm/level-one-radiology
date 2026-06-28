@@ -37,6 +37,10 @@
   --color-text-muted: var(--color-text-muted);
   --color-text-disabled: var(--color-text-disabled);
 
+  /* Brand primary (gold) + legible foreground on it */
+  --color-primary: var(--color-primary);
+  --color-on-primary: var(--color-on-primary);
+
   /* Signal colors */
   --color-signal-red: var(--color-signal-red);
   --color-signal-orange: var(--color-signal-orange);
