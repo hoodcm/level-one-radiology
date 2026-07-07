@@ -3,8 +3,11 @@ import NewsletterSignup from '@/components/shared/NewsletterSignup.tsx';
 import Container from '@/components/layout/Container.astro';
 import Grid from '@/components/layout/Grid.astro';
 import Col from '@/components/layout/Col.astro';
+import pkg from '../../../package.json';
 
 const currentYear = new Date().getFullYear();
+// Data plate: stamped at build time, like an instrument's engineering plate.
+const buildDate = new Date().toISOString().slice(0, 10);
 ---
 
 <footer class="site-footer">
@@ -20,12 +23,11 @@ const currentYear = new Date().getFullYear();
         </ul>
       </Col>
 
-      <!-- Connect -->
+      <!-- Connect. LinkedIn/X links return here once real profile URLs exist —
+           placeholder hrefs to bare domains shipped as dead links. -->
       <Col span={{ md: 3, lg: 5 }}>
         <h4 class="site-footer__section-title">Connect</h4>
         <ul class="site-footer__links">
-          <li><a href="https://linkedin.com" class="site-footer__link" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
-          <li><a href="https://x.com" class="site-footer__link" target="_blank" rel="noopener noreferrer">X / Twitter</a></li>
           <li><a href="/rss.xml" class="site-footer__link">RSS Feed</a></li>
         </ul>
       </Col>
@@ -33,7 +35,7 @@ const currentYear = new Date().getFullYear();
       <!-- Newsletter -->
       <Col span={{ md: 6, lg: 8 }}>
         <NewsletterSignup
-          client:load
+          client:visible
           variant="section"
           headline="Stay current"
           subhead="Weekly insights on emergency radiology. Educational depth, clinical utility, no filler."
@@ -45,13 +47,14 @@ const currentYear = new Date().getFullYear();
       <p class="site-footer__copyright">
         &copy; {currentYear} Level One Radiology. All rights reserved.
       </p>
-      <div style="display: flex; gap: 16px; align-items: center;">
-        <!-- Registration marks -->
+      <div class="site-footer__marks">
+        <!-- Registration mark + data plate -->
         <svg class="registration-mark" width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
           <circle cx="4" cy="4" r="3" fill="none" stroke="currentColor" stroke-width="0.5"/>
           <line x1="4" y1="0" x2="4" y2="8" stroke="currentColor" stroke-width="0.5"/>
           <line x1="0" y1="4" x2="8" y2="4" stroke="currentColor" stroke-width="0.5"/>
         </svg>
+        <span class="site-footer__plate">L1R v{pkg.version} · Built {buildDate}</span>
         <svg class="registration-mark" width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
           <circle cx="4" cy="4" r="3" fill="none" stroke="currentColor" stroke-width="0.5"/>
           <line x1="4" y1="0" x2="4" y2="8" stroke="currentColor" stroke-width="0.5"/>

@@ -17,15 +17,22 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Focus indicators — Signal Cyan */
+/* In-page anchors (e.g. the #subscribe CTA) glide instead of jumping. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Focus indicators — the gold action color (see colors.css semantics) */
 :focus-visible {
-  outline: 2px solid var(--color-signal-cyan);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
-/* Links default to Signal Cyan */
+/* Links default to the gold action color */
 a {
-  color: var(--color-signal-cyan);
+  color: var(--color-link);
   text-decoration: none;
 }
 
@@ -35,6 +42,6 @@ a:hover {
 
 /* Selection */
 ::selection {
-  background: var(--color-signal-cyan);
-  color: var(--color-bg-deepest);
+  background: var(--color-selection-bg);
+  color: var(--color-selection-fg);
 }

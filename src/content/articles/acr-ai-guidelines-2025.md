@@ -1,6 +1,7 @@
 ---
 title: "What the 2025 ACR AI Guidelines Mean for Emergency Radiology"
 publishDate: "2026-02-05"
+serial: "L1-0003"
 description: "The ACR's updated framework for clinical AI deployment sets new expectations for validation, monitoring, and radiologist oversight. Here's what emergency radiologists need to know, and what the guidelines leave unresolved."
 tags: ["ai", "policy", "acr", "emergency"]
 primaryTag: "AI & Policy"

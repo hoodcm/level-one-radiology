@@ -46,24 +46,17 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Preload above-the-fold fonts so they're ready before first paint,
-         avoiding the swap-reflow ("jitter") on the hero text. -->
-    <link rel="preload" href="/fonts/eurostile/eurostile-next-w1g-ext.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/eurostile/eurostile-next-w1g-ext-bold.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/utopia/utopia-regular.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/lab-grotesque/lab-grotesque-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Mobile browser chrome merges with the canvas. Mirrors
+         --color-bg-deepest (metas can't read CSS vars). -->
+    <meta name="theme-color" content="#0B0A08" />
 
-    <!-- TRIAL: candidate replacement faces (Google Fonts, OFL).
-         Newsreader↔Utopia, DM Sans↔Lab Grotesque, Michroma↔Eurostile,
-         Chivo Mono↔IBM Plex Mono. Michroma is single-weight; its bold state is
-         synthesized via -webkit-text-stroke (see --wordmark-stroke in
-         typography.css). Remove this block to revert. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Chivo+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Michroma&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&display=swap"
-    />
+    <!-- Preload the above-the-fold faces (the ACTIVE trial faces — Newsreader
+         serif, DM Sans body, Michroma brand/UI) so first paint doesn't
+         swap-reflow the hero. Self-hosted variable woff2, latin subset; see
+         scripts/fetch-ofl-fonts.mjs. -->
+    <link rel="preload" href="/fonts/ofl/newsreader-roman-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/ofl/dm-sans-roman-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/ofl/michroma-roman-latin.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
     <Header />

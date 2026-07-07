@@ -34,6 +34,16 @@
   --color-primary: var(--color-signal-yellow);
   --color-on-primary: var(--color-bg-deepest);
 
+  /* Interaction semantics — THE opinionated split. GOLD is the action color:
+     everything you can click or that marks your place (links, focus,
+     selection, CTAs, reading progress) reads as the brand primary. CYAN is
+     informational apparatus (key points, note callouts, statuses) plus its
+     taxonomy role. The remaining signals are taxonomy/severity only. */
+  --color-link: var(--color-primary);
+  --color-focus: var(--color-primary);
+  --color-selection-bg: var(--color-primary);
+  --color-selection-fg: var(--color-on-primary);
+
   /* Signal Colors (functional, not decorative) */
   --color-signal-red: #D03454;
   --color-signal-orange: #E85D2D;
@@ -47,6 +57,10 @@
   --color-border-default: rgba(255, 255, 255, 0.08);
   --color-border-strong: rgba(255, 255, 255, 0.15);
   --color-border-accent: #232220;
+
+  /* Hairline grid texture — blueprint ground for HUD surfaces (hero).
+     Knob: alpha. 0.03 is near-subliminal; 0.05 reads as graph paper. */
+  --color-grid-line: rgba(255, 255, 255, 0.04);
 
   /* Legacy (deprecated — use new tokens) */
   --color-imaging-black: var(--color-bg-deepest);

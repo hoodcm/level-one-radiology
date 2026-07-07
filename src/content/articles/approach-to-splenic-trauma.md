@@ -1,6 +1,8 @@
 ---
 title: "Approach to Splenic Trauma on CT: A Systematic Framework"
 publishDate: "2026-01-15"
+serial: "L1-0001"
+lastReviewed: "2026-01-15"
 description: "A structured approach to evaluating splenic injuries on CT, from subcapsular hematomas to vascular pedicle injuries. Includes AAST grading with imaging correlates and decision points for operative vs. nonoperative management."
 tags: ["trauma", "abdomen", "ct", "spleen"]
 primaryTag: "Trauma"

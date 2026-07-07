@@ -6,7 +6,7 @@ first_surfaced: 2026-06-23
 last_touched: 2026-06-28
 depends_on: []
 links: [src/content/articles/, docs/writing.md]
-assessed: 2026-06-28
+assessed: 2026-07-07
 ---
 Write the first real educational deep-dive article (a "Collector" — the SEO
 educational workhorse). Only the 3 Feb-06 placeholder articles exist

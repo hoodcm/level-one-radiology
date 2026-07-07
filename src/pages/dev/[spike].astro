@@ -1,0 +1,570 @@
+---
+// Gesture spike — THROWAWAY (M1/M3). Section 1 hosts the REAL <case-viewer>
+// element on the real shell (what the device session judges); section 2 keeps
+// the original inline prototype for A/B (render-path + gesture-model
+// comparison). Deleted or promoted in M5. Dev-only: getStaticPaths returns []
+// in prod builds, so `astro build` emits nothing under /dev/.
+import { readFileSync } from 'node:fs';
+import '@/styles/main.css';
+import { caseShellHtml } from '@/lib/case-shell.mjs';
+
+export function getStaticPaths() {
+  return import.meta.env.DEV ? [{ params: { spike: 'gesture-spike' } }] : [];
+}
+
+const manifest = JSON.parse(readFileSync('public/cases/dev-synthetic/manifest.json', 'utf8'));
+const shell = caseShellHtml(manifest, 'Synthetic test stack — scrub through the exam.');
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Gesture spike — dev only</title>
+  </head>
+  <body class="spike">
+    <header class="spike-head">
+      <h1>GESTURE SPIKE · DEV-SYNTHETIC</h1>
+      <p>
+        Judgment criteria (plan step 3): momentum-stop tap must not engage · diagonal drags
+        survive · engaged state obvious at arm's length · escape always reachable · rest
+        vertical drag always scrolls · zero flicker at fastest scrub · pick pxPerFrame ·
+        second-pointer probe fires · VoiceOver adjusts the range prototype.
+      </p>
+    </header>
+
+    <section class="spike-controls" aria-label="Spike toggles">
+      <label>render
+        <select id="ctl-render">
+          <option value="canvas" selected>bitmap-canvas</option>
+          <option value="img">img-swap</option>
+        </select>
+      </label>
+      <label>gesture
+        <select id="ctl-gesture">
+          <option value="progressive" selected>progressive-engage</option>
+          <option value="horizontal">horizontal-only</option>
+        </select>
+      </label>
+      <label>pxPerFrame <span id="ppf-readout">auto</span>
+        <input id="ctl-ppf" type="range" min="0" max="40" step="1" value="0" />
+      </label>
+      <label><input id="ctl-deadzones" type="checkbox" checked /> edge dead-zones</label>
+      <label><input id="ctl-nudge" type="checkbox" /> settle-nudge</label>
+    </section>
+
+    <p class="filler">
+      Scroll filler above the stage — at rest a vertical thumb drag anywhere on the image
+      must scroll this page natively, every attempt. Lorem ipsum dolor sit amet, consectetur
+      adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </p>
+
+    <!-- SECTION 1: the REAL element on the real build-time shell (step 6+).
+         The pxPerFrame knob sets data-ppf; toggle nudge, then reload —
+         boot fires once per page load. -->
+    <section class="real-element">
+      <h2 class="real-element__label">REAL &lt;case-viewer&gt; ELEMENT</h2>
+      <Fragment set:html={shell} />
+    </section>
+    <script>
+      import '@/components/case/case-viewer';
+      // Wire the spike knobs + probe log to the real element's events.
+      const cv = document.querySelector('case-viewer')!;
+      const logEl = () => document.getElementById('log')!;
+      const say = (msg: string) => {
+        const line = document.createElement('div');
+        line.textContent = `${(performance.now() / 1000).toFixed(2)}s [element] ${msg}`;
+        logEl().prepend(line);
+      };
+      for (const ev of ['cv:state', 'cv:boot', 'cv:window', 'cv:series', 'cv:fill', 'cv:promote']) {
+        cv.addEventListener(ev, (e) => say(`${ev} ${JSON.stringify((e as CustomEvent).detail)}`));
+      }
+      document.getElementById('ctl-ppf')!.addEventListener('input', (e) => {
+        const v = (e.target as HTMLInputElement).value;
+        if (Number(v) > 0) cv.setAttribute('data-ppf', v);
+        else cv.removeAttribute('data-ppf');
+      });
+      document.getElementById('ctl-nudge')!.addEventListener('change', (e) => {
+        if ((e.target as HTMLInputElement).checked) cv.setAttribute('data-nudge', '');
+        else cv.removeAttribute('data-nudge');
+      });
+    </script>
+
+    <p class="filler">
+      SECTION 2 below is the original inline prototype, kept for A/B: render-path
+      (canvas vs img-swap) and gesture-model comparison against the element above.
+    </p>
+
+    <div class="stage-wrap">
+      <div class="spike-meta"><span>SYN</span><span>AXIAL</span><span id="win-label">SOFT TISSUE</span><span class="spike-counter" id="counter">IM –/–</span></div>
+      <div class="stage" id="stage">
+        <canvas id="cv"></canvas>
+        <img id="iv" alt="" draggable="false" hidden />
+        <button class="stage-x" id="btn-x" aria-label="Disengage" hidden>✕</button>
+      </div>
+      <div class="stage-bar">
+        <input id="slider" type="range" min="1" max="48" value="24" aria-label="Image position, Synthetic test stack" />
+        <button id="btn-fs" aria-label="Fullscreen (M4 — probe only)">⛶</button>
+      </div>
+      <div class="chips" role="radiogroup" aria-label="Window" id="chips"></div>
+    </div>
+
+    <p class="filler">
+      Scroll filler below the stage. Diagonal sloppy drags starting on the image should keep
+      scrubbing once the horizontal axis wins the 10px race — pointercancel is treated as
+      pointerup so the frame holds rather than snapping back.
+    </p>
+
+    <section class="vo-proto">
+      <h2>VO RANGE PROTOTYPE</h2>
+      <p>Restyled native range — VoiceOver must focus and adjust it (swipe up/down).</p>
+      <input id="vo-range" type="range" min="1" max="48" value="24" aria-label="Image 24 of 48, VoiceOver prototype" />
+    </section>
+
+    <section class="spike-log-wrap">
+      <h2>PROBE LOG</h2>
+      <div class="spike-log" id="log" aria-live="off"></div>
+    </section>
+
+    <p class="filler tall">End filler so the page always has scroll travel on tall phones.</p>
+
+    <script>
+      // ---- Spike engine: quick-and-dirty vertical slice of the plan's gesture
+      // model + both render paths. Not production architecture (that's step 6).
+      const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
+      const log = (msg: string) => {
+        const el = $('log');
+        const line = document.createElement('div');
+        line.textContent = `${(performance.now() / 1000).toFixed(2)}s ${msg}`;
+        el.prepend(line);
+        while (el.childElementCount > 60) el.lastElementChild!.remove();
+      };
+
+      const stage = $('stage');
+      const canvas = $<HTMLCanvasElement>('cv');
+      const ctx = canvas.getContext('2d')!;
+      const img = $<HTMLImageElement>('iv');
+      const counter = $('counter');
+      const slider = $<HTMLInputElement>('slider');
+      const btnX = $('btn-x');
+      const chipsBox = $('chips');
+      const winLabel = $('win-label');
+
+      const manifest = await fetch('/cases/dev-synthetic/manifest.json').then((r) => r.json());
+      const series = manifest.series[0];
+      const N: number = series.frames;
+      let winIdx = 0;
+      let frame: number = series.start;
+      slider.max = String(N);
+
+      stage.style.aspectRatio = `${series.width} / ${series.height}`;
+
+      // --- Frame store: eager-decode everything (spike shortcut; the real
+      // store is LRU'd + windowed in step 6). Frontier clamp still applies.
+      const url = (w: number, i: number) =>
+        manifest.base + series.windows[w].pattern.replace('{nnn}', String(i).padStart(3, '0'));
+      const bitmaps: (ImageBitmap | null)[][] = series.windows.map(() => Array(N + 1).fill(null));
+      let frontier = 0; // highest contiguous decoded index for active window
+
+      async function warm(w: number) {
+        for (let i = 1; i <= N; i++) {
+          if (!bitmaps[w][i]) {
+            const blob = await fetch(url(w, i)).then((r) => r.blob());
+            bitmaps[w][i] = await createImageBitmap(blob);
+          }
+          if (w === winIdx) {
+            frontier = Math.max(frontier, i);
+            if (i === frame) render();
+          }
+        }
+        log(`window "${series.windows[w].key}" fully decoded`);
+      }
+
+      // --- Render paths
+      const mode = () => ($<HTMLSelectElement>('ctl-render')).value;
+      function sizeCanvas() {
+        const dpr = Math.min(devicePixelRatio || 1, 3);
+        const w = stage.clientWidth;
+        const h = stage.clientHeight;
+        if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+          canvas.width = w * dpr;
+          canvas.height = h * dpr;
+        }
+      }
+      function render() {
+        counter.textContent = `IM ${frame}/${N}`;
+        slider.value = String(frame);
+        slider.setAttribute('aria-valuetext', `Image ${frame} of ${N}`);
+        if (mode() === 'canvas') {
+          canvas.hidden = false;
+          img.hidden = true;
+          const bmp = bitmaps[winIdx][frame];
+          if (!bmp) return;
+          sizeCanvas();
+          ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+        } else {
+          canvas.hidden = true;
+          img.hidden = false;
+          img.src = url(winIdx, frame); // browser-cached post-warm; spike-grade swap
+        }
+      }
+      new ResizeObserver(render).observe(stage);
+
+      // --- pxPerFrame knob
+      const ppfCtl = $<HTMLInputElement>('ctl-ppf');
+      const ppfAuto = () => Math.min(24, Math.max(8, stage.clientWidth / N));
+      const ppf = () => {
+        const v = Number(ppfCtl.value);
+        return v === 0 ? ppfAuto() : v;
+      };
+      const ppfShow = () => {
+        $('ppf-readout').textContent =
+          Number(ppfCtl.value) === 0 ? `auto (${ppfAuto().toFixed(1)})` : ppfCtl.value;
+      };
+      ppfCtl.addEventListener('input', ppfShow);
+
+      // --- Gesture engine (state table: rest / scrub-h / engaged)
+      type State = 'rest' | 'scrub-h' | 'engaged';
+      let state: State = 'rest';
+      const setState = (s: State) => {
+        state = s;
+        stage.dataset.state = s;
+        stage.style.touchAction = s === 'engaged' ? 'none' : 'pan-y';
+        btnX.hidden = s !== 'engaged';
+        log(`state → ${s}`);
+      };
+      setState('rest');
+
+      const DEAD = 28;
+      const deadzones = () => ($<HTMLInputElement>('ctl-deadzones')).checked;
+      const gestureModel = () => ($<HTMLSelectElement>('ctl-gesture')).value;
+
+      // Synthetic pointer events (emulation/tests) have no active pointer to
+      // capture; real pointers always do.
+      const capture = (id: number) => {
+        try {
+          stage.setPointerCapture(id);
+        } catch {}
+      };
+
+      const active = new Map<number, { x: number; y: number }>();
+      let raceX = 0, raceY = 0, lastX = 0, lastY = 0, scrubAcc = 0, scrubbing = false;
+      let startFrame = frame;
+
+      const setFrame = (f: number) => {
+        const clamped = Math.max(1, Math.min(frontier || 1, Math.round(f)));
+        if (clamped !== frame) {
+          frame = clamped;
+          render();
+        }
+      };
+
+      stage.addEventListener('pointerdown', (e) => {
+        if (
+          deadzones() &&
+          e.pointerType === 'touch' &&
+          (e.clientX < DEAD || e.clientX > innerWidth - DEAD)
+        ) {
+          log(`dead-zone ignore @x=${Math.round(e.clientX)}`);
+          return;
+        }
+        active.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (active.size === 2) log('★ SECOND POINTER observed (promotion probe fires)');
+        raceX = raceY = 0;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        scrubAcc = 0;
+        startFrame = frame;
+        scrubbing = state === 'engaged';
+        if (scrubbing) capture(e.pointerId);
+      });
+
+      stage.addEventListener('pointermove', (e) => {
+        if (!active.has(e.pointerId)) return;
+        const dx = e.clientX - lastX;
+        const dy = e.clientY - lastY;
+        lastX = e.clientX;
+        lastY = e.clientY;
+
+        if (state === 'engaged') {
+          scrubAcc += dx + dy; // either axis; vertical = PACS axis
+          setFrame(startFrame + scrubAcc / ppf());
+          return;
+        }
+        if (!scrubbing) {
+          raceX += Math.abs(dx);
+          raceY += Math.abs(dy);
+          if (Math.max(raceX, raceY) >= 10) {
+            if (raceX > raceY) {
+              scrubbing = true; // scrub-h win
+              setState('scrub-h');
+              capture(e.pointerId);
+            } else {
+              active.delete(e.pointerId); // vertical win at rest: compositor scrolls
+            }
+          }
+          return;
+        }
+        scrubAcc += dx;
+        setFrame(startFrame + scrubAcc / ppf());
+      });
+
+      const endPointer = (e: PointerEvent) => {
+        active.delete(e.pointerId);
+        if (state === 'scrub-h' && active.size === 0) setState('rest');
+        scrubbing = state === 'engaged';
+      };
+      stage.addEventListener('pointerup', endPointer);
+      stage.addEventListener('pointercancel', (e) => {
+        log('pointercancel (treated as up — frame holds)');
+        endPointer(e);
+      });
+
+      // Engage on click (browsers suppress click on scroll-stopping taps).
+      stage.addEventListener('click', (e) => {
+        if (gestureModel() !== 'progressive') return;
+        if ((e.target as HTMLElement).closest('button, input, select')) return;
+        if (state === 'rest') setState('engaged');
+      });
+      btnX.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setState('rest');
+      });
+      document.addEventListener('click', (e) => {
+        if (state === 'engaged' && !(e.target as HTMLElement).closest('.stage-wrap')) setState('rest');
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && state === 'engaged') setState('rest');
+      });
+      new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting && state === 'engaged') setState('rest');
+        },
+        { threshold: 0.1 }
+      ).observe(stage);
+
+      // Desktop wheel: engaged only, steps capped per frame, swallowed at edges.
+      let wheelSteps = 0, wheelArmed = false;
+      stage.addEventListener(
+        'wheel',
+        (e) => {
+          if (state !== 'engaged') return;
+          e.preventDefault();
+          const dy = e.deltaY; // read before deltaMode (Firefox quirk)
+          wheelSteps += Math.sign(dy);
+          if (!wheelArmed) {
+            wheelArmed = true;
+            requestAnimationFrame(() => {
+              setFrame(frame + Math.max(-3, Math.min(3, wheelSteps)));
+              wheelSteps = 0;
+              wheelArmed = false;
+            });
+          }
+        },
+        { passive: false }
+      );
+
+      // Slider + chips
+      slider.addEventListener('input', () => setFrame(Number(slider.value)));
+      series.windows.forEach((w: { key: string; label: string }, i: number) => {
+        const b = document.createElement('button');
+        b.textContent = w.label;
+        b.setAttribute('role', 'radio');
+        b.setAttribute('aria-checked', String(i === winIdx));
+        b.addEventListener('click', () => {
+          winIdx = i;
+          winLabel.textContent = w.label;
+          frontier = 0;
+          for (let k = 1; k <= N && bitmaps[i][k]; k++) frontier = k;
+          [...chipsBox.children].forEach((c, j) => c.setAttribute('aria-checked', String(j === i)));
+          render(); // window switch preserves index exactly
+          if (frontier < N) warm(i);
+        });
+        chipsBox.append(b);
+      });
+
+      $('btn-fs').addEventListener('click', () => log('fullscreen requested (M4 — not in spike)'));
+
+      // VO prototype wiring
+      const vo = $<HTMLInputElement>('vo-range');
+      vo.addEventListener('input', () =>
+        vo.setAttribute('aria-valuetext', `Image ${vo.value} of ${vo.max}`)
+      );
+
+      // Boot: warm active window, then optional settle-nudge.
+      ppfShow();
+      render();
+      await warm(winIdx);
+      if (($<HTMLInputElement>('ctl-nudge')).checked) {
+        const f0 = frame;
+        setFrame(f0 + 1);
+        setTimeout(() => setFrame(f0), 180);
+        log('settle-nudge played');
+      }
+      log(`ready · ${N} frames · ppf ${ppf().toFixed(1)}`);
+    </script>
+
+    <style>
+      .spike {
+        margin: 0;
+        background: var(--color-bg-deepest);
+        color: var(--color-text-primary);
+        font-family: var(--ff-body);
+      }
+      .spike-head,
+      .spike-controls,
+      .filler,
+      .vo-proto,
+      .spike-log-wrap {
+        padding-inline: var(--space-2);
+        max-width: var(--media-column);
+        margin-inline: auto;
+      }
+      .spike-head h1,
+      .vo-proto h2,
+      .spike-log-wrap h2 {
+        font-family: var(--ff-mono);
+        font-size: var(--fz-ui);
+        letter-spacing: var(--ls-ui);
+        color: var(--color-text-muted);
+      }
+      .spike-head p,
+      .filler {
+        font-size: var(--fz-body-s);
+        color: var(--color-text-secondary);
+      }
+      .filler.tall { padding-bottom: 70svh; }
+      .spike-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        align-items: center;
+        font-family: var(--ff-mono);
+        font-size: var(--fz-body-xs);
+        color: var(--color-text-muted);
+        padding-block: var(--space-2);
+        border-block: 1px solid var(--color-border-default);
+      }
+      .stage-wrap {
+        margin-block: var(--space-3);
+        /* full-bleed on mobile per plan; capped at media column on desktop */
+        max-width: var(--media-column);
+        margin-inline: auto;
+      }
+      .spike-meta {
+        display: flex;
+        gap: var(--space-1);
+        font-family: var(--ff-mono);
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+        padding: var(--space-1) var(--space-2);
+      }
+      .spike-counter { margin-left: auto; }
+      .stage {
+        position: relative;
+        background: var(--color-bg-deepest);
+        max-height: 70svh;
+        touch-action: pan-y;
+        overflow: hidden;
+        cursor: grab;
+      }
+      .stage:active { cursor: grabbing; }
+      .stage canvas,
+      .stage img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      /* Engaged affordance: cyan hairline ring (spike-grade; brackets in step 7) */
+      .stage[data-state='engaged'] {
+        outline: 1px solid var(--color-signal-cyan);
+        outline-offset: -1px;
+      }
+      .stage-x {
+        position: absolute;
+        top: var(--space-1);
+        right: var(--space-1);
+        min-width: 44px;
+        min-height: 44px;
+        background: var(--color-bg-secondary);
+        color: var(--color-text-ivory);
+        border: 1px solid var(--color-border-strong);
+        border-radius: var(--radius-xs);
+      }
+      .stage-bar {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-1) var(--space-2);
+      }
+      .stage-bar button {
+        min-width: 44px;
+        min-height: 44px;
+        background: none;
+        border: 1px solid var(--color-border-default);
+        border-radius: var(--radius-xs);
+        color: var(--color-text-muted);
+      }
+      .chips {
+        display: flex;
+        gap: var(--space-1);
+        padding: 0 var(--space-2) var(--space-2);
+      }
+      .chips button {
+        font-family: var(--ff-mono);
+        font-size: var(--fz-ui);
+        letter-spacing: var(--ls-ui);
+        min-height: 44px;
+        padding-inline: var(--space-2);
+        background: var(--color-bg-secondary);
+        color: var(--color-text-muted);
+        border: 1px solid var(--color-border-default);
+        border-radius: var(--radius-xs);
+      }
+      .chips button[aria-checked='true'] {
+        color: var(--color-text-ivory);
+        border-color: var(--color-border-strong);
+      }
+      /* Restyled native range — the slider pattern the VO check judges. */
+      .spike input[type='range'] {
+        flex: 1;
+        appearance: none;
+        height: 44px;
+        background: transparent;
+      }
+      .spike input[type='range']::-webkit-slider-runnable-track {
+        height: 2px;
+        background: var(--color-border-strong);
+      }
+      .spike input[type='range']::-webkit-slider-thumb {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        margin-top: -9px;
+        border-radius: var(--radius-xs);
+        background: var(--color-text-ivory);
+        border: 1px solid var(--color-border-strong);
+      }
+      .spike input[type='range']:focus-visible {
+        outline: 2px solid var(--color-focus);
+        outline-offset: 2px;
+      }
+      .spike-log {
+        font-family: var(--ff-mono);
+        font-size: var(--fz-body-xs);
+        color: var(--color-text-muted);
+        border: 1px solid var(--color-border-default);
+        border-radius: var(--radius-xs);
+        padding: var(--space-1);
+        height: 10rem;
+        overflow-y: auto;
+        margin-bottom: var(--space-3);
+      }
+      .vo-proto input[type='range'] { width: 100%; }
+    </style>
+  </body>
+</html>

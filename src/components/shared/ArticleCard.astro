@@ -1,53 +1,53 @@
 ---
 import Tag from '@/components/shared/Tag.astro';
+import {
+  tagVariant,
+  contentTypeVariant,
+  contentTypeLabel,
+  type PrimaryTag,
+  type ContentType,
+} from '@/lib/tags';
 
 interface Props {
   title: string;
   description: string;
-  publishDate: string;
-  primaryTag: string;
-  contentType: string;
+  publishDate: Date;
+  serial: string;
+  primaryTag: PrimaryTag;
+  contentType: ContentType;
   slug: string;
+  /** Lead treatment: larger title, generous padding, fills its grid cell. */
+  featured?: boolean;
 }
 
-const { title, description, publishDate, primaryTag, contentType, slug } = Astro.props;
+const { title, description, publishDate, serial, primaryTag, contentType, slug, featured = false } =
+  Astro.props;
 
-const tagVariantMap: Record<string, 'default' | 'signal-red' | 'signal-cyan' | 'signal-violet' | 'signal-yellow' | 'signal-orange'> = {
-  'TRAUMA': 'signal-red',
-  'ABDOMEN': 'signal-cyan',
-  'CHEST': 'signal-orange',
-  'NEURO': 'signal-violet',
-  'MSK': 'signal-yellow',
-  'AI & POLICY': 'signal-violet',
-};
-
-const contentTypeVariantMap: Record<string, 'default' | 'signal-red' | 'signal-cyan' | 'signal-violet' | 'signal-yellow' | 'signal-orange'> = {
-  'educational': 'signal-cyan',
-  'commentary': 'signal-violet',
-  'case-analysis': 'signal-orange',
-};
-
-const tagVariant = tagVariantMap[primaryTag.toUpperCase()] || 'default';
-const contentTypeVariant = contentTypeVariantMap[contentType] || 'default';
-const contentTypeLabel = contentType.replace('-', ' ').toUpperCase();
-
-const formattedDate = new Date(publishDate).toLocaleDateString('en-US', {
+// Frontmatter dates parse as UTC midnight; render in UTC too, or the
+// calendar date shifts back a day in US timezones.
+const formattedDate = publishDate.toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'short',
   day: 'numeric',
+  timeZone: 'UTC',
 });
+
+// Shared with the article h1 so the title morphs across the navigation
+// (cross-document view transitions). Must be a valid CSS custom-ident.
+const vtName = `vt-${slug.replace(/[^a-zA-Z0-9-]/g, '-')}`;
 ---
 
-<a href={`/articles/${slug}`} class="article-card hud-frame">
+<a href={`/articles/${slug}`} class:list={['article-card', 'hud-frame', { 'article-card--lead': featured }]}>
   <span class="hud-corner-bl" aria-hidden="true"></span>
   <span class="hud-corner-br" aria-hidden="true"></span>
   <div class="article-card__tags">
-    <Tag label={primaryTag.toUpperCase()} variant={tagVariant} />
-    <Tag label={contentTypeLabel} variant={contentTypeVariant} />
+    <Tag label={primaryTag.toUpperCase()} variant={tagVariant(primaryTag)} />
+    <Tag label={contentTypeLabel(contentType)} variant={contentTypeVariant(contentType)} />
   </div>
-  <h3 class="article-card__title">{title}</h3>
+  <h3 class="article-card__title" style={`view-transition-name: ${vtName};`}>{title}</h3>
   <p class="article-card__excerpt">{description}</p>
   <div class="article-card__meta">
+    <span>{serial}</span>
     <span>{formattedDate}</span>
   </div>
 </a>

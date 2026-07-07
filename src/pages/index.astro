@@ -5,12 +5,10 @@ import Grid from '@/components/layout/Grid.astro';
 import Col from '@/components/layout/Col.astro';
 import ArticleCard from '@/components/shared/ArticleCard.astro';
 import FeatureBand from '@/components/shared/FeatureBand.astro';
-import { getCollection } from 'astro:content';
+import { getArticles } from '@/lib/articles';
 
-const allArticles = await getCollection('articles');
-const featuredArticles = allArticles
-  .filter((a) => a.data.featured)
-  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+const allArticles = await getArticles();
+const featuredArticles = allArticles.filter((a) => a.data.featured);
 
 const leadArticle = featuredArticles[0];
 const restArticles = featuredArticles.slice(1);
@@ -25,7 +23,13 @@ const restArticles = featuredArticles.slice(1);
         <span class="hero__wordmark-line"><span class="hero__wordmark-level">Level One</span></span>
         <span class="hero__wordmark-line"><span class="hero__wordmark-radiology">Radiology</span></span>
       </a>
-      <h1 class="hero__tagline">An independent emergency radiology publication. Clinical deep-dives, teaching cases, and field notes from a practicing radiologist.</h1>
+      <!-- One h1, two voices: on mobile the spans flow as a single quiet
+           paragraph under the wordmark; on desktop (no wordmark in the hero)
+           the statement steps up to display scale as the page's opening moment. -->
+      <h1 class="hero__tagline">
+        <span class="hero__statement">An independent emergency radiology publication.</span>
+        <span class="hero__support">Clinical deep-dives, teaching cases, and field notes from a practicing radiologist.</span>
+      </h1>
     </Container>
   </section>
 
@@ -43,9 +47,11 @@ const restArticles = featuredArticles.slice(1);
           {leadArticle && (
             <Col span={{ lg: 11 }}>
               <ArticleCard
+                featured
                 title={leadArticle.data.title}
                 description={leadArticle.data.description}
                 publishDate={leadArticle.data.publishDate}
+                serial={leadArticle.data.serial}
                 primaryTag={leadArticle.data.primaryTag}
                 contentType={leadArticle.data.contentType}
                 slug={leadArticle.id}
@@ -58,6 +64,7 @@ const restArticles = featuredArticles.slice(1);
                 title={article.data.title}
                 description={article.data.description}
                 publishDate={article.data.publishDate}
+                serial={article.data.serial}
                 primaryTag={article.data.primaryTag}
                 contentType={article.data.contentType}
                 slug={article.id}

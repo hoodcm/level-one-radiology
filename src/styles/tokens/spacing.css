@@ -44,12 +44,20 @@
   --media-column: 55rem;     /* 880px — figures, media, code */
   /* page shell = --grid-max-width (1440px) */
 
+  /* Article page rail (≥80em): ghost | reading column | TOC rail. Symmetric
+     1fr flanks keep the prose optically centered while the TOC occupies the
+     right margin. Page-level layout, deliberately outside <Grid>. */
+  --article-rail-columns: 1fr minmax(0, var(--reading-column)) 1fr;
+
   /* Radius scale — cards/buttons anchor at 8px, large media at 16px */
   --radius-xs: 0.25rem;   /* 4px  — chips, small controls */
   --radius-sm: 0.5rem;    /* 8px  — cards, buttons */
   --radius-md: 0.75rem;   /* 12px */
   --radius-lg: 1rem;      /* 16px — large media panels */
   --radius-pill: 100vw;
+
+  /* Grid texture cell — the blueprint-ground pitch (3 × gutter). */
+  --grid-texture-cell: 3rem;   /* 48px */
 
   /* Feature-band detector card */
   --fb-card-min-h: 23.125rem;  /* 370px — card height; kept just above the HUD width so the panel fills it with a little vertical padding */

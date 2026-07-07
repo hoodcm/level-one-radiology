@@ -1,0 +1,391 @@
+/* ==============================================
+   CASE VIEWER — the showstopper module.
+
+   Static shell emitted at build time (src/lib/case-shell.mjs); behavior
+   upgraded in place by case-viewer.ts. Light DOM, so every value here rides
+   the token system. Slice imagery sits on true imaging black; chrome is the
+   meta strip + corner brackets ("slight HUD framing" — no border: dark-on-
+   dark needs none).
+
+   States (stamped by the element): [data-state=rest|scrub-h|engaged|fullscreen]
+   plus .is-booting / .is-ready / .is-stalled.
+   ============================================== */
+
+case-viewer {
+  display: block;
+  margin-block: var(--space-5);
+}
+
+.cv {
+  margin: 0;
+}
+
+/* --- Meta strip — the .figure-meta console voice --- */
+.cv__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--space-1);
+  margin-bottom: var(--space-1);
+  font-family: var(--ff-mono);
+  font-size: var(--cv-meta-size);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.cv__meta span + span:not(.cv__counter)::before {
+  content: '·';
+  color: var(--color-text-disabled);
+  margin-right: var(--space-1);
+}
+.cv__counter,
+.cv-fs__counter {
+  margin-left: auto;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+/* Decode stall: subtle glyph on the counter, never a spinner on the image. */
+.is-stalled .cv__counter::after {
+  content: '·';
+  color: var(--color-signal-cyan);
+  margin-left: 0.4em;
+}
+
+/* --- Stage: aspect-ratio box (zero CLS), imaging black, height-capped so a
+   tap-outside/scroll surface always exists on tall stacks --- */
+.cv__stage {
+  position: relative;
+  background: var(--color-bg-deepest);
+  max-height: var(--cv-stage-max-h);
+  margin-inline: auto;
+  overflow: hidden;
+  touch-action: pan-y;
+  cursor: grab;
+}
+case-viewer[data-state='engaged'] .cv__stage,
+case-viewer[data-state='fullscreen'] .cv__stage {
+  touch-action: none;
+}
+.cv__stage:active {
+  cursor: grabbing;
+}
+
+.cv__canvas,
+.cv__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+/* Poster is a ~96px blur-up: soften the upscale, fade out once frames draw. */
+.cv__poster {
+  filter: blur(var(--cv-poster-blur));
+  transform: scale(1.02); /* hide blur edge-bleed */
+  transition: opacity var(--reveal-duration) var(--reveal-ease);
+}
+case-viewer.is-ready .cv__poster {
+  opacity: 0;
+}
+
+/* --- Boot HUD reticle — choreography VERBATIM from the loading-hud
+   prototype (design-assets/prototypes/case-viewer-loading-hud.md pins the
+   keyframes, timings, and delays: "they're tuned; don't round them").
+   Entrance keys on .is-booting (~50% IO); exit keys on .is-ready (first
+   frame drawn), interior fading 100ms before the brackets. The white
+   drop-shadow stays verbatim per the prototype doc — the HUD overlays
+   imaging, not themed chrome. --- */
+.cv__hud {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 1px var(--cv-hud-glow));
+  pointer-events: none;
+  opacity: 0;
+}
+case-viewer.is-booting .cv__hud {
+  opacity: 1;
+}
+.cv__hud-el,
+.cv-anim-grid {
+  opacity: 0;
+}
+case-viewer.is-booting .cv-anim-grid { animation: cv-cut-in 100ms steps(1, jump-end) 50ms forwards; }
+case-viewer.is-booting .cv-anim-center-1 { animation: cv-slow-flicker 400ms steps(1, jump-start) 0ms forwards; }
+case-viewer.is-booting .cv-anim-center-2 { animation: cv-slow-flicker 400ms steps(1, jump-start) 75ms forwards; }
+case-viewer.is-booting .cv-anim-panels { animation: cv-slow-flicker 400ms steps(1, jump-start) 100ms forwards; }
+case-viewer.is-booting .cv-anim-bracket-tl { animation: cv-snap-tl 350ms cubic-bezier(0.1, 1.5, 0.92, 1) 100ms forwards; }
+case-viewer.is-booting .cv-anim-bracket-tr { animation: cv-snap-tr 350ms cubic-bezier(0.1, 1.5, 0.92, 1) 100ms forwards; }
+case-viewer.is-booting .cv-anim-bracket-bl { animation: cv-snap-bl 350ms cubic-bezier(0.1, 1.5, 0.92, 1) 100ms forwards; }
+case-viewer.is-booting .cv-anim-bracket-br { animation: cv-snap-br 350ms cubic-bezier(0.1, 1.5, 0.92, 1) 100ms forwards; }
+
+/* Exit: interior first, brackets hold 100ms longer — inside-out dismissal. */
+case-viewer.is-ready .cv__hud-early { animation: cv-fade-out 400ms cubic-bezier(0.7, 0, 0.84, 0) 350ms forwards; }
+case-viewer.is-ready .cv__hud-late { animation: cv-fade-out 400ms cubic-bezier(0.7, 0, 0.84, 0) 450ms forwards; }
+
+/* First frame fades in under the departing HUD (prototype image fade-in). */
+.cv__canvas {
+  opacity: 0;
+}
+case-viewer.is-ready .cv__canvas {
+  animation: cv-fade-in 400ms cubic-bezier(0.7, 0, 0.84, 0) 250ms forwards;
+}
+
+@keyframes cv-fade-out { 0% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes cv-fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes cv-slow-flicker { 0% { opacity: 0; } 30% { opacity: 0.6; } 50% { opacity: 0; } 60% { opacity: 0.9; } 100% { opacity: 0.9; } }
+@keyframes cv-cut-in { 0% { opacity: 0; } 100% { opacity: 0.6; } }
+@keyframes cv-snap-tl { 0% { transform: translate(-40px, -40px); opacity: 0; } 10% { opacity: 1; } 30% { opacity: 0; } 40% { opacity: 1; } 100% { transform: translate(0, 0); opacity: 1; } }
+@keyframes cv-snap-tr { 0% { transform: translate(40px, -40px); opacity: 0; } 10% { opacity: 1; } 30% { opacity: 0; } 40% { opacity: 1; } 100% { transform: translate(0, 0); opacity: 1; } }
+@keyframes cv-snap-bl { 0% { transform: translate(-40px, 40px); opacity: 0; } 10% { opacity: 1; } 30% { opacity: 0; } 40% { opacity: 1; } 100% { transform: translate(0, 0); opacity: 1; } }
+@keyframes cv-snap-br { 0% { transform: translate(40px, 40px); opacity: 0; } 10% { opacity: 1; } 30% { opacity: 0; } 40% { opacity: 1; } 100% { transform: translate(0, 0); opacity: 1; } }
+
+/* Reduced motion: no HUD, no snap — the boot collapses to the poster→frame
+   crossfade. Scrub itself is exempt (1:1 user-driven substitution). */
+@media (prefers-reduced-motion: reduce) {
+  .cv__hud {
+    display: none;
+  }
+  case-viewer.is-ready .cv__canvas {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* --- Corner brackets: ivory at rest, full-opacity cyan when engaged --- */
+.cv__brackets {
+  position: absolute;
+  inset: var(--space-1);
+  pointer-events: none;
+}
+.cv__brackets i {
+  position: absolute;
+  width: var(--cv-bracket-size);
+  height: var(--cv-bracket-size);
+  border: 0 solid var(--color-text-ivory);
+  opacity: var(--cv-bracket-opacity-rest);
+  transition:
+    opacity 0.15s ease,
+    border-color 0.15s ease;
+}
+.cv__brackets i:nth-child(1) { top: 0; left: 0; border-top-width: var(--cv-bracket-stroke); border-left-width: var(--cv-bracket-stroke); }
+.cv__brackets i:nth-child(2) { top: 0; right: 0; border-top-width: var(--cv-bracket-stroke); border-right-width: var(--cv-bracket-stroke); }
+.cv__brackets i:nth-child(3) { bottom: 0; left: 0; border-bottom-width: var(--cv-bracket-stroke); border-left-width: var(--cv-bracket-stroke); }
+.cv__brackets i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: var(--cv-bracket-stroke); border-right-width: var(--cv-bracket-stroke); }
+case-viewer[data-state='engaged'] .cv__brackets i {
+  opacity: 1;
+  border-color: var(--color-signal-cyan);
+}
+
+/* --- Disengage ✕ — engaged only, 44px hit area --- */
+.cv__close {
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-1);
+  min-width: var(--cv-hit-area);
+  min-height: var(--cv-hit-area);
+  background: color-mix(in srgb, var(--color-bg-deepest) 72%, transparent);
+  color: var(--color-text-ivory);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+}
+
+/* --- Control bar: restyled native range + fullscreen button --- */
+.cv__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+.cv__fs {
+  min-width: var(--cv-hit-area);
+  min-height: var(--cv-hit-area);
+  background: none;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xs);
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+.cv__fs:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
+}
+
+.cv__bar input[type='range'],
+.cv-fs__bar input[type='range'] {
+  flex: 1;
+  appearance: none;
+  height: var(--cv-hit-area);
+  margin: 0;
+  background: transparent;
+}
+.cv__bar input[type='range']::-webkit-slider-runnable-track,
+.cv-fs__bar input[type='range']::-webkit-slider-runnable-track {
+  height: 2px;
+  background: var(--color-border-strong);
+}
+.cv__bar input[type='range']::-webkit-slider-thumb,
+.cv-fs__bar input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  width: var(--cv-thumb-size);
+  height: var(--cv-thumb-size);
+  margin-top: calc((var(--cv-thumb-size) - 2px) / -2);
+  border-radius: var(--radius-xs);
+  background: var(--color-text-ivory);
+  border: 1px solid var(--color-border-strong);
+}
+.cv__bar input[type='range']::-moz-range-track,
+.cv-fs__bar input[type='range']::-moz-range-track {
+  height: 2px;
+  background: var(--color-border-strong);
+}
+.cv__bar input[type='range']::-moz-range-thumb,
+.cv-fs__bar input[type='range']::-moz-range-thumb {
+  width: var(--cv-thumb-size);
+  height: var(--cv-thumb-size);
+  border-radius: var(--radius-xs);
+  background: var(--color-text-ivory);
+  border: 1px solid var(--color-border-strong);
+}
+/* --- Window chips / series tabs --- */
+.cv__chips,
+.cv__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+.cv__chips button,
+.cv__tabs button {
+  font-family: var(--ff-mono);
+  font-size: var(--fz-ui);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  min-height: var(--cv-hit-area);
+  padding-inline: var(--space-2);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+}
+.cv__chips button[aria-checked='true'],
+.cv__tabs button[aria-checked='true'] {
+  color: var(--color-text-ivory);
+  border-color: var(--color-border-strong);
+  background: var(--color-bg-raised);
+}
+/* --- Caption: the prose figcaption voice --- */
+.cv__caption {
+  font-family: var(--ff-body);
+  font-size: var(--fz-body-s);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+/* --- Fullscreen overlay (M4) — fixed, visualViewport-sized (case-viewer.ts
+   keeps width/height/offset in step with pinch-zoomed pages), dvh fallback,
+   safe-area padded. Same imaging-black field; chrome floats over it. --- */
+.cv-fs {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 100;
+  background: var(--color-bg-deepest);
+  display: flex;
+  flex-direction: column;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+.cv-fs__meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--ff-mono);
+  font-size: var(--cv-meta-size);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.cv-fs__stage {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+.cv-fs__pan {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.cv-fs__pan canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.cv-fs__close {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + var(--space-1));
+  right: calc(env(safe-area-inset-right) + var(--space-1));
+  min-width: var(--cv-hit-area);
+  min-height: var(--cv-hit-area);
+  background: color-mix(in srgb, var(--color-bg-deepest) 72%, transparent);
+  color: var(--color-text-ivory);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+}
+.cv-fs__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+}
+.cv-fs__chip {
+  font-family: var(--ff-mono);
+  font-size: var(--fz-ui);
+  letter-spacing: var(--ls-ui);
+  min-height: var(--cv-hit-area);
+  padding-inline: var(--space-2);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+}
+.cv-fs__chip[aria-pressed='true'] {
+  color: var(--color-signal-cyan);
+  border-color: var(--color-border-strong);
+  background: var(--color-bg-raised);
+}
+.cv-fs__readout {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom) + var(--cv-hit-area) + var(--space-3));
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--ff-mono);
+  font-size: var(--cv-meta-size);
+  letter-spacing: var(--ls-ui);
+  color: var(--color-signal-cyan);
+  pointer-events: none;
+}
+/* --- Placement: article prose (media width) + edge-to-edge on mobile --- */
+.prose case-viewer {
+  max-width: var(--media-column);
+}
+@media (max-width: 47.9375em) {
+  /* Full-bleed the imaging field only; chrome keeps the page gutter. */
+  .prose case-viewer .cv__stage {
+    width: 100vw;
+    margin-inline: calc(-1 * var(--grid-margin));
+  }
+}

@@ -5,7 +5,7 @@ band: someday
 first_surfaced: 2026-06-28
 last_touched: 2026-06-28
 depends_on: []
-assessed: 2026-06-28
+assessed: 2026-07-07
 ---
 context7 is now a user-scope plugin (documented in CLAUDE.md this session; do not
 re-add via .mcp.json). A stale local context7 entry remains in `~/.claude.json`

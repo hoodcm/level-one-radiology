@@ -291,6 +291,7 @@
   letter-spacing: var(--ls-ui);
   text-transform: uppercase;
   line-height: 1;
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -375,6 +376,7 @@
   letter-spacing: -0.01em;
   color: var(--color-text-ivory);
   margin-bottom: var(--space-1);
+  text-wrap: balance;
 }
 
 .article-card__excerpt {
@@ -390,6 +392,30 @@
   color: var(--color-text-muted);
   display: flex;
   gap: var(--space-2);
+}
+
+/* Lead card — the featured slot reads as a feature, not a wide small card:
+   generous padding, headline-scale title, full-height so it stays flush with
+   the stacked column beside it (meta pinned to the bottom edge). */
+.article-card--lead {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--card-padding-lg);
+}
+
+.article-card--lead .article-card__title {
+  font-size: var(--fz-headline);
+  margin-bottom: var(--space-2);
+}
+
+.article-card--lead .article-card__excerpt {
+  font-size: var(--fz-body);
+  max-width: 55ch;
+}
+
+.article-card--lead .article-card__meta {
+  margin-top: auto;
 }
 
 /* --- HUD Frame (four-corner brackets) ---
@@ -411,6 +437,28 @@
   border-color: var(--color-border-strong);
   border-style: solid;
   pointer-events: none;
+  transition: border-color 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+}
+
+/* Target acquired: on card hover the brackets brighten and step 2px outward. */
+.article-card.hud-frame:hover::before { transform: translate(-2px, -2px); border-color: var(--color-text-muted); }
+.article-card.hud-frame:hover::after { transform: translate(2px, -2px); border-color: var(--color-text-muted); }
+.article-card.hud-frame:hover > .hud-corner-bl { transform: translate(-2px, 2px); border-color: var(--color-text-muted); }
+.article-card.hud-frame:hover > .hud-corner-br { transform: translate(2px, 2px); border-color: var(--color-text-muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hud-frame::before,
+  .hud-frame::after,
+  .hud-frame > .hud-corner-bl,
+  .hud-frame > .hud-corner-br {
+    transition: border-color 0.2s var(--ease-out);
+  }
+  .article-card.hud-frame:hover::before,
+  .article-card.hud-frame:hover::after,
+  .article-card.hud-frame:hover > .hud-corner-bl,
+  .article-card.hud-frame:hover > .hud-corner-br {
+    transform: none;
+  }
 }
 
 .hud-frame::before {
@@ -464,11 +512,40 @@
   color: var(--color-text-disabled);
 }
 
+.newsletter-inline__status {
+  font-size: var(--fz-body-s);
+  color: var(--color-signal-cyan);
+}
+
+.newsletter-inline__error {
+  font-size: var(--fz-body-xs);
+  color: var(--color-signal-red);
+}
+
+/* Gold CTA button (form submit) — same voice as the nav/mobile Subscribe. */
+.btn-gold {
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  color: var(--color-on-primary);
+  font-family: var(--ff-ui);
+  font-size: var(--fz-ui);
+  font-weight: 700;
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  line-height: 1;
+}
+.btn-gold:hover {
+  background: var(--color-bg-deepest);
+  color: var(--color-primary);
+}
+
 /* --- Newsletter CTA (footer section) --- */
 .newsletter-cta {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  /* #subscribe anchor target: land clear of the sticky header. */
+  scroll-margin-top: calc(var(--nav-height) + var(--space-3));
 }
 
 .newsletter-cta__headline {
@@ -543,7 +620,22 @@
   color: var(--color-text-disabled);
 }
 
+/* Data plate — version + build date, stamped at build (Footer.astro). */
+.site-footer__plate {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-disabled);
+}
+
 /* --- Registration Marks (footer personality) --- */
+.site-footer__marks {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
 .registration-mark {
   color: var(--color-text-disabled);
   opacity: 0.5;
@@ -562,6 +654,25 @@
   justify-content: center;
   padding: var(--section-spacer) 0;
   background: var(--color-bg-deepest);
+  position: relative;
+  /* Own stacking context so the z:-1 grid paints above THIS background
+     instead of vanishing behind it. */
+  isolation: isolate;
+}
+
+/* Blueprint ground: a faint hairline grid behind the hero, fading out toward
+   the band below. Paints above the background, below the text (z -1). */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--color-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-grid-line) 1px, transparent 1px);
+  background-size: var(--grid-texture-cell) var(--grid-texture-cell);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent 88%);
 }
 
 /* Brand wordmark in the hero — shown only on mobile, where the header
@@ -590,6 +701,9 @@
   overflow: hidden;
   padding-top: 0.14em;
   margin-top: -0.14em;
+  /* The fluid --fz-wordmark-hero guarantees fit; nowrap guards the reveal mask
+     against ever wrapping (a wrapped line breaks the baseline-rise illusion). */
+  white-space: nowrap;
 }
 .hero__wordmark-level,
 .hero__wordmark-radiology {
@@ -632,7 +746,9 @@
 }
 
 /* Subtitle: a short serif statement of what the site is (Anthropic-style
-   supporting paragraph under the headline). */
+   supporting paragraph under the headline). On mobile the wordmark above is
+   the display moment and both spans flow as one quiet paragraph; on desktop
+   the statement itself becomes the display moment. */
 .hero__tagline {
   max-width: 34ch;
   font-family: var(--ff-display);
@@ -640,6 +756,29 @@
   line-height: 1.2;
   font-weight: 400;
   color: var(--color-text-secondary);
+}
+
+@media (min-width: 48em) {
+  .hero__tagline {
+    max-width: none;
+  }
+  .hero__statement {
+    display: block;
+    max-width: 18ch;
+    font-size: var(--fz-display-l);
+    line-height: var(--lh-display-l);
+    letter-spacing: -0.01em;
+    color: var(--color-text-ivory);
+    text-wrap: balance;
+  }
+  .hero__support {
+    display: block;
+    max-width: 34ch;
+    margin-top: var(--space-3);
+    font-size: var(--fz-hero-subtitle);
+    line-height: 1.4;
+    color: var(--color-text-secondary);
+  }
 }
 
 /* --- Feature Band (full-bleed scroll-expand) --- */

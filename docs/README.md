@@ -14,7 +14,9 @@ The map of this project's docs — start here.
 - The **CSS token files** (`src/styles/tokens/*.css`, `src/styles/base/motion.css`) are the single source
   of truth for every concrete value — color, type, spacing, motion. Docs describe and point to them; they
   never restate values (that's how values drift).
-- [archive/](archive/) holds superseded docs (dated). Design-inspiration assets and prototypes live in
-  `design-assets/` at the repo root, not here.
+- [plans/](plans/) holds active plan and brief documents (dated) awaiting or feeding implementation.
+- [archive/](archive/) holds superseded docs (dated). Design-inspiration assets, reference studies
+  (including the design-ethos site survey), and prototypes live in `design-assets/` at the repo root,
+  not here.
 
 Project-level instructions (stack gotchas, commands, session workflow) live in [CLAUDE.md](../CLAUDE.md).

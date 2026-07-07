@@ -1,10 +1,14 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
 import Layout from '@/layouts/Layout.astro';
 import Tag from '@/components/shared/Tag.astro';
+import TableOfContents from '@/components/article/TableOfContents.astro';
+import NewsletterSignup from '@/components/shared/NewsletterSignup.tsx';
+import { getArticles } from '@/lib/articles';
+import { tagVariant, contentTypeVariant, contentTypeLabel } from '@/lib/tags';
 
 export async function getStaticPaths() {
-  const articles = await getCollection('articles');
+  const articles = await getArticles();
   return articles.map((article) => ({
     params: { slug: article.id },
     props: { article },
@@ -12,70 +16,126 @@ export async function getStaticPaths() {
 }
 
 const { article } = Astro.props;
-const { Content } = await render(article);
+const { Content, headings, remarkPluginFrontmatter } = await render(article);
 
-const { title, description, publishDate, primaryTag, contentType, keyPoints } = article.data;
+// Stamped by remarkCaseViewer when the article embeds a ::case directive;
+// the element script loads only on pages that need it (like minutesRead).
+const hasCaseViewer = remarkPluginFrontmatter.hasCaseViewer === true;
 
-const tagVariantMap: Record<string, 'default' | 'signal-red' | 'signal-cyan' | 'signal-violet' | 'signal-yellow' | 'signal-orange'> = {
-  'TRAUMA': 'signal-red',
-  'ABDOMEN': 'signal-cyan',
-  'CHEST': 'signal-orange',
-  'NEURO': 'signal-violet',
-  'MSK': 'signal-yellow',
-  'AI & POLICY': 'signal-violet',
-};
+const { title, serial, description, publishDate, lastReviewed, primaryTag, contentType, keyPoints, ogImage } =
+  article.data;
+const minutesRead = remarkPluginFrontmatter.minutesRead;
 
-const contentTypeVariantMap: Record<string, 'default' | 'signal-red' | 'signal-cyan' | 'signal-violet' | 'signal-yellow' | 'signal-orange'> = {
-  'educational': 'signal-cyan',
-  'commentary': 'signal-violet',
-  'case-analysis': 'signal-orange',
-};
-
-const tagVariant = tagVariantMap[primaryTag.toUpperCase()] || 'default';
-const contentTypeVariant = contentTypeVariantMap[contentType] || 'default';
-const contentTypeLabel = contentType.replace('-', ' ').toUpperCase();
-
-const formattedDate = new Date(publishDate).toLocaleDateString('en-US', {
+// Frontmatter dates parse as UTC midnight; render in UTC too, or the
+// calendar date shifts back a day in US timezones.
+const formattedDate = publishDate.toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
+  timeZone: 'UTC',
 });
+const reviewedStamp = lastReviewed
+  ? `${lastReviewed.getUTCFullYear()}-${String(lastReviewed.getUTCMonth() + 1).padStart(2, '0')}`
+  : null;
+
+// view-transition-name must be a valid CSS custom-ident.
+const vtName = `vt-${article.id.replace(/[^a-zA-Z0-9-]/g, '-')}`;
 ---
 
-<Layout title={`${title} | Level One Radiology`} description={description}>
+<Layout title={`${title} | Level One Radiology`} description={description} ogImage={ogImage}>
+  <!-- Reading progress: scroll-driven, pure CSS; invisible where unsupported. -->
+  <div class="article-progress" aria-hidden="true"></div>
+
   <article class="article">
-    <div class="container">
-      <!-- Header: SANS title (structure) over a SERIF deck (editorial voice) -->
-      <header class="article__header reading-column">
-        <div class="article__tags">
-          <Tag label={primaryTag.toUpperCase()} variant={tagVariant} />
-          <Tag label={contentTypeLabel} variant={contentTypeVariant} />
-        </div>
-        <h1 class="article__title">{title}</h1>
-        <p class="article__deck">{description}</p>
-        <div class="article__meta">
-          <span>Published {formattedDate}</span>
-        </div>
-      </header>
+    <div class="container article__layout">
+      <div class="article__main">
+        <!-- Header: SANS title (structure) over a SERIF deck (editorial voice) -->
+        <header class="article__header reading-column">
+          <div class="article__tags">
+            <Tag label={primaryTag.toUpperCase()} variant={tagVariant(primaryTag)} />
+            <Tag label={contentTypeLabel(contentType)} variant={contentTypeVariant(contentType)} />
+          </div>
+          <h1 class="article__title" style={`view-transition-name: ${vtName};`}>{title}</h1>
+          <p class="article__deck">{description}</p>
+          <div class="article__meta">
+            <span>{serial}</span>
+            <span class="article__meta-sep" aria-hidden="true">·</span>
+            <span>Published {formattedDate}</span>
+            <span class="article__meta-sep" aria-hidden="true">·</span>
+            <span>{minutesRead} min read</span>
+          </div>
+          {reviewedStamp && (
+            <p class="article__review">Last reviewed {reviewedStamp} · Practice patterns vary</p>
+          )}
+        </header>
 
-      <!-- Key Points: reference apparatus → sans, quiet card -->
-      {keyPoints && keyPoints.length > 0 && (
-        <aside class="key-points reading-column">
-          <h2 class="key-points__label">Key Points</h2>
-          <ul class="key-points__list">
-            {keyPoints.map((point) => <li>{point}</li>)}
-          </ul>
+        <!-- Key Points: reference apparatus → sans, quiet card -->
+        {keyPoints && keyPoints.length > 0 && (
+          <aside class="key-points reading-column">
+            <h2 class="key-points__label">Key Points</h2>
+            <ul class="key-points__list">
+              {keyPoints.map((point) => <li>{point}</li>)}
+            </ul>
+          </aside>
+        )}
+
+        <!-- Body: SERIF at reading line-height, 640px measure -->
+        <div class="prose reading-column">
+          <Content />
+          <!-- End mark: the publication's tombstone. -->
+          <svg class="article__endmark" viewBox="0 0 439 522" fill="currentColor" aria-hidden="true" focusable="false">
+            <path d="M0.251099 393L105.568 0H209.913L132.746 287.956H238.251L210.101 393H0.251099Z" />
+            <path d="M438.251 129L332.935 522H228.589L305.756 234.044H200.251L228.401 129L438.251 129Z" />
+          </svg>
+        </div>
+
+        <!-- The reader who just finished is the reader who subscribes. -->
+        <aside class="article__subscribe reading-column">
+          <p class="article__subscribe-headline">If this was useful, subscribe.</p>
+          <p class="article__subscribe-subhead">New articles by email, about once a week.</p>
+          <NewsletterSignup client:visible variant="inline" />
         </aside>
-      )}
 
-      <!-- Body: SERIF (Utopia) at reading line-height, 640px measure -->
-      <div class="prose reading-column">
-        <Content />
+        <footer class="article__footer reading-column">
+          <a href="/" class="article__back">← Back to Level One Radiology</a>
+        </footer>
       </div>
 
-      <footer class="article__footer reading-column">
-        <a href="/" class="article__back">← Back to Level One Radiology</a>
-      </footer>
+      <TableOfContents headings={headings} />
     </div>
   </article>
+
+  {hasCaseViewer && <script>import '@/components/case/case-viewer';</script>}
+
+  <script>
+    // Scroll-spy for the TOC rail: stamp aria-current on the link whose
+    // section heading most recently crossed the top third of the viewport.
+    const toc = document.querySelector('[data-toc]');
+    if (toc && 'IntersectionObserver' in window) {
+      const links = new Map(
+        [...toc.querySelectorAll<HTMLAnchorElement>('.toc__link')].map((a) => [
+          decodeURIComponent(a.hash.slice(1)),
+          a,
+        ])
+      );
+      const setActive = (id: string) => {
+        links.forEach((a, key) => {
+          if (key === id) a.setAttribute('aria-current', 'true');
+          else a.removeAttribute('aria-current');
+        });
+      };
+      const observed = [...links.keys()]
+        .map((id) => document.getElementById(id))
+        .filter((el): el is HTMLElement => !!el);
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) setActive(entry.target.id);
+          }
+        },
+        { rootMargin: '-10% 0px -65% 0px' }
+      );
+      observed.forEach((el) => io.observe(el));
+    }
+  </script>
 </Layout>

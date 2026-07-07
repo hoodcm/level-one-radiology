@@ -1,0 +1,31 @@
+{
+  "id": "dev-synthetic",
+  "title": "Synthetic test stack",
+  "modality": "SYN",
+  "base": "/cases/dev-synthetic/",
+  "rev": 3,
+  "series": [
+    {
+      "key": "axial",
+      "label": "AXIAL",
+      "plane": "axial",
+      "frames": 48,
+      "width": 1024,
+      "height": 1024,
+      "start": 24,
+      "windows": [
+        {
+          "key": "soft",
+          "label": "SOFT TISSUE",
+          "pattern": "axial/soft/{nnn}.jpg"
+        },
+        {
+          "key": "lung",
+          "label": "INVERTED",
+          "pattern": "axial/lung/{nnn}.jpg"
+        }
+      ],
+      "poster": "axial/poster.jpg"
+    }
+  ]
+}

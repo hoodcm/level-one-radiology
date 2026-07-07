@@ -11,6 +11,9 @@ node_modules/
 dist/
 .astro/
 
+# Browser-automation debris (Playwright MCP — console/page dumps, can capture auth tokens)
+.playwright-mcp/
+
 # Claude local files
 .claude/settings.local.json
 CLAUDE.local.md

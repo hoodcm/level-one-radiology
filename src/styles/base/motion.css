@@ -43,3 +43,16 @@
     transition: none;
   }
 }
+
+/* Cross-document view transitions — page navigations crossfade instead of
+   flashing. Pure CSS (no router JS): supported browsers opt in, others
+   navigate normally. */
+@view-transition {
+  navigation: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}

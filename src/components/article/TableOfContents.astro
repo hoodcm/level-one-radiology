@@ -1,0 +1,31 @@
+---
+/**
+ * TableOfContents — "On this page" rail for article h2 sections. Rendered
+ * only when the article has 2+ sections; visible only ≥80em (the right
+ * margin beside the reading column). Numbering mirrors the CSS section
+ * counters on the prose h2s. A small scroll-spy in [slug].astro stamps
+ * aria-current on the active link.
+ */
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+}
+const { headings } = Astro.props;
+// Astro collects heading text after rehype runs, so the appended anchor "#"
+// (rehype-autolink-headings) rides along — strip it.
+const sections = headings
+  .filter((h) => h.depth === 2)
+  .map((h) => ({ ...h, text: h.text.replace(/#\s*$/, '') }));
+---
+
+{sections.length >= 2 && (
+  <nav class="toc" aria-label="On this page" data-toc>
+    <p class="type-ui">On this page</p>
+    <ol class="toc__list">
+      {sections.map((section) => (
+        <li class="toc__item">
+          <a href={`#${section.slug}`} class="toc__link">{section.text}</a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}

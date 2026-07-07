@@ -1,0 +1,38 @@
+/* ==============================================
+   PRINT — chrome hiding + reading adjustments
+   Color inversion is handled by tokens/print.css (token overrides).
+   ============================================== */
+
+@media print {
+  .site-header,
+  .site-footer,
+  .mobile-menu,
+  .nav-toggle,
+  .feature-band,
+  .article-progress,
+  .article__toc,
+  .article__subscribe,
+  .article__footer,
+  .heading-anchor {
+    display: none !important;
+  }
+
+  .article__layout {
+    display: block;
+  }
+
+  /* Ink over signal: prose links print as text, with the destination shown
+     for external references. */
+  .prose a {
+    color: var(--color-text-primary);
+  }
+  .prose a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.8em;
+    color: var(--color-text-muted);
+  }
+
+  .prose pre {
+    white-space: pre-wrap;
+  }
+}

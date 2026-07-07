@@ -44,102 +44,40 @@ export default function NewsletterSignup({
     }
   }
 
+  const form =
+    status === "success" ? (
+      <p className="newsletter-inline__status">You're in. Check your inbox for a welcome email.</p>
+    ) : (
+      <form onSubmit={handleSubmit} className="newsletter-inline">
+        <div className="newsletter-inline__form">
+          <Input
+            type="email"
+            placeholder="Your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            aria-label="Email address"
+            disabled={status === "loading"}
+          />
+          <Button type="submit" disabled={status === "loading"} className="btn-gold">
+            {status === "loading" ? "..." : "Subscribe"}
+          </Button>
+        </div>
+        {status === "error" && <p className="newsletter-inline__error">{errorMessage}</p>}
+        <p className="newsletter-inline__privacy">No spam. Unsubscribe anytime.</p>
+      </form>
+    );
+
   if (variant === "section") {
+    // The site-wide Subscribe CTAs (header, mobile menu) target #subscribe.
     return (
-      <div className="newsletter-cta">
+      <div className="newsletter-cta" id="subscribe">
         {headline && <h3 className="newsletter-cta__headline">{headline}</h3>}
         {subhead && <p className="newsletter-cta__subhead">{subhead}</p>}
-        {status === "success" ? (
-          <p style={{ color: "var(--color-signal-cyan)", fontSize: "var(--fz-body-s)" }}>
-            You're in. Check your inbox for a welcome email.
-          </p>
-        ) : (
-          <form onSubmit={handleSubmit} className="newsletter-inline">
-            <div className="newsletter-inline__form">
-              <Input
-                type="email"
-                placeholder="Your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                aria-label="Email address"
-                disabled={status === "loading"}
-              />
-              <Button
-                type="submit"
-                disabled={status === "loading"}
-                style={{
-                  background: "var(--color-primary)",
-                  borderColor: "var(--color-primary)",
-                  color: "var(--color-on-primary)",
-                  fontFamily: "var(--ff-ui)",
-                  fontSize: "var(--fz-ui)",
-                  fontWeight: 700,
-                  letterSpacing: "var(--ls-ui)",
-                  textTransform: "uppercase" as const,
-                  lineHeight: 1,
-                }}
-              >
-                {status === "loading" ? "..." : "Subscribe"}
-              </Button>
-            </div>
-            {status === "error" && (
-              <p style={{ color: "var(--color-signal-red)", fontSize: "var(--fz-body-xs)" }}>
-                {errorMessage}
-              </p>
-            )}
-            <p className="newsletter-inline__privacy">No spam. Unsubscribe anytime.</p>
-          </form>
-        )}
+        {form}
       </div>
     );
   }
 
-  // Inline variant (hero)
-  return (
-    <div className="newsletter-inline" id="subscribe">
-      {status === "success" ? (
-        <p style={{ color: "var(--color-signal-cyan)", fontSize: "var(--fz-body-s)" }}>
-          You're in. Check your inbox for a welcome email.
-        </p>
-      ) : (
-        <form onSubmit={handleSubmit}>
-          <div className="newsletter-inline__form">
-            <Input
-              type="email"
-              placeholder="Your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              aria-label="Email address"
-              disabled={status === "loading"}
-            />
-            <Button
-              type="submit"
-              disabled={status === "loading"}
-              style={{
-                background: "var(--color-primary)",
-                borderColor: "var(--color-primary)",
-                color: "var(--color-on-primary)",
-                fontFamily: "var(--ff-ui)",
-                fontSize: "var(--fz-ui)",
-                fontWeight: 700,
-                letterSpacing: "var(--ls-ui)",
-                textTransform: "uppercase" as const,
-                lineHeight: 1,
-              }}
-            >
-              {status === "loading" ? "..." : "Subscribe"}
-            </Button>
-          </div>
-          {status === "error" && (
-            <p style={{ color: "var(--color-signal-red)", fontSize: "var(--fz-body-xs)" }}>
-              {errorMessage}
-            </p>
-          )}
-          <p className="newsletter-inline__privacy">No spam. Unsubscribe anytime.</p>
-        </form>
-      )}
-    </div>
-  );
+  return <div className="newsletter-inline">{form}</div>;
 }

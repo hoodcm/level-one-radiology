@@ -1,11 +1,12 @@
 ---
 id: tuned-wrong-viewport-wordmark
-status: open
+status: resolved
 tags: [pattern-only]
 first_seen: 2026-06-27
 last_seen: 2026-06-27
 recurrence: 1
 related: []
+assessed: 2026-07-07
 ---
 
 ## Description
@@ -13,3 +14,5 @@ During the font-swap trial I spent ~6 rounds tuning the **desktop** header wordm
 
 ## Notes
 2026-06-27 — Remedy is behavioral, not mechanical: when iterating on observable output, screenshot the viewport the user is actually viewing (mobile-first here) *before* tuning, and confirm which element carries the text when a name like "the wordmark" is ambiguous between a mobile and a desktop instance. Reinforces the existing `mobile-first-default` memory. No clean hook surface — tagged pattern-only.
+
+2026-07-07 — Janitor: shipped in [Unreleased] — CHANGELOG "Fixed: Mobile hero wordmark clipped/wrapped ≤390px" records `--fz-wordmark-hero` now a fluid clamp derived from the measured width ratio, verified 0 overflow at 344/360/390. The single-viewport-tuning failure mode this item describes is structurally addressed (formula-derived sizing + multi-width verification replaces ad hoc single-viewport tuning).

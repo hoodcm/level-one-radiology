@@ -4,17 +4,27 @@ Actionable tasks and open questions. Check at session start, update frequently.
 
 <!-- todo:worklist:start -->
 
+## Start here
+_as of 2026-07-07 · 0 streams startable · 4 now/next items untyped_
+
+**Decisions waiting (⚖): 2** — Judge this session's visual tuning on screen · Split primary-CTA gold from caution into distinct tokens if they conflict
+
+- standalone: Restore footer LinkedIn/X links with real profile URLs (build)
+
 ## Now
 
-- **Build About page**
-  Build the About page (the nav already links ABOUT; no page exists yet). MVP-core (CONTEXT names "about page" in MVP scope) and stated priority #1 for next session. Done: an About route renders under `src/pages/`.
-  ↳ links: src/pages/
-- **Build article index page (/articles)**
-  Build the `/articles` listing page at `src/pages/articles/index.astro` — the index that lists all articles (the homepage cards now link through to the article template, but there is no standalone listing route yet). MVP-core (CONTEXT names "article index" in MVP scope) and stated priority #1 for next session. Article template (`[slug].astro`) and ArticleCard component already exist to build on. Done: `src/pages/articles/index.astro` renders the article collection.
-  ↳ links: src/pages/articles/
+- **Build Case Viewer showstopper module**
+  Build the Case Viewer — the "showstopper module," a PACS-like image viewer for clinical cases embedded within articles. Light-DOM custom element `<case-viewer>` (not a React island — see the archived plan), mobile-first, built and code-reviewed. Michael: "the mobile-first image viewer is key." Implementation is substantially complete (mapping/frame-store/case-viewer/ fullscreen modules, boot choreography, TUNE, build-time manifest pipeline, review hardening, /simplify pass) and is live-embedded in a published article (`src/content/articles/window-and-level.md`), but that embed is a TEMPORARY synthetic demo case (`::case{id="dev-synthetic"}`) standing in for the on-device test surface — swapping it for a real clinical case is step 15 below, not a separate deliverable. Remaining scope is purely the four **user-gated, device-only** steps from `docs/archive/plans/2026-07-07-case-viewer-plan.md` (Steps section) — none are autonomous: - Step 3 — on-device gesture-spike judgment (Michael's iPhone) - Step 12 — fullscreen device pass - Step 13 — VoiceOver full-flow a11y pass - Step 15 — first real clinical case (replaces the synthetic embed above) Done: all four device-gated steps pass on Michael's iPhone and the real-case embed (step 15) is live.
+  ↳ links: src/components/case/, docs/design/components.md, docs/archive/plans/2026-07-07-case-viewer-plan.md
+- **Judge this session's visual tuning on screen**
+  One on-screen judgment pass over this session's headless-verified visual knobs — his eyes are the gate on all of these: - Deepened gold shade (`--color-signal-yellow` → #D8A82C, via `--color-primary`) now owns much more surface than before: CTAs, nav/mobile Subscribe, newsletter buttons, pull-quote stripe, links, focus rings, selection, progress hairline, subscribe accents, and the caution role (shared token). - Hero blueprint grid (`--color-grid-line` alpha 0.04, `--grid-texture-cell` 48px). - Desktop prose leading (`--lh-reading` 1.44). - De-striped apparatus cards. - HUD corner hover. - Title view-transition morph (click card → article in Chrome/Safari). - Print stylesheet (⌘P on an article). Done: each knob above is confirmed acceptable on screen (or re-tuned).
+  ↳ links: src/styles/tokens/colors.css, src/styles/tokens/typography.css
 - **Resolve the body-serif widening (opsz vs wider OFL serif)**
   The body reading serif (Newsreader) is being widened for a sturdier text column. An `opsz` experiment is live via `--reading-opsz` (typography.css; consumed by prose.css `font-variation-settings: "opsz"`) and awaits the user's on-screen judgment. Newsreader has no `wdth` axis, so widening is only available through optical size. Next step is either lower the opsz further or evaluate a wider / more-geometric OFL body serif. Stated priority Now/Next. Done: a deliberate body-serif width direction is chosen — a settled `--reading-opsz` value or a swapped wider OFL body serif.
   ↳ links: src/styles/tokens/typography.css, src/styles/components/prose.css
+- **Review/edit Claude-drafted page copy**
+  Claude drafted the copy on `/about`, the 404 page, and the article subscribe-card microcopy in brand voice; a de-slick pass already ran at Michael's direction this session ("copy reading a little too slick"), but the final wording is his call. Review and edit each. Done: About, 404, and article subscribe-card copy read as final, in Michael's voice.
+  ↳ links: src/pages/about.astro, src/pages/404.astro, src/pages/articles/[slug].astro
 
 ## Next
 
@@ -23,19 +33,19 @@ Actionable tasks and open questions. Check at session start, update frequently.
 - **Set up Plausible analytics**
   Wire Plausible analytics — add the tracking script (gated on `PUBLIC_PLAUSIBLE_DOMAIN`, already declared in CLAUDE.md env vars) to the base layout. No `plausible` reference exists anywhere in `src/` yet. Privacy- respecting analytics is the listed measurement tool; subscriber conversion is the keystone metric. Stated priority #2. Done: Plausible script loads on production pages for the configured domain.
   ↳ links: src/layouts/Layout.astro
-- **Self-host the OFL font faces (currently CDN-loaded)**
-  The OFL swap shipped in release 0.5.0 (Newsreader / DM Sans / Michroma / Chivo Mono), but the four faces load from the Google Fonts CDN — unlike the rest of the project, which self-hosts from `public/fonts/`. Download and self-host the woff2 files and repoint Layout.astro (the CDN `<link>` to fonts.googleapis.com). The Utopia / Lab Grotesque / Eurostile / IBM Plex Mono originals are deliberately retained as CSS fallbacks — leave them. Done: the four OFL faces are self-hosted from `public/fonts/` and Layout.astro no longer references the Google Fonts CDN.
-  ↳ links: src/layouts/Layout.astro
-- **Confirm the deepened gold shade on screen**
-  The brand primary moved from red to gold and `--color-signal-yellow` deepened to #D8A82C (a richer goldenrod) this session, flowing to both the gold CTAs (via `--color-primary`) and the caution signal (shared token). Confirm the new shade reads correctly on screen — CTAs, nav/mobile Subscribe, newsletter buttons, pull-quote stripe, and the caution role — before relying on it. Done: the deepened gold is confirmed acceptable on screen (or re-tuned).
-  ↳ links: src/styles/tokens/colors.css
+- **Restore footer LinkedIn/X links with real profile URLs**
+  LinkedIn/X placeholder links were removed from the footer this session (the bare-domain hrefs were dead links). Restore once Michael supplies real profile URLs — a one-line change in `src/components/layout/Footer.astro`; a comment in the file marks the spot ("Connect" column). Blocked on Michael supplying the URLs. Done: real LinkedIn/X links render in the footer Connect column.
+  ↳ links: src/components/layout/Footer.astro
+- **Case-viewer hot-path perf items deferred from the /simplify pass**
+  Three efficiency/altitude findings from the case-viewer review were judged real but not mechanically safe to apply before the device-gated verification pass (they change hot-path behavior that only the iPhone session can validate): 1. Layout-read/write interleaving forces a synchronous reflow per scrub frame — `#ppf()`/`fitCanvas` read `clientWidth` right after `#syncReadout` DOM writes (case-viewer.ts), and fullscreen `#redraw` reads `getBoundingClientRect()` after `#syncFrame` writes. Fix shape: cache stage dimensions in the existing ResizeObserver / viewport callbacks and pass them through (mind the 0×0 window before the first RO callback). 2. `#setFrame` conflates advance/retarget/repaint; splitting an explicit `#repaint()` would let it early-out on unchanged frame. The repaint-on-unchanged-frame dependency is pinned by a comment at #setFrame for now; do the split only with device profiling in hand. 3. `get #store` re-derives `` `${series.key}/${win.key}` `` + Map.get ~4× per pointermove. Negligible in isolation — bundle with the above only if profiling shows it matters (a cached field must be invalidated on window/series switch). Done: apply-or-close each with an on-device profiling judgment during (or after) the device-gated case-viewer pass.
+  ↳ links: src/components/case/case-viewer.ts, src/components/case/fullscreen.ts
 
 ## Later
 
-- **Build Case Viewer showstopper module**
 - **Decide and verify FeatureBand detector desktop behavior**
 - **Write first educational article (deep-dive)**
 - **Enforce the grid primitive with a hook**
+- **Split primary-CTA gold from caution into distinct tokens if they conflict**
 
 ## Someday
 
@@ -43,7 +53,7 @@ Actionable tasks and open questions. Check at session start, update frequently.
 - **Consider thin Scrib3-style gutters for full-bleed image spans**
 - **Remove the stale local context7 entry in ~/.claude.json**
 - **Repair ~/.npm cache permissions (EACCES)**
-- **Split primary-CTA gold from caution into distinct tokens if they conflict**
+- **Add size-adjust metric-compatible fallbacks for OFL fonts**
 
 ## Open questions
 
@@ -57,11 +67,11 @@ Actionable tasks and open questions. Check at session start, update frequently.
 <!-- todo:friction:start -->
 
 ## Friction worth addressing
-_Refreshed 2026-06-28 by end-session janitor · project store_
+_Refreshed 2026-07-07 by end-session janitor · project store_
 
-**Quick fixes (0)** — apply directly:
-**Needs design (1)**:
-- prefer-font-supported-before-transform-hacks — order-of-operations for type adjustments (native variable axes / OpenType features first, then synthetic transforms with the tradeoff flagged) → /hook-design .claude/friction/open/2026-06-28-prefer-font-supported-before-transform-hacks.md
+**Quick fixes (1)** — apply directly:
+- prefer-font-supported-before-transform-hacks — encode "font-supported axes before transform hacks" as a typography principle → add the adjustment order (native variable axes / OpenType features first; transforms second, with the tradeoff flagged) to docs/design/reasoning/typography.md
+**Needs design (0)**:
 
 <!-- todo:friction:end -->
 
@@ -69,21 +79,26 @@ _Refreshed 2026-06-28 by end-session janitor · project store_
 
 ## Continuation
 
-_Last session: 2026-06-28_
+_Last session: 2026-07-07_
+
+Level One Radiology — the dark-first, content-driven website for leveloneradiology.com (Astro + React islands, design-token single-source-of-truth).
 
 **Accomplished:**
-- Reorganized docs/ for single-source-of-truth — grouped under `design/`, docs point to the CSS tokens (see CHANGELOG ### Changed)
-- Added `.claude/rules/` pointer rules + the CLAUDE.md "Documentation" doctrine (see ### Added)
-- Fixed `tsconfig.json` baseUrl (TS-7 migration); pruned unused deps `radix-ui` + `lucide-react`
-- Root cleanup: archived `DESIGN.md` + `PROJECT-INITIALIZATION`; moved references/prototypes to top-level `design-assets/`
-- Set shadcn style to Mira + regenerated button/input; fixed the npm cache (installs + context7 now work)
+- Closed the case-viewer `/implement-plan` Phase 10: `/code-review` (10 findings fixed — decode races, global LRU bound, build-validation gaps) then `/simplify` (net −45 lines, unified scrub pipeline); see CHANGELOG `[Unreleased]`.
+- Embedded the case viewer live in `window-and-level.md` (synthetic stack) as the deployed test surface — the dev spike page is prod-excluded and style-gallery's embed is draft-only, so neither was testable after a push.
+- Recorded the review hardening in the archived plan's deviations ledger and filed the deferred hot-path perf work as a new TODO item.
+- Gates green throughout (26/26 vitest, `npm run build` + `npm run lint`); 4 local checkpoint commits on main (`715daca`, `16cc949`, `397408e`, `3dad68e`), published via `/push` at session end.
 
-**Start by reading:** CLAUDE.md, CONTEXT.md, docs/README.md, TODO.md, CHANGELOG.md
+**Start by reading:** TODO.md, CONTEXT.md, CHANGELOG.md
 
-**Priorities:** see the `## Now` / `## Next` bands above.
+**Priorities:**
+1. See TODO.md `## Start here` and `## Now`. The lead item is the case-viewer on-device verification on Michael's iPhone (steps 3 inline judgment, 12 fullscreen, 13 VoiceOver, 15 first real case) — the only work now between the module and "done." Dev server: `npm run dev -- --host`, then `/dev/gesture-spike` or `/articles/window-and-level`.
+2. Then the deferred case-viewer hot-path perf items (apply-or-close with on-device profiling in hand).
 
-**Heads-up:**
-- Reload the VS Code window once to bring context7's MCP server online (the npm-cache fix needs a fresh session to re-launch it).
-- The repo is uncommitted; `/push` (minor bump) is next.
+**Time-sensitive:** See TODO.md `## Time-sensitive` (no case-viewer deadlines this session).
+
+**Unverified assumptions:**
+- The review fixes are pointer/history/DOM behaviors vitest can't exercise — 26/26 confirms non-regression, not the fixes themselves; the device pass (steps 3/12/13) is what confirms them. The one I'd most expect to be wrong: the second-finger scrub fix goes inert (no live hand-off) when the owning finger lifts mid-scrub.
+- The synthetic embed renders on the deployed GitHub Pages URL — confirmed in the local prod build (element + 121 frames + poster in `dist/`), not yet eyeballed on the live URL post-push.
 
 <!-- todo:continuation:end -->

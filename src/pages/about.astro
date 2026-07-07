@@ -1,0 +1,54 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Container from '@/components/layout/Container.astro';
+
+const description =
+  'Level One Radiology is an independent emergency radiology publication written by Michael Hood, MD, an emergency radiologist at Mass General Brigham.';
+---
+
+<Layout title="About | Level One Radiology" description={description}>
+  <section class="page">
+    <Container width="reading">
+      <header class="page-header">
+        <p class="type-ui">About</p>
+        <h1 class="page-header__title">About Level One</h1>
+      </header>
+
+      <div class="prose">
+        <p class="lead">
+          Level One Radiology is an independent publication about emergency radiology. It has one
+          author, no institution, and no sponsor.
+        </p>
+
+        <p>
+          I'm Michael Hood, an emergency radiologist at Mass General Brigham in Boston. I read the
+          trauma and emergency imaging this site writes about. The content comes from that work: the
+          findings that change management, the calls that are hard to make, and how the field is
+          changing.
+        </p>
+
+        <h2>Why this exists</h2>
+        <p>
+          Radiology has journals for rigor and trade sites for speed, and not much in between. Journal
+          teaching arrives a year late and reads like a textbook. Trade coverage is fast but thin. This
+          site is for the middle: educational deep-dives, commentary while the topic still matters, and
+          teaching cases you can use on your next shift.
+        </p>
+
+        <h2>What to expect</h2>
+        <p>
+          Articles are the product. Deep-dives explain the mechanism before the findings, so the signs
+          are findable rather than just recognizable. Commentary takes a position. Cases support the
+          teaching rather than standing alone. Articles run as long as the teaching requires and no
+          longer.
+        </p>
+
+        <p>
+          New articles go out by email about once a week.
+          <a href="#subscribe">Subscribe at the bottom of this page</a> or use the
+          <a href="/rss.xml">RSS feed</a>.
+        </p>
+      </div>
+    </Container>
+  </section>
+</Layout>

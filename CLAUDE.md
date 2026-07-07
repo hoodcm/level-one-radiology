@@ -49,38 +49,46 @@ When you need current API/usage docs for a library — **Astro 5, Tailwind v4, s
 
 ```
 src/
-  content.config.ts       # Content schema (Zod, Astro 5 Content Layer API)
+  content.config.ts       # Content schema (Zod, Astro 5 Content Layer API; enums derive from lib/tags.ts)
   content/
-    articles/             # Markdown files with frontmatter
+    articles/             # Markdown files with frontmatter (style-gallery.md = draft-only specimen)
   components/
-    layout/               # Header, Footer, Container (.astro)
-    article/              # TableOfContents, KeyPoints (.astro), NewsletterCTA (.jsx)
-    case/                 # CaseViewer (.jsx) — custom, not shadcn
-    shared/               # tag, article-card (.astro)
+    layout/               # Header, Footer, Container, Grid, Col (.astro)
+    article/              # TableOfContents.astro
+    case/                 # <case-viewer> element + frame-store/fullscreen/mapping (.ts); see docs/archive/plans/ brief
+    shared/               # Tag, ArticleCard, FeatureBand (.astro), NewsletterSignup (.tsx)
     ui/                   # shadcn/ui auto-generated components
   lib/
-    utils.ts              # Utility functions (cn helper, etc.)
+    utils.ts              # cn helper etc.
+    tags.ts               # Single source: tag/contentType taxonomy → signal variants
+    articles.ts           # getArticles(): draft-filtered, date-sorted accessor
+    markdown-plugins.mjs  # remarkCallouts, remarkCaseViewer, rehypeTableScroll, remarkReadingTime
+    case-shell.mjs        # build-time <case-viewer> shell emitter + ::case validation (shared w/ loader + case:build)
+    case-loader.ts        # case-aware content loader (rev-invalidates stale ::case embeds)
   pages/
     articles/
       [slug].astro        # Article template
       index.astro         # Article listing
     index.astro           # Homepage
+    about.astro           # About
+    404.astro             # Not-found page
+    rss.xml.js            # RSS feed (@astrojs/rss)
   layouts/
     Layout.astro          # Base layout
   styles/
-    tokens/               # colors.css, typography.css, spacing.css
-    base/                 # global.css, motion.css
-    components/           # Per-component CSS
+    tokens/               # colors, typography, spacing, print, fonts-ofl.generated (.css)
+    base/                 # global.css, motion.css, print.css
+    components/           # Per-component CSS (homepage, prose, pages)
     main.css              # Import manifest
 
 public/
   CNAME                   # Custom domain for GitHub Pages
   robots.txt              # Search engine directives
-  images/articles/        # Images organized by article slug
-  fonts/                  # Self-hosted woff2 fallback faces (active faces load via Google Fonts)
+  images/                 # og-default.jpg; article images by slug as they arrive
+  fonts/                  # Self-hosted woff2 — ofl/ = active faces (fetch-ofl-fonts.mjs); rest = fallbacks
 ```
 
-**Pattern:** Static Astro pages by default. React islands (`client:load`) only for interactive components (newsletter form, case viewer, search).
+**Pattern:** Static Astro pages by default. React islands (`client:visible`/`client:load`) only for interactive components (newsletter form, case viewer, search). Markdown renders through the remark/rehype pipeline in `astro.config.mjs`.
 
 ## Documentation
 

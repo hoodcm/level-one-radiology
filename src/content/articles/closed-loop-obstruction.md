@@ -1,6 +1,8 @@
 ---
 title: "Closed-Loop Obstruction: The CT Signs You Cannot Miss"
 publishDate: "2026-01-28"
+serial: "L1-0002"
+lastReviewed: "2026-01-28"
 description: "Closed-loop small bowel obstruction carries high morbidity when diagnosis is delayed. This article reviews the CT findings that distinguish simple from closed-loop obstruction, with emphasis on the signs that predict ischemia."
 tags: ["abdomen", "ct", "emergency", "small-bowel"]
 primaryTag: "Abdomen"
@@ -28,10 +30,9 @@ The definitive signs point to the loop itself. Follow the mesenteric vessels to 
 
 The signs of ischemia are what change management. Reduced or absent wall enhancement, compared to adjacent normal bowel on portal venous phase, is the most specific finding for nonviable bowel. Mesenteric haziness from edema and hemorrhage indicates venous congestion progressing toward ischemia, and high-density intraluminal contents (>20 HU) suggest mucosal ischemia.
 
-<div class="callout callout--critical">
-<p class="callout__label">Do not wait for late signs</p>
-<p>Pneumatosis intestinalis and portal venous gas confirm ischemia, but they are late findings. A closed loop with reduced wall enhancement warrants urgent surgical communication <em>before</em> these appear.</p>
-</div>
+:::critical[Do not wait for late signs]
+Pneumatosis intestinalis and portal venous gas confirm ischemia, but they are late findings. A closed loop with reduced wall enhancement warrants urgent surgical communication *before* these appear.
+:::
 
 ## The Interpretation Framework
 
@@ -67,3 +68,4 @@ Not every closed-loop obstruction requires emergency surgery. The key is disting
 ## Key Takeaway
 
 Identify the two transition points, trace the closed loop between them, and assess for ischemia by evaluating wall enhancement. When in doubt, communicate urgency: the surgical team needs to know this is not a simple SBO.
+

@@ -634,40 +634,53 @@ Charts/graphs for trend analysis or literature data. Clean, on-brand, accessible
 
 ## Showstopper: Case Viewer
 
-The signature differentiator. What makes someone say "this is different."
+The signature differentiator, shipped: scrollable CT/MR stacks embedded inline in articles, scrubbed
+the way radiologists scrub. A framework-free light-DOM custom element `<case-viewer>` — no React on
+article pages, and the design tokens cascade straight into it.
 
-### Requirements
+### How it works
 
-- Handle image stacks (scroll through slices)
-- Support annotations (arrows, circles, text labels) with toggle
-- Support comparison mode (two studies side-by-side, synchronized scrolling)
-- Mobile: Swipe to scroll, tap to toggle annotations, pinch to zoom
-- Desktop: Scroll wheel navigation, keyboard arrows, click-drag pan when zoomed
-- Performance: Lazy loading essential (don't load entire stack upfront)
-- Dark interface (uses deepest background with HUD framing)
+- **Authoring**: `::case[Caption text.]{id="case-id"}` in article markdown. The authoring guide
+  (frame export, `npm run case:build`, caption conventions) lives in
+  [../writing.md](../writing.md) → Case viewer authoring.
+- **Build**: `remarkCaseViewer` (`src/lib/markdown-plugins.mjs`) expands the directive via
+  `src/lib/case-shell.mjs` into the full static shell — poster, meta strip, counter, native range
+  slider, window chips, boot-HUD SVG — so the article ships zero-CLS, no-runtime-JSON HTML and a
+  no-JS reader still gets poster + meta + caption. A missing manifest or frame file fails the
+  build (render-time check + `astro:build:start` integration in `astro.config.mjs`);
+  `src/lib/case-loader.ts` re-renders embedding articles when a case's manifest `rev` moves.
+- **Runtime**: `src/components/case/case-viewer.ts` upgrades the shell in place. Pure logic lives
+  in DOM-free, vitest-covered modules: `mapping.ts` (px→frame, frontier clamp) and
+  `frame-store.ts` (ImageBitmap LRU with explicit `close()`, generation tokens,
+  direction-weighted decode-ahead). `fullscreen.ts` owns the overlay: visualViewport sizing,
+  popstate as the single close authority, pinch zoom, TUNE filter drag.
 
-### Design Principle
+### Interaction model (locked by the 2026-07 plan)
 
-Should feel native to a radiologist. Familiar interaction patterns, clinical-appropriate display. This is where the imaging-native aesthetic gets expressed most fully.
+Progressive engage: at rest the image scrolls with the page (`touch-action: pan-y`) and a
+horizontal drag scrubs; a tap engages PACS mode (page held, either axis scrubs, cyan brackets); a
+second finger or the ⛶ button promotes to fullscreen. Direct 1:1 mapping, integer snap, zero
+momentum; the scrub position clamps to the decoded frontier so the counter never disagrees with
+the image. Window chips switch pre-baked window exports **preserving the slice index exactly**
+(that index is the pedagogy); series tabs reset to the series' start frame. TUNE (fullscreen only)
+is an honest render adjustment — CSS filters with floors, reset on close — never labeled W/L. Full
+rationale and rejected alternatives: the archived plan
+(`docs/archive/plans/2026-07-07-case-viewer-plan.md`).
 
-### Implementation Approach
+### Chrome
 
-The Case Viewer is likely **custom-built rather than using shadcn/ui**, because:
+Meta strip in the `.figure-meta` console voice; corner brackets are the HUD framing (no border —
+dark-on-dark needs none); boot choreography ported verbatim from
+`design-assets/prototypes/case-viewer-loading-hud.html`; reduced motion collapses to a fade. All
+values are tokens — component tokens in `src/styles/tokens/case-viewer.css`, styles in
+`src/styles/components/case-viewer.css`.
 
-1. **Domain-specific interactions** — PACS-like navigation doesn't map to standard primitives
-2. **Full control needed** — Window/level, zoom, pan require custom implementation
-3. **Performance critical** — Image stack handling needs specialized optimization
+### Deferred by explicit choice (v2 candidates)
 
-However, you may use primitive components internally:
-
-- **Base UI Slider** for window/level controls
-- **Base UI Tooltip** with "detached triggers" for annotation popups that follow cursor
-- **Base UI ScrollArea** for thumbnail strip navigation
-
-### Development discipline
-
-Don't build a second showstopper until the criteria in
-[philosophy.md](philosophy.md#the-module-system) are met (20+ articles, engagement data, a clear need).
+Annotations/measurement, comparison pairs with synced scrolling, unknown-case reveal block, pinned
+scroll-showcase, text→image deep links, cine export. Don't build a second showstopper until the
+criteria in [philosophy.md](philosophy.md#the-module-system) are met (20+ articles, engagement
+data, a clear need).
 
 ---
 

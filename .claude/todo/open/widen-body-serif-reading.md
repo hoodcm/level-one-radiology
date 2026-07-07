@@ -6,7 +6,7 @@ first_surfaced: 2026-06-28
 last_touched: 2026-06-28
 depends_on: []
 links: [src/styles/tokens/typography.css, src/styles/components/prose.css]
-assessed: 2026-06-28
+assessed: 2026-07-07
 ---
 The body reading serif (Newsreader) is being widened for a sturdier text column.
 An `opsz` experiment is live via `--reading-opsz` (typography.css; consumed by

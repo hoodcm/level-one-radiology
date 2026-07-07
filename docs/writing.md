@@ -504,6 +504,41 @@ The finding did something. Say so.
 
 ---
 
+## Case Viewer Authoring
+
+Embedding a scrollable stack in an article. The build mechanics and interaction model live in
+[design/components.md](design/components.md#showstopper-case-viewer); this section is the author's
+side.
+
+### Directive syntax
+
+```
+::case[Scroll through the exam. Portal venous phase at the transition point.]{id="ct-abd-001"}
+```
+
+The `[caption]` renders as the figcaption; the `id` names a case under `public/cases/<id>/`
+produced by `npm run case:build -- --in <exported-frames> --id <id>` (one run per series+window —
+see the header of `scripts/build-case.mjs` for the full flags). A build fails loudly if the case's
+manifest or any referenced frame is missing.
+
+### Caption micro-copy
+
+Open with the affordance, then the teaching point: "Scroll through the exam…" tells a first-time
+reader the figure moves. Keep it to one or two sentences in the figure-caption voice.
+
+### Curation
+
+Short, hand-picked runs beat whole exams. Trim the stack to the slices that carry the finding plus
+enough approach for context (30–90 frames), and set `--start` to the key image — that's the frame
+the reader lands on, and the slice index is preserved when they switch windows.
+
+### De-identification
+
+Happens at export, in the clinical workflow, before frames ever reach the repo. The ingest strips
+file metadata (EXIF) as hygiene, but it never inspects content — exporting clean pixels is on you.
+
+---
+
 ## Quick Reference Checklist
 
 Before publishing, verify:

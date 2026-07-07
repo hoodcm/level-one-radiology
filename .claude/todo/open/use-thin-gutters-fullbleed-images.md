@@ -6,7 +6,7 @@ first_surfaced: 2026-06-23
 last_touched: 2026-06-26
 depends_on: []
 links: [src/components/shared/FeatureBand.astro]
-assessed: 2026-06-28
+assessed: 2026-07-07
 ---
 Possibly introduce thin Scrib3-style gutters specifically for full-bleed image
 spans (e.g. inside FeatureBand / full-bleed article media) rather than letting

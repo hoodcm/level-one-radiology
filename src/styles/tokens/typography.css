@@ -1,8 +1,9 @@
 /* ==============================================
    TYPOGRAPHY — Level One Radiology Design Tokens
-   Active faces (OFL, via Google Fonts — see Layout.astro):
+   Active faces (OFL, self-hosted — fonts-ofl.generated.css, produced by
+   scripts/fetch-ofl-fonts.mjs):
    Display: Newsreader | Body: DM Sans | UI/brand: Michroma | Mono: Chivo Mono
-   The self-hosted @font-face faces below (Utopia / Lab Grotesque / Eurostile /
+   The @font-face faces below (Utopia / Lab Grotesque / Eurostile /
    IBM Plex Mono) are retained as CSS fallbacks behind each token.
    ============================================== */
 
@@ -398,7 +399,7 @@
 
   /* Long-form reading. Anthropic uses 155%, but Utopia (serif) has a taller
      line box than Anthropic Sans, so it reads looser at the same multiplier.
-     Tightened to 1.38 for a denser, less airy serif column. */
+     Tightened to 1.36 for a denser, less airy serif column. */
   --lh-reading: 1.36;
 
   /* Body reading optical size — Newsreader's `opsz` axis (6–72). Lower selects
@@ -425,9 +426,14 @@
      lighter stroke for a subtle weight step. */
   --wordmark-stroke-hero: 4px;
   --wordmark-stroke-hero-semi: 0.2px;
-  /* Hero brand wordmark (mobile-only lockup) — trimmed so wide Michroma clears
-     the right edge on a 390px screen. */
-  --fz-wordmark-hero: 2.25rem;
+  /* Hero brand wordmark (mobile-only lockup) — fluid, derived from the widest
+     line's measured width ratio so it clears the content box at EVERY mobile
+     width, not one tuned viewport. "Level One" (0.16em tracking + hero stroke)
+     measures 9.18× its font-size; 9.3 adds safety. The extra 16px absorbs a
+     classic (non-overlay) scrollbar, which 100vw includes but the layout box
+     does not. Cap = the prior 36px look (reached ≥ ~420px); floor guards very
+     small screens. */
+  --fz-wordmark-hero: clamp(1.625rem, calc((100vw - 2 * var(--grid-margin) - 16px) / 9.3), 2.25rem);
   /* Hero subtitle — supporting serif statement under the wordmark */
   --fz-hero-subtitle: 1.375rem;
   /* Homepage article-card title */
@@ -440,6 +446,10 @@
     --fz-display-l: 3rem;
     --fz-display: 2rem;
     --fz-headline: 1.5rem;
+    /* Reading leading opens with the measure: the full 640px column runs
+       ~73 chars/line, and long lines need more lead for the return sweep.
+       Mobile (~40 cpl) keeps the denser 1.36. Knob: lower = denser. */
+    --lh-reading: 1.44;
   }
 }
 

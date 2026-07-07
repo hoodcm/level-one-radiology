@@ -1,0 +1,30 @@
+/* ==============================================
+   PRINT — token overrides
+   Radiologists save teaching material as PDFs. Because every component reads
+   the tokens, re-basing them here flips the whole site to an ink-friendly
+   light palette with no per-component print rules. Chrome hiding lives in
+   base/print.css.
+   ============================================== */
+
+@media print {
+  :root {
+    color-scheme: light;
+
+    --color-bg-deepest: #ffffff;
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f4f3f1;
+    --color-bg-raised: #f4f3f1;
+    --color-bg-active: #ececea;
+    --color-bg-elevated: #ececea;
+
+    --color-text-primary: #1a1917;
+    --color-text-ivory: #000000;
+    --color-text-secondary: #333230;
+    --color-text-muted: #66625c;
+    --color-text-disabled: #8a857d;
+
+    --color-border-subtle: rgba(0, 0, 0, 0.08);
+    --color-border-default: rgba(0, 0, 0, 0.15);
+    --color-border-strong: rgba(0, 0, 0, 0.3);
+  }
+}

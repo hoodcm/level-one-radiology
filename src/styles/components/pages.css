@@ -1,0 +1,61 @@
+/* ==============================================
+   PAGES — standalone-page patterns (article index, about, 404)
+   The article template's own shell lives in prose.css.
+   ============================================== */
+
+/* Shared page shell: symmetric section rhythm below the header bar. */
+.page {
+  padding: var(--section-spacer-sm) 0 var(--section-spacer);
+}
+
+/* Page header — eyebrow (type-ui, in markup) over a sans title. */
+.page-header {
+  margin-bottom: var(--section-spacer-sm);
+}
+
+.page-header__title {
+  font-family: var(--ff-body);
+  font-size: var(--fz-display);
+  line-height: var(--lh-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text-ivory);
+  margin-top: var(--space-1);
+  text-wrap: balance;
+}
+
+.page-header__meta {
+  margin-top: var(--space-1);
+}
+
+/* Article index — cards fill their grid cell so rows stay flush. */
+.article-index__cell .article-card {
+  height: 100%;
+}
+
+/* 404 — quiet HUD register. */
+.not-found {
+  padding-block: var(--space-6);
+}
+
+.not-found__code {
+  font-family: var(--ff-ui-ext);
+  font-size: 6rem;
+  line-height: 1;
+  color: var(--color-text-ivory);
+  margin: var(--space-2) 0 var(--space-3);
+}
+
+.not-found__text {
+  max-width: 38ch;
+  font-family: var(--ff-display);
+  font-size: var(--fz-hero-subtitle);
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.not-found__links {
+  display: flex;
+  gap: var(--space-4);
+}

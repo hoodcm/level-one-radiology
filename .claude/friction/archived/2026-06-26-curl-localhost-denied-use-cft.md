@@ -1,11 +1,12 @@
 ---
 id: curl-localhost-denied-use-cft
-status: open
+status: resolved
 tags: [pattern-only]
 first_seen: 2026-06-26
 last_seen: 2026-06-26
 recurrence: 1
 related: []
+assessed: 2026-07-07
 ---
 
 ## Description
@@ -21,3 +22,7 @@ command denied, so git checkpoints had to be split out from any curl probe.
 (background, log to scratchpad), edit, then screenshot the route with the CfT binary at three
 widths (per the global chrome-for-testing rule) rather than curl-ing the dev server. Low-stakes
 workflow note; likely auto-decays once the screenshot loop is habitual.
+
+2026-07-07 — Janitor: closed on inference — the 2026-07-07 session's localhost verification went
+entirely through Chrome for Testing per the global rule, with no curl attempts; the screenshot
+loop is now habitual. Reversible; a recurrence re-opens.

@@ -1,0 +1,38 @@
+/* ==============================================
+   CASE VIEWER — component tokens
+   Chrome sizing + bracket treatment for the showstopper module.
+   Consumed by components/case-viewer.css and the fullscreen overlay.
+   ============================================== */
+
+:root {
+  /* Meta strip mono size — the .figure-meta console voice. */
+  --cv-meta-size: 10px;
+
+  /* Inline stage height cap: guarantees a tap-outside/scroll surface always
+     exists; tall sagittal stacks letterbox on the imaging field. */
+  --cv-stage-max-h: 70svh;
+
+  /* Poster blur-up (the static ~96px thumb upscaled under the boot). */
+  --cv-poster-blur: 12px;
+
+  /* Boot HUD reticle glow — plain white (the HUD overlays imaging, not themed
+     chrome; see components/case-viewer.css §Boot HUD). 40% alpha gives the 1px
+     bloom; a raw white-alpha literal matches the --color-border-* /
+     --color-grid-line idiom in tokens/colors.css. */
+  --cv-hud-glow: rgba(255, 255, 255, 0.4);
+
+  /* Corner brackets — the "slight HUD framing". Ivory at rest; the engaged
+     state goes full opacity + signal cyan (imaging-active semantics). */
+  --cv-bracket-size: 0.75rem;   /* 12px — matches the .hud-frame corner size */
+  --cv-bracket-stroke: 1px;
+  --cv-bracket-opacity-rest: 0.35;
+
+  /* Touch targets + slider thumb. */
+  --cv-hit-area: 2.75rem;       /* 44px — iOS minimum hit area */
+  --cv-thumb-size: 1.25rem;     /* 20px */
+
+  /* Edge dead-zone inset (coarse pointers): system back-swipes win near the
+     screen edge, so pointer-downs inside this inset are ignored. Referenced
+     by case-viewer.ts (EDGE_DEAD_PX) — keep the two in step. */
+  --cv-edge-dead-zone: 28px;
+}
