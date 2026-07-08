@@ -1,0 +1,341 @@
+---
+// Motion lab — dev-only exhibit + stress harness. Two sections:
+//   A · CRT boot exhibit — replayable faithful-feel replica of the beta
+//       site's power-on (source: design-assets/references/beta-crt-boot.md;
+//       styles: src/styles/components/crt-boot.css — both deletable).
+//   B · Lock-in stress — the REAL <case-viewer> element with controls that
+//       exercise the three jitter shapes the channel-split fix must clear
+//       (rapid engage/disengage · stack-edge ticks · re-engage mid-return).
+// Dev-only: getStaticPaths returns [] in prod builds, so `astro build`
+// emits nothing under /dev/.
+import { readFileSync } from 'node:fs';
+import '@/styles/main.css';
+import '@/styles/components/crt-boot.css';
+import { caseShellHtml } from '@/lib/case-shell.mjs';
+
+export function getStaticPaths() {
+  return import.meta.env.DEV ? [{ params: { view: 'lab' } }] : [];
+}
+
+const manifest = JSON.parse(readFileSync('public/cases/dev-synthetic/manifest.json', 'utf8'));
+const shell = caseShellHtml(manifest, 'Synthetic stack — lock-in stress target.');
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Motion lab — dev only</title>
+  </head>
+  <body class="mlab">
+    <header class="mlab-head">
+      <h1>MOTION LAB · CRT BOOT + LOCK-IN STRESS</h1>
+      <p>
+        Section A replays the beta CRT power-on (reference:
+        design-assets/references/beta-crt-boot.md). Section B drives the real
+        case-viewer's bracket lock-in through the three jitter shapes; the
+        corners must never jump.
+      </p>
+    </header>
+
+    <!-- SECTION A: CRT boot exhibit -->
+    <section class="mlab-section">
+      <h2>A · CRT BOOT EXHIBIT</h2>
+      <p>
+        Line dwells → snaps open → overshoots narrow-and-tall at 80% → settles
+        to the card. Escape / click the scrim to switch off (off runs at half
+        the on-duration).
+      </p>
+      <button class="mlab-btn" id="crt-power">POWER ON ▸</button>
+    </section>
+
+    <div class="crt-overlay" id="crt" hidden>
+      <div class="crt-scanlines"></div>
+      <div class="crt-rect" id="crt-rect"></div>
+      <div class="crt-card" id="crt-card">
+        <h3>CRT PREVIEW</h3>
+        <p>Faithful-feel replica of the beta overlay. Press Escape to switch off.</p>
+      </div>
+    </div>
+
+    <!-- SECTION B: the REAL element + stress controls -->
+    <section class="mlab-section">
+      <h2>B · LOCK-IN STRESS — REAL &lt;case-viewer&gt;</h2>
+      <div class="mlab-controls" aria-label="Stress controls">
+        <button class="mlab-btn" id="ctl-engage">engage</button>
+        <button class="mlab-btn" id="ctl-disengage">disengage</button>
+        <button class="mlab-btn" id="ctl-edge">edge tick</button>
+        <button class="mlab-btn" id="ctl-retap">re-tap ×5</button>
+        <button class="mlab-btn" id="ctl-midreturn">re-engage mid-return</button>
+        <label class="mlab-toggle"
+          ><input type="checkbox" id="ctl-proto-b" /> PROTOTYPE B — delta recoil</label
+        >
+      </div>
+      <p class="mlab-readout" id="readout">translate — · transform —</p>
+      <Fragment set:html={shell} />
+    </section>
+
+    <script>
+      import '@/components/case/case-viewer';
+
+      // ---- Section A: phase machine (rect → card → exit), per the beta.
+      const overlay = document.getElementById('crt')!;
+      const rect = document.getElementById('crt-rect')!;
+      const setPhase = (p: string) => overlay.setAttribute('data-phase', p);
+      document.getElementById('crt-power')!.addEventListener('click', () => {
+        // Ignore presses while open: re-setting phase 'rect' would not restart
+        // the same-named animation, so no animationend → wedged machine.
+        if (!overlay.hidden) return;
+        overlay.hidden = false;
+        setPhase('rect');
+      });
+      rect.addEventListener('animationend', () => {
+        if (overlay.dataset.phase === 'rect') setPhase('card');
+        else if (overlay.dataset.phase === 'exit') overlay.hidden = true;
+      });
+      const powerOff = () => {
+        if (!overlay.hidden && overlay.dataset.phase !== 'exit') setPhase('exit');
+      };
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') powerOff();
+      });
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) powerOff();
+      });
+
+      // ---- Section B: stress controls against the real element.
+      const cv = document.querySelector('case-viewer') as HTMLElement;
+      const stage = () => cv.querySelector('.cv__stage') as HTMLElement;
+      const engage = () => {
+        if (cv.dataset.state !== 'engaged') stage().click();
+      };
+      const disengage = () =>
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+      document.getElementById('ctl-engage')!.addEventListener('click', (e) => {
+        e.stopPropagation(); // don't let this click read as tap-outside
+        engage();
+      });
+      document.getElementById('ctl-disengage')!.addEventListener('click', disengage);
+      // Edge tick exactly as case-viewer.ts stamps it (one 200ms beat).
+      document.getElementById('ctl-edge')!.addEventListener('click', (e) => {
+        e.stopPropagation();
+        cv.classList.add('is-edge');
+        setTimeout(() => cv.classList.remove('is-edge'), 300);
+      });
+      // Jitter shape (a): rapid engage/disengage bursts.
+      document.getElementById('ctl-retap')!.addEventListener('click', (e) => {
+        e.stopPropagation();
+        let n = 0;
+        const tick = () => {
+          n % 2 ? disengage() : engage();
+          if (++n < 10) setTimeout(tick, 90);
+        };
+        tick();
+      });
+      // Jitter shape (c): engage while the disengage return is mid-flight
+      // (return transition is 200ms; re-engage at ~90ms).
+      document.getElementById('ctl-midreturn')!.addEventListener('click', (e) => {
+        e.stopPropagation();
+        engage();
+        setTimeout(() => {
+          disengage();
+          setTimeout(engage, 90);
+        }, 350);
+      });
+
+      // ---- Prototype B (lab-only candidate): translate is never animated —
+      // the transition owns ALL position (interrupt-proof) — and the recoil
+      // becomes a one-shot DELTA on the transform channel, stamped via
+      // .is-locking exactly like case-viewer.ts stamps .is-edge. Judged by
+      // eye against the verbatim recoil; promoted only if indistinguishable.
+      let lockTimer: ReturnType<typeof setTimeout> | undefined;
+      document.getElementById('ctl-proto-b')!.addEventListener('change', (e) => {
+        cv.toggleAttribute('data-proto-b', (e.target as HTMLInputElement).checked);
+      });
+      cv.addEventListener('cv:state', (e) => {
+        if (!cv.hasAttribute('data-proto-b')) return;
+        if ((e as CustomEvent).detail.state !== 'engaged') return;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        clearTimeout(lockTimer);
+        cv.classList.remove('is-locking');
+        void cv.offsetWidth; // restart the one-shot cleanly on rapid re-engage
+        cv.classList.add('is-locking');
+        lockTimer = setTimeout(() => cv.classList.remove('is-locking'), 300);
+      });
+
+      // Live channel readout: both channels of the first bracket, per frame —
+      // but only inside an activity window. An unconditional rAF +
+      // getComputedStyle loop forces a style read every frame forever, and
+      // that flush can perturb the very jitter timing this lab measures.
+      const bracket = cv.querySelector('.cv__brackets i')!;
+      const readout = document.getElementById('readout')!;
+      let sampleUntil = 0;
+      let sampling = false;
+      const sample = () => {
+        const s = getComputedStyle(bracket);
+        readout.textContent = `translate ${s.translate} · transform ${s.transform}`;
+        if (performance.now() < sampleUntil) requestAnimationFrame(sample);
+        else sampling = false;
+      };
+      const wake = () => {
+        sampleUntil = performance.now() + 800; // outlasts every bracket beat
+        if (!sampling) {
+          sampling = true;
+          requestAnimationFrame(sample);
+        }
+      };
+      cv.addEventListener('cv:state', wake);
+      // Manual scrubs reach stack edges without a cv:state event — keep the
+      // readout live while a pointer/wheel is working the stage.
+      cv.addEventListener('pointerdown', wake);
+      cv.addEventListener('pointermove', wake);
+      cv.addEventListener('wheel', wake, { passive: true });
+      document.querySelectorAll('.mlab-btn').forEach((b) => b.addEventListener('click', wake));
+      wake(); // one initial paint of the readout
+    </script>
+
+    <style>
+      .mlab {
+        margin: 0;
+        background: var(--color-bg-deepest);
+        color: var(--color-text-primary);
+        font-family: var(--ff-body);
+      }
+      .mlab-head,
+      .mlab-section {
+        padding-inline: var(--space-2);
+        max-width: var(--media-column);
+        margin-inline: auto;
+        margin-block: var(--space-3);
+      }
+      .mlab-head h1,
+      .mlab-section h2 {
+        font-family: var(--ff-mono);
+        font-size: var(--fz-ui);
+        letter-spacing: var(--ls-ui);
+        color: var(--color-text-muted);
+      }
+      .mlab-head p,
+      .mlab-section p {
+        font-size: var(--fz-body-s);
+        color: var(--color-text-secondary);
+      }
+      .mlab-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-1);
+        margin-block: var(--space-2);
+      }
+      .mlab-btn {
+        font-family: var(--ff-mono);
+        font-size: var(--fz-ui);
+        letter-spacing: var(--ls-ui);
+        text-transform: uppercase;
+        min-height: var(--cv-hit-area);
+        padding-inline: var(--space-2);
+        background: var(--color-bg-secondary);
+        color: var(--color-text-muted);
+        border: 1px solid var(--color-border-default);
+        border-radius: var(--radius-xs);
+        cursor: pointer;
+      }
+      .mlab-btn:hover {
+        color: var(--color-text-primary);
+        border-color: var(--color-border-strong);
+      }
+      .mlab-readout {
+        /* Per-frame updates must never move the page: reserved two-line
+           block, numerics tabular, long matrices clipped — zero reflow. */
+        font-family: var(--ff-mono);
+        font-size: var(--fz-body-xs);
+        color: var(--color-signal-cyan);
+        font-variant-numeric: tabular-nums;
+        display: block;
+        height: calc(2 * 1.4em);
+        line-height: 1.4;
+        margin-block: 0 var(--space-2);
+        overflow: hidden;
+      }
+      .crt-card h3 {
+        font-family: var(--ff-mono);
+        font-size: var(--fz-ui);
+        letter-spacing: var(--ls-ui);
+        color: var(--color-text-ivory);
+      }
+      .crt-card p {
+        font-size: var(--fz-body-s);
+        color: var(--color-text-secondary);
+      }
+      .mlab-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        font-family: var(--ff-mono);
+        font-size: var(--fz-ui);
+        letter-spacing: var(--ls-ui);
+        color: var(--color-text-muted);
+      }
+    </style>
+
+    <!-- PROTOTYPE B styles (lab-only, global: they target case-viewer
+         internals + real keyframes). The knobs are the --pb-* vars — tune
+         them live in devtools on the case-viewer element. -->
+    <style is:global>
+      case-viewer[data-proto-b] {
+        --pb-lag: 1.6px;  /* early hold-back — recreates the accelerating hit */
+        --pb-over: 0.6px; /* overshoot past the lock */
+        --pb-dip: 0.5px;  /* recoil under before settling */
+        --pb-dur: 0.24s;
+      }
+      /* Position is transition-only: the verbatim lock-in animation is off. */
+      case-viewer[data-proto-b][data-state='engaged'] .cv__brackets i {
+        animation: none;
+      }
+      /* Delta recoil rides transform, composing over the moving translate. */
+      @media (prefers-reduced-motion: no-preference) {
+        case-viewer[data-proto-b].is-locking .cv__brackets i {
+          animation: cv-lock-delta var(--pb-dur);
+        }
+        case-viewer[data-proto-b].is-locking.is-edge .cv__brackets i {
+          animation:
+            cv-lock-delta var(--pb-dur),
+            cv-edge 0.2s var(--ease-out);
+        }
+        case-viewer[data-proto-b].is-edge[data-state='engaged'] .cv__brackets i {
+          animation: cv-edge 0.2s var(--ease-out);
+        }
+        case-viewer[data-proto-b].is-locking.is-edge[data-state='engaged'] .cv__brackets i {
+          animation:
+            cv-lock-delta var(--pb-dur),
+            cv-edge 0.2s var(--ease-out);
+        }
+      }
+      @keyframes cv-lock-delta {
+        0% {
+          transform: translate(0, 0);
+          animation-timing-function: ease-in;
+        }
+        35% {
+          /* lag behind the fast transition — net motion builds speed */
+          transform: translate(calc(var(--sx) * var(--pb-lag) * -1), calc(var(--sy) * var(--pb-lag) * -1));
+          animation-timing-function: ease-out;
+        }
+        60% {
+          /* whip past the lock — the hit */
+          transform: translate(calc(var(--sx) * var(--pb-over)), calc(var(--sy) * var(--pb-over)));
+          animation-timing-function: ease-in-out;
+        }
+        80% {
+          /* recoil under */
+          transform: translate(calc(var(--sx) * var(--pb-dip) * -1), calc(var(--sy) * var(--pb-dip) * -1));
+          animation-timing-function: ease-in-out;
+        }
+        100% {
+          transform: translate(0, 0);
+        }
+      }
+    </style>
+  </body>
+</html>

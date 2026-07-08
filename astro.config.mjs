@@ -30,7 +30,8 @@ const caseViewerValidation = () => ({
       // a nested article's ::case embed must be validated here too, or it
       // sails through this cache-less net. CASE_DIRECTIVE_RE is the shared
       // scan pattern (case-shell.mjs) — caption-optional, either quote style.
-      for (const f of readdirSync('src/content/articles', { recursive: true })) {
+      // encoding pins the string[] overload (no encoding → string[] | Buffer[]).
+      for (const f of readdirSync('src/content/articles', { recursive: true, encoding: 'utf8' })) {
         if (!f.endsWith('.md')) continue;
         const md = readFileSync(`src/content/articles/${f}`, 'utf8');
         if (/^draft:\s*true/m.test(md)) continue; // drafts don't build
@@ -45,6 +46,11 @@ const caseViewerValidation = () => ({
 // https://astro.build/config
 export default defineConfig({
   site: 'https://leveloneradiology.com',
+  // Static site, small pages: hover-prefetch every internal link so card →
+  // article navigation (and its view transition) starts from cache.
+  prefetch: {
+    prefetchAll: true,
+  },
   integrations: [react(), sitemap(), caseViewerValidation()],
   markdown: {
     // Shiki emits CSS variables; prose.css maps them to the color tokens so
@@ -71,6 +77,9 @@ export default defineConfig({
     ],
   },
   vite: {
-    plugins: [tailwindcss()],
+    // Cast: @tailwindcss/vite types against the root vite package while astro
+    // bundles its own — structurally identical plugins, nominally distinct
+    // Plugin types. Runtime is unaffected.
+    plugins: [/** @type {import('astro').ViteUserConfig['plugins']} */ ([tailwindcss()])],
   },
 });

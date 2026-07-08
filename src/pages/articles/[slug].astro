@@ -55,7 +55,13 @@ const vtName = `vt-${article.id.replace(/[^a-zA-Z0-9-]/g, '-')}`;
 const moreArticles = [newer, older].filter((n): n is NonNullable<typeof newer> => n !== null);
 ---
 
-<Layout title={`${title} | Level One Radiology`} description={description} ogImage={ogImage}>
+<Layout
+  title={`${title} | Level One Radiology`}
+  description={description}
+  ogImage={ogImage}
+  ogType="article"
+  publishedTime={publishDate}
+>
   <!-- Reading progress: scroll-driven, pure CSS; invisible where unsupported. -->
   <div class="article-progress" aria-hidden="true"></div>
 

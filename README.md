@@ -30,6 +30,7 @@ npm run dev        # Dev server → localhost:4321
 npm run build      # Production build → dist/
 npm run preview    # Preview production build
 npm run lint       # Enforce design tokens (CI-gated)
+npm run check      # astro check — type diagnostics (mirrors the IDE)
 ```
 
 **Current state:** homepage and article template built (cards link through to full articles), carrying the

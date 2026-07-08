@@ -30,7 +30,7 @@ describe('::case directive contract', () => {
     expect(out.value).toContain('<case-viewer data-case="dev-synthetic"');
     expect(out.value).toContain('data-cv-manifest');
     expect(out.value).toContain('"id":"dev-synthetic"');
-    expect(out.value).toContain('IM 24/48'); // counter pre-rendered at start
+    expect(out.value).toContain('Image 24/48'); // counter pre-rendered at start (start 24 == frames width, no pad)
     expect(out.value).toContain('max="48"');
     expect(out.value).toContain('/cases/dev-synthetic/axial/poster.jpg');
     expect(out.value).toContain('data-cv-window="soft"');
@@ -109,7 +109,7 @@ describe('shell DOM contract (caseShellHtml)', () => {
   it('renders geometry, start frame, and single-window shells without chips', () => {
     const html = caseShellHtml(manifest, '');
     expect(html).toContain('aspect-ratio: 512 / 640');
-    expect(html).toContain('IM 7/30');
+    expect(html).toContain('Image  7/30'); // frame 7 space-padded to frames' 2-digit width
     expect(html).toContain('aria-valuetext="Image 7 of 30"');
     expect(html).not.toContain('data-cv-windows'); // one window → no chips
     expect(html).not.toContain('cv__tabs'); // one series → no tabs

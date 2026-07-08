@@ -10,11 +10,13 @@
  *
  * Shell contract (what case-viewer.ts binds to): data-cv-* hooks —
  * manifest (JSON script) · stage · canvas · poster · counter · series-label ·
- * window-label · slider · close · fullscreen · windows/window · series/serie.
+ * window-label · slider · close · activate · fullscreen · windows/window · series/serie.
  */
 
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+
+import { iconSvg } from './case-icons.mjs';
 
 const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
@@ -149,17 +151,18 @@ export function caseShellHtml(manifest, caption = '') {
   return `<case-viewer data-case="${esc(manifest.id)}" data-rev="${esc(manifest.rev)}">
 <script type="application/json" data-cv-manifest>${json}</script>
 <figure class="cv">
-<div class="cv__meta">${manifest.modality ? `<span>${esc(manifest.modality)}</span>` : ''}<span data-cv-series-label>${esc(series.label)}</span><span data-cv-window-label>${esc(win.label)}</span><span class="cv__counter" data-cv-counter>IM ${series.start}/${series.frames}</span></div>
+<div class="cv__meta">${manifest.modality ? `<span>${esc(manifest.modality)}</span>` : ''}<span data-cv-series-label>${esc(series.label)}</span><span data-cv-window-label>${esc(win.label)}</span><span class="cv__counter" data-cv-counter>Image ${String(series.start).padStart(String(series.frames).length, ' ')}/${series.frames}</span></div>
 <div class="cv__stage" data-cv-stage style="aspect-ratio: ${Number(series.width)} / ${Number(series.height)};">
 <img class="cv__poster" data-cv-poster src="${esc(posterUrl)}" alt="${esc(manifest.title)}" width="${Number(series.width)}" height="${Number(series.height)}" loading="lazy" decoding="async" />
-<canvas class="cv__canvas" data-cv-canvas></canvas>
+<canvas class="cv__canvas" data-cv-canvas aria-hidden="true"></canvas>
 ${hudSvg()}
 <div class="cv__brackets" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-<button type="button" class="cv__close" data-cv-close aria-label="Exit scrub mode" hidden>✕</button>
+<button type="button" class="cv__close" data-cv-close aria-label="Exit scrub mode" hidden>${iconSvg('x')}</button>
+<button type="button" class="cv__activate" data-cv-activate aria-label="Activate case viewer">${iconSvg('power')}</button>
 </div>
 <div class="cv__bar">
 <input type="range" data-cv-slider min="1" max="${Number(series.frames)}" value="${Number(series.start)}" step="1" aria-label="Image position, ${esc(manifest.title)}" aria-valuetext="Image ${series.start} of ${series.frames}" />
-<button type="button" class="cv__fs" data-cv-fullscreen aria-label="Open fullscreen viewer">⛶</button>
+<button type="button" class="cv__fs" data-cv-fullscreen aria-label="Open fullscreen viewer">${iconSvg('maximize')}</button>
 </div>
 ${chips}${tabs}${caption ? `<figcaption class="cv__caption">${esc(caption)}</figcaption>` : ''}
 </figure>

@@ -1,0 +1,176 @@
+/* ==============================================
+   ORNAMENT — detector-plate framing
+   Quarter arcs in the inner corners + tee fiducials at the edge
+   midpoints of article cards; half-scale arcs on article callouts.
+   One masked ::before per surface — the mask carves the line-work
+   out of a single ink layer, so no ornament markup is needed and
+   hover restyles one background-color. Values: tokens/ornament.css.
+   Kill-switch: remove this import from main.css.
+   ============================================== */
+
+@supports (mask-image: linear-gradient(#000, #000)) {
+
+  /* --- Shared mask pieces.
+     Colors inside mask images are alpha carriers, not design values:
+     any opaque color marks "painted"; the visible color is the
+     element's background-color (the ink token). --- */
+  :root {
+    --orn-bar: linear-gradient(#000, #000);
+    /* Quarter-circle ring, one per corner; the circle sits at the box
+       corner that faces the card center, so the box shows one quadrant. */
+    --orn-ring-tl: radial-gradient(circle at 100% 100%,
+      transparent calc(var(--orn-arc-r) - var(--orn-stroke)),
+      #000 calc(var(--orn-arc-r) - var(--orn-stroke)),
+      #000 var(--orn-arc-r), transparent var(--orn-arc-r));
+    --orn-ring-tr: radial-gradient(circle at 0% 100%,
+      transparent calc(var(--orn-arc-r) - var(--orn-stroke)),
+      #000 calc(var(--orn-arc-r) - var(--orn-stroke)),
+      #000 var(--orn-arc-r), transparent var(--orn-arc-r));
+    --orn-ring-bl: radial-gradient(circle at 100% 0%,
+      transparent calc(var(--orn-arc-r) - var(--orn-stroke)),
+      #000 calc(var(--orn-arc-r) - var(--orn-stroke)),
+      #000 var(--orn-arc-r), transparent var(--orn-arc-r));
+    --orn-ring-br: radial-gradient(circle at 0% 0%,
+      transparent calc(var(--orn-arc-r) - var(--orn-stroke)),
+      #000 calc(var(--orn-arc-r) - var(--orn-stroke)),
+      #000 var(--orn-arc-r), transparent var(--orn-arc-r));
+    /* Callout rings — same quadrants at the half-scale radius. */
+    --orn-co-ring-tl: radial-gradient(circle at 100% 100%,
+      transparent calc(var(--orn-co-arc-r) - var(--orn-stroke)),
+      #000 calc(var(--orn-co-arc-r) - var(--orn-stroke)),
+      #000 var(--orn-co-arc-r), transparent var(--orn-co-arc-r));
+    --orn-co-ring-tr: radial-gradient(circle at 0% 100%,
+      transparent calc(var(--orn-co-arc-r) - var(--orn-stroke)),
+      #000 calc(var(--orn-co-arc-r) - var(--orn-stroke)),
+      #000 var(--orn-co-arc-r), transparent var(--orn-co-arc-r));
+    --orn-co-ring-bl: radial-gradient(circle at 100% 0%,
+      transparent calc(var(--orn-co-arc-r) - var(--orn-stroke)),
+      #000 calc(var(--orn-co-arc-r) - var(--orn-stroke)),
+      #000 var(--orn-co-arc-r), transparent var(--orn-co-arc-r));
+    --orn-co-ring-br: radial-gradient(circle at 0% 0%,
+      transparent calc(var(--orn-co-arc-r) - var(--orn-stroke)),
+      #000 calc(var(--orn-co-arc-r) - var(--orn-stroke)),
+      #000 var(--orn-co-arc-r), transparent var(--orn-co-arc-r));
+    /* Derived offsets used by every arm layer. */
+    --orn-arc-elbow: calc(var(--orn-arc-inset) + var(--orn-arc-r));
+    --orn-co-arc-elbow: calc(var(--orn-co-arc-inset) + var(--orn-co-arc-r));
+  }
+
+  /* --- Article cards: four corner arcs + four midpoint tees --- */
+  .article-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background-color: var(--orn-ink);
+    transition: background-color 0.2s var(--ease-out);
+    mask-repeat: no-repeat;
+    mask-image:
+      /* corner arcs: ring, horizontal arm, vertical arm — TL TR BL BR */
+      var(--orn-ring-tl), var(--orn-bar), var(--orn-bar),
+      var(--orn-ring-tr), var(--orn-bar), var(--orn-bar),
+      var(--orn-ring-bl), var(--orn-bar), var(--orn-bar),
+      var(--orn-ring-br), var(--orn-bar), var(--orn-bar),
+      /* edge tees: line + stem — top bottom left right */
+      var(--orn-bar), var(--orn-bar),
+      var(--orn-bar), var(--orn-bar),
+      var(--orn-bar), var(--orn-bar),
+      var(--orn-bar), var(--orn-bar);
+    mask-position:
+      left var(--orn-arc-inset) top var(--orn-arc-inset),
+      left var(--orn-arc-elbow) top var(--orn-arc-inset),
+      left var(--orn-arc-inset) top var(--orn-arc-elbow),
+      right var(--orn-arc-inset) top var(--orn-arc-inset),
+      right var(--orn-arc-elbow) top var(--orn-arc-inset),
+      right var(--orn-arc-inset) top var(--orn-arc-elbow),
+      left var(--orn-arc-inset) bottom var(--orn-arc-inset),
+      left var(--orn-arc-elbow) bottom var(--orn-arc-inset),
+      left var(--orn-arc-inset) bottom var(--orn-arc-elbow),
+      right var(--orn-arc-inset) bottom var(--orn-arc-inset),
+      right var(--orn-arc-elbow) bottom var(--orn-arc-inset),
+      right var(--orn-arc-inset) bottom var(--orn-arc-elbow),
+      left 50% top var(--orn-line-inset),
+      left 50% top var(--orn-line-inset),
+      left 50% bottom var(--orn-line-inset),
+      left 50% bottom var(--orn-line-inset),
+      left var(--orn-line-inset) top 50%,
+      left var(--orn-line-inset) top 50%,
+      right var(--orn-line-inset) top 50%,
+      right var(--orn-line-inset) top 50%;
+    mask-size:
+      var(--orn-arc-r) var(--orn-arc-r),
+      var(--orn-arc-arm) var(--orn-stroke),
+      var(--orn-stroke) var(--orn-arc-arm),
+      var(--orn-arc-r) var(--orn-arc-r),
+      var(--orn-arc-arm) var(--orn-stroke),
+      var(--orn-stroke) var(--orn-arc-arm),
+      var(--orn-arc-r) var(--orn-arc-r),
+      var(--orn-arc-arm) var(--orn-stroke),
+      var(--orn-stroke) var(--orn-arc-arm),
+      var(--orn-arc-r) var(--orn-arc-r),
+      var(--orn-arc-arm) var(--orn-stroke),
+      var(--orn-stroke) var(--orn-arc-arm),
+      var(--orn-line-len) var(--orn-stroke),
+      var(--orn-stroke) calc(var(--orn-tee-stem) + var(--orn-stroke)),
+      var(--orn-line-len) var(--orn-stroke),
+      var(--orn-stroke) calc(var(--orn-tee-stem) + var(--orn-stroke)),
+      var(--orn-stroke) var(--orn-line-len),
+      calc(var(--orn-tee-stem) + var(--orn-stroke)) var(--orn-stroke),
+      var(--orn-stroke) var(--orn-line-len),
+      calc(var(--orn-tee-stem) + var(--orn-stroke)) var(--orn-stroke);
+  }
+
+  .article-card:hover::before {
+    background-color: var(--orn-ink-hover);
+  }
+
+  /* --- Article callouts: the corner arcs alone, at half scale --- */
+  .callout,
+  .key-points {
+    position: relative;
+  }
+
+  .callout::before,
+  .key-points::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background-color: var(--orn-ink);
+    mask-repeat: no-repeat;
+    mask-image:
+      var(--orn-co-ring-tl), var(--orn-bar), var(--orn-bar),
+      var(--orn-co-ring-tr), var(--orn-bar), var(--orn-bar),
+      var(--orn-co-ring-bl), var(--orn-bar), var(--orn-bar),
+      var(--orn-co-ring-br), var(--orn-bar), var(--orn-bar);
+    mask-position:
+      left var(--orn-co-arc-inset) top var(--orn-co-arc-inset),
+      left var(--orn-co-arc-elbow) top var(--orn-co-arc-inset),
+      left var(--orn-co-arc-inset) top var(--orn-co-arc-elbow),
+      right var(--orn-co-arc-inset) top var(--orn-co-arc-inset),
+      right var(--orn-co-arc-elbow) top var(--orn-co-arc-inset),
+      right var(--orn-co-arc-inset) top var(--orn-co-arc-elbow),
+      left var(--orn-co-arc-inset) bottom var(--orn-co-arc-inset),
+      left var(--orn-co-arc-elbow) bottom var(--orn-co-arc-inset),
+      left var(--orn-co-arc-inset) bottom var(--orn-co-arc-elbow),
+      right var(--orn-co-arc-inset) bottom var(--orn-co-arc-inset),
+      right var(--orn-co-arc-elbow) bottom var(--orn-co-arc-inset),
+      right var(--orn-co-arc-inset) bottom var(--orn-co-arc-elbow);
+    mask-size:
+      var(--orn-co-arc-r) var(--orn-co-arc-r),
+      var(--orn-co-arc-arm) var(--orn-stroke),
+      var(--orn-stroke) var(--orn-co-arc-arm),
+      var(--orn-co-arc-r) var(--orn-co-arc-r),
+      var(--orn-co-arc-arm) var(--orn-stroke),
+      var(--orn-stroke) var(--orn-co-arc-arm),
+      var(--orn-co-arc-r) var(--orn-co-arc-r),
+      var(--orn-co-arc-arm) var(--orn-stroke),
+      var(--orn-stroke) var(--orn-co-arc-arm),
+      var(--orn-co-arc-r) var(--orn-co-arc-r),
+      var(--orn-co-arc-arm) var(--orn-stroke),
+      var(--orn-stroke) var(--orn-co-arc-arm);
+  }
+
+}

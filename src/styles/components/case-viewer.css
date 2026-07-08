@@ -43,12 +43,22 @@ case-viewer {
   margin-left: auto;
   color: var(--color-text-secondary);
   font-variant-numeric: tabular-nums;
+  /* Preserve the space-padding that right-aligns the frame number, so the
+     "Image" label stays anchored as the count crosses digit boundaries
+     (monospace + pre = fixed width, zero shift). */
+  white-space: pre;
 }
-/* Decode stall: subtle glyph on the counter, never a spinner on the image. */
-.is-stalled .cv__counter::after {
+/* Decode stall: subtle glyph on the counter, never a spinner on the image.
+   The glyph's slot is ALWAYS reserved (transparent) so toggling stall during
+   a fast scrub only changes its colour, never the counter's width — a
+   width change would shift the right-anchored counter left and strobe. */
+.cv__counter::after {
   content: '·';
-  color: var(--color-signal-cyan);
+  color: transparent;
   margin-left: 0.4em;
+}
+.is-stalled .cv__counter::after {
+  color: var(--color-signal-cyan);
 }
 
 /* --- Stage: aspect-ratio box (zero CLS), imaging black, height-capped so a
@@ -61,6 +71,10 @@ case-viewer {
   overflow: hidden;
   touch-action: pan-y;
   cursor: grab;
+  /* A scrub is never a text-selection drag or a long-press image callout. */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 case-viewer[data-state='engaged'] .cv__stage,
 case-viewer[data-state='fullscreen'] .cv__stage {
@@ -68,6 +82,97 @@ case-viewer[data-state='fullscreen'] .cv__stage {
 }
 .cv__stage:active {
   cursor: grabbing;
+}
+
+/* --- Tap-to-activate (apparatus.caseTapToActivate stamps data-cv-tap):
+   at rest the stage is a button, not a scrubber — the cursor says so, and a
+   quiet console chip carries the affordance. Shown once the boot settles;
+   first engagement retires it for good (.has-engaged). --- */
+case-viewer[data-cv-tap][data-state='rest'] .cv__stage {
+  cursor: pointer;
+}
+case-viewer[data-cv-tap] .cv__stage::after {
+  content: 'TAP TO SCRUB';
+  position: absolute;
+  bottom: var(--space-2);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--space-0) var(--space-1);
+  background: var(--cv-scrim);
+  border-radius: var(--radius-xs);
+  font-family: var(--ff-mono);
+  font-size: var(--cv-meta-size);
+  letter-spacing: var(--ls-ui);
+  color: var(--color-text-secondary);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+case-viewer[data-cv-tap][data-state='rest'].is-ready:not(.has-engaged) .cv__stage::after {
+  opacity: 1;
+  transition-delay: 0.9s; /* arrive after the HUD exit settles */
+}
+
+/* --- Tap-to-boot (apparatus.caseTapToBoot stamps data-cv-armed on the host):
+   the stage holds inert and dimmed — no decode, no boot — behind a centered
+   ACTIVATE button, the ONLY live control while armed (case-viewer.ts gates
+   every other input on the same latch). Emitted always; shown only while
+   armed. --- */
+case-viewer[data-cv-armed] .cv__stage {
+  cursor: default;
+}
+/* The whole console mutes with the stage — meta strip, slider bar, chips,
+   tabs (never the caption): faded and untouchable so nothing but ACTIVATE
+   reads as a control. The JS latch backs this up for keyboard/AT input. */
+case-viewer .cv__meta,
+case-viewer .cv__bar,
+case-viewer .cv__chips,
+case-viewer .cv__tabs {
+  transition: opacity 0.3s ease; /* the un-mute on activation is a seen moment */
+}
+case-viewer[data-cv-armed] .cv__meta,
+case-viewer[data-cv-armed] .cv__bar,
+case-viewer[data-cv-armed] .cv__chips,
+case-viewer[data-cv-armed] .cv__tabs {
+  opacity: var(--cv-armed-chrome-opacity);
+  pointer-events: none;
+}
+case-viewer[data-cv-armed] .cv__stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--cv-armed-veil);
+  pointer-events: none;
+}
+.cv__activate {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--cv-activate-h);
+  min-height: var(--cv-activate-h);
+  background: var(--cv-scrim);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-xs);
+  color: var(--color-text-ivory);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.cv__activate svg {
+  width: var(--cv-activate-icon);
+  height: var(--cv-activate-icon);
+}
+case-viewer[data-cv-armed] .cv__activate {
+  display: inline-flex;
+}
+.cv__activate:hover {
+  color: var(--color-signal-cyan);
+  border-color: var(--color-signal-cyan);
 }
 
 .cv__canvas,
@@ -154,7 +259,15 @@ case-viewer.is-ready .cv__canvas {
   }
 }
 
-/* --- Corner brackets: ivory at rest, full-opacity cyan when engaged --- */
+/* --- Corner brackets: ivory at rest; engaged they go full-opacity cyan AND
+   advance inward to a locked inset held for the whole engaged stay. Each
+   corner's inward direction is its sign pair (--sx/--sy).
+
+   Channel split (jitter fix): the lock position rides the `translate`
+   longhand; the stack-edge tick rides `transform`. Independent properties
+   compose (translate applies, then transform), so the edge keyframe
+   restarting from zero can never stomp the lock's channel — the three-way
+   transform fight (lock keyframe + edge keyframe + transition) is gone. --- */
 .cv__brackets {
   position: absolute;
   inset: var(--space-1);
@@ -166,17 +279,114 @@ case-viewer.is-ready .cv__canvas {
   height: var(--cv-bracket-size);
   border: 0 solid var(--color-text-ivory);
   opacity: var(--cv-bracket-opacity-rest);
+  --cv-lock: 0px;
+  translate: calc(var(--sx) * var(--cv-lock)) calc(var(--sy) * var(--cv-lock));
   transition:
     opacity 0.15s ease,
     border-color 0.15s ease;
 }
-.cv__brackets i:nth-child(1) { top: 0; left: 0; border-top-width: var(--cv-bracket-stroke); border-left-width: var(--cv-bracket-stroke); }
-.cv__brackets i:nth-child(2) { top: 0; right: 0; border-top-width: var(--cv-bracket-stroke); border-right-width: var(--cv-bracket-stroke); }
-.cv__brackets i:nth-child(3) { bottom: 0; left: 0; border-bottom-width: var(--cv-bracket-stroke); border-left-width: var(--cv-bracket-stroke); }
-.cv__brackets i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: var(--cv-bracket-stroke); border-right-width: var(--cv-bracket-stroke); }
+.cv__brackets i:nth-child(1) { --sx: 1; --sy: 1; top: 0; left: 0; border-top-width: var(--cv-bracket-stroke); border-left-width: var(--cv-bracket-stroke); }
+.cv__brackets i:nth-child(2) { --sx: -1; --sy: 1; top: 0; right: 0; border-top-width: var(--cv-bracket-stroke); border-right-width: var(--cv-bracket-stroke); }
+.cv__brackets i:nth-child(3) { --sx: 1; --sy: -1; bottom: 0; left: 0; border-bottom-width: var(--cv-bracket-stroke); border-left-width: var(--cv-bracket-stroke); }
+.cv__brackets i:nth-child(4) { --sx: -1; --sy: -1; bottom: 0; right: 0; border-bottom-width: var(--cv-bracket-stroke); border-right-width: var(--cv-bracket-stroke); }
 case-viewer[data-state='engaged'] .cv__brackets i {
   opacity: 1;
   border-color: var(--color-signal-cyan);
+  --cv-lock: var(--cv-bracket-lock);
+}
+/* Lock-in choreography — the CRT boot's three-beat grammar (see
+   design-assets/references/beta-crt-boot.md), scaled to the brackets:
+   WIND-UP (pull slightly outward — the anticipation, the CRT's dwell),
+   SNAP (accelerate PAST the lock — the hit, the CRT's 80% overshoot),
+   SETTLE (ease back onto the lock from beyond — never a bounce short of
+   it, which reads as stutter at this amplitude). All on the `translate`
+   channel; the held engaged translate is the final frame, so the hand-off
+   is seamless; release returns on the plain UI ease. Reduced motion places
+   the lock instantly (position is state, travel is flourish).
+   Feel knobs: wind-up depth = the -0.35 factor · overshoot = the 1.6
+   factor · beat placement = the 30%/60% stops · weight = the 0.3s duration. */
+@media (prefers-reduced-motion: no-preference) {
+  .cv__brackets i {
+    transition:
+      opacity 0.15s ease,
+      border-color 0.15s ease,
+      translate 0.2s var(--ease-out);
+  }
+  case-viewer[data-state='engaged'] .cv__brackets i {
+    animation: cv-lock-in 0.3s;
+  }
+}
+@keyframes cv-lock-in {
+  0% {
+    translate: 0 0;
+    animation-timing-function: ease-out; /* drift into the wind-up */
+  }
+  30% {
+    /* wind-up: pull back before the strike */
+    translate: calc(var(--sx) * var(--cv-lock) * -0.35) calc(var(--sy) * var(--cv-lock) * -0.35);
+    animation-timing-function: ease-in; /* accelerate through the whole travel — the snap */
+  }
+  60% {
+    /* the hit: past the lock */
+    translate: calc(var(--sx) * var(--cv-lock) * 1.6) calc(var(--sy) * var(--cv-lock) * 1.6);
+    animation-timing-function: ease-out; /* recoil bleeds off the energy */
+  }
+  100% {
+    translate: calc(var(--sx) * var(--cv-lock)) calc(var(--sy) * var(--cv-lock));
+  }
+}
+/* The ✕ occupies the top-right corner while engaged; its bracket yields
+   rather than peeking out from behind the button's scrim. */
+case-viewer[data-state='engaged'] .cv__brackets i:nth-child(2) {
+  opacity: 0;
+}
+/* Promoted: the inline viewer sits dimmed under the fullscreen scrim, and
+   any authored movement there (brackets sliding off the engaged lock, colour
+   eases) reads as background jank under the CRT dwell — state changes snap
+   instantly while the overlay owns the screen. */
+case-viewer[data-state='fullscreen'] .cv__brackets i,
+case-viewer[data-state='fullscreen'] .cv__counter {
+  transition: none;
+  animation: none;
+}
+/* Engaged readout rides the same imaging-active cyan as the brackets — the
+   state change reads in the console voice, not just at the corners. */
+case-viewer[data-state='engaged'] .cv__counter {
+  color: var(--color-signal-cyan);
+}
+case-viewer[data-state='engaged'] .cv__bar input[type='range']::-webkit-slider-thumb {
+  background: var(--color-signal-cyan);
+}
+case-viewer[data-state='engaged'] .cv__bar input[type='range']::-moz-range-thumb {
+  background: var(--color-signal-cyan);
+}
+
+/* Stack-edge tick (case-viewer.ts stamps .is-edge — 200ms animation, class
+   held 300ms — when a drag/wheel scrub arrives at IM 1 or IM N): each
+   bracket nudges inward once
+   from wherever it sits — the end-of-stack stop. Expressed as a pure delta
+   on `transform`, which composes over the `translate` lock (rest or engaged)
+   instead of restating it. JS suppresses it under reduced motion. */
+case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
+/* Engaged + edge tick: the two animations must ride ONE animation list — a
+   lone .is-edge rule would REPLACE the engaged rule's animation, and when
+   the tick ended cv-lock-in would re-enter the list as a fresh animation and
+   replay from zero (the 3px stack-end snap). Keeping the name continuously
+   in the list means it never restarts (CSS matches animations by name). */
+@media (prefers-reduced-motion: no-preference) {
+  case-viewer.is-edge[data-state='engaged'] .cv__brackets i {
+    animation:
+      cv-edge 0.2s var(--ease-out),
+      cv-lock-in 0.22s;
+  }
+}
+@keyframes cv-edge {
+  40% {
+    transform: translate(
+      calc(var(--sx) * var(--cv-edge-tick)),
+      calc(var(--sy) * var(--cv-edge-tick))
+    );
+  }
 }
 
 /* --- Disengage ✕ — engaged only, 44px hit area --- */
@@ -186,11 +396,58 @@ case-viewer[data-state='engaged'] .cv__brackets i {
   right: var(--space-1);
   min-width: var(--cv-hit-area);
   min-height: var(--cv-hit-area);
-  background: color-mix(in srgb, var(--color-bg-deepest) 72%, transparent);
+  background: var(--cv-scrim);
+  font-family: var(--ff-mono);
   color: var(--color-text-ivory);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-xs);
   cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+/* Icon buttons share the centered-glyph treatment; glyphs are Lucide
+   outline SVGs at their native 24px grid. */
+.cv__close,
+.cv__fs,
+.cv-fs__close,
+.cv-fs__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.cv__close svg,
+.cv__fs svg,
+.cv-fs__close svg,
+.cv-fs__chip svg {
+  width: var(--cv-icon-size);
+  height: var(--cv-icon-size);
+}
+
+/* Hover micro-interaction: the glyph springs up a touch on pointer-over — the
+   button box and hit area stay put, only the icon moves (a transform is
+   GPU-composited, so it never reflows). `(hover: hover)` scopes it to real
+   pointers so a tap on a touchscreen never leaves a glyph stuck enlarged; the
+   easing overshoots slightly (--ease-out) for a bit of life. Authored, so
+   reduced motion opts out. The activate power glyph gets a hair more travel —
+   it is the primary invitation. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .cv__close svg,
+  .cv__fs svg,
+  .cv-fs__close svg,
+  .cv-fs__chip svg,
+  .cv__activate svg {
+    transition: transform 0.15s var(--ease-out);
+  }
+  .cv__close:hover svg,
+  .cv__fs:hover svg,
+  .cv-fs__close:hover svg,
+  .cv-fs__chip:hover svg,
+  .cv__activate:hover svg {
+    transform: scale(1.05);
+  }
+}
+.cv__close:hover,
+.cv-fs__close:hover {
+  background: color-mix(in srgb, var(--color-bg-raised) 72%, transparent);
 }
 
 /* --- Control bar: restyled native range + fullscreen button --- */
@@ -203,11 +460,13 @@ case-viewer[data-state='engaged'] .cv__brackets i {
 .cv__fs {
   min-width: var(--cv-hit-area);
   min-height: var(--cv-hit-area);
+  font-family: var(--ff-mono);
   background: none;
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-xs);
   color: var(--color-text-muted);
   cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 .cv__fs:hover {
   color: var(--color-text-primary);
@@ -271,6 +530,14 @@ case-viewer[data-state='engaged'] .cv__brackets i {
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-xs);
   cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+.cv__chips button:hover,
+.cv__tabs button:hover,
+.cv__chips button:active,
+.cv__tabs button:active {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
 }
 .cv__chips button[aria-checked='true'],
 .cv__tabs button[aria-checked='true'] {
@@ -297,19 +564,114 @@ case-viewer[data-state='engaged'] .cv__brackets i {
   width: 100vw;
   height: 100dvh;
   z-index: 100;
-  background: var(--color-bg-deepest);
-  display: flex;
-  flex-direction: column;
+  /* The scrim field behind the morphing rect (the beta overlay's backdrop):
+     dims and visually freezes the page under the animation, and makes the
+     root the input surface from the first frame. */
+  background: var(--cv-scrim);
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
   touch-action: none;
   overscroll-behavior: contain;
+}
+/* The CRT rect — the imaging-black screen that morphs within the field. */
+.cv-fs__screen {
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg-deepest);
+  display: flex;
+  flex-direction: column;
+  transform-origin: center; /* the line must snap open from the middle */
+}
+/* --- Fullscreen CRT switch-on/off — the beta site's power-on grammar
+   (design-assets/references/beta-crt-boot.md, timings verbatim via the
+   --cv-crt-* tokens), retargeted from the beta's card to the full screen:
+   hairline dwell (0–50%) → spring to full height (70%) → narrow-and-tall
+   overshoot (80%) → settle to the full 1×1 box. The morphing rect is the
+   inner __screen; the root stays full-size as the beta's scrim field (and
+   the input surface), with `transform` on it owned by the visualViewport
+   sizing (fullscreen.ts #sizeToViewport). Shipping adaptation flagged by the
+   exhibit itself: no border-radius animation (paint-triggering — its "do NOT
+   copy" note); the morph rides the `scale` longhand. Content arrives on the
+   beta's hard-ease slide once the rect lands (delay = --cv-crt-on,
+   `backwards` holds it hidden through the morph). Authored motion — reduced
+   motion cuts straight to the settled overlay. --- */
+@media (prefers-reduced-motion: no-preference) {
+  .cv-fs__screen {
+    animation: cv-crt-on var(--cv-crt-on) ease-out;
+  }
+  .cv-fs__screen > * {
+    animation: cv-crt-content-in var(--cv-crt-content) var(--cv-crt-content-ease) var(--cv-crt-on) backwards;
+  }
+  /* The phosphor beam — the bright line the screen opens from and collapses
+     back to (a black slit on a dark page was invisible). Unscaled (it rides
+     the root, not the morphing rect); visible through the dwell, gone as the
+     screen springs open, back for the collapse. Glow via --cv-hud-glow —
+     zero that token's alpha to kill the bloom. */
+  .cv-fs::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 2px;
+    margin-top: -1px;
+    background: var(--color-text-ivory);
+    /* Two-layer bloom: a tight hot core plus a wide phosphor halo. */
+    box-shadow:
+      0 0 6px 2px var(--cv-hud-glow),
+      0 0 32px 8px var(--cv-hud-glow);
+    pointer-events: none;
+    opacity: 0;
+    animation: cv-crt-beam-on var(--cv-crt-on) linear;
+  }
+  /* Switch-off (fullscreen.ts stamps .is-shutdown, holding the real close
+     until the beat lands): content cuts, the rect re-widens briefly, then
+     collapses to the line — off at half the on-duration, per the design. */
+  .cv-fs.is-shutdown .cv-fs__screen {
+    animation: cv-crt-off var(--cv-crt-off) ease-out forwards;
+  }
+  .cv-fs.is-shutdown .cv-fs__screen > * {
+    animation: none;
+    opacity: 0;
+  }
+  .cv-fs.is-shutdown::after {
+    animation: cv-crt-beam-off var(--cv-crt-off) linear forwards;
+  }
+}
+@keyframes cv-crt-on {
+  0%, 50% { scale: 1 0.01; }  /* the warming-up dwell */
+  70%     { scale: 1 0.7; }
+  80%     { scale: 0.9 1; }   /* the overshoot: narrow-and-tall geometry snap */
+  100%    { scale: 1 1; }
+}
+@keyframes cv-crt-off {
+  0%       { scale: 1 1; }
+  20%      { scale: 0.9 1; }
+  30%      { scale: 1 0.7; }
+  80%, 100% { scale: 1 0.01; }
+}
+@keyframes cv-crt-content-in {
+  0%   { opacity: 0; translate: -10px 0; }
+  100% { opacity: 1; translate: 0 0; }
+}
+/* Beam visibility, synced to the morph beats: alive while the rect is the
+   line (dwell 0–50%), gone once the screen springs open; the off-beam
+   returns as the collapse re-forms the line (rect hits scaleY 0.01 at 80%). */
+@keyframes cv-crt-beam-on {
+  0%, 55%   { opacity: 1; }
+  75%, 100% { opacity: 0; }
+}
+@keyframes cv-crt-beam-off {
+  0%, 70%   { opacity: 0; }
+  85%, 100% { opacity: 1; }
 }
 .cv-fs__meta {
   display: flex;
   align-items: baseline;
   gap: var(--space-1);
   padding: var(--space-1) var(--space-2);
+  /* Clear the absolutely-positioned ✕ so the counter never sits under it. */
+  padding-right: calc(var(--cv-hit-area) + var(--space-2) + env(safe-area-inset-right, 0px));
   font-family: var(--ff-mono);
   font-size: var(--cv-meta-size);
   letter-spacing: var(--ls-ui);
@@ -321,6 +683,9 @@ case-viewer[data-state='engaged'] .cv__brackets i {
   min-height: 0;
   position: relative;
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 .cv-fs__pan {
   position: absolute;
@@ -338,11 +703,13 @@ case-viewer[data-state='engaged'] .cv__brackets i {
   right: calc(env(safe-area-inset-right) + var(--space-1));
   min-width: var(--cv-hit-area);
   min-height: var(--cv-hit-area);
-  background: color-mix(in srgb, var(--color-bg-deepest) 72%, transparent);
+  background: var(--cv-scrim);
+  font-family: var(--ff-mono);
   color: var(--color-text-ivory);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-xs);
   cursor: pointer;
+  transition: background-color 0.15s ease;
 }
 .cv-fs__bar {
   display: flex;
@@ -361,6 +728,12 @@ case-viewer[data-state='engaged'] .cv__brackets i {
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-xs);
   cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.cv-fs__chip:hover,
+.cv-fs__chip:active {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
 }
 .cv-fs__chip[aria-pressed='true'] {
   color: var(--color-signal-cyan);
@@ -383,9 +756,11 @@ case-viewer[data-state='engaged'] .cv__brackets i {
   max-width: var(--media-column);
 }
 @media (max-width: 47.9375em) {
-  /* Full-bleed the imaging field only; chrome keeps the page gutter. */
+  /* Full-bleed the imaging field only; chrome keeps the page gutter.
+     calc over 100vw: viewport units include a classic scrollbar's width,
+     which would overflow the page horizontally on non-overlay scrollbars. */
   .prose case-viewer .cv__stage {
-    width: 100vw;
+    width: calc(100% + 2 * var(--grid-margin));
     margin-inline: calc(-1 * var(--grid-margin));
   }
 }

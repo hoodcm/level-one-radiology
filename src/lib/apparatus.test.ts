@@ -6,8 +6,10 @@ import { describe, expect, it } from 'vitest';
 import { apparatus } from './apparatus';
 
 describe('apparatus flag-name contract', () => {
-  it('exposes exactly the three kill-switch booleans', () => {
+  it('exposes exactly the known kill-switch booleans', () => {
     expect(Object.keys(apparatus).sort()).toEqual([
+      'caseTapToActivate',
+      'caseTapToBoot',
       'footnotePopovers',
       'mobileToc',
       'readNext',

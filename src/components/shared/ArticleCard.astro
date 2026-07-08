@@ -36,9 +36,7 @@ const formattedDate = publishDate.toLocaleDateString('en-US', {
 const vtName = `vt-${slug.replace(/[^a-zA-Z0-9-]/g, '-')}`;
 ---
 
-<a href={`/articles/${slug}`} class:list={['article-card', 'hud-frame', { 'article-card--lead': featured }]}>
-  <span class="hud-corner-bl" aria-hidden="true"></span>
-  <span class="hud-corner-br" aria-hidden="true"></span>
+<a href={`/articles/${slug}/`} class:list={['article-card', { 'article-card--lead': featured }]}>
   <div class="article-card__tags">
     <Tag label={primaryTag.toUpperCase()} variant={tagVariant(primaryTag)} />
     <Tag label={contentTypeLabel(contentType)} variant={contentTypeVariant(contentType)} />

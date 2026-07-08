@@ -33,52 +33,27 @@ Tier definitions, module standards, and showstopper discipline live in
 
 ## Design Language
 
-### HUD Framing
+### Detector-plate framing
 
-Inspired by Palantir's interface design. Four-corner brackets create a targeting-reticle aesthetic on key containers.
+The signature container ornament, modeled on a DR detector plate's registration
+fiducials. Two marks: quarter **field arcs** (a curve plus straight arms) in each
+inner corner, and **edge tees** (a segment parallel to the edge with a stem
+pointing at the container's center) at each edge midpoint. Ink is `text-muted`
+at low opacity, brightening on card hover.
 
-```css
-.hud-frame {
-  position: relative;
-  padding: 2px;
-}
+It renders as a single masked `::before` per surface — mask layers carve the
+line-work out of one ink layer, so no ornament markup is needed and hover
+restyles one `background-color`. Geometry (insets, radii, arm/line lengths, stem)
+is entirely token-driven; a callout variant reuses the same arcs at half scale.
 
-.hud-frame::before,
-.hud-frame::after,
-.hud-frame > .hud-corner-bl,
-.hud-frame > .hud-corner-br {
-  content: '';
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  border-color: var(--color-border-strong);
-  border-style: solid;
-}
+- **Values** → `src/styles/tokens/ornament.css`
+- **Rendering** → `src/styles/components/ornament.css` (kill-switch: drop its import from `main.css`)
 
-.hud-frame::before {
-  top: 0; left: 0;
-  border-width: 1px 0 0 1px;
-}
+**Where it applies:** article cards (arcs + edge tees), article callouts and Key
+Points (corner arcs only, half scale). The Case Viewer keeps its own lighter
+corner brackets (`tokens/case-viewer.css`), a separate treatment.
 
-.hud-frame::after {
-  top: 0; right: 0;
-  border-width: 1px 1px 0 0;
-}
-
-.hud-frame > .hud-corner-bl {
-  bottom: 0; left: 0;
-  border-width: 0 0 1px 1px;
-}
-
-.hud-frame > .hud-corner-br {
-  bottom: 0; right: 0;
-  border-width: 0 1px 1px 0;
-}
-```
-
-**When to use:** Article cards, Case Viewer, sidebar panels, modal dialogs
-
-**When NOT to use:** Body text, navigation, form inputs, inline elements
+**When NOT to use:** body text, navigation, form inputs, inline elements.
 
 ### Micrographic Elements
 
@@ -394,7 +369,7 @@ Technical ornament inspired by print production and vintage electronics.
 
 ### 10. Article Index Card
 
-For listing pages. Title, date, tag(s), excerpt. Uses monospace tag styling with HUD framing.
+For listing pages. Title, date, tag(s), excerpt. Uses monospace tag styling with the detector-plate framing (see Design Language).
 
 ```css
 .article-card {
@@ -678,20 +653,43 @@ article pages, and the design tokens cascade straight into it.
 ### Interaction model (locked by the 2026-07 plan)
 
 Progressive engage: at rest the image scrolls with the page (`touch-action: pan-y`) and a
-horizontal drag scrubs; a tap engages PACS mode (page held, either axis scrubs, cyan brackets); a
-second finger or the ⛶ button promotes to fullscreen. Direct 1:1 mapping, integer snap, zero
-momentum; the scrub position clamps to the decoded frontier so the counter never disagrees with
-the image. Window chips switch pre-baked window exports **preserving the slice index exactly**
-(that index is the pedagogy); series tabs reset to the series' start frame. TUNE (fullscreen only)
-is an honest render adjustment — CSS filters with floors, reset on close — never labeled W/L. Full
-rationale and rejected alternatives: the archived plan
+horizontal drag scrubs; a tap engages PACS mode (page held, either axis scrubs; brackets, counter,
+and slider thumb go signal cyan; the brackets strike a locked inward inset, recoil subtly, and
+settle back in — 0→100→70→100 — holding the lock until release); a second finger
+or the ⛶ button promotes to fullscreen. **Tap-to-activate** (`apparatus.caseTapToActivate`,
+default on — an experiment, flip the flag to revert): the rest-state drag-scrub is disabled, so
+the viewer is inert until the engage tap; a quiet `TAP TO SCRUB` chip over the imaging field
+carries the affordance once the boot settles and retires on first engagement. **Tap-to-boot**
+(`apparatus.caseTapToBoot`, default on — likewise an experiment): before any of that, the viewer
+holds inert and semi-greyed behind a centered `ACTIVATE` button — no frame decode, no network, no
+boot HUD — until the reader taps it; the tap clears the veil and drives the boot (warming the first
+frame), then the tap-to-activate flow above takes over. Direct
+1:1 mapping, integer snap, zero momentum; the scrub position clamps to the decoded frontier so the
+counter never disagrees with the image; arriving at IM 1/N ticks the brackets inward once — the
+end-of-stack stop. Window chips switch pre-baked window exports **preserving the slice index
+exactly** (that index is the pedagogy) and carry the full radio keyboard pattern (roving tabindex,
+arrows); series tabs reset to the series' start frame. TUNE (fullscreen only) is an honest render
+adjustment — CSS filters with floors, reset on close — never labeled W/L. Desktop parity: wheel
+scrubs engaged/fullscreen (rAF-coalesced, ≤3 frames/beat), double-click toggles fullscreen zoom,
+PageUp/Down = ±5 on both sliders. Full rationale and rejected alternatives: the archived plan
 (`docs/archive/plans/2026-07-07-case-viewer-plan.md`).
 
 ### Chrome
 
 Meta strip in the `.figure-meta` console voice; corner brackets are the HUD framing (no border —
 dark-on-dark needs none); boot choreography ported verbatim from
-`design-assets/prototypes/case-viewer-loading-hud.html`; reduced motion collapses to a fade. All
+`design-assets/prototypes/case-viewer-loading-hud.html`; reduced motion collapses to a fade.
+Button glyphs are **Lucide outline icons** (`lucide-react` is the source package — the project's
+icon library): the viewer is React-free, so `src/lib/case-icons.mjs` inlines the SVG node data
+verbatim, imported by both the build-time shell and the fullscreen overlay (square-power = activate,
+minimize = disengage/close, scan-eye = fullscreen, contrast = TUNE). Glyphs run large in their hit
+areas (`--cv-icon-size`; the activate power at `--cv-activate-icon`) over the buttons' plain 1px
+border; on hover-capable pointers each springs up a touch (`transform: scale(1.05)`, reduced-motion
+opt-out).
+Fullscreen switches on and off like a CRT — the beta site's power-on grammar
+(`design-assets/references/beta-crt-boot.md`: hairline dwell → spring → overshoot → settle; off at
+half the on-duration), retargeted to the full screen, content arriving on the hard-ease slide once
+the rect lands; close is deferred until the collapse beat lands. All
 values are tokens — component tokens in `src/styles/tokens/case-viewer.css`, styles in
 `src/styles/components/case-viewer.css`.
 
@@ -718,5 +716,5 @@ When implementing a component, verify:
 - [ ] Typography scale (uses defined classes)
 - [ ] Spacing (uses spacing tokens)
 - [ ] Touch targets (44×44px minimum)
-- [ ] HUD framing applied where appropriate
+- [ ] Detector-plate framing applied where appropriate
 - [ ] Works with chosen primitive library (Base UI or Radix)

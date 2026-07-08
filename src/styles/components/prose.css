@@ -109,7 +109,8 @@
 
 /* Section headings — SANS (Lab Grotesque); sizes + rhythm mirror Anthropic.
    Margins collapse with the preceding paragraph's 16px to the heading's
-   24/32px, giving Anthropic's exact paragraph→heading→body cadence. */
+   28/40px — a half-step above Anthropic's 24/32 (the full-step bump read as
+   too much air on screen; this splits the difference). */
 .prose h2,
 .prose h3,
 .prose h4 {
@@ -118,7 +119,7 @@
   color: var(--color-text-ivory);
   line-height: 1.2;
   letter-spacing: -0.01em;
-  margin-top: 2rem;                /* 32px (mobile) */
+  margin-top: 1.75rem;             /* 28px (mobile) */
   margin-bottom: 0.5rem;           /* 8px */
 }
 .prose h2 { font-size: 1.25rem; }          /* 20px */
@@ -174,7 +175,7 @@
 @media (min-width: 60em) {
   .prose h2,
   .prose h3,
-  .prose h4 { margin-top: 3rem; }           /* 48px */
+  .prose h4 { margin-top: 2.5rem; }         /* 40px */
   .prose h2 { font-size: 1.5625rem; }        /* 25px */
   .prose h3,
   .prose h4 { font-size: 1.1875rem; }        /* 19px */
@@ -332,7 +333,7 @@
   left: 0;
   width: 100%;
   height: 1px;
-  z-index: 49;
+  z-index: 30; /* under the mobile overlay menu (40) and header (50) */
   background: var(--color-primary);
   transform: scaleX(0);
   transform-origin: left;
@@ -428,7 +429,7 @@
   color: var(--color-text-muted);
   text-decoration: none;
 }
-.article__back:hover { color: var(--color-link); }
+.article__back:hover { color: var(--color-link); text-decoration: none; }
 
 /* --- Key Points callout — reference apparatus, so SANS --- */
 /* Apparatus cards share one treatment: quiet panel, full hairline border,
@@ -526,7 +527,9 @@
 /* --- Callout / note box — note (cyan) · caution (yellow) · critical (red).
    Signal lives in the label + tint, not an edge stripe. --- */
 .callout {
-  margin: var(--space-5) 0;
+  /* 40px — deliberately between space-4 and space-5: a full space-5 read as
+     too much air around the panel, space-4 as too little. */
+  margin: calc((var(--space-4) + var(--space-5)) / 2) 0;
   padding: var(--card-padding-sm) var(--card-padding-md);
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-border-default);

@@ -17,7 +17,7 @@ interface Props {
   headings: { depth: number; slug: string; text: string }[];
   variant?: 'rail' | 'index';
 }
-const { headings, variant = 'rail' } = Astro.props;
+const { headings, variant = 'rail' } = Astro.props as Props;
 // Astro collects heading text after rehype runs, so the appended anchor "#"
 // (rehype-autolink-headings) rides along — strip it.
 const sections = headings

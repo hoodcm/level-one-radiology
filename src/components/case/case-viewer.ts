@@ -7,6 +7,9 @@
  *   rest      touch-action:pan-y — page scrolls; horizontal drag scrubs
  *             (10px cumulative axis race); click engages; second pointer
  *             promotes to fullscreen (wired in M4)
+ *             Under apparatus.caseTapToActivate the rest drag-scrub is OFF:
+ *             the viewer is inert until the engage tap (a TAP TO SCRUB chip
+ *             carries the affordance), so scrub-h is unreachable.
  *   scrub-h   1:1 horizontal scrub, pointer captured, cancel = up
  *   engaged   touch-action:none — either axis scrubs (vertical = PACS axis);
  *             exits: ✕ · outside click · Esc · scrolled out of view
@@ -15,6 +18,7 @@
  * explicit close on evict; background fill is HTTP-cache-warming only, gated
  * on sustained interaction (≥8 distinct frames) and saveData.
  */
+import { apparatus } from '../../lib/apparatus';
 import { FrameStore } from './frame-store';
 import { CaseFullscreen } from './fullscreen';
 import { clampFrame, clampToFrontier, frameForDrag, pxPerFrame } from './mapping';
@@ -56,6 +60,10 @@ const RETRY_MS = [1000, 2000, 4000];
 const supportsSaveData = () =>
   (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
 
+/** Same escaping contract as case-shell.mjs's esc() — chip rebuilds inject
+ *  manifest strings into innerHTML and must match the build-time shell. */
+const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
 export class CaseViewerElement extends HTMLElement {
   #manifest!: CaseManifest;
   #seriesIdx = 0;
@@ -76,6 +84,16 @@ export class CaseViewerElement extends HTMLElement {
   #bootIo: IntersectionObserver | null = null;
   #near = false;
   #hasDrawn = false;
+  // Tap-to-boot latch (apparatus.caseTapToBoot): while true the viewer is inert
+  // — the boot IO is never wired and the warm/flush tier no-ops — until the
+  // ACTIVATE tap clears it and drives the boot directly.
+  #pendingBoot = false;
+  // Stage CSS size, cached by the ResizeObserver so the per-frame scrub path
+  // (#draw/#ppf) never reads clientWidth after #syncReadout's DOM writes —
+  // that read forced one synchronous reflow per scrub frame (measured 1:1).
+  #stageW = 0;
+  #stageH = 0;
+  #edgeCued = false;
   #distinct = new Set<string>();
   #filled = new Set<string>();
   #retryTimer = 0;
@@ -94,6 +112,7 @@ export class CaseViewerElement extends HTMLElement {
   #justScrubbed = false;
   #wheelSteps = 0;
   #wheelArmed = false;
+  #wheelAbort: AbortController | null = null;
 
   #abort = new AbortController();
 
@@ -108,6 +127,18 @@ export class CaseViewerElement extends HTMLElement {
     this.#closeBtn = this.querySelector('[data-cv-close]')!;
     this.#frame = this.series.start;
 
+    // Tap-to-activate (apparatus flag): CSS keys the hint chip + pointer
+    // cursor on this attribute, so flipping the flag removes both wholesale.
+    if (apparatus.caseTapToActivate) this.dataset.cvTap = '';
+
+    // Tap-to-boot: arm the dimmed ACTIVATE overlay; CSS keys the veil + button
+    // on data-cv-armed, and #observe/#nearViewport gate all decode+boot work on
+    // #pendingBoot so nothing loads until the tap.
+    if (apparatus.caseTapToBoot) {
+      this.#pendingBoot = true;
+      this.dataset.cvArmed = '';
+    }
+
     this.#bind();
     this.#observe();
     this.dataset.state = this.#state;
@@ -115,6 +146,7 @@ export class CaseViewerElement extends HTMLElement {
 
   disconnectedCallback(): void {
     this.#abort.abort();
+    this.#wheelAbort?.abort();
     this.#io?.disconnect();
     this.#bootIo?.disconnect();
     this.#ro?.disconnect();
@@ -178,10 +210,21 @@ export class CaseViewerElement extends HTMLElement {
   }
 
   // --- render ---------------------------------------------------------------
+  /** Stage CSS size from the RO cache; one live read only in the pre-first-
+   *  callback window (a decode can land before the observer's initial fire). */
+  #stageSize(): { w: number; h: number } {
+    if (this.#stageW === 0) {
+      this.#stageW = this.#stage.clientWidth;
+      this.#stageH = this.#stage.clientHeight;
+    }
+    return { w: this.#stageW, h: this.#stageH };
+  }
+
   #draw(): void {
     const bmp = this.#store.get(this.#frame);
     if (!bmp) return;
-    fitCanvas(this.#canvas, this.#stage.clientWidth, this.#stage.clientHeight);
+    const { w, h } = this.#stageSize();
+    fitCanvas(this.#canvas, w, h);
     drawContain(this.#canvas, bmp);
     this.#hasDrawn = true;
     this.#maybeReady();
@@ -199,7 +242,10 @@ export class CaseViewerElement extends HTMLElement {
 
   #syncReadout(): void {
     const n = this.series.frames;
-    this.#counter.textContent = `IM ${this.#frame}/${n}`;
+    // "Image N/M" with N pad-aligned to M's width (space-padded; the counter's
+    // white-space:pre + monospace hold the label anchored across digit counts).
+    // Same visible/AT contract as case-shell.mjs — cannot import that node module.
+    this.#counter.textContent = `Image ${String(this.#frame).padStart(String(n).length, ' ')}/${n}`;
     this.#slider.value = String(this.#frame);
     this.#slider.setAttribute('aria-valuetext', `Image ${this.#frame} of ${n}`);
     this.#emit('cv:frame', { frame: this.#frame });
@@ -241,6 +287,7 @@ export class CaseViewerElement extends HTMLElement {
       this.#frame = clamped;
       this.#distinct.add(`${this.series.key}:${clamped}`);
     }
+    if (viaDrag) this.#edgeCue(clamped);
     this.#store.setTarget(this.#frame, this.#dir);
     if (this.#store.has(this.#frame)) {
       this.#draw();
@@ -252,6 +299,22 @@ export class CaseViewerElement extends HTMLElement {
       if (!viaDrag) this.#syncReadout();
     }
     this.#maybeFill();
+  }
+
+  /** Stack-edge acknowledgment: one inward bracket tick when a drag/wheel
+   *  scrub arrives at IM 1 or IM N — the PACS "end of stack" stop, once per
+   *  visit. Frontier holds are not edges (decode catch-up is the stall
+   *  glyph's job). Authored motion, so reduced-motion suppresses it. */
+  #edgeCue(frame: number): void {
+    if (frame !== 1 && frame !== this.series.frames) {
+      this.#edgeCued = false;
+      return;
+    }
+    if (this.#edgeCued) return;
+    this.#edgeCued = true;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    this.classList.add('is-edge');
+    setTimeout(() => this.classList.remove('is-edge'), 300);
   }
 
   #maybeFill(): void {
@@ -266,7 +329,12 @@ export class CaseViewerElement extends HTMLElement {
 
   // --- lifecycle (IntersectionObserver tiers) --------------------------------
   #observe(): void {
-    this.#ro = new ResizeObserver(() => this.#draw());
+    this.#ro = new ResizeObserver((entries) => {
+      const box = entries[entries.length - 1].contentRect;
+      this.#stageW = box.width;
+      this.#stageH = box.height;
+      this.#draw();
+    });
     this.#ro.observe(this.#stage);
     // Warm/flush tier: decode starts well before arrival, closes after exit.
     this.#io = new IntersectionObserver(
@@ -280,28 +348,48 @@ export class CaseViewerElement extends HTMLElement {
     );
     this.#io.observe(this);
     // Boot tier: the choreography is a seen moment — fire at ~half visible,
-    // once, then stop watching.
-    this.#bootIo = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((e) => e.isIntersecting)) return;
-        this.#bootIo?.disconnect();
-        this.#bootIo = null;
-        this.classList.add('is-booting');
-        this.#emit('cv:boot');
-        this.#maybeReady();
-      },
-      { threshold: 0.5 }
-    );
-    this.#bootIo.observe(this.#stage);
+    // once, then stop watching. Skipped under tap-to-boot: the ACTIVATE tap is
+    // the boot trigger there (#activate), not the scroll position.
+    if (!this.#pendingBoot) {
+      this.#bootIo = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
+          this.#bootIo?.disconnect();
+          this.#bootIo = null;
+          this.classList.add('is-booting');
+          this.#emit('cv:boot');
+          this.#maybeReady();
+        },
+        { threshold: 0.5 }
+      );
+      this.#bootIo.observe(this.#stage);
+    }
+  }
+
+  /** ACTIVATE tap (tap-to-boot): retire the dimmed overlay and hand off to the
+   *  same boot choreography + warm the current frame — the work the boot IO and
+   *  near-viewport tiers would have done automatically. */
+  #activate(): void {
+    if (!this.#pendingBoot) return;
+    this.#pendingBoot = false;
+    delete this.dataset.cvArmed;
+    this.classList.add('is-booting');
+    this.#emit('cv:boot');
+    this.#maybeReady();
+    this.#nearViewport();
   }
 
   #nearViewport(): void {
+    // Inert until the ACTIVATE tap clears the latch (tap-to-boot).
+    if (this.#pendingBoot) return;
     this.#near = true;
     this.#store.setTarget(this.#frame, this.#dir);
     if (this.classList.contains('is-stalled')) this.#armRetry();
   }
 
   #farViewport(): void {
+    // Nothing warmed or booted yet under a pending tap-to-boot latch.
+    if (this.#pendingBoot) return;
     this.#near = false;
     clearTimeout(this.#retryTimer);
     if (this.#state !== 'rest') this.#setState('rest');
@@ -328,10 +416,49 @@ export class CaseViewerElement extends HTMLElement {
   // --- state machine ---------------------------------------------------------
   #setState(next: State): void {
     if (this.#state === next) return;
+    const wasEngaged = this.#state === 'engaged';
     this.#state = next;
     this.dataset.state = next;
     this.#closeBtn.hidden = next !== 'engaged';
+    if (next === 'engaged') {
+      // First engagement retires the tap-to-activate hint for good. The
+      // bracket lock-in choreography is pure CSS, keyed on data-state.
+      this.classList.add('has-engaged');
+      this.#bindWheel();
+    } else if (wasEngaged) {
+      this.#wheelAbort?.abort();
+      this.#wheelAbort = null;
+    }
     this.#emit('cv:state', { state: next });
+  }
+
+  /** Desktop wheel scrub, bound only while engaged: a permanently-registered
+   *  non-passive wheel listener would make the browser wait on this handler
+   *  for every page-scroll wheel event that crosses the stage at rest.
+   *  Capped per animation frame; swallowed at stack edges (disengage stays
+   *  explicit — wheel never returns the page). */
+  #bindWheel(): void {
+    this.#wheelAbort = new AbortController();
+    this.#stage.addEventListener(
+      'wheel',
+      (e) => {
+        e.preventDefault();
+        const dy = e.deltaY; // read before deltaMode (Firefox order quirk)
+        this.#wheelSteps += Math.sign(dy);
+        if (this.#wheelArmed) return;
+        this.#wheelArmed = true;
+        requestAnimationFrame(() => {
+          const step = Math.max(-WHEEL_STEP_CAP, Math.min(WHEEL_STEP_CAP, this.#wheelSteps));
+          this.#wheelSteps = 0;
+          this.#wheelArmed = false;
+          if (step === 0) return;
+          const dir = Math.sign(step) as 1 | -1;
+          const frontier = this.#store.frontier(this.#frame, dir);
+          this.#setFrame(clampToFrontier(this.#frame + step, frontier, dir), true);
+        });
+      },
+      { signal: this.#wheelAbort.signal, passive: false }
+    );
   }
 
   // --- input wiring -----------------------------------------------------------
@@ -352,6 +479,7 @@ export class CaseViewerElement extends HTMLElement {
     stage.addEventListener(
       'click',
       (e) => {
+        if (this.#pendingBoot) return; // ACTIVATE is the only live control while armed
         if ((e.target as HTMLElement).closest('button, input')) return;
         if (this.#justScrubbed) {
           this.#justScrubbed = false;
@@ -366,6 +494,16 @@ export class CaseViewerElement extends HTMLElement {
       (e) => {
         e.stopPropagation();
         this.#setState('rest');
+      },
+      { signal }
+    );
+    // ACTIVATE overlay (tap-to-boot): fires the boot; stopPropagation so the
+    // stage click can't also read it as an engage tap.
+    this.querySelector('[data-cv-activate]')?.addEventListener(
+      'click',
+      (e) => {
+        e.stopPropagation();
+        this.#activate();
       },
       { signal }
     );
@@ -384,35 +522,24 @@ export class CaseViewerElement extends HTMLElement {
       { signal }
     );
 
-    // Desktop wheel: engaged only, capped per animation frame, swallowed at
-    // stack edges (disengage stays explicit — wheel never returns the page).
-    stage.addEventListener(
-      'wheel',
-      (e) => {
-        if (this.#state !== 'engaged') return;
-        e.preventDefault();
-        const dy = e.deltaY; // read before deltaMode (Firefox order quirk)
-        this.#wheelSteps += Math.sign(dy);
-        if (this.#wheelArmed) return;
-        this.#wheelArmed = true;
-        requestAnimationFrame(() => {
-          const step = Math.max(-WHEEL_STEP_CAP, Math.min(WHEEL_STEP_CAP, this.#wheelSteps));
-          this.#wheelSteps = 0;
-          this.#wheelArmed = false;
-          if (step === 0) return;
-          const dir = Math.sign(step) as 1 | -1;
-          const frontier = this.#store.frontier(this.#frame, dir);
-          this.#setFrame(clampToFrontier(this.#frame + step, frontier, dir), true);
-        });
-      },
-      { signal, passive: false }
-    );
-
     // Slider is the semantic scrubber (VO-adjustable). PageUp/Down = ±5.
-    this.#slider.addEventListener('input', () => this.#setFrame(Number(this.#slider.value), false), { signal });
+    // Armed guard: snap back rather than decode — every control below waits
+    // behind the ACTIVATE gate.
+    this.#slider.addEventListener(
+      'input',
+      () => {
+        if (this.#pendingBoot) {
+          this.#slider.value = String(this.#frame);
+          return;
+        }
+        this.#setFrame(Number(this.#slider.value), false);
+      },
+      { signal }
+    );
     this.#slider.addEventListener(
       'keydown',
       (e) => {
+        if (this.#pendingBoot) return;
         if (e.key !== 'PageUp' && e.key !== 'PageDown') return;
         e.preventDefault();
         this.#setFrame(this.#frame + (e.key === 'PageUp' ? 5 : -5), false);
@@ -425,6 +552,7 @@ export class CaseViewerElement extends HTMLElement {
     this.querySelector('[data-cv-windows]')?.addEventListener(
       'click',
       (e) => {
+        if (this.#pendingBoot) return;
         const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-cv-window]');
         if (btn) this.#switchWindow(btn.dataset.cvWindow!);
       },
@@ -433,6 +561,7 @@ export class CaseViewerElement extends HTMLElement {
     this.querySelector('[data-cv-series]')?.addEventListener(
       'click',
       (e) => {
+        if (this.#pendingBoot) return;
         const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-cv-serie]');
         if (btn) this.#switchSeries(btn.dataset.cvSerie!);
       },
@@ -441,7 +570,46 @@ export class CaseViewerElement extends HTMLElement {
 
     this.querySelector('[data-cv-fullscreen]')?.addEventListener(
       'click',
-      () => this.#promote('button'),
+      () => {
+        if (this.#pendingBoot) return;
+        this.#promote('button');
+      },
+      { signal }
+    );
+
+    // role=radio carries the full keyboard contract: roving tabindex (the
+    // checked chip is the group's one tab stop) + arrow-key selection.
+    this.#radiogroup('[data-cv-windows]', ['cv:window', 'cv:series']);
+    this.#radiogroup('[data-cv-series]', ['cv:series']);
+  }
+
+  #radiogroup(selector: string, syncOn: string[]): void {
+    const root = this.querySelector(selector);
+    if (!root) return;
+    const { signal } = this.#abort;
+    // Queried live — #switchSeries rebuilds the window chips in place.
+    const radios = () => [...root.querySelectorAll<HTMLButtonElement>('[role="radio"]')];
+    const sync = () =>
+      radios().forEach((r) => (r.tabIndex = r.getAttribute('aria-checked') === 'true' ? 0 : -1));
+    sync();
+    for (const ev of syncOn) this.addEventListener(ev, sync, { signal });
+    root.addEventListener(
+      'keydown',
+      (e) => {
+        const ke = e as KeyboardEvent;
+        const list = radios();
+        const at = list.indexOf(ke.target as HTMLButtonElement);
+        if (at === -1) return;
+        let to: number;
+        if (ke.key === 'ArrowRight' || ke.key === 'ArrowDown') to = (at + 1) % list.length;
+        else if (ke.key === 'ArrowLeft' || ke.key === 'ArrowUp') to = (at - 1 + list.length) % list.length;
+        else if (ke.key === 'Home') to = 0;
+        else if (ke.key === 'End') to = list.length - 1;
+        else return;
+        ke.preventDefault();
+        list[to].focus();
+        list[to].click(); // selection follows focus (radio pattern)
+      },
       { signal }
     );
   }
@@ -476,10 +644,16 @@ export class CaseViewerElement extends HTMLElement {
 
   #ppf(): number {
     const override = Number(this.dataset.ppf);
-    return override > 0 ? override : pxPerFrame(this.#stage.clientWidth, this.series.frames);
+    return override > 0 ? override : pxPerFrame(this.#stageSize().w, this.series.frames);
   }
 
   #pointerDown(e: PointerEvent): void {
+    // Armed (tap-to-boot): the pointer machinery is offline — no scrub
+    // tracking, no two-finger fullscreen promote — until the ACTIVATE tap.
+    if (this.#pendingBoot) return;
+    // The ✕ lives inside the stage: tracking it would capture the pointer to
+    // the stage, retargeting the button's click there — a dead close button.
+    if ((e.target as HTMLElement).closest('button')) return;
     // System edge-back-swipes beat touch-action; leave the edges alone.
     if (
       e.pointerType === 'touch' &&
@@ -528,7 +702,13 @@ export class CaseViewerElement extends HTMLElement {
       this.#raceX += Math.abs(dx);
       this.#raceY += Math.abs(dy);
       if (Math.max(this.#raceX, this.#raceY) >= AXIS_RACE_PX) {
-        if (this.#raceX > this.#raceY) {
+        if (apparatus.caseTapToActivate) {
+          // Rest is inert until the engage tap: a real drag is a page
+          // gesture (or a stray mouse drag), never a scrub. Eat the click a
+          // mouse drag synthesizes on release so it can't read as the tap.
+          this.#justScrubbed = true;
+          this.#active.delete(e.pointerId);
+        } else if (this.#raceX > this.#raceY) {
           this.#tracking = true;
           this.#scrubId = e.pointerId;
           this.#setState('scrub-h');
@@ -589,6 +769,21 @@ export class CaseViewerElement extends HTMLElement {
     this.#emit('cv:window', { window: key });
   }
 
+  #rebuildChips(): void {
+    const wrap = this.querySelector('[data-cv-windows]');
+    if (!wrap) return;
+    const windows = this.series.windows;
+    wrap.innerHTML =
+      windows.length > 1
+        ? windows
+            .map(
+              (w, i) =>
+                `<button type="button" role="radio" aria-checked="${i === this.#windowIdx}" data-cv-window="${esc(w.key)}">${esc(w.label)}</button>`
+            )
+            .join('')
+        : '';
+  }
+
   #switchSeries(key: string): void {
     const idx = this.#manifest.series.findIndex((s) => s.key === key);
     if (idx === -1 || idx === this.#seriesIdx) return;
@@ -605,6 +800,9 @@ export class CaseViewerElement extends HTMLElement {
     this.querySelectorAll<HTMLElement>('[data-cv-serie]').forEach((b) =>
       b.setAttribute('aria-checked', String(b.dataset.cvSerie === key))
     );
+    // The shell's chips belong to series[0]; each series owns its window
+    // list, so switching rebuilds them (delegated listener survives).
+    this.#rebuildChips();
     this.#stage.style.aspectRatio = `${s.width} / ${s.height}`;
     this.#slider.max = String(s.frames);
     this.#frame = 0; // force redraw bookkeeping through #setFrame

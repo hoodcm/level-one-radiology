@@ -1,0 +1,194 @@
+/* ==============================================
+   CRT BOOT — dev-lab exhibit ONLY.
+
+   Faithful-feel replica of the beta site's CRT power-on overlay
+   (design-assets/references/beta-crt-boot.md is the source of truth for
+   every beat below). Imported solely by src/pages/dev/motion/[view].astro —
+   never by main.css. Delete this file + that page to remove the exhibit.
+
+   Re-expressed (not byte-copied) where the beta violated this repo's rules:
+   - scan drift: transform:translateY on an oversized layer, NOT
+     background-position (motion.md §5 — no paint-triggering properties);
+   - timings/easings/scanline color: tokens, scoped here (exhibit-only —
+     deliberately NOT in the global palette);
+   - reduced-motion path added (the beta had none): plain opacity fade.
+   Deliberate deviations kept from the reference (both flagged in the plan):
+   - --crt-content-ease is a hard ease-in — banned on interactive UI
+     (motion.md §1) but load-bearing for the reference feel;
+   - the morph keyframes animate border-radius (paint-triggering, motion.md
+     §5) — part of the beta's geometry-snap read; cheap on this one-shot
+     solid-color rect, but do NOT copy the pattern into shipping components.
+   ============================================== */
+
+:root {
+  /* Beat timings — verbatim from the beta bindings. Off is deliberately
+     half of on: switching off snaps shut faster than it opens. */
+  --crt-on: 300ms;
+  --crt-off: 150ms;
+  --crt-content: 150ms;
+  --crt-scan: 1s;
+  --crt-content-ease: cubic-bezier(0.8, 0, 1, 1);
+  /* Yellow-phosphor scanline ink (beta: rgba(255,255,0,0.08)) + 4px period. */
+  --color-crt-scanline: rgba(255 255 0 / 0.08);
+  --crt-scan-period: 4px;
+  /* Morph geometry — the four values that differ between the beta's desktop
+     and mobile keyframe variants (phones settle to a larger card since the
+     absolute overshoot distance scales with the box). Each keyframe is
+     defined ONCE below; the breakpoint overrides only these numbers. The
+     card box derives from the settle scales so it can never drift from the
+     rect it sits on. */
+  --crt-sy-over: 0.8;
+  --crt-sx-over: 0.6;
+  --crt-sy-settle: 0.75;
+  --crt-sx-settle: 0.7;
+}
+@media (max-width: 47.9375em) {
+  :root {
+    --crt-sy-over: 0.95;
+    --crt-sx-over: 0.8;
+    --crt-sy-settle: 0.9;
+    --crt-sx-settle: 0.9;
+  }
+}
+
+/* --- Overlay field: scrim + drifting scanlines + the morph rect --- */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cv-scrim);
+  overflow: hidden;
+}
+.crt-overlay[hidden] {
+  display: none;
+}
+
+/* Persistent phosphor drift: an oversized gradient layer translating one
+   full period, looped — visually identical to the beta's
+   background-position scroll, but GPU-composited. */
+.crt-scanlines {
+  position: absolute;
+  inset: calc(-1 * var(--crt-scan-period)) 0 0 0;
+  height: calc(100% + 2 * var(--crt-scan-period));
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    0deg,
+    var(--color-crt-scanline) 0px,
+    var(--color-crt-scanline) calc(var(--crt-scan-period) / 2),
+    transparent calc(var(--crt-scan-period) / 2),
+    transparent var(--crt-scan-period)
+  );
+  animation: crt-scan var(--crt-scan) linear infinite;
+}
+@keyframes crt-scan {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(var(--crt-scan-period)); }
+}
+
+/* --- The morph rect: a full-viewport panel that switches on like a CRT.
+   transform-origin center is load-bearing (the beta inherited it from
+   Tailwind's default) — the line must snap open from the middle. --- */
+.crt-rect {
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg-raised);
+  transform-origin: center;
+}
+/* The on-animation stays applied through the card phase: its forwards fill
+   IS the card's backing panel (the beta kept the rect mounted for exactly
+   this). Same animation name across both phases → no restart on the flip. */
+.crt-overlay[data-phase='rect'] .crt-rect,
+.crt-overlay[data-phase='card'] .crt-rect {
+  animation: crt-rect-on var(--crt-on) ease-out forwards;
+}
+.crt-overlay[data-phase='exit'] .crt-rect {
+  animation: crt-rect-off var(--crt-off) ease-out forwards;
+}
+
+/* Switch-on: hold the hairline for the first 50% (the warming-up dwell),
+   spring to full height, overshoot narrow-and-tall at 80%, settle to the
+   card box. Geometry/beats verbatim from the beta; the size-variant numbers
+   ride the --crt-s* vars (var() in keyframes resolves against the animated
+   element, so the breakpoint override applies). */
+@keyframes crt-rect-on {
+  0%, 50% { transform: scaleY(0.01) scaleX(1); border-radius: 0; }
+  70%     { transform: scaleY(0.7)  scaleX(1); border-radius: var(--radius-lg); }
+  80%     { transform: scaleY(var(--crt-sy-over)) scaleX(var(--crt-sx-over)); border-radius: var(--radius-lg); }
+  100%    { transform: scaleY(var(--crt-sy-settle)) scaleX(var(--crt-sx-settle)); border-radius: var(--radius-lg); }
+}
+/* Switch-off: card → brief re-widen → collapse to the line → cut. */
+@keyframes crt-rect-off {
+  0%       { transform: scaleY(var(--crt-sy-settle)) scaleX(var(--crt-sx-settle)); border-radius: var(--radius-lg); }
+  20%      { transform: scaleY(var(--crt-sy-over)) scaleX(var(--crt-sx-over)); border-radius: var(--radius-lg); }
+  30%      { transform: scaleY(0.7) scaleX(1); border-radius: var(--radius-lg); }
+  80%, 100% { transform: scaleY(0.01) scaleX(1); border-radius: 0; }
+}
+
+/* --- Card phase: content arrives with the hard-ease slide-in --- */
+.crt-card {
+  position: absolute;
+  /* Derived from the settle scales — the content box always matches the
+     rect it sits on, at every breakpoint. Percentages of the overlay, not
+     vw/vh: viewport units include a classic scrollbar's width, the rect
+     (100% of the overlay) does not — the beta's 70vw carried that skew. */
+  width: calc(var(--crt-sx-settle) * 100%);
+  height: calc(var(--crt-sy-settle) * 100%);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  text-align: center;
+  padding: var(--space-3);
+  opacity: 0;
+}
+.crt-overlay[data-phase='card'] .crt-card {
+  animation: crt-content-in var(--crt-content) var(--crt-content-ease) forwards;
+}
+@keyframes crt-content-in {
+  0%   { opacity: 0; transform: translateX(-10px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* --- Reduced motion (new; the beta had none): the whole sequence collapses
+   to a plain opacity fade — no morph, no drift, content immediately laid. --- */
+@media (prefers-reduced-motion: reduce) {
+  .crt-scanlines {
+    animation: none;
+  }
+  /* 'card' must be listed too: the always-on rule keeps crt-rect-on applied
+     through the card phase, so without this override the full morph would
+     start the moment the fade hands off. Same name across all three phases
+     → the fade never restarts on a phase flip. */
+  .crt-overlay[data-phase='rect'] .crt-rect,
+  .crt-overlay[data-phase='card'] .crt-rect {
+    animation: crt-fade var(--crt-content) ease-out forwards;
+  }
+  /* Exit needs a DIFFERENT name: a same-name direction flip would not
+     restart the finished fade, so animationend would never fire and the
+     overlay would never re-hide. */
+  .crt-overlay[data-phase='exit'] .crt-rect {
+    animation: crt-fade-out var(--crt-content) ease-out forwards;
+  }
+  .crt-rect {
+    /* Static card geometry (was hard-coded to the desktop scales, silently
+       wrong on phones — deriving from the vars fixes both breakpoints). */
+    transform: scaleY(var(--crt-sy-settle)) scaleX(var(--crt-sx-settle));
+    border-radius: var(--radius-lg);
+  }
+  .crt-overlay[data-phase='card'] .crt-card {
+    animation: crt-fade var(--crt-content) ease-out forwards;
+  }
+}
+@keyframes crt-fade {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes crt-fade-out {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}

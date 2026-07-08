@@ -401,6 +401,10 @@
      figure-meta strip). */
   --fz-micro: 0.625rem;   /* 10px */
 
+  /* Engineering-plate stamp — footer copyright + data plate only; one step
+     below micro, the absolute floor of the scale. */
+  --fz-plate: 0.5625rem;  /* 9px */
+
   /* Long-form reading. Anthropic uses 155%, but Utopia (serif) has a taller
      line box than Anthropic Sans, so it reads looser at the same multiplier.
      Tightened to 1.36 for a denser, less airy serif column. */

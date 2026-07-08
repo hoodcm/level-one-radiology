@@ -52,11 +52,11 @@
   /* Minimum touch-target edge (module standard: 44×44px effective). */
   --tap-target: 2.75rem;   /* 44px */
 
-  /* Radius scale — cards/buttons anchor at 8px, large media at 16px */
+  /* Radius scale — buttons/callouts anchor at 8px, cards and large media at 16px */
   --radius-xs: 0.25rem;   /* 4px  — chips, small controls */
-  --radius-sm: 0.5rem;    /* 8px  — cards, buttons */
+  --radius-sm: 0.5rem;    /* 8px  — buttons, callouts */
   --radius-md: 0.75rem;   /* 12px */
-  --radius-lg: 1rem;      /* 16px — large media panels */
+  --radius-lg: 1rem;      /* 16px — article cards, large media panels */
   --radius-pill: 100vw;
 
   /* Grid texture cell — the blueprint-ground pitch (3 × gutter). */

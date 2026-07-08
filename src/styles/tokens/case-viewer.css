@@ -23,9 +23,35 @@
 
   /* Corner brackets — the "slight HUD framing". Ivory at rest; the engaged
      state goes full opacity + signal cyan (imaging-active semantics). */
-  --cv-bracket-size: 0.75rem;   /* 12px — matches the .hud-frame corner size */
+  --cv-bracket-size: 0.75rem;   /* 12px */
   --cv-bracket-stroke: 1px;
   --cv-bracket-opacity-rest: 0.35;
+  /* Stack-edge tick: how far the brackets nudge inward when a scrub reaches
+     IM 1 or IM N — the PACS end-of-stack stop, kept at texture scale. While
+     engaged the nudge rides on top of the locked inset. */
+  --cv-edge-tick: 2px;
+  /* Engaged lock: the inward inset the brackets advance to and HOLD for the
+     whole engaged stay (entry overshoots once and settles — the lock click). */
+  --cv-bracket-lock: 3px;
+
+  /* Chrome scrim — the translucent imaging-black behind controls that float
+     over the slice (✕ buttons, tap-to-activate hint). */
+  --cv-scrim: color-mix(in srgb, var(--color-bg-deepest) 72%, transparent);
+
+  /* Tap-to-boot veil — the semi-greyed imaging-black that dims the inert stage
+     until the ACTIVATE tap fires the boot (apparatus.caseTapToBoot). */
+  --cv-armed-veil: color-mix(in srgb, var(--color-bg-deepest) 55%, transparent);
+  /* Armed chrome mute — the meta strip / slider / chips fade to this opacity
+     (pointer-events off) so nothing but ACTIVATE reads as touchable. */
+  --cv-armed-chrome-opacity: 0.35;
+  /* ACTIVATE button — the one live control while armed; sized to invite the
+     tap, far above the 44px minimum. Holds the boxed square-power glyph. */
+  --cv-activate-h: 4.5rem;             /* 72px square */
+  --cv-activate-icon: 3.25rem;         /* 52px power glyph */
+
+  /* Button glyphs (Lucide outline icons, inlined via case-icons.mjs); run
+     large in their 44px hit areas so the icon frame reads as the button. */
+  --cv-icon-size: 2rem;                /* 32px */
 
   /* Touch targets + slider thumb. */
   --cv-hit-area: 2.75rem;       /* 44px — iOS minimum hit area */
@@ -35,4 +61,15 @@
      screen edge, so pointer-downs inside this inset are ignored. Referenced
      by case-viewer.ts (EDGE_DEAD_PX) — keep the two in step. */
   --cv-edge-dead-zone: 28px;
+
+  /* Fullscreen CRT switch-on/off — beat timings verbatim from the beta
+     bindings (design-assets/references/beta-crt-boot.md): off is deliberately
+     half of on (switching off snaps shut curter than it opens); the content
+     ease is the beta's hard ease-in — a deliberate motion.md §1 deviation,
+     load-bearing for the "content arrives" read. fullscreen.ts's close hold
+     (CRT_OFF_MS) must stay in step with --cv-crt-off. */
+  --cv-crt-on: 300ms;
+  --cv-crt-off: 150ms;
+  --cv-crt-content: 150ms;
+  --cv-crt-content-ease: cubic-bezier(0.8, 0, 1, 1);
 }

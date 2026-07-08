@@ -1,0 +1,33 @@
+/* ==============================================
+   ORNAMENT — detector-plate framing tokens
+   Corner field arcs + midpoint tee lines on cards; scaled-down
+   arcs on article callouts. Modeled on a DR detector plate's
+   registration fiducials (spec chosen in the card-ornament lab,
+   2026-07-08). Consumed by components/ornament.css.
+   ============================================== */
+
+:root {
+  /* Ink — warm gray at low presence; hover brightens x1.7. */
+  --orn-ink: color-mix(in srgb, var(--color-text-muted) 25%, transparent);
+  --orn-ink-hover: color-mix(in srgb, var(--color-text-muted) 42.5%, transparent);
+
+  /* Stroke weight shared by every ornament line. */
+  --orn-stroke: 1px;
+
+  /* Field arcs — quarter arcs in each inner corner with straight arms. */
+  --orn-arc-inset: 6px;   /* distance in from the card edge */
+  --orn-arc-r: 10px;      /* curve radius */
+  --orn-arc-arm: 12px;    /* straight arm beyond the curve, each direction */
+
+  /* Edge tees — a segment of the field line at each edge midpoint,
+     parallel to the edge, with a stem pointing at the card center. */
+  --orn-line-len: 32px;
+  --orn-line-inset: 6px;
+  --orn-tee-stem: 8px;
+
+  /* Callout variant — same geometry at half scale (stroke stays 1px). */
+  --orn-co-scale: 0.5;
+  --orn-co-arc-inset: calc(var(--orn-arc-inset) * var(--orn-co-scale));
+  --orn-co-arc-r: calc(var(--orn-arc-r) * var(--orn-co-scale));
+  --orn-co-arc-arm: calc(var(--orn-arc-arm) * var(--orn-co-scale));
+}

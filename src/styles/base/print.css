@@ -11,10 +11,21 @@
   .feature-band,
   .article-progress,
   .article__toc,
+  .article-index,
   .article__subscribe,
   .article__footer,
-  .heading-anchor {
+  .heading-anchor,
+  /* Case-viewer interactive chrome — the poster/canvas prints, the slider,
+     window tabs/chips, close button, and TAP-TO-SCRUB stage chip do not. */
+  .cv__bar,
+  .cv__chips,
+  .cv__tabs,
+  .cv__close {
     display: none !important;
+  }
+
+  .cv__stage::after {
+    content: none !important;
   }
 
   .article__layout {

@@ -11,10 +11,10 @@ featured: false
 keyPoints:
   - "Your monitor shows a few hundred grays and your eye resolves a few dozen. The Hounsfield scale spans thousands of values. Windowing decides which slice of it you see"
   - "Level picks the center of the visible slice. Width decides how many densities on either side of center get a gray of their own"
-  - "Every window is a trade: contrast where you point it, blindness everywhere else. A head CT is read in at least three"
+  - "Every window trades contrast at one part of the scale for contrast everywhere else. A head CT is read in at least three"
 ---
 
-<p class="lead">You have probably sat next to a radiologist and watched them make small, twitchy drags with the mouse while the image flickers through a dozen versions of itself. Nobody narrates this part. The image just gets better and the reading continues. Those drags are windowing, and they are often the difference between an image that shows the answer and the same image hiding it.</p>
+<p class="lead">I'm sure you have sat next to a radiologist and watched them make small, twitchy drags with the mouse while the image flickers through a dozen versions of itself. You might be wondering what they are doing and why. Those drags are windowing, and they are often the difference between an image that shows the answer and the same image hiding it.</p>
 
 These controls are genuinely confusing when you first drive a PACS yourself, and it is understandably easiest to leave the presets alone and hope. So let's build the whole mechanism from the ground up, then come back to the presets and decode them.
 
@@ -41,11 +41,11 @@ That something is the window. Before defining it, it helps to know where the int
 <dd>Several hundred to a few thousand HU depending on how cortical it is.</dd>
 </dl>
 
-Read the brain entry again. The finding you interrogate on every single head CT lives inside a ten-unit sliver of a four-thousand-unit scale. Displaying that sliver well is the entire game.
+Read the brain entry again. The gray-white interface you assess on every head CT lives inside a ten-unit sliver of a four-thousand-unit scale, and most of the display problem in neuroimaging comes down to giving that sliver enough grays to read.
 
 ## Two Controls, One Window
 
-Windowing is zoom, but for density instead of position. **Window level** is where you point: the HU value at the center of your display, rendered as middle gray. **Window width** is how far you zoom: the range of HU values spread across the full ramp from black to white. Anything below the bottom edge of the window renders pure black. Anything above the top edge renders pure white. No detail survives outside the window, no matter how large the density difference.
+Windowing is zoom, but for density instead of position. **Window level** is where you point: the HU value at the center of your display, rendered as middle gray. **Window width** is how far you zoom: the range of HU values spread across the full ramp from black to white. Anything below the bottom edge of the window renders pure black, anything above the top edge renders pure white, and no detail survives outside the window no matter how large the density difference.
 
 A narrow window spends all of your grays on a small stretch of the scale, so tiny density differences become visible contrast. A wide window spreads the same grays across a huge stretch, so nothing clips to black or white, but neighboring tissues converge toward the same shade.
 
@@ -74,15 +74,15 @@ gray(65, 2800, 600)  # bone window  -> 79
 gray(38, 2800, 600)  # bone window  -> 76    (3 grays apart: invisible)
 ```
 
-The same two voxels, <span class="readout">27 HU</span> apart, are separated by 86 gray levels in one window and 3 in the other. That is the trade you are making with every drag.
+The same two voxels, <span class="readout">27 HU</span> apart, are separated by 86 gray levels in one window and 3 in the other.
 
-::case[A synthetic test stack, not real anatomy, for trying the viewer. Drag across the image to scrub the series, and switch windows to compare the display.]{id="dev-synthetic"}
+::case[A synthetic test stack, not real anatomy, for trying the viewer. Tap the image to activate, drag to scrub the series, and switch windows to compare the display.]{id="dev-synthetic"}
 
 ---
 
 ## The Presets, Decoded
 
-Presets are not correct answers. They are named positions in the trade-off, each buying contrast for one question by giving it up for the others.
+Presets are named positions in the trade-off, each buying contrast for one question by paying for it with the others.
 
 | Preset | Width / Level | What it buys | What it gives up |
 |---|---|---|---|
@@ -100,4 +100,4 @@ Every viewer puts these on hotkeys, usually the number row, and pairs them with 
 
 The practical sequence: brain window for the parenchyma, subdural window along the convexities and falx, bone window for the fractures, soft tissue for the scalp. The scalp hematoma tells you where the coup is, which tells you where to look hardest for the contrecoup.
 
-And when a finding is equivocal at every preset, stop flipping windows and measure it. An ROI reads the data directly, with no gray ramp in the way. The window decides what you see, never what is there.
+And when a finding is equivocal at every preset, stop flipping windows and measure it. An ROI reads the data directly, with no gray ramp in the way.

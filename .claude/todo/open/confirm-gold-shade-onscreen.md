@@ -3,11 +3,11 @@ id: confirm-gold-shade-onscreen
 title: Judge this session's visual tuning on screen
 band: now
 first_surfaced: 2026-06-28
-last_touched: 2026-07-07
+last_touched: 2026-07-08
 depends_on: []
-links: [src/styles/tokens/colors.css, src/styles/tokens/typography.css, src/styles/components/apparatus/ordinal-tick.css, src/styles/main.css]
+links: [src/styles/tokens/colors.css, src/styles/tokens/typography.css, src/styles/tokens/ornament.css, src/styles/components/ornament.css, src/styles/components/apparatus/ordinal-tick.css, src/styles/main.css]
 worktype: decide
-assessed: 2026-07-07
+assessed: 2026-07-08
 ---
 One on-screen judgment pass over this session's headless-verified visual knobs
 — his eyes are the gate on all of these:
@@ -20,7 +20,10 @@ One on-screen judgment pass over this session's headless-verified visual knobs
   48px).
 - Desktop prose leading (`--lh-reading` 1.44).
 - De-striped apparatus cards.
-- HUD corner hover.
+- Card + callout detector-plate ornament (corner field-arcs + edge fiducials,
+  replacing the old HUD corner brackets; card radius 8px→16px). New this
+  session, headless-only so far — confirm the ornament geometry/ink reads
+  right and the hover brighten feels right without the old bracket step-out.
 - Title view-transition morph (click card → article in Chrome/Safari).
 - Print stylesheet (⌘P on an article).
 - Ordinal tick-in keep/cut: demo-gated element at
@@ -29,9 +32,11 @@ One on-screen judgment pass over this session's headless-verified visual knobs
   plan's default expectation is CUT (a second motion grammar beside
   `[data-reveal]`). If cut: delete the file + import line, record in
   CHANGELOG.
-- On-screen pass over the 8 shipped article-apparatus elements: section
-  break mark, arrival wash, mobile INDEX, serial exit strip, footnote
-  popover cards, figure accession cells, readout chips, cite line.
+- On-screen pass over the 7 shipped article-apparatus elements (canonical
+  roster: `docs/design/components.md` → Article apparatus): section break
+  mark, arrival wash, mobile INDEX, More-articles footer block, footnote
+  popover cards, figure accession cells, readout chips. (The cite-line
+  element planned in the first pass was cut on review before shipping.)
 
 Done: each knob above is confirmed acceptable on screen (or re-tuned), and
 the ordinal tick-in keep/cut call is made.
@@ -44,3 +49,8 @@ scatter of near-duplicate on-screen-judgment items). Re-banded next→now.
 2026-07-07 folded in the article-apparatus Phase 1+2 on-screen judgment
 (ordinal tick-in keep/cut + the 8 shipped elements) rather than splitting a
 sibling decision item — same "his eyes are the gate" shape, same session.
+2026-07-08 corrected the apparatus roster to 7 elements (was 8; cite-line
+never shipped) and folded in the new card/callout detector-plate ornament
+(replaces the HUD corner brackets this item previously asked about — that
+bullet is now moot and swapped out) — same "his eyes are the gate on a
+headless CSS change" shape, matched rather than spun into a new item.

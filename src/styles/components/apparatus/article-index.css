@@ -77,7 +77,9 @@
   align-items: center;
   min-height: var(--tap-target);
 }
-.article-index__link:hover { color: var(--color-text-primary); }
+/* text-decoration pinned: the global a:hover underline would otherwise win
+   over the rest-state `none` (same suppression as .toc__link:hover). */
+.article-index__link:hover { color: var(--color-text-primary); text-decoration: none; }
 
 /* Open/close transition via ::details-content — Newly Baseline, so gated;
    browsers without it get an instant toggle. Reduced motion: no transition. */

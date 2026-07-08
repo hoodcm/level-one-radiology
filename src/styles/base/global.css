@@ -30,6 +30,27 @@ body {
   outline-offset: 2px;
 }
 
+/* Skip link — visually hidden until keyboard-focused, then pinned above the
+   sticky header (z-50) so it's the first tab stop on every page. */
+.skip-link {
+  position: fixed;
+  top: var(--space-1);
+  left: var(--space-1);
+  z-index: 60;
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  font-family: var(--ff-ui);
+  font-size: var(--fz-ui);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  transform: translateY(calc(-100% - var(--space-2)));
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
 /* Links default to the gold action color */
 a {
   color: var(--color-link);

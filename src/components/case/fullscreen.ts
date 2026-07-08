@@ -1,11 +1,12 @@
 /**
  * fullscreen.ts — the fullscreen viewer overlay (plan M4, decisions 7/8/9).
  *
- * iPhone Safari cannot element-fullscreen (Apple WONTFIX), so the base is a
- * position:fixed overlay sized off visualViewport (correct even when the
+ * iPhone Safari cannot element-fullscreen (Apple WONTFIX), so fullscreen is
+ * a position:fixed overlay sized off visualViewport (correct even when the
  * page itself is pinch-zoomed at entry), safe-area padded, with a fixed-body
- * scroll lock. Where the real Fullscreen API exists (desktop/iPadOS) it is
- * layered on top of the same overlay.
+ * scroll lock — on EVERY platform. The native Fullscreen API is deliberately
+ * unused: element fullscreen escalates to the host window in embedded
+ * browsers (VS Code preview), and one code path beats two.
  *
  * History machine: pushState on open; POPSTATE IS THE SINGLE CLOSE
  * AUTHORITY — ✕ and Esc call history.back(); teardown order is
@@ -20,6 +21,7 @@
  * floors keep the image from ever reading as a dead uniform field), RESET
  * chip when non-neutral, double-tap resets while tuning, resets on close.
  */
+import { iconSvg } from '../../lib/case-icons.mjs';
 import { clampFrame, clampToFrontier, frameForDrag } from './mapping';
 import { drawContain, fitCanvas } from './render';
 
@@ -36,10 +38,16 @@ export interface FullscreenController {
   onClose(finalFrame: number): void;
 }
 
+// Switch-off hold: close defers until the CRT collapse lands — the designed
+// 150ms off-beat (tokens/case-viewer.css --cv-crt-off; keep in step) plus a
+// couple of frames so the cut never clips the line.
+const CRT_OFF_MS = 180;
+
 const ZOOM_MAX = 4;
 const DOUBLE_TAP_ZOOM = 2;
 const DOUBLE_TAP_MS = 300;
 const DOUBLE_TAP_SLOP_PX = 24;
+const WHEEL_STEP_CAP = 3; // per animation frame — keep in step with case-viewer.ts
 // TUNE mapping — prototype math (case-viewer-loading-hud.html), floors from
 // the plan: contrast 0.3–3, brightness 0.4–2.5. Never zero: a uniform gray/
 // black void reads as breakage, not adjustment.
@@ -81,6 +89,18 @@ export class CaseFullscreen {
   #lastTapTime = 0;
   #lastTapX = 0;
   #lastTapY = 0;
+  #lastPointerType = '';
+  #wheelSteps = 0;
+  #wheelArmed = false;
+  // Stage rect, cached per viewport event so the per-frame path (#redraw,
+  // pinch/pan clamps) never reads getBoundingClientRect after #syncFrame's
+  // DOM writes — that read forced one synchronous reflow per scrub frame.
+  #rect: { left: number; top: number; width: number; height: number } = {
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+  };
 
   constructor(controller: FullscreenController) {
     this.#c = controller;
@@ -102,7 +122,12 @@ export class CaseFullscreen {
     window.addEventListener('popstate', this.#onPop, { signal: this.#abort.signal });
 
     document.body.appendChild(this.#root);
-    // Fixed-body scroll lock — the iOS-proof variant.
+    // Fixed-body scroll lock — the iOS-proof variant. The gutter pad holds
+    // the page width steady where a classic scrollbar exists: fixing the body
+    // collapses the document scrollbar and the page would reflow wider the
+    // instant the overlay opens — visible movement under the CRT dwell.
+    const gutter = window.innerWidth - document.documentElement.clientWidth;
+    if (gutter > 0) document.body.style.paddingRight = `${gutter}px`;
     document.body.style.position = 'fixed';
     document.body.style.top = `-${this.#scrollY}px`;
     document.body.style.width = '100%';
@@ -111,32 +136,30 @@ export class CaseFullscreen {
     visualViewport?.addEventListener('resize', this.#onViewport, { signal: this.#abort.signal });
     visualViewport?.addEventListener('scroll', this.#onViewport, { signal: this.#abort.signal });
 
-    // Real Fullscreen API where it exists; the overlay is the fallback AND
-    // the content either way. Exit via Esc/system chrome routes through
-    // fullscreenchange → history.back() → popstate teardown.
-    if (document.fullscreenEnabled) {
-      this.#root.requestFullscreen().catch(() => {});
-      document.addEventListener(
-        'fullscreenchange',
-        () => {
-          if (!document.fullscreenElement) this.requestClose();
-        },
-        { signal: this.#abort.signal }
-      );
-    }
-
+    // Overlay-only, everywhere: the fixed visualViewport-sized overlay IS the
+    // fullscreen experience. The native Fullscreen API is deliberately not
+    // used — element fullscreen escalates to the host window in embedded
+    // browsers (VS Code preview) and iPhone Safari never had it, so the
+    // overlay is the one code path on every platform.
     this.#syncFrame(this.#c.frame);
     (this.#root.querySelector('[data-fs-close]') as HTMLButtonElement).focus();
     this.#c.el.addEventListener('cv:decoded', this.#onDecoded, { signal: this.#abort.signal });
   }
 
   /** The one close entry point users reach — routes through history, exactly
-   *  once: Esc under native fullscreen races the fullscreenchange handler, so
-   *  #closing collapses both into a single history.back() (cleared in teardown). */
+   *  once (#closing guards double-invocation, cleared in teardown). */
   requestClose(): void {
     if (!this.#open || this.#closing) return;
     this.#closing = true;
-    history.back();
+    // CRT switch-off beat before the real close (authored motion — reduced
+    // motion closes immediately). A direct back-gesture popstate still tears
+    // down instantly: system navigation is never animated against.
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      history.back();
+      return;
+    }
+    this.#root.classList.add('is-shutdown');
+    setTimeout(() => history.back(), CRT_OFF_MS);
   }
 
   #onPop = (): void => {
@@ -148,7 +171,6 @@ export class CaseFullscreen {
     this.#open = false;
     this.#closing = false;
     this.#abort.abort(); // all listeners, incl. popstate
-    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
     this.#resetTune();
     this.#root.remove();
     // Order pinned by the plan: close → unlock body → restore scrollY.
@@ -157,6 +179,7 @@ export class CaseFullscreen {
     document.body.style.position = '';
     document.body.style.top = '';
     document.body.style.width = '';
+    document.body.style.paddingRight = '';
     window.scrollTo({ top: this.#scrollY, left: 0, behavior: 'instant' });
     this.#c.onClose(this.#frame);
   }
@@ -168,10 +191,24 @@ export class CaseFullscreen {
 
   #sizeToViewport(): void {
     const vv = visualViewport;
-    if (!vv) return;
-    this.#root.style.width = `${vv.width}px`;
-    this.#root.style.height = `${vv.height}px`;
-    this.#root.style.transform = `translate(${vv.offsetLeft}px, ${vv.offsetTop}px)`;
+    if (vv) {
+      this.#root.style.width = `${vv.width}px`;
+      this.#root.style.height = `${vv.height}px`;
+      this.#root.style.transform = `translate(${vv.offsetLeft}px, ${vv.offsetTop}px)`;
+    }
+    // One deliberate layout read per viewport event, in place of one per frame.
+    // offset* metrics, not getBoundingClientRect: the CRT morph scales the
+    // root at entry/exit, and a mid-morph rect would bake that scale into the
+    // cache (distorting the first fitCanvas). offset* reads the unscaled
+    // layout box; the root is the offsetParent (position:fixed), so adding
+    // its visualViewport translation back yields viewport coords for the
+    // pinch/pan pointer math.
+    this.#rect = {
+      left: (vv?.offsetLeft ?? 0) + this.#stage.offsetLeft,
+      top: (vv?.offsetTop ?? 0) + this.#stage.offsetTop,
+      width: this.#stage.offsetWidth,
+      height: this.#stage.offsetHeight,
+    };
   }
 
   // --- DOM ---------------------------------------------------------------------
@@ -181,16 +218,21 @@ export class CaseFullscreen {
     root.setAttribute('role', 'dialog');
     root.setAttribute('aria-modal', 'true');
     root.setAttribute('aria-label', `${this.#c.title} — fullscreen viewer`);
+    // The __screen wrapper is the CRT rect: it morphs while the root stays
+    // full-size — a scrim field over the page (masking any reflow behind the
+    // animation) and the input surface from the first frame.
     root.innerHTML = `
+<div class="cv-fs__screen">
 <div class="cv-fs__meta"><span data-fs-meta></span><span class="cv-fs__counter" data-fs-counter></span></div>
 <div class="cv-fs__stage" data-fs-stage><div class="cv-fs__pan" data-fs-pan><canvas data-fs-canvas></canvas></div></div>
-<button type="button" class="cv-fs__close" data-fs-close aria-label="Close fullscreen viewer">✕</button>
+<button type="button" class="cv-fs__close" data-fs-close aria-label="Close fullscreen viewer">${iconSvg('x')}</button>
 <div class="cv-fs__bar">
-<input type="range" data-fs-slider min="1" max="${this.#c.frames}" step="1" aria-label="Image position, ${this.#c.title}" />
-<button type="button" class="cv-fs__chip" data-fs-tune aria-pressed="false">TUNE</button>
+<input type="range" data-fs-slider min="1" max="${this.#c.frames}" step="1" />
+<button type="button" class="cv-fs__chip" data-fs-tune aria-pressed="false" aria-label="Tune contrast and brightness">${iconSvg('contrast')}</button>
 <button type="button" class="cv-fs__chip" data-fs-reset hidden>RESET</button>
 </div>
-<div class="cv-fs__readout" data-fs-readout hidden></div>`;
+<div class="cv-fs__readout" data-fs-readout hidden></div>
+</div>`;
 
     this.#stage = root.querySelector('[data-fs-stage]')!;
     this.#pan = root.querySelector('[data-fs-pan]')!;
@@ -201,6 +243,9 @@ export class CaseFullscreen {
     this.#resetBtn = root.querySelector('[data-fs-reset]')!;
     this.#tuneReadout = root.querySelector('[data-fs-readout]')!;
     (root.querySelector('[data-fs-meta]') as HTMLElement).textContent = this.#c.metaText;
+    // Via setAttribute, never the innerHTML template: the title is manifest
+    // prose and a quote inside it would break out of the attribute.
+    this.#slider.setAttribute('aria-label', `Image position, ${this.#c.title}`);
 
     const { signal } = this.#abort;
     root.querySelector('[data-fs-close]')!.addEventListener('click', () => this.requestClose(), { signal });
@@ -219,6 +264,16 @@ export class CaseFullscreen {
     );
 
     this.#slider.addEventListener('input', () => this.#setFrame(Number(this.#slider.value)), { signal });
+    // PageUp/Down = ±5, matching the inline slider.
+    this.#slider.addEventListener(
+      'keydown',
+      (e) => {
+        if (e.key !== 'PageUp' && e.key !== 'PageDown') return;
+        e.preventDefault();
+        this.#setFrame(this.#frame + (e.key === 'PageUp' ? 5 : -5));
+      },
+      { signal }
+    );
     this.#tuneBtn.addEventListener('click', () => this.#toggleTune(), { signal });
     this.#resetBtn.addEventListener('click', () => this.#resetTune(), { signal });
 
@@ -226,14 +281,37 @@ export class CaseFullscreen {
     this.#stage.addEventListener('pointermove', (e) => this.#move(e), { signal });
     this.#stage.addEventListener('pointerup', (e) => this.#up(e), { signal });
     this.#stage.addEventListener('pointercancel', (e) => this.#up(e), { signal });
+    // Wheel scrub, rAF-coalesced and step-capped — the inline element's
+    // contract, so trackpad inertia can't skip slices faster in fullscreen.
     this.#stage.addEventListener(
       'wheel',
       (e) => {
         e.preventDefault();
-        const dir = (Math.sign(e.deltaY) || 1) as 1 | -1;
-        this.#setFrame(clampToFrontier(this.#frame + dir, this.#c.frontier(this.#frame, dir), dir));
+        this.#wheelSteps += Math.sign(e.deltaY);
+        if (this.#wheelArmed) return;
+        this.#wheelArmed = true;
+        requestAnimationFrame(() => {
+          const step = Math.max(-WHEEL_STEP_CAP, Math.min(WHEEL_STEP_CAP, this.#wheelSteps));
+          this.#wheelSteps = 0;
+          this.#wheelArmed = false;
+          if (step === 0 || !this.#open) return;
+          const dir = Math.sign(step) as 1 | -1;
+          this.#setFrame(clampToFrontier(this.#frame + step, this.#c.frontier(this.#frame, dir), dir));
+        });
       },
       { signal, passive: false }
+    );
+    // Mouse parity for double-tap: double-click toggles fit↔2× (or resets
+    // TUNE) — touch stays on the #up path, which already handles taps.
+    this.#stage.addEventListener(
+      'dblclick',
+      (e) => {
+        if (this.#lastPointerType === 'touch') return;
+        if (this.#tuning) this.#resetTune();
+        else if (this.#scale > 1) this.#applyPanTransform(1, 0, 0);
+        else this.#applyPinch(DOUBLE_TAP_ZOOM, e.clientX, e.clientY);
+      },
+      { signal }
     );
     return root;
   }
@@ -270,7 +348,8 @@ export class CaseFullscreen {
 
   #syncFrame(frame: number): void {
     this.#frame = frame;
-    this.#counter.textContent = `IM ${frame}/${this.#c.frames}`;
+    // "Image N/M", N pad-aligned to M's width — anchored label (see case-viewer.ts #syncReadout).
+    this.#counter.textContent = `Image ${String(frame).padStart(String(this.#c.frames).length, ' ')}/${this.#c.frames}`;
     this.#slider.value = String(frame);
     this.#slider.setAttribute('aria-valuetext', `Image ${frame} of ${this.#c.frames}`);
     this.#redraw();
@@ -279,8 +358,7 @@ export class CaseFullscreen {
   #redraw(): void {
     const bmp = this.#c.bitmap(this.#frame);
     if (!bmp) return;
-    const r = this.#stage.getBoundingClientRect();
-    fitCanvas(this.#canvas, r.width, r.height);
+    fitCanvas(this.#canvas, this.#rect.width, this.#rect.height);
     drawContain(this.#canvas, bmp);
   }
 
@@ -291,6 +369,7 @@ export class CaseFullscreen {
     } catch {
       /* noop */
     }
+    this.#lastPointerType = e.pointerType;
     this.#pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (this.#pointers.size === 2) {
       const [a, b] = [...this.#pointers.values()];
@@ -362,7 +441,7 @@ export class CaseFullscreen {
   // --- zoom / pan -------------------------------------------------------------------
   #applyPinch(ratio: number, cx: number, cy: number): void {
     const next = Math.min(ZOOM_MAX, Math.max(1, this.#scale * ratio));
-    const r = this.#stage.getBoundingClientRect();
+    const r = this.#rect;
     const mx = cx - r.left;
     const my = cy - r.top;
     // Keep the pinch midpoint stationary while the scale changes around it.
@@ -371,7 +450,7 @@ export class CaseFullscreen {
   }
 
   #applyPanTransform(scale: number, tx: number, ty: number): void {
-    const r = this.#stage.getBoundingClientRect();
+    const r = this.#rect;
     if (scale <= 1) {
       scale = 1;
       tx = 0;

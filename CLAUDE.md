@@ -22,6 +22,7 @@ This is the project's expression of the global documentation-hygiene single-sour
 | Framework | Astro + React islands |
 | Styling | Tailwind CSS + CSS custom properties |
 | Components | shadcn/ui (Base UI primitives, Mira style) |
+| Icons | Lucide (`lucide-react`; inlined as SVG in framework-free components — see `src/lib/case-icons.mjs`) |
 | Content | Markdown + YAML frontmatter (git-managed) |
 | Hosting | GitHub Pages |
 | Newsletter | Buttondown |
@@ -35,8 +36,14 @@ This is the project's expression of the global documentation-hygiene single-sour
 | `npm run dev` | Dev server (localhost:4321) |
 | `npm run build` | Production build |
 | `npm run preview` | Preview production build |
+| `npm run check` | `astro check` — TypeScript/type diagnostics across `.astro`/`.ts`/`.tsx` (mirrors the IDE's Problems panel) |
 | `npm run lint` | Enforce design tokens (no hard-coded colors/grid) — `lint:css` (stylelint) + `lint:markup` (inline-color check). Runs in CI; a violation fails the deploy |
 | `npx shadcn add [name]` | Add shadcn/ui component |
+
+**Keep the dev server running for the whole session.** Michael watches changes live at
+localhost:4321 — start `npm run dev` as a background task early in any session that touches the
+site, and never kill it when you finish a verification step. If it must restart (cache clear,
+config change), bring it back up immediately and confirm it responds before moving on.
 
 ## Documentation Lookups (context7)
 
@@ -62,7 +69,7 @@ src/
     utils.ts              # cn helper etc.
     tags.ts               # Single source: tag/contentType taxonomy → signal variants
     articles.ts           # getArticles(): draft-filtered, date-sorted accessor
-    apparatus.ts          # Article-apparatus kill-switch flags (markup-emitting elements)
+    apparatus.ts          # Article-apparatus kill-switch flags (markup-emitting elements + case-viewer behavior experiments)
     markdown-plugins.mjs  # remarkCallouts, remarkCaseViewer, rehypeTableScroll, remarkReadingTime, rehypeFootnotePopovers
     case-shell.mjs        # build-time <case-viewer> shell emitter + ::case validation (shared w/ loader + case:build)
     case-loader.ts        # case-aware content loader (rev-invalidates stale ::case embeds)

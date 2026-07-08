@@ -88,9 +88,9 @@ Every clinical image carries a metadata strip in the console voice: modality, pl
 
 ## The Case Viewer
 
-The showstopper module. Scroll through the exam the way a radiologist does: drag across the image to scrub, tap the image to hold the page and scrub on either axis, switch windows without losing your slice.
+The showstopper module. Scroll through the exam the way a radiologist does: tap the image to hold the page and scrub on either axis, switch windows without losing your slice.
 
-::case[Synthetic test stack. Drag across the image to scrub through the exam.]{id="dev-synthetic"}
+::case[Synthetic test stack. Tap the image, then drag to scrub through the exam.]{id="dev-synthetic"}
 
 ## Quotes, Rules, and Notes
 

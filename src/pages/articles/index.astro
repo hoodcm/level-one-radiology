@@ -23,6 +23,7 @@ const articles = await getArticles();
         </p>
       </header>
 
+      <h2 class="sr-only">All articles</h2>
       <Grid rowGap="var(--gap-md)">
         {articles.map((article) => (
           <Col span={{ md: 6, lg: 6 }} class="article-index__cell">

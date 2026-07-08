@@ -6,7 +6,8 @@ first_surfaced: 2026-06-23
 last_touched: 2026-06-23
 depends_on: []
 links: [src/layouts/Layout.astro]
-assessed: 2026-07-07
+worktype: build
+assessed: 2026-07-08
 ---
 Wire Plausible analytics — add the tracking script (gated on
 `PUBLIC_PLAUSIBLE_DOMAIN`, already declared in CLAUDE.md env vars) to the base

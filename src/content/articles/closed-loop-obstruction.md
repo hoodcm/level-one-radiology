@@ -1,42 +1,46 @@
 ---
-title: "Closed-Loop Obstruction: The CT Signs You Cannot Miss"
+title: "Closed-Loop Obstruction on CT: Two Transition Points"
 publishDate: "2026-01-28"
 serial: "L1-0002"
 lastReviewed: "2026-01-28"
-description: "Closed-loop small bowel obstruction carries high morbidity when diagnosis is delayed. This article reviews the CT findings that distinguish simple from closed-loop obstruction, with emphasis on the signs that predict ischemia."
+description: "The CT findings that separate simple from closed-loop small bowel obstruction, why the closed loop strangulates faster, and the enhancement check that predicts ischemia."
 tags: ["abdomen", "ct", "emergency", "small-bowel"]
 primaryTag: "Abdomen"
 contentType: "educational"
 featured: true
 keyPoints:
-  - "The C-sign or U-sign of converging mesenteric vessels at the transition point is pathognomonic"
-  - "Reduced wall enhancement is the most specific sign of ischemia, not wall thickening"
-  - "Pneumatosis and portal venous gas are late findings. Waiting for them delays surgery"
+  - "A closed loop has two transition points along one bowel segment. Count them, usually on the coronals"
+  - "Reduced wall enhancement predicts ischemia better than wall thickening does. Compare against adjacent normal loops"
+  - "Pneumatosis and portal venous gas are late findings. Call the surgeon before they appear"
 ---
 
-## The Clinical Problem
+You have probably read SBOs where you scroll back and forth and cannot settle on a single transition point. Some of those are closed loops, and the distinction is worth the extra minutes, because this is a surgical emergency. A closed loop is a segment of bowel obstructed at both ends. It cannot decompress in either direction, and it strangulates faster than a simple obstruction.
 
-Closed-loop obstruction accounts for a disproportionate share of bowel obstruction morbidity. Unlike simple mechanical obstruction, a closed loop has no proximal decompression pathway: the trapped segment distends rapidly, venous outflow is compromised first, and ischemia follows.
+## What a Closed Loop Is
 
-The radiologist's job: identify the closed loop before ischemia becomes irreversible.
+Think of twisting a balloon animal: you make one twist, and the balloon is obstructed on both sides of it. An adhesive band wrapping around a loop does the same thing. One band, two transition points, one trapped segment between them. Internal hernias and volvulus produce the same configuration by different mechanisms.
 
-## Anatomy of a Closed Loop
+The trapped segment is why the clock runs faster. It cannot vent in either direction, so it distends against a fixed volume, and the rising pressure closes the thin-walled mesenteric veins before it closes the arteries. Blood keeps arriving and cannot leave. Venous congestion becomes edema, edema becomes ischemia, and the wall can be dying while the overall picture still reads as an ordinary SBO.
 
-A closed loop requires two points of obstruction along a single bowel segment. The most common mechanism is adhesive band wrapping around a loop, creating both proximal and distal transition points. Internal hernias and volvulus produce the same configuration.
+## Finding the Loop
 
-## The CT Signs
+**Two transition points, not one.** A simple obstruction has a single point where dilated bowel meets decompressed. A closed loop has two, along one segment, and on coronal reformats the trapped segment often draws a C or a U with both limbs converging toward the obstruction.
 
-The definitive signs point to the loop itself. Follow the mesenteric vessels to the transition point: in a closed loop, vessels from separate mesenteric leaves converge toward a single point of torsion or compression, the "beak" or "whirl" sign. The loop forms a C or U shape, with the two limbs converging at the obstruction, best appreciated on coronal reformats.
+**Follow the mesenteric vessels.** At the transition point, vessels from separate mesenteric leaves converge on a single point of torsion or compression. Arranged radially around it, they make the whirl sign. Tapering into it, they make the beak, and what the beak represents is the single spot where the segment is being pinched off.
 
-The signs of ischemia are what change management. Reduced or absent wall enhancement, compared to adjacent normal bowel on portal venous phase, is the most specific finding for nonviable bowel. Mesenteric haziness from edema and hemorrhage indicates venous congestion progressing toward ischemia, and high-density intraluminal contents (>20 HU) suggest mucosal ischemia.
+## Deciding Whether It Is Strangulating
+
+Finding the loop is half the read. The other half is deciding whether the wall is still perfused, because that is what separates a surgical consult from an urgent one.
+
+Reduced or absent wall enhancement, judged against adjacent normal loops on the portal venous phase, is the most specific finding for nonviable bowel. Haziness in the loop's mesentery is venous congestion made visible: the veins are obstructed before the arteries, so fluid backs up into the mesentery. High-density intraluminal contents, above roughly 20 HU, suggest the ischemic mucosa is bleeding into the lumen.
 
 :::critical[Do not wait for late signs]
-Pneumatosis intestinalis and portal venous gas confirm ischemia, but they are late findings. A closed loop with reduced wall enhancement warrants urgent surgical communication *before* these appear.
+Pneumatosis intestinalis and portal venous gas confirm ischemia, but they are late findings. A closed loop with reduced wall enhancement earns the surgical phone call before they appear.
 :::
 
 ## The Interpretation Framework
 
-Not every closed-loop obstruction requires emergency surgery. The key is distinguishing strangulation (compromised blood supply) from simple closed-loop obstruction (mechanical only). Enhancement is your most reliable tool.
+Not every closed-loop obstruction needs emergency surgery. The distinction that matters is strangulation, meaning compromised blood supply, versus a closed loop that is still purely mechanical, and enhancement is your most reliable tool for making it.
 
 | Feature | Simple obstruction | Closed-loop |
 |---|---|---|
@@ -67,5 +71,4 @@ Not every closed-loop obstruction requires emergency surgery. The key is disting
 
 ## Key Takeaway
 
-Identify the two transition points, trace the closed loop between them, and assess for ischemia by evaluating wall enhancement. When in doubt, communicate urgency: the surgical team needs to know this is not a simple SBO.
-
+Count the transition points, trace the loop between them, and judge the wall by its enhancement. Then say "closed loop" to the surgical team rather than "SBO," because the two phrases produce different response times.

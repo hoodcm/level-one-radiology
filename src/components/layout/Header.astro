@@ -1,11 +1,13 @@
 ---
 import Container from '@/components/layout/Container.astro';
 
-const { pathname } = Astro.url;
+// Production builds emit directory URLs ('/about/'); dev serves '/about'.
+// Normalize before comparing or the active state never matches in prod.
+const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
 
 const navItems: { href: string; label: string; active: boolean }[] = [
-  { href: '/articles', label: 'Articles', active: pathname.startsWith('/articles') },
-  { href: '/about', label: 'About', active: pathname === '/about' },
+  { href: '/articles/', label: 'Articles', active: current.startsWith('/articles') },
+  { href: '/about/', label: 'About', active: current === '/about' },
 ];
 ---
 
@@ -118,7 +120,17 @@ const navItems: { href: string; label: string; active: boolean }[] = [
   } else {
     measureWordmark();
   }
-  window.addEventListener('resize', measureWordmark);
+  // rAF-throttled: resize fires per event and measureWordmark forces layout.
+  let measuring = false;
+  window.addEventListener('resize', () => {
+    if (!measuring) {
+      measuring = true;
+      requestAnimationFrame(() => {
+        measureWordmark();
+        measuring = false;
+      });
+    }
+  });
   desktop.addEventListener('change', measureWordmark);
 
   if (toggle) {

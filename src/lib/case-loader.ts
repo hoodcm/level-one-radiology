@@ -18,7 +18,6 @@ import { utimesSync } from 'node:fs';
 import path from 'node:path';
 import type { Loader, LoaderContext } from 'astro/loaders';
 import { glob } from 'astro/loaders';
-// @ts-expect-error — plain-JS module shared with the remark plugin and scripts
 import { CASE_DIRECTIVE_RE, caseManifestRev } from './case-shell.mjs';
 
 type GlobOptions = Parameters<typeof glob>[0];

@@ -14,8 +14,8 @@ This is owned infrastructure for building a national reputation and thought lead
 
 - **Fictive Kin methodology** — The foundational design philosophy (see `docs/design/philosophy.md`). Eight principles: Systems Not Sites, Facts Not Feelings, Modules Not Pages, Beginning Not Ending, Keystone Metrics, Minimum Viable System, Tight Not Cramped, Bespoke Warmth.
 - **Collectors vs Attractors** — Two content types. Collectors are SEO workhorses (educational articles, case analyses). Attractors are timely commentary pieces (LinkedIn fuel, traffic spikes).
-- **React islands** — Astro architecture pattern. Most pages are static HTML; React loads only for interactive components (newsletter form, case viewer).
-- **HUD framing** — Signature visual treatment: four-corner brackets on key containers, inspired by Palantir and PACS workstations.
+- **React islands** — Astro architecture pattern. Most pages are static HTML; React loads only for interactive components (the newsletter form). The case viewer is interactive but deliberately framework-free (see below), so it is not a React island.
+- **Detector-plate framing** — Signature visual treatment on cards and callouts: quarter "field arcs" in the inner corners plus T-shaped fiducials at the edge midpoints, modeled on a DR detector plate's registration marks. Values in `src/styles/tokens/ornament.css`, rendering in `src/styles/components/ornament.css` (masked `::before`, one per surface; kill-switch is the import line).
 - **Smart Brevity** — Writing structure from Axios: headline, lede, why it matters, go deeper. Combined with a human teaching voice.
 - **Case Viewer** — The "showstopper module." PACS-like viewer for JPEG image stacks (deliberately not DICOM), embedded within articles via `::case[caption]{id="…"}`, mobile-first. Framework-free `<case-viewer>` custom element (`src/components/case/`), not shadcn. Requirements + architecture brief: `docs/archive/plans/2026-07-07-case-viewer-brief.md`.
 - **Surface hierarchy** — Six-level background system from near-black (#0B0A08) to mid-gray (#333230), using warm bias formula (R=G+1, B=G-2).
@@ -39,4 +39,4 @@ This is owned infrastructure for building a national reputation and thought lead
 
 ---
 
-*Last updated: 2026-07-07*
+*Last updated: 2026-07-08*

@@ -6,7 +6,8 @@ first_surfaced: 2026-06-26
 last_touched: 2026-06-28
 depends_on: []
 links: [src/components/layout/, docs/design/reasoning/layout.md]
-assessed: 2026-07-07
+worktype: meta
+assessed: 2026-07-08
 ---
 Design a hook (via /hook-design) that flags raw `grid-template-columns` or
 re-declared `max-width + margin:auto + padding` container shells appearing

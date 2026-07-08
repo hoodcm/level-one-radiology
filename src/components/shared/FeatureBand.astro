@@ -72,6 +72,22 @@
   </div>
 </section>
 
+<!-- No JS: the boot script never runs, so reveal the static HUD (same override
+     the reduced-motion media query applies in homepage.css). Without this the
+     band is a permanently blank card when scripts are disabled or fail. -->
+<noscript>
+  <style is:inline>
+    .feature-band__surface .fb-grid,
+    .feature-band__surface .fb-panel-l,
+    .feature-band__surface .fb-panel-r,
+    .feature-band__surface .fb-center-1,
+    .feature-band__surface .fb-center-2,
+    .feature-band__surface .fb-bk {
+      opacity: 1;
+    }
+  </style>
+</noscript>
+
 <script>
   // Two coordinated behaviors (iteration mode — both replay each scroll-pass):
   //  1. HUD boot — triggered when the card is 40% in view (toggles `is-booted`).
@@ -88,6 +104,7 @@
     let fadeTimer: number | null = null;
     let resetTimer: number | null = null;
     let seen = false; // gate the top fade-away until the card has been fully seen
+    let lastProgress = '';
     const update = () => {
       const rect = band.getBoundingClientRect();
       const vh = window.innerHeight || 1;
@@ -97,7 +114,13 @@
       const start = vh * 0.7;
       const end = vh * 0.1;
       const p = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
-      band.style.setProperty('--fb-progress', p.toFixed(4));
+      // p is pinned at 0 or 1 for most of the page's scroll range — skip the
+      // style write (and its invalidation) when the value hasn't changed.
+      const next = p.toFixed(4);
+      if (next !== lastProgress) {
+        band.style.setProperty('--fb-progress', next);
+        lastProgress = next;
+      }
       // Boot the detector once scrolled past the peek (progress-based, so the
       // card is reliably BLANK at rest on every screen size). Stays booted until
       // the top-reset below.

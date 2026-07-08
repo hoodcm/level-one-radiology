@@ -29,7 +29,9 @@
   border-top: 1px solid var(--color-border-subtle);
 }
 .read-next__link:first-of-type { border-top: 0; }
-.read-next__link:hover { color: var(--color-link); }
+/* text-decoration pinned on both hovers: the global a:hover underline would
+   otherwise win over the rest-state `none` (same as .toc__link:hover). */
+.read-next__link:hover { color: var(--color-link); text-decoration: none; }
 
 .read-next__all {
   display: inline-flex;
@@ -43,4 +45,4 @@
   color: var(--color-text-muted);
   text-decoration: none;
 }
-.read-next__all:hover { color: var(--color-link); }
+.read-next__all:hover { color: var(--color-link); text-decoration: none; }

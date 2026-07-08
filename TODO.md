@@ -5,10 +5,13 @@ Actionable tasks and open questions. Check at session start, update frequently.
 <!-- todo:worklist:start -->
 
 ## Start here
-_as of 2026-07-07 · 0 streams startable · 4 now/next items untyped_
+_as of 2026-07-08 · 3 streams startable · 2 now/next items untyped_
 
-**Decisions waiting (⚖): 2** — Judge this session's visual tuning on screen · Split primary-CTA gold from caution into distinct tokens if they conflict
+**Decisions waiting (⚖): 8** — Judge this session's visual tuning on screen · Reconsider display/body serif if text halation persists · Remove or gate the unused data-reveal motion system · Retire legacy font payload (Utopia/Eurostile/Lab Grotesque) and re-subset Newsreader · Split primary-CTA gold from caution into distinct tokens if they conflict · Consider thin Scrib3-style gutters for full-bleed image spans · +2 more
 
+- case-viewer — next: Build Case Viewer showstopper module (build)
+- fonts — next: Retire legacy font payload (Utopia/Eurostile/Lab Grotesque) and re-subset Newsreader (decide)
+- newsletter — next: Replace the React newsletter island with a static form + vanilla JS (build)
 - standalone: Restore footer LinkedIn/X links with real profile URLs (build)
 
 ## Now
@@ -17,14 +20,17 @@ _as of 2026-07-07 · 0 streams startable · 4 now/next items untyped_
   Build the Case Viewer — the "showstopper module," a PACS-like image viewer for clinical cases embedded within articles. Light-DOM custom element `<case-viewer>` (not a React island — see the archived plan), mobile-first, built and code-reviewed. Michael: "the mobile-first image viewer is key." Implementation is substantially complete (mapping/frame-store/case-viewer/ fullscreen modules, boot choreography, TUNE, build-time manifest pipeline, review hardening, /simplify pass) and is live-embedded in a published article (`src/content/articles/window-and-level.md`), but that embed is a TEMPORARY synthetic demo case (`::case{id="dev-synthetic"}`) standing in for the on-device test surface — swapping it for a real clinical case is step 15 below, not a separate deliverable. Remaining scope is purely the four **user-gated, device-only** steps from `docs/archive/plans/2026-07-07-case-viewer-plan.md` (Steps section) — none are autonomous: - Step 3 — on-device gesture-spike judgment (Michael's iPhone) - Step 12 — fullscreen device pass - Step 13 — VoiceOver full-flow a11y pass - Step 15 — first real clinical case (replaces the synthetic embed above) Done: all four device-gated steps pass on Michael's iPhone and the real-case embed (step 15) is live.
   ↳ links: src/components/case/, docs/design/components.md, docs/archive/plans/2026-07-07-case-viewer-plan.md
 - **Judge this session's visual tuning on screen**
-  One on-screen judgment pass over this session's headless-verified visual knobs — his eyes are the gate on all of these: - Deepened gold shade (`--color-signal-yellow` → #D8A82C, via `--color-primary`) now owns much more surface than before: CTAs, nav/mobile Subscribe, newsletter buttons, pull-quote stripe, links, focus rings, selection, progress hairline, subscribe accents, and the caution role (shared token). - Hero blueprint grid (`--color-grid-line` alpha 0.04, `--grid-texture-cell` 48px). - Desktop prose leading (`--lh-reading` 1.44). - De-striped apparatus cards. - HUD corner hover. - Title view-transition morph (click card → article in Chrome/Safari). - Print stylesheet (⌘P on an article). - Ordinal tick-in keep/cut: demo-gated element at `src/styles/components/apparatus/ordinal-tick.css` (import marked DEMO-GATED in `src/styles/main.css`). Scroll any article in `npm run dev`; plan's default expectation is CUT (a second motion grammar beside `[data-reveal]`). If cut: delete the file + import line, record in CHANGELOG. - On-screen pass over the 8 shipped article-apparatus elements: section break mark, arrival wash, mobile INDEX, serial exit strip, footnote popover cards, figure accession cells, readout chips, cite line. Done: each knob above is confirmed acceptable on screen (or re-tuned), and the ordinal tick-in keep/cut call is made.
-  ↳ links: src/styles/tokens/colors.css, src/styles/tokens/typography.css, src/styles/components/apparatus/ordinal-tick.css, src/styles/main.css
+  One on-screen judgment pass over this session's headless-verified visual knobs — his eyes are the gate on all of these: - Deepened gold shade (`--color-signal-yellow` → #D8A82C, via `--color-primary`) now owns much more surface than before: CTAs, nav/mobile Subscribe, newsletter buttons, pull-quote stripe, links, focus rings, selection, progress hairline, subscribe accents, and the caution role (shared token). - Hero blueprint grid (`--color-grid-line` alpha 0.04, `--grid-texture-cell` 48px). - Desktop prose leading (`--lh-reading` 1.44). - De-striped apparatus cards. - Card + callout detector-plate ornament (corner field-arcs + edge fiducials, replacing the old HUD corner brackets; card radius 8px→16px). New this session, headless-only so far — confirm the ornament geometry/ink reads right and the hover brighten feels right without the old bracket step-out. - Title view-transition morph (click card → article in Chrome/Safari). - Print stylesheet (⌘P on an article). - Ordinal tick-in keep/cut: demo-gated element at `src/styles/components/apparatus/ordinal-tick.css` (import marked DEMO-GATED in `src/styles/main.css`). Scroll any article in `npm run dev`; plan's default expectation is CUT (a second motion grammar beside `[data-reveal]`). If cut: delete the file + import line, record in CHANGELOG. - On-screen pass over the 7 shipped article-apparatus elements (canonical roster: `docs/design/components.md` → Article apparatus): section break mark, arrival wash, mobile INDEX, More-articles footer block, footnote popover cards, figure accession cells, readout chips. (The cite-line element planned in the first pass was cut on review before shipping.) Done: each knob above is confirmed acceptable on screen (or re-tuned), and the ordinal tick-in keep/cut call is made.
+  ↳ links: src/styles/tokens/colors.css, src/styles/tokens/typography.css, src/styles/tokens/ornament.css, src/styles/components/ornament.css, src/styles/components/apparatus/ordinal-tick.css, src/styles/main.css
 - **Resolve the body-serif widening (opsz vs wider OFL serif)**
   The body reading serif (Newsreader) is being widened for a sturdier text column. An `opsz` experiment is live via `--reading-opsz` (typography.css; consumed by prose.css `font-variation-settings: "opsz"`) and awaits the user's on-screen judgment. Newsreader has no `wdth` axis, so widening is only available through optical size. Next step is either lower the opsz further or evaluate a wider / more-geometric OFL body serif. Stated priority Now/Next. Done: a deliberate body-serif width direction is chosen — a settled `--reading-opsz` value or a swapped wider OFL body serif.
   ↳ links: src/styles/tokens/typography.css, src/styles/components/prose.css
 - **Review/edit Claude-drafted page copy**
   Claude drafted the copy on `/about`, the 404 page, and the article subscribe-card microcopy in brand voice; a de-slick pass already ran at Michael's direction this session ("copy reading a little too slick"), but the final wording is his call. Review and edit each. Done: About, 404, and article subscribe-card copy read as final, in Michael's voice.
   ↳ links: src/pages/about.astro, src/pages/404.astro, src/pages/articles/[slug].astro
+- **Create the Buttondown account (or fix the slug) — Subscribe is fully broken**
+  Confirmed at runtime during the site-wide sweep: the newsletter form POSTs to `buttondown.com/…/leveloneradiology`, which 404s — the Buttondown account/newsletter does not exist. Every live Subscribe click on the deployed site currently fails silently into the (now-visible) error state. Email subscribers are the site's keystone metric (CONTEXT.md) and a working signup is explicit MVP scope — this is the single most launch-blocking open item in the store. USER-ACTION: either create the `leveloneradiology` Buttondown account or correct the slug the form posts to; no code change needed once the account/slug is right. Done: a real Subscribe submission on the deployed site succeeds end-to-end.
+  ↳ links: src/components/shared/NewsletterSignup.tsx
 
 ## Next
 
@@ -37,21 +43,28 @@ _as of 2026-07-07 · 0 streams startable · 4 now/next items untyped_
   LinkedIn/X placeholder links were removed from the footer this session (the bare-domain hrefs were dead links). Restore once Michael supplies real profile URLs — a one-line change in `src/components/layout/Footer.astro`; a comment in the file marks the spot ("Connect" column). Blocked on Michael supplying the URLs. Done: real LinkedIn/X links render in the footer Connect column.
   ↳ links: src/components/layout/Footer.astro
 - **Case-viewer hot-path perf items deferred from the /simplify pass**
-  Three efficiency/altitude findings from the case-viewer review were judged real but not mechanically safe to apply before the device-gated verification pass (they change hot-path behavior that only the iPhone session can validate): 1. Layout-read/write interleaving forces a synchronous reflow per scrub frame — `#ppf()`/`fitCanvas` read `clientWidth` right after `#syncReadout` DOM writes (case-viewer.ts), and fullscreen `#redraw` reads `getBoundingClientRect()` after `#syncFrame` writes. Fix shape: cache stage dimensions in the existing ResizeObserver / viewport callbacks and pass them through (mind the 0×0 window before the first RO callback). 2. `#setFrame` conflates advance/retarget/repaint; splitting an explicit `#repaint()` would let it early-out on unchanged frame. The repaint-on-unchanged-frame dependency is pinned by a comment at #setFrame for now; do the split only with device profiling in hand. 3. `get #store` re-derives `` `${series.key}/${win.key}` `` + Map.get ~4× per pointermove. Negligible in isolation — bundle with the above only if profiling shows it matters (a cached field must be invalidated on window/series switch). Done: apply-or-close each with an on-device profiling judgment during (or after) the device-gated case-viewer pass.
+  Two remaining efficiency/altitude findings from the case-viewer review, judged real but profiling-gated (they change hot-path behavior that only the iPhone session can validate): 1. `#setFrame` conflates advance/retarget/repaint; splitting an explicit `#repaint()` would let it early-out on unchanged frame. The repaint-on-unchanged-frame dependency is pinned by a comment at #setFrame for now; do the split only with device profiling in hand. 2. `get #store` re-derives `` `${series.key}/${win.key}` `` + Map.get ~4× per pointermove. Negligible in isolation — bundle with the above only if profiling shows it matters (a cached field must be invalidated on window/series switch). (The third — layout-read/write interleaving in the scrub path — was applied in the 2026-07-07 polish pass: stage dimensions are now cached by the inline ResizeObserver and the fullscreen viewport handler, so the per-move handlers perform zero layout reads. Note for the device pass: CDP LayoutCount stays ~1/frame either way because the counter-text update schedules a normal render-phase layout — the win is the removed *synchronous* mid-handler reflow, which that metric can't isolate.) Done: apply-or-close each with an on-device profiling judgment during (or after) the device-gated case-viewer pass. ## Additional runtime-robustness scope (folded in, same workstream) Surfaced by a parallel session's case-viewer sweep — real bugs/gaps, not hot-path perf, but same files/workstream so kept as one item rather than a scatter of siblings: - Fullscreen slider lacks the inline viewer's stall indicator + frontier clamp — the counter can assert a slice that isn't actually shown yet. - Prefetch fan-out is uncapped (~40 fetches) mid-scrub; needs a ceiling. - A queued wheel rAF can land after disengage (stale-state write). - No `inert` behind the fullscreen overlay; no keyboard zoom/TUNE path. - No warm-decode-on-engage for first-scrub feel (cold first frame). Done (this scope): each bug fixed or explicitly closed with a written rationale.
   ↳ links: src/components/case/case-viewer.ts, src/components/case/fullscreen.ts
+- **Replace the React newsletter island with a static form + vanilla JS**
+  The newsletter form is the site's only React island — ~72KB gzipped plus hydration cost, all to power one email field. Surfaced during the site-wide sweep as the single highest-leverage perf win available: a static HTML form + ~20 lines of vanilla JS (POST to Buttondown, swap in a success/error message) reproduces the same behavior and lets `@astrojs/react` be dropped from the dependency tree entirely (no more React runtime anywhere on the site). Touches the same component as `newsletter-buttondown-account-missing` — sequence with that item in mind (fixing the account first makes the rewrite testable end-to-end; either order is workable). Done: `NewsletterSignup` is a plain Astro component with vanilla JS, no React runtime ships to the client, and `@astrojs/react` is removed from package.json.
+  ↳ links: src/components/shared/NewsletterSignup.tsx
+- **Retire legacy font payload (Utopia/Eurostile/Lab Grotesque) and re-subset Newsreader**
+  Surfaced during the site-wide latency sweep: ~2MB of retired Utopia/Eurostile/ Lab Grotesque woff2 still ships in `public/fonts/` even though the OFL trial (Newsreader/DM Sans/Michroma/Chivo Mono) is the active face set. The legacy `@font-face` blocks lack `unicode-range`, so the literal "→" glyph in "All articles →" triggers a Lab Grotesque download on every article page. Decide: delete the legacy faces outright (if the OFL trial is staying) or add `unicode-range` scoping so they never download unless actually needed. Also re-subset Newsreader — the 132KB preload could roughly halve with a tighter glyph range. Related but distinct: `is-fonts-licensing-acquired` (whether the legacy faces are even licensed) and `metric-compatible-font-fallbacks` (size-adjust fallback faces for the OFL set) — this item is the payload-weight cleanup, not licensing or CLS. Done: legacy font files are either removed or unicode-range-scoped (no accidental download), and Newsreader ships a tighter subset.
+  ↳ links: public/fonts/, src/styles/tokens/fonts-ofl.generated.css
 
 ## Later
 
 - **Decide and verify FeatureBand detector desktop behavior**
-- **Write first educational article (deep-dive)**
 - **Enforce the grid primitive with a hook**
 - **Split primary-CTA gold from caution into distinct tokens if they conflict**
+- **Tokenize the duplicated 0.15s UI-transition duration literal**
+- **Remove or gate the unused data-reveal motion system**
+- **Give the TOC scroll-spy an initial / deep-link active state**
 
 ## Someday
 
 - **Reconsider display/body serif if text halation persists**
 - **Consider thin Scrib3-style gutters for full-bleed image spans**
-- **Remove the stale local context7 entry in ~/.claude.json**
 - **Repair ~/.npm cache permissions (EACCES)**
 - **Add size-adjust metric-compatible fallbacks for OFL fonts**
 
@@ -67,11 +80,17 @@ _as of 2026-07-07 · 0 streams startable · 4 now/next items untyped_
 <!-- todo:friction:start -->
 
 ## Friction worth addressing
-_Refreshed 2026-07-07 by end-session janitor · project store_
+_Refreshed 2026-07-08 by end-session janitor · project store_
 
-**Quick fixes (1)** — apply directly:
-- prefer-font-supported-before-transform-hacks — encode "font-supported axes before transform hacks" as a typography principle → add the adjustment order (native variable axes / OpenType features first; transforms second, with the tradeoff flagged) to docs/design/reasoning/typography.md
-**Needs design (0)**:
+**Quick fixes (5)** — apply directly:
+- file-move-crashes-running-dev-server — a bulk file/folder move under a running `npm run dev` crashed it with a stale-path ENOENT (no actual broken ref) → add to CLAUDE.md Technical Gotchas: after a large `git mv`, restart `npm run dev` and confirm health with `npm run build`, not the dev-server overlay.
+- pull-then-install-before-dev — a cross-machine pull that added a `package.json` dep left `npm run dev` failing with module-not-found → add to CLAUDE.md Technical Gotchas: run `npm install` after any cross-machine pull touching `package.json`.
+- astro-frontmatter-regex-compiler-break — a regex literal with `\/\/` in `.astro` frontmatter broke the esbuild compile with a misleading `Unexpected "export"` → add to CLAUDE.md Technical Gotchas: avoid `\/\/` regex in `.astro` frontmatter; adjudicate single-file `.astro` diagnostics with `npm run build`.
+- prefer-font-supported-before-transform-hacks — reached for `transform: scaleX()` before checking the font's native variable axes → add to docs/design/reasoning/typography.md: check native axes / OpenType features before transform hacks.
+- bezier-cannot-express-undershoot-motion — reached for a cubic-bezier for a recoil/undershoot motion (beziers are monotonic) → add to docs/design/reasoning/motion.md: non-monotonic motion needs `@keyframes` with per-beat timing, not a bezier.
+
+**Needs design (1)**:
+- shell-module-edits-stale-content-cache — editing the build-time shell (`case-shell.mjs`/`case-icons.mjs`) doesn't invalidate Astro's content-layer cache, so markup/icon changes stay invisible until a manual cache clear + dev restart → /hook-design .claude/friction/open/2026-07-08-shell-module-edits-stale-content-cache.md
 
 <!-- todo:friction:end -->
 
@@ -79,26 +98,21 @@ _Refreshed 2026-07-07 by end-session janitor · project store_
 
 ## Continuation
 
-_Last session: 2026-07-07_
-
-Level One Radiology — the dark-first, content-driven website for leveloneradiology.com (Astro + React islands, design-token single-source-of-truth).
+_Last session: 2026-07-08_
 
 **Accomplished:**
-- Implemented the article-apparatus plan end to end (13/13 steps): eight in-article elements plus the demo-gated ordinal tick-in, one-place kill switches, new contract tests — see CHANGELOG `[Unreleased]`.
-- Ran the Phase 10 chain: /code-review (3 correctness fixes applied, incl. always-on footnote heading fix) and /simplify (`--fz-micro` token, structuredClone); Codex offer declined.
-- Fixed the pre-existing TOC rail selector mismatch (mobile hide, desktop sticky, and print exclusion had all silently failed).
-- Archived the plan with its deviations ledger to docs/archive/plans/2026-07-07-article-apparatus-plan.md.
+- Case-viewer tap-to-boot gate: an ACTIVATE (Lucide square-power) button holds the viewer inert and fully greyed until tapped — no decode, boot, or network until then (CHANGELOG `[Unreleased]` → Added).
+- Fullscreen now plays the beta-site CRT switch-on/off transition (dwell → spring → overshoot → settle; half-duration collapse on close) with a scrim field + ivory phosphor beam, and went overlay-only (native Fullscreen API dropped — it escalated to the host window in embedded browsers).
+- Adopted Lucide as the icon library (square-power / minimize / scan-eye / contrast), inlined via `src/lib/case-icons.mjs`; subtle `scale(1.05)` icon hover.
+- Added `npm run check` (astro check) and cleared every pre-existing diagnostic it surfaced; `npm test`, `npm run lint`, and `npm run check` all green.
 
 **Start by reading:** TODO.md, CONTEXT.md, CHANGELOG.md
 
-**Priorities:**
-1. See TODO.md `## Start here` — the new decision surface is the on-screen judgment pass over the apparatus elements, including the ordinal tick-in keep/cut (plan default: cut). Dev server: `npm run dev`, any article page; the gallery (`/articles/style-gallery`) exercises everything.
-2. The case-viewer device-gated steps remain the lead workstream (unchanged this session).
+**Priorities:** see TODO.md `## Start here` and the `## Now` / `## Next` bands — the case-viewer module is the live workstream (its device-gated steps still need a real-hardware pass), and the icon/boot polish added another `0.15s` literal to the duplicated-style-literals straggler.
 
-**Time-sensitive:** See TODO.md `## Time-sensitive` (nothing new this session).
+**Time-sensitive:** see TODO.md `## Time-sensitive` (nothing added this session).
 
 **Unverified assumptions:**
-- Footnote-card anchor positioning was verified in Chromium only; non-Chromium engines get the centered-card fallback by design, but that fallback hasn't been exercised in a real Safari/Firefox — confirm during the on-screen pass.
-- One vitest run reported 2 transient failures right after the simplify commit, unreproducible across 5 subsequent 33/33 runs; if it recurs, suspect contention with a concurrent build, not the structuredClone change.
+- The CRT fullscreen choreography and the tap-to-boot activate gesture were exercised only in the VS Code preview + headless Playwright; real-device touch behavior (finger activate-tap discrimination, CRT motion on-device) is unconfirmed — a phone/tablet pass would confirm.
 
 <!-- todo:continuation:end -->

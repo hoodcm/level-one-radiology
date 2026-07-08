@@ -12,6 +12,7 @@
 @import "./tokens/fonts-ofl.generated.css";
 @import "./tokens/typography.css";
 @import "./tokens/spacing.css";
+@import "./tokens/ornament.css";
 @import "./tokens/case-viewer.css";
 @import "./tokens/print.css";
 
@@ -22,6 +23,7 @@
 
 /* Component Styles */
 @import "./components/homepage.css";
+@import "./components/ornament.css";
 @import "./components/prose.css";
 @import "./components/pages.css";
 @import "./components/case-viewer.css";
@@ -71,11 +73,27 @@
   --color-border-default: var(--color-border-default);
   --color-border-strong: var(--color-border-strong);
 
-  /* Font families */
-  --font-display: "Utopia Std", Georgia, serif;
-  --font-body: "Lab Grotesque", system-ui, sans-serif;
-  --font-ui: "Eurostile LT Std", "IBM Plex Mono", monospace;
-  --font-mono: "IBM Plex Mono", "JetBrains Mono", monospace;
+  /* shadcn/Base-UI semantic names → project tokens. The ui/ components
+     (button.tsx, input.tsx) style with these; without them the utilities
+     (border-input, ring-ring, placeholder:text-muted-foreground, …) silently
+     generate nothing and the newsletter form renders half-styled. */
+  --color-ring: var(--color-focus);
+  --color-input: var(--color-bg-elevated);
+  --color-border: var(--color-border-default);
+  --color-foreground: var(--color-text-primary);
+  --color-primary-foreground: var(--color-on-primary);
+  --color-muted: var(--color-bg-raised);
+  --color-muted-foreground: var(--color-text-muted);
+  --color-secondary: var(--color-bg-raised);
+  --color-secondary-foreground: var(--color-text-primary);
+  --color-destructive: var(--color-signal-red);
+
+  /* Font families — reference the active --ff-* stacks (typography.css);
+     restating faces here is exactly the drift that shipped the old stacks. */
+  --font-display: var(--ff-display);
+  --font-body: var(--ff-body);
+  --font-ui: var(--ff-ui);
+  --font-mono: var(--ff-mono);
 }
 
 /* Base layer resets */

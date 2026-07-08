@@ -1,9 +1,9 @@
 ---
-title: "Lisfranc Injury on CT: The Foot That Was Called Normal"
+title: "Lisfranc Injury on CT: The One Joint to Check"
 publishDate: "2026-04-08"
 serial: "L1-0005"
 lastReviewed: "2026-04-08"
-description: "A case-based walk through Lisfranc injury: the midfoot anatomy, the fleck sign, the alignment checks that catch it, and the report that protects the foot."
+description: "A case-based walk through Lisfranc injury: the midfoot anatomy, the fleck sign, the alignment checks that catch it, and the report that gets it fixed."
 tags: ["msk", "trauma", "ct", "foot"]
 primaryTag: "MSK"
 contentType: "case-analysis"
@@ -14,9 +14,9 @@ keyPoints:
   - "A fleck of bone in the space between the first and second metatarsal bases is an avulsed Lisfranc ligament until proven otherwise"
 ---
 
-The order comes through at 1 a.m.: CT right foot, rule out fracture. The story is a head-on collision with the right foot braced against the brake pedal at impact. Radiographs from four hours earlier were read as normal. The foot is now too swollen for the walking boot they tried to fit, and there is a smudge of bruising coming up along the sole.
+The order comes through at 1 a.m.: CT right foot, rule out fracture. The story is a head-on collision with the right foot braced against the brake pedal at impact. Radiographs from four hours earlier were read as normal. The foot is now too swollen for the walking boot they tried to fit, and there is bruising coming up along the sole.
 
-That last detail, plantar ecchymosis, is doing more diagnostic work than the radiographs did. Before the images, the anatomy, because this injury only makes sense as architecture.
+That bruising, plantar ecchymosis, is worth pausing on. Blood reaching the sole means deep midfoot structures are bleeding, and in this mechanism it should put Lisfranc injury on your list before the first image loads. The images will make more sense after the anatomy, so start there.
 
 ## The Architecture of the Midfoot
 
@@ -24,7 +24,7 @@ Think of the midfoot as an arched tic-tac-toe board. The three cuneiforms and th
 
 Ligaments hold the grid together, with one deliberate gap. There is no transverse ligament between the first and second metatarsal bases. The only structure tying the medial column to the rest of the foot is the Lisfranc ligament, running obliquely from the medial cuneiform to the base of the second metatarsal, stronger on its plantar side than its dorsal side.
 
-So the whole tarsometatarsal complex hangs on one ligament and one recessed keystone. Load the arch violently, the way a brake pedal loads a plantarflexed foot in a head-on collision, and the failure point is not a mystery. The ligament tears or pulls off its attachment, the keystone unlocks, and the columns of the foot are free to splay.
+So the whole tarsometatarsal complex hangs on one ligament and one recessed keystone. Load the arch violently, the way a brake pedal loads a plantarflexed foot in a head-on collision, and the failure is predictable: the ligament tears or pulls off its attachment, the keystone unlocks, and the columns of the foot are free to splay.
 
 ## The Case, Read Properly
 
@@ -42,11 +42,11 @@ On bone windows (the same width-and-level trade covered in [Window and Level](/a
 2. **Widening between the medial cuneiform and the second metatarsal base.** Compare it to the other foot when you have one. More than 2 mm of asymmetry is real.
 3. **Dorsal subluxation of the second tarsometatarsal joint on the sagittal reformat.** The keystone has started to lift out of its mortise.
 
-None of these is a dramatic finding. All of them together are an unstable midfoot.
+Each of these findings is subtle on its own. Together they describe an unstable midfoot.
 
 ## Why the Radiographs Were Called Normal
 
-The overnight read was not lazy. A purely or mostly ligamentous Lisfranc injury can sit perfectly reduced on a non-weight-bearing radiograph: nothing is displaced at the moment of exposure because nothing is loading the arch. When the injury pattern is subtle and the film is taken off-load, miss rates follow. Roughly one in five Lisfranc injuries is missed at first presentation, and the missed ones present later with arch collapse.
+The overnight read was not lazy. A purely or mostly ligamentous Lisfranc injury can sit perfectly reduced on a non-weight-bearing radiograph: nothing is displaced at the moment of exposure because nothing is loading the arch. When the injury pattern is subtle and the film is taken off-load, misses follow. Roughly one in five Lisfranc injuries is missed at first presentation, and the missed ones present later with arch collapse.
 
 That being said, the films usually carry a clue for the reader who checks alignment on purpose:
 
@@ -66,7 +66,7 @@ Loading the arch does what the brake pedal did, gently: it stresses the one liga
 
 ## What Happens to This Foot
 
-This patient went to fixation within the week, which is the point of catching it. The Lisfranc ligament does not heal itself back to competence. An unstable midfoot left to collapse remodels into a flat, arthritic, chronically painful foot, and the salvage operation at that stage is fusion. The difference between those two futures is mostly whether the first reader checked one joint.
+This patient went to fixation within the week, which is the point of catching it. The Lisfranc ligament does not heal itself back to competence. An unstable midfoot left to collapse remodels into a flat, arthritic, chronically painful foot, and the salvage operation at that stage is fusion. What usually separates the two outcomes is whether the first reader checked the joint.
 
 The decision to fix is the surgeon's. Your job is a report that makes the instability impossible to ignore, and a phone call when the report might sit unread until the clinic visit.
 
@@ -93,4 +93,4 @@ The decision to fix is the surgeon's. Your job is a report that makes the instab
 
 ## The Takeaway
 
-Every foot imaged after an axial load gets the second tarsometatarsal joint checked deliberately: alignment lines, the first intermetatarsal space, the keystone. It takes ten seconds, and it is the ten seconds this diagnosis lives or dies on. Go deeper on the injury spectrum at [Radiopaedia's Lisfranc injury entry](https://radiopaedia.org/articles/lisfranc-injury).
+Every foot imaged after an axial load gets the second tarsometatarsal joint checked deliberately: alignment lines, the first intermetatarsal space, the keystone. The check takes ten seconds. Go deeper on the injury spectrum at [Radiopaedia's Lisfranc injury entry](https://radiopaedia.org/articles/lisfranc-injury).

@@ -3,11 +3,12 @@ id: build-case-viewer-module
 title: Build Case Viewer showstopper module
 band: now
 first_surfaced: 2026-06-23
-last_touched: 2026-07-07
+last_touched: 2026-07-08
 depends_on: []
 links: [src/components/case/, docs/design/components.md, docs/archive/plans/2026-07-07-case-viewer-plan.md]
 worktype: build
-assessed: 2026-07-07
+workstream: case-viewer
+assessed: 2026-07-08
 ---
 Build the Case Viewer — the "showstopper module," a PACS-like image viewer for
 clinical cases embedded within articles. Light-DOM custom element
@@ -39,3 +40,22 @@ embed (step 15) is live.
 (397408e), viewer embedded live with a synthetic demo case in a published
 article (3dad68e). Remaining scope narrowed to the four device-gated steps
 (3, 12, 13, 15) — implementation itself is done pending those gates.
+2026-07-08 raised the stakes on Step 3 (on-device gesture-spike judgment): the
+polish pass added tap-to-activate (behind `apparatus.caseTapToActivate`), so
+Step 3 now must confirm real-finger tap-vs-drag discrimination (not just the
+Playwright pointer-event emulation), plus Safari support for the `cv-lock-in`
+engaged-bracket keyframe animation (worst-case fallback: a clean move-and-lock
+without the impact-recoil, no dead motion).
+2026-07-08 independently reconfirmed by a second sweep this session: the
+`window-and-level` embed is still the synthetic dev fixture in production —
+same open item as step 15 above, no new work.
+2026-07-08 further polish raises Steps 3 and 12 again: a second latch
+(`apparatus.caseTapToBoot`) now holds the viewer inert/greyed behind an
+ACTIVATE button until tapped, so Step 3 must confirm real-finger discrimination
+on *both* the activate tap and the tap-to-scrub engage; fullscreen dropped the
+native Fullscreen API entirely for an overlay-only CRT switch-on/off
+transition, so Step 12 must confirm that choreography on-device (in addition
+to the `cv-lock-in` Safari fallback already noted). Icon library switched to
+Lucide (inlined via new `src/lib/case-icons.mjs`; `@tabler/icons-react`
+dropped) — cosmetic, no new device-gate implication. Implementation still
+substantially complete; remaining scope unchanged (steps 3, 12, 13, 15).

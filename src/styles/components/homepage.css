@@ -3,14 +3,13 @@
    Styles from COMPONENT-LIBRARY.md
    ============================================== */
 
-/* --- Site Header (48px sticky, backdrop-blur) --- */
+/* --- Site Header (sticky, height from --nav-height) --- */
 .site-header {
   height: var(--nav-height);
   position: sticky;
   top: 0;
   z-index: 50;
   background: var(--color-bg-deepest);
-  backdrop-filter: blur(12px);
 }
 
 /* Shell (max-width / centering / page margin) comes from <Container>; this
@@ -42,7 +41,7 @@
   display: block; /* mobile: icon mark */
 }
 
-/* Wordmark — desktop only; replaces the icon ≥ 600px */
+/* Wordmark — desktop only; replaces the icon ≥ 768px (48em, below) */
 .site-logo__wordmark {
   display: none;
   align-items: center;
@@ -114,12 +113,18 @@
 
 /* --- Mobile hamburger toggle (Anthropic-style: thin, asymmetric) --- */
 .nav-toggle {
-  display: none; /* shown < 600px */
+  display: none; /* shown < 768px (inline-flex) */
   appearance: none;
   background: transparent;
   border: 0;
-  padding: var(--space-1);
-  margin-right: calc(var(--space-1) * -1);
+  /* Full 44px hit area around the small bars; the negative margin keeps the
+     bars' right edge optically aligned with the container edge. */
+  min-width: var(--tap-target);
+  min-height: var(--tap-target);
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-right: calc((22px - var(--tap-target)) / 2);
   cursor: pointer;
   color: var(--color-text-primary);
 }
@@ -345,10 +350,11 @@
    the featured section is bg-primary, the cards lift to bg-raised so they read
    as distinct panels, not a flat list. */
 .article-card {
+  position: relative;
   display: block;
   background: var(--color-bg-raised);
   border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-lg);
   padding: var(--card-padding-md);
   transition: background-color 0.2s ease, border-color 0.2s ease;
   text-decoration: none;
@@ -388,7 +394,7 @@
 
 .article-card__meta {
   font-family: var(--ff-mono);
-  font-size: 10px;
+  font-size: var(--fz-micro);
   color: var(--color-text-muted);
   display: flex;
   gap: var(--space-2);
@@ -418,68 +424,8 @@
   margin-top: auto;
 }
 
-/* --- HUD Frame (four-corner brackets) ---
-   Decorative bracket overlay only; it must NOT set padding (the corner brackets
-   are absolutely positioned, so they frame the corners regardless). The host
-   component (e.g. .article-card) owns its own content padding. */
-.hud-frame {
-  position: relative;
-}
-
-.hud-frame::before,
-.hud-frame::after,
-.hud-frame > .hud-corner-bl,
-.hud-frame > .hud-corner-br {
-  content: '';
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  border-color: var(--color-border-strong);
-  border-style: solid;
-  pointer-events: none;
-  transition: border-color 0.2s var(--ease-out), transform 0.2s var(--ease-out);
-}
-
-/* Target acquired: on card hover the brackets brighten and step 2px outward. */
-.article-card.hud-frame:hover::before { transform: translate(-2px, -2px); border-color: var(--color-text-muted); }
-.article-card.hud-frame:hover::after { transform: translate(2px, -2px); border-color: var(--color-text-muted); }
-.article-card.hud-frame:hover > .hud-corner-bl { transform: translate(-2px, 2px); border-color: var(--color-text-muted); }
-.article-card.hud-frame:hover > .hud-corner-br { transform: translate(2px, 2px); border-color: var(--color-text-muted); }
-
-@media (prefers-reduced-motion: reduce) {
-  .hud-frame::before,
-  .hud-frame::after,
-  .hud-frame > .hud-corner-bl,
-  .hud-frame > .hud-corner-br {
-    transition: border-color 0.2s var(--ease-out);
-  }
-  .article-card.hud-frame:hover::before,
-  .article-card.hud-frame:hover::after,
-  .article-card.hud-frame:hover > .hud-corner-bl,
-  .article-card.hud-frame:hover > .hud-corner-br {
-    transform: none;
-  }
-}
-
-.hud-frame::before {
-  top: 0; left: 0;
-  border-width: 1px 0 0 1px;
-}
-
-.hud-frame::after {
-  top: 0; right: 0;
-  border-width: 1px 1px 0 0;
-}
-
-.hud-frame > .hud-corner-bl {
-  bottom: 0; left: 0;
-  border-width: 0 0 1px 1px;
-}
-
-.hud-frame > .hud-corner-br {
-  bottom: 0; right: 0;
-  border-width: 0 1px 1px 0;
-}
+/* Card ornament (corner field arcs + edge tees) lives in
+   components/ornament.css; values in tokens/ornament.css. */
 
 /* --- Featured Grid --- */
 /* Layout (columns 11/7 desktop, stacked mobile) is owned by <Grid>/<Col>;
@@ -615,7 +561,7 @@
 
 .site-footer__copyright {
   font-family: var(--ff-mono);
-  font-size: 9px;
+  font-size: var(--fz-plate);
   letter-spacing: 0.05em;
   color: var(--color-text-disabled);
 }
@@ -623,7 +569,7 @@
 /* Data plate — version + build date, stamped at build (Footer.astro). */
 .site-footer__plate {
   font-family: var(--ff-mono);
-  font-size: 9px;
+  font-size: var(--fz-plate);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-text-disabled);
@@ -807,7 +753,10 @@
   max-width: calc(var(--grid-max-width) + (100% - var(--grid-max-width)) * var(--fb-progress));
   min-height: var(--fb-card-min-h);
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, calc(0.08 * (1 - var(--fb-progress))));
+  /* --color-border-default faded toward transparent as the card widens —
+     identical alpha math to the old rgba literal, but riding the token. */
+  border: 1px solid
+    color-mix(in srgb, var(--color-border-default) calc(100% * (1 - var(--fb-progress))), transparent);
   border-radius: calc(var(--radius-lg) * (1 - var(--fb-progress)));
   background: var(--color-bg-primary);
 }
@@ -836,7 +785,7 @@
   aspect-ratio: 1 / 1;
   display: block;
   /* glow so the bright HUD strokes read crisply on the dark panel */
-  filter: drop-shadow(0 0 2px rgba(239, 234, 224, 0.45));
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--color-text-ivory) 45%, transparent));
 }
 
 /* --- Boot-up sequence ---

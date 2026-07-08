@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, type SyntheticEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -17,7 +17,7 @@ export default function NewsletterSignup({
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (!email) return;
 
@@ -31,7 +31,9 @@ export default function NewsletterSignup({
         body: new URLSearchParams({ email }),
       });
 
-      if (response.ok || response.status === 303) {
+      // fetch follows Buttondown's post-subscribe redirect, so the final
+      // response is what we see — a 3xx status is never observable here.
+      if (response.ok) {
         setStatus("success");
         setEmail("");
       } else {
@@ -46,7 +48,9 @@ export default function NewsletterSignup({
 
   const form =
     status === "success" ? (
-      <p className="newsletter-inline__status">You're in. Check your inbox for a welcome email.</p>
+      <p className="newsletter-inline__status" role="status">
+        You're in. Check your inbox for a welcome email.
+      </p>
     ) : (
       <form onSubmit={handleSubmit} className="newsletter-inline">
         <div className="newsletter-inline__form">
@@ -63,7 +67,10 @@ export default function NewsletterSignup({
             {status === "loading" ? "..." : "Subscribe"}
           </Button>
         </div>
-        {status === "error" && <p className="newsletter-inline__error">{errorMessage}</p>}
+        {/* Persistent live region so success/error is announced, not silent. */}
+        <p className="newsletter-inline__error" role="status">
+          {status === "error" ? errorMessage : ""}
+        </p>
         <p className="newsletter-inline__privacy">No spam. Unsubscribe anytime.</p>
       </form>
     );
