@@ -78,9 +78,9 @@ def apply_window(hu: int, ww: int, wl: int) -> float:
 
 ## Figures and the Console Strip
 
-Every clinical image carries a metadata strip in the console voice: modality, plane, window, phase. The caption below it stays quiet sans.
+Every clinical image carries a metadata strip in the console voice: modality, plane, window, phase. The caption below it stays quiet sans. Figures with a strip are accessioned automatically: a `FIG NN` cell leads the strip, counted in document order, and decorative images without a strip stay unnumbered. In-text references are authored by hand as [Fig. 1](#fig-1) against an `id="fig-1"` anchor on the figure. The numbering does not self-heal: reordering figures means updating both the anchors and the references.
 
-<figure>
+<figure id="fig-1">
 <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'><rect width='16' height='9' fill='%231B1A18'/><text x='8' y='4.9' font-family='monospace' font-size='0.9' fill='%236D655B' text-anchor='middle'>CLINICAL IMAGE PLACEHOLDER</text></svg>" alt="Placeholder panel standing in for a clinical image" />
 <div class="figure-meta"><span>CT</span><span>Axial</span><span>W400 L40</span><span>Portal venous</span></div>
 <figcaption>Converging mesenteric vessels at the transition point. The strip above this caption is the house pattern for all case imagery.</figcaption>
@@ -92,7 +92,9 @@ The showstopper module. Scroll through the exam the way a radiologist does: drag
 
 ::case[Synthetic test stack. Drag across the image to scrub through the exam.]{id="dev-synthetic"}
 
-## Quotes and Rules
+## Quotes, Rules, and Notes
+
+Footnotes are tap-first: the superscript number is a button that opens the note in a popover card,[^1] and the full plate still renders at the end of the article for reference and for browsers without popover support.[^2]
 
 > A blockquote takes the secondary ink with the gold stripe. Long-form pull quotes read in this voice, one thought per quote.
 
@@ -109,10 +111,14 @@ A horizontal rule separates major movements:
 <dd>Mesenteric vessels rotating around the point of torsion.</dd>
 </dl>
 
-Press <kbd>W</kbd> then drag to window. Highlighted text uses <mark>the gold wash</mark> sparingly.
+Press <kbd>W</kbd> then drag to window. Highlighted text uses <mark>the gold wash</mark> sparingly. Measurement values ride inline as readout chips, muted mono in a hairline: <span class="readout">W80 L40</span>, <span class="readout">65 HU</span>. They are deliberately not the violet of `inline code`.
 
 ## The Lead Paragraph Class
 
 <p class="lead">A lead paragraph, opted in with the lead class, sits a step larger and brighter than body text. Use it once, at the top, or not at all.</p>
 
 And a closing paragraph at normal weight to compare against the lead above. The reader should never finish a section wondering what to do with this page: if an element looks wrong here, fix its token or its prose rule, then recheck.
+
+[^1]: The card is a build-time copy of this note. Tapping outside it, or the button again, closes it.
+
+[^2]: A second note proves the numbering, the plate ordering, and the backref arrows below.

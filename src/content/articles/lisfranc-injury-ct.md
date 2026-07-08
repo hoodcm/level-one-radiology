@@ -28,9 +28,9 @@ So the whole tarsometatarsal complex hangs on one ligament and one recessed keys
 
 ## The Case, Read Properly
 
-Here is the image that settles it.
+Here is the image that settles it ([Fig. 1](#fig-1)).
 
-<figure>
+<figure id="fig-1">
 <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'><rect width='16' height='9' fill='%231B1A18'/><text x='8' y='4.9' font-family='monospace' font-size='0.9' fill='%236D655B' text-anchor='middle'>CASE IMAGE PENDING</text></svg>" alt="Placeholder panel standing in for the axial CT of the midfoot" />
 <div class="figure-meta"><span>CT</span><span>Axial</span><span>W2800 L600</span><span>Bone</span></div>
 <figcaption>Case imagery pending. The panel stands where the axial CT belongs: a small avulsed fragment in the space between the first and second metatarsal bases, with subtle widening of the interval between the medial cuneiform and the second metatarsal.</figcaption>

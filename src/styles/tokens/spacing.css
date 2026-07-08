@@ -49,6 +49,9 @@
      right margin. Page-level layout, deliberately outside <Grid>. */
   --article-rail-columns: 1fr minmax(0, var(--reading-column)) 1fr;
 
+  /* Minimum touch-target edge (module standard: 44×44px effective). */
+  --tap-target: 2.75rem;   /* 44px */
+
   /* Radius scale — cards/buttons anchor at 8px, large media at 16px */
   --radius-xs: 0.25rem;   /* 4px  — chips, small controls */
   --radius-sm: 0.5rem;    /* 8px  — cards, buttons */
@@ -58,6 +61,11 @@
 
   /* Grid texture cell — the blueprint-ground pitch (3 × gutter). */
   --grid-texture-cell: 3rem;   /* 48px */
+
+  /* Section-break registration mark (apparatus/section-break.css) — the
+     crosshair-circle footprint; the circle spans 3/4 of it (footer r=3/8
+     geometry). */
+  --break-mark-size: 0.75rem;  /* 12px */
 
   /* Feature-band detector card */
   --fb-card-min-h: 23.125rem;  /* 370px — card height; kept just above the HUD width so the panel fills it with a little vertical padding */

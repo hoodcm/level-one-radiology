@@ -26,6 +26,17 @@
 @import "./components/pages.css";
 @import "./components/case-viewer.css";
 
+/* Article apparatus — one import per element; disable = comment out the line.
+   Elements that also emit markup carry a flag in src/lib/apparatus.ts. */
+@import "./components/apparatus/section-break.css";
+@import "./components/apparatus/arrival-wash.css";
+@import "./components/apparatus/article-index.css";
+@import "./components/apparatus/read-next.css";
+@import "./components/apparatus/footnotes.css";
+@import "./components/apparatus/figure-accession.css";
+@import "./components/apparatus/readout.css";
+@import "./components/apparatus/ordinal-tick.css";
+
 /* Tailwind v4 theme — expose tokens as utility classes */
 @theme inline {
   /* Surface colors */

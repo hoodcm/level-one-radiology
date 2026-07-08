@@ -17,8 +17,8 @@ _as of 2026-07-07 · 0 streams startable · 4 now/next items untyped_
   Build the Case Viewer — the "showstopper module," a PACS-like image viewer for clinical cases embedded within articles. Light-DOM custom element `<case-viewer>` (not a React island — see the archived plan), mobile-first, built and code-reviewed. Michael: "the mobile-first image viewer is key." Implementation is substantially complete (mapping/frame-store/case-viewer/ fullscreen modules, boot choreography, TUNE, build-time manifest pipeline, review hardening, /simplify pass) and is live-embedded in a published article (`src/content/articles/window-and-level.md`), but that embed is a TEMPORARY synthetic demo case (`::case{id="dev-synthetic"}`) standing in for the on-device test surface — swapping it for a real clinical case is step 15 below, not a separate deliverable. Remaining scope is purely the four **user-gated, device-only** steps from `docs/archive/plans/2026-07-07-case-viewer-plan.md` (Steps section) — none are autonomous: - Step 3 — on-device gesture-spike judgment (Michael's iPhone) - Step 12 — fullscreen device pass - Step 13 — VoiceOver full-flow a11y pass - Step 15 — first real clinical case (replaces the synthetic embed above) Done: all four device-gated steps pass on Michael's iPhone and the real-case embed (step 15) is live.
   ↳ links: src/components/case/, docs/design/components.md, docs/archive/plans/2026-07-07-case-viewer-plan.md
 - **Judge this session's visual tuning on screen**
-  One on-screen judgment pass over this session's headless-verified visual knobs — his eyes are the gate on all of these: - Deepened gold shade (`--color-signal-yellow` → #D8A82C, via `--color-primary`) now owns much more surface than before: CTAs, nav/mobile Subscribe, newsletter buttons, pull-quote stripe, links, focus rings, selection, progress hairline, subscribe accents, and the caution role (shared token). - Hero blueprint grid (`--color-grid-line` alpha 0.04, `--grid-texture-cell` 48px). - Desktop prose leading (`--lh-reading` 1.44). - De-striped apparatus cards. - HUD corner hover. - Title view-transition morph (click card → article in Chrome/Safari). - Print stylesheet (⌘P on an article). Done: each knob above is confirmed acceptable on screen (or re-tuned).
-  ↳ links: src/styles/tokens/colors.css, src/styles/tokens/typography.css
+  One on-screen judgment pass over this session's headless-verified visual knobs — his eyes are the gate on all of these: - Deepened gold shade (`--color-signal-yellow` → #D8A82C, via `--color-primary`) now owns much more surface than before: CTAs, nav/mobile Subscribe, newsletter buttons, pull-quote stripe, links, focus rings, selection, progress hairline, subscribe accents, and the caution role (shared token). - Hero blueprint grid (`--color-grid-line` alpha 0.04, `--grid-texture-cell` 48px). - Desktop prose leading (`--lh-reading` 1.44). - De-striped apparatus cards. - HUD corner hover. - Title view-transition morph (click card → article in Chrome/Safari). - Print stylesheet (⌘P on an article). - Ordinal tick-in keep/cut: demo-gated element at `src/styles/components/apparatus/ordinal-tick.css` (import marked DEMO-GATED in `src/styles/main.css`). Scroll any article in `npm run dev`; plan's default expectation is CUT (a second motion grammar beside `[data-reveal]`). If cut: delete the file + import line, record in CHANGELOG. - On-screen pass over the 8 shipped article-apparatus elements: section break mark, arrival wash, mobile INDEX, serial exit strip, footnote popover cards, figure accession cells, readout chips, cite line. Done: each knob above is confirmed acceptable on screen (or re-tuned), and the ordinal tick-in keep/cut call is made.
+  ↳ links: src/styles/tokens/colors.css, src/styles/tokens/typography.css, src/styles/components/apparatus/ordinal-tick.css, src/styles/main.css
 - **Resolve the body-serif widening (opsz vs wider OFL serif)**
   The body reading serif (Newsreader) is being widened for a sturdier text column. An `opsz` experiment is live via `--reading-opsz` (typography.css; consumed by prose.css `font-variation-settings: "opsz"`) and awaits the user's on-screen judgment. Newsreader has no `wdth` axis, so widening is only available through optical size. Next step is either lower the opsz further or evaluate a wider / more-geometric OFL body serif. Stated priority Now/Next. Done: a deliberate body-serif width direction is chosen — a settled `--reading-opsz` value or a swapped wider OFL body serif.
   ↳ links: src/styles/tokens/typography.css, src/styles/components/prose.css
@@ -84,21 +84,21 @@ _Last session: 2026-07-07_
 Level One Radiology — the dark-first, content-driven website for leveloneradiology.com (Astro + React islands, design-token single-source-of-truth).
 
 **Accomplished:**
-- Closed the case-viewer `/implement-plan` Phase 10: `/code-review` (10 findings fixed — decode races, global LRU bound, build-validation gaps) then `/simplify` (net −45 lines, unified scrub pipeline); see CHANGELOG `[Unreleased]`.
-- Embedded the case viewer live in `window-and-level.md` (synthetic stack) as the deployed test surface — the dev spike page is prod-excluded and style-gallery's embed is draft-only, so neither was testable after a push.
-- Recorded the review hardening in the archived plan's deviations ledger and filed the deferred hot-path perf work as a new TODO item.
-- Gates green throughout (26/26 vitest, `npm run build` + `npm run lint`); 4 local checkpoint commits on main (`715daca`, `16cc949`, `397408e`, `3dad68e`), published via `/push` at session end.
+- Implemented the article-apparatus plan end to end (13/13 steps): eight in-article elements plus the demo-gated ordinal tick-in, one-place kill switches, new contract tests — see CHANGELOG `[Unreleased]`.
+- Ran the Phase 10 chain: /code-review (3 correctness fixes applied, incl. always-on footnote heading fix) and /simplify (`--fz-micro` token, structuredClone); Codex offer declined.
+- Fixed the pre-existing TOC rail selector mismatch (mobile hide, desktop sticky, and print exclusion had all silently failed).
+- Archived the plan with its deviations ledger to docs/archive/plans/2026-07-07-article-apparatus-plan.md.
 
 **Start by reading:** TODO.md, CONTEXT.md, CHANGELOG.md
 
 **Priorities:**
-1. See TODO.md `## Start here` and `## Now`. The lead item is the case-viewer on-device verification on Michael's iPhone (steps 3 inline judgment, 12 fullscreen, 13 VoiceOver, 15 first real case) — the only work now between the module and "done." Dev server: `npm run dev -- --host`, then `/dev/gesture-spike` or `/articles/window-and-level`.
-2. Then the deferred case-viewer hot-path perf items (apply-or-close with on-device profiling in hand).
+1. See TODO.md `## Start here` — the new decision surface is the on-screen judgment pass over the apparatus elements, including the ordinal tick-in keep/cut (plan default: cut). Dev server: `npm run dev`, any article page; the gallery (`/articles/style-gallery`) exercises everything.
+2. The case-viewer device-gated steps remain the lead workstream (unchanged this session).
 
-**Time-sensitive:** See TODO.md `## Time-sensitive` (no case-viewer deadlines this session).
+**Time-sensitive:** See TODO.md `## Time-sensitive` (nothing new this session).
 
 **Unverified assumptions:**
-- The review fixes are pointer/history/DOM behaviors vitest can't exercise — 26/26 confirms non-regression, not the fixes themselves; the device pass (steps 3/12/13) is what confirms them. The one I'd most expect to be wrong: the second-finger scrub fix goes inert (no live hand-off) when the owning finger lifts mid-scrub.
-- The synthetic embed renders on the deployed GitHub Pages URL — confirmed in the local prod build (element + 121 frames + poster in `dist/`), not yet eyeballed on the live URL post-push.
+- Footnote-card anchor positioning was verified in Chromium only; non-Chromium engines get the centered-card fallback by design, but that fallback hasn't been exercised in a real Safari/Firefox — confirm during the on-screen pass.
+- One vitest run reported 2 transient failures right after the simplify commit, unreproducible across 5 subsequent 33/33 runs; if it recurs, suspect contention with a concurrent build, not the structuredClone change.
 
 <!-- todo:continuation:end -->

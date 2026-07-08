@@ -1,0 +1,31 @@
+/* ==============================================
+   ORDINAL TICK-IN — the mono section ordinal beside each article h2 ticks
+   in (fade + short slide) as the heading scrolls into view, driven by a
+   pure-CSS view() timeline. Kept after live judgment (2026-07-07), accepting
+   the second motion grammar beside [data-reveal] (motion.css).
+   Guards: @supports view-timeline + reduced-motion. Disable: comment out
+   the import in main.css.
+   ============================================== */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .article .prose h2::before {
+      display: inline-block;   /* transforms don't apply to inline boxes */
+      animation: l1-ordinal-tick linear both;
+      animation-timeline: view();
+      /* Complete the tick while the heading crosses the lower viewport edge. */
+      animation-range: entry 0% entry 80%;
+    }
+  }
+}
+
+@keyframes l1-ordinal-tick {
+  from {
+    opacity: 0;
+    transform: translateX(-0.35em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

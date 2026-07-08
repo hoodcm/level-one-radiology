@@ -1,0 +1,20 @@
+/* ==============================================
+   READOUT CHIPS — inline measurement values in the console voice:
+   <span class="readout">W80 L40</span>, <span class="readout">65 HU</span>.
+   Muted mono in a hairline chip — deliberately NOT violet (violet means
+   code/technical token) and not <data> (its value contract is a single
+   machine-readable value, which "W80 L40" is not). An authoring convention:
+   the style gallery is the reference. Disable: comment out the import in
+   main.css (spans degrade to plain text).
+   ============================================== */
+
+.prose .readout {
+  font-family: var(--ff-mono);
+  font-size: 0.85em;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+  padding: 0.05em 0.4em;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xs);
+  white-space: nowrap;
+}

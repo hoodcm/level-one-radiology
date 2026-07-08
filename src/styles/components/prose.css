@@ -118,7 +118,7 @@
   color: var(--color-text-ivory);
   line-height: 1.2;
   letter-spacing: -0.01em;
-  margin-top: 1.5rem;              /* 24px (mobile) */
+  margin-top: 2rem;                /* 32px (mobile) */
   margin-bottom: 0.5rem;           /* 8px */
 }
 .prose h2 { font-size: 1.25rem; }          /* 20px */
@@ -127,18 +127,29 @@
 
 /* Section ordinals — articles only (not About's prose): a muted mono counter
    before each h2, mirrored by the TOC rail. Console grammar, darkroom-style. */
+/* Consolidated counter-reset — owned HERE, and only here. counter-reset is a
+   single property: a second rule resetting one counter on the same element
+   would silently clobber the other. l1-figure is incremented by
+   apparatus/figure-accession.css. */
 .article .prose {
-  counter-reset: l1-section;
+  counter-reset: l1-section l1-figure;
+}
+/* The ordinal hangs in the LEFT MARGIN (absolute, off the text box) so the
+   heading text stays flush with the prose measure. */
+.article .prose h2 {
+  position: relative;
 }
 .article .prose h2::before {
   counter-increment: l1-section;
   content: counter(l1-section, decimal-leading-zero);
+  position: absolute;
+  right: calc(100% + 0.7em);
+  top: 0.45em;   /* optically baseline-aligns the smaller mono digits */
   font-family: var(--ff-mono);
   font-weight: 400;
   font-size: 0.65em;
   letter-spacing: 0.04em;
   color: var(--color-text-muted);
-  margin-right: 0.7em;
 }
 
 /* Anchored headings (rehype-slug): land below the sticky header, and carry a
@@ -163,16 +174,20 @@
 @media (min-width: 60em) {
   .prose h2,
   .prose h3,
-  .prose h4 { margin-top: 2rem; }           /* 32px */
+  .prose h4 { margin-top: 3rem; }           /* 48px */
   .prose h2 { font-size: 1.5625rem; }        /* 25px */
   .prose h3,
   .prose h4 { font-size: 1.1875rem; }        /* 19px */
 }
 
-/* Lists — 15px / 1.4, 2rem indent, 12px between items. */
+/* Lists — 15px / 1.4, 2rem indent, 12px between items. Markers restored
+   explicitly: the Tailwind preflight strips list-style everywhere. */
 .prose ul,
 .prose ol { margin: 0 0 1rem; padding-left: 2rem; }
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
 .prose li { font-size: 0.9375rem; line-height: 1.35; }   /* 15px */
+.prose li::marker { color: var(--color-text-muted); }
 .prose li + li { margin-top: 0.75rem; }                 /* 12px */
 
 /* Inline links — visible but controlled underline (Anthropic metrics). */
@@ -219,7 +234,7 @@
   row-gap: var(--space-0);
   margin-top: var(--space-1);
   font-family: var(--ff-mono);
-  font-size: 10px;
+  font-size: var(--fz-micro);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-text-muted);
@@ -277,7 +292,7 @@
 /* --- End mark: the publication's tombstone (print convention). --- */
 .article__endmark {
   display: block;
-  height: 14px;
+  height: 18px;
   width: auto;
   margin-top: var(--space-4);
   color: var(--color-text-muted);
@@ -299,16 +314,6 @@
   font-weight: 600;
   color: var(--color-text-ivory);
   margin: 0 0 var(--space-0);
-}
-.article__subscribe-headline::before {
-  content: '';
-  display: inline-block;
-  width: 4px;
-  height: 4px;
-  border-radius: 1px;
-  background: var(--color-primary);
-  margin-right: 0.6em;
-  vertical-align: 0.16em;
 }
 .article__subscribe-subhead {
   font-family: var(--ff-body);
@@ -389,7 +394,7 @@
   counter-increment: l1-toc;
   content: counter(l1-toc, decimal-leading-zero);
   font-family: var(--ff-mono);
-  font-size: 10px;
+  font-size: var(--fz-micro);
   letter-spacing: 0.04em;
   color: var(--color-text-disabled);
 }
@@ -447,6 +452,7 @@
 .key-points__list {
   margin: 0;
   padding-left: var(--space-3);
+  list-style: disc;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -455,6 +461,7 @@
   line-height: 1.5;
   color: var(--color-text-secondary);
 }
+.key-points__list li::marker { color: var(--color-text-muted); }
 
 /* ==============================================
    EXTENDED PROSE ELEMENTS (Anthropic-style apparatus)
@@ -519,7 +526,7 @@
 /* --- Callout / note box — note (cyan) · caution (yellow) · critical (red).
    Signal lives in the label + tint, not an edge stripe. --- */
 .callout {
-  margin: var(--space-4) 0;
+  margin: var(--space-5) 0;
   padding: var(--card-padding-sm) var(--card-padding-md);
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-border-default);
@@ -546,19 +553,6 @@
   background: color-mix(in srgb, var(--color-signal-red) 8%, var(--color-bg-secondary));
 }
 .callout--critical .callout__label { color: var(--color-signal-red); }
-
-/* Label indicator — the 4px signal square (mirrors .tag__indicator). */
-.key-points__label::before,
-.callout__label::before {
-  content: '';
-  display: inline-block;
-  width: 4px;
-  height: 4px;
-  border-radius: 1px;
-  background: currentColor;
-  margin-right: 0.6em;
-  vertical-align: 0.14em;
-}
 
 /* --- Reference / data card — the Anthropic "stone card": all sans,
    title → sublabel groups → bullets. Reads as apparatus, not narrative. --- */
@@ -593,7 +587,8 @@
   line-height: 1.45;
   color: var(--color-text-secondary);
 }
-.reference-card ul { margin: 0; padding-left: var(--space-3); }
+.reference-card ul { margin: 0; padding-left: var(--space-3); list-style: disc; }
+.reference-card li::marker { color: var(--color-text-muted); }
 .reference-card li + li { margin-top: var(--space-1); }
 
 /* --- Definition list — term / definition pairs (sans) --- */

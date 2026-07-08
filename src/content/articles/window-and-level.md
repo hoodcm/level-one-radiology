@@ -51,7 +51,7 @@ A narrow window spends all of your grays on a small stretch of the scale, so tin
 
 ## Watch the Trade-Off Happen
 
-Put up a head CT in the standard brain window, width 80 and level 40. The window runs from 0 to 80 HU: CSF near black, white matter dark gray, gray matter lighter, acute blood approaching white. The ten-unit gray-white difference gets a real, visible share of the ramp. Meanwhile the calvarium, at many hundreds of units, slams into the top of the window and renders as a featureless white band.
+Put up a head CT in the standard brain window, <span class="readout">W80 L40</span>. The window runs from 0 to 80 HU: CSF near black, white matter dark gray, gray matter lighter, acute blood approaching white. The ten-unit gray-white difference gets a real, visible share of the ramp. Meanwhile the calvarium, at many hundreds of units, slams into the top of the window and renders as a featureless white band.
 
 Now drag the width open toward bone settings and watch two things happen at once. The skull develops texture: cortex, diploë, sutures, fracture lines. And the brain collapses toward a single flat gray, because its whole ten-unit interface now occupies a fraction of one displayed shade. Nothing about the data changed. You spent your grays somewhere else.
 
@@ -74,7 +74,7 @@ gray(65, 2800, 600)  # bone window  -> 79
 gray(38, 2800, 600)  # bone window  -> 76    (3 grays apart: invisible)
 ```
 
-The same two voxels, 27 HU apart, are separated by 86 gray levels in one window and 3 in the other. That is the trade you are making with every drag.
+The same two voxels, <span class="readout">27 HU</span> apart, are separated by 86 gray levels in one window and 3 in the other. That is the trade you are making with every drag.
 
 ::case[A synthetic test stack, not real anatomy, for trying the viewer. Drag across the image to scrub the series, and switch windows to compare the display.]{id="dev-synthetic"}
 
@@ -92,7 +92,7 @@ Presets are not correct answers. They are named positions in the trade-off, each
 | Bone | 2800 / 600 | Cortex, diploë, fracture lines | All soft tissue contrast |
 | Soft tissue | 400 / 50 | Scalp, orbits, neck | Fine intracranial contrast |
 
-The subdural preset is worth understanding rather than memorizing. It raises the level toward clot density and opens the width just enough that bone and blood stop sharing pure white, which is exactly the failure that hides the thin subdural at brain settings.
+The subdural preset <span class="readout">W200 L80</span> is worth understanding rather than memorizing. It raises the level toward clot density and opens the width just enough that bone and blood stop sharing pure white, which is exactly the failure that hides the thin subdural at brain settings.
 
 Every viewer puts these on hotkeys, usually the number row, and pairs them with a free drag: hold <kbd>W</kbd> (or the middle button, viewers disagree) and drag one axis for width, the other for level. Learning to hit the presets without looking is a real speed gain. Learning the free drag is better, because it lets you interrogate a specific pixel instead of hoping a preset covers it.
 

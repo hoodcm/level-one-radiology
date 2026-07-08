@@ -1,0 +1,29 @@
+/* ==============================================
+   FIGURE ACCESSION — clinical figures get accession numbers: a `FIG NN`
+   cell leads the console strip (.figure-meta). Only figures carrying a
+   strip are counted — decorative images skip cleanly. The l1-figure counter
+   is RESET in prose.css's consolidated counter-reset (single-property
+   clobber hazard — one owner); this file only increments and renders.
+   In-text references stay authored (`Fig. N` + `#fig-n` anchors — see the
+   style gallery); reordering figures means updating the references.
+   Disable: comment out the import in main.css.
+   ============================================== */
+
+.prose figure:has(.figure-meta) {
+  counter-increment: l1-figure;
+}
+
+/* The accession cell — a flex item ahead of the authored spans. */
+.prose figure .figure-meta::before {
+  content: 'FIG ' counter(l1-figure, decimal-leading-zero);
+  color: var(--color-text-secondary);
+}
+
+/* The first authored span now needs the same '·' separator the later spans
+   carry (prose.css owns the span + span rule; this extends it to the seam
+   after the FIG cell). */
+.prose figure .figure-meta > span:first-child::before {
+  content: '·';
+  color: var(--color-text-disabled);
+  margin-right: var(--space-1);
+}

@@ -1,0 +1,46 @@
+/* ==============================================
+   MORE ARTICLES — the article footer's related-reading block: a quiet ui
+   label over the date-neighbor article titles, plainly readable, then an
+   "All articles →" link. Neighbors come from the date-sorted collection
+   ([slug].astro getStaticPaths). Replaces the back-link row; the subscribe
+   card above stays the last full-width apparatus. Markup gated by
+   `apparatus.readNext`. Disable: flip the flag (markup) and/or comment out
+   the import in main.css (style).
+   ============================================== */
+
+.read-next__label {
+  font-family: var(--ff-ui);
+  font-size: var(--fz-ui);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-1);
+}
+
+.read-next__link {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap-target);
+  font-family: var(--ff-body);
+  font-size: var(--fz-body);
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-top: 1px solid var(--color-border-subtle);
+}
+.read-next__link:first-of-type { border-top: 0; }
+.read-next__link:hover { color: var(--color-link); }
+
+.read-next__all {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-target);
+  margin-top: var(--space-0);
+  font-family: var(--ff-ui);
+  font-size: var(--fz-ui);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+.read-next__all:hover { color: var(--color-link); }

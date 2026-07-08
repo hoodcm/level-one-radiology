@@ -243,3 +243,9 @@ Phase 2 — scholarly apparatus (authoring conventions):
 ## Open questions
 
 - Ordinal tick-in keep/cut — deliberately deferred to the step-8 live demo (user's explicit choice).
+
+## Implementation deviations
+
+- 2026-07-07 · Step 4: the mobile INDEX is emitted by `TableOfContents.astro` via a `variant` prop (`rail` | `index`) with two invocations in `[slug].astro`, rather than one invocation emitting both — a single emission at the component's existing call site would have placed the INDEX at the DOM bottom on mobile (the rail is grid-placed, the INDEX is in-flow under the header). Component still owns both renderings and the `mobileToc` gate.
+- 2026-07-07 · Adjacent fix surfaced by step-4 verification: the rail `<nav>` never carried the `article__toc` class that prose.css/print.css target, so the mobile hide, desktop sticky, and print exclusion silently failed (pre-existing, visible as a duplicate TOC at the page bottom on mobile — directly conflicting with the new INDEX). Fixed by adding the class (`0fe8b96`).
+- 2026-07-07 · Step 12: the citation URL is built with `URL.host + pathname` instead of a scheme-stripping regex — Astro's frontmatter compiler fails on `\/\//` inside a regex literal ("Unexpected export").

@@ -397,6 +397,10 @@
   --lh-ui: 1.5;
   --ls-ui: 0.06em;
 
+  /* Console micro-numerals — the smallest mono voice (TOC/INDEX ordinals,
+     figure-meta strip). */
+  --fz-micro: 0.625rem;   /* 10px */
+
   /* Long-form reading. Anthropic uses 155%, but Utopia (serif) has a taller
      line box than Anthropic Sans, so it reads looser at the same multiplier.
      Tightened to 1.36 for a denser, less airy serif column. */

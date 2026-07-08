@@ -6,23 +6,33 @@ import TableOfContents from '@/components/article/TableOfContents.astro';
 import NewsletterSignup from '@/components/shared/NewsletterSignup.tsx';
 import { getArticles } from '@/lib/articles';
 import { tagVariant, contentTypeVariant, contentTypeLabel } from '@/lib/tags';
+import { apparatus } from '@/lib/apparatus';
 
 export async function getStaticPaths() {
+  // getArticles() is newest-first, so index i-1 is the newer neighbor and
+  // i+1 the older — the footer's More-articles block (drafts already
+  // excluded in prod by the accessor).
+  const neighbor = (a?: Awaited<ReturnType<typeof getArticles>>[number]) =>
+    a ? { id: a.id, title: a.data.title } : null;
   const articles = await getArticles();
-  return articles.map((article) => ({
+  return articles.map((article, i) => ({
     params: { slug: article.id },
-    props: { article },
+    props: {
+      article,
+      newer: neighbor(articles[i - 1]),
+      older: neighbor(articles[i + 1]),
+    },
   }));
 }
 
-const { article } = Astro.props;
+const { article, newer, older } = Astro.props;
 const { Content, headings, remarkPluginFrontmatter } = await render(article);
 
 // Stamped by remarkCaseViewer when the article embeds a ::case directive;
 // the element script loads only on pages that need it (like minutesRead).
 const hasCaseViewer = remarkPluginFrontmatter.hasCaseViewer === true;
 
-const { title, serial, description, publishDate, lastReviewed, primaryTag, contentType, keyPoints, ogImage } =
+const { title, description, publishDate, lastReviewed, primaryTag, contentType, keyPoints, ogImage } =
   article.data;
 const minutesRead = remarkPluginFrontmatter.minutesRead;
 
@@ -40,6 +50,9 @@ const reviewedStamp = lastReviewed
 
 // view-transition-name must be a valid CSS custom-ident.
 const vtName = `vt-${article.id.replace(/[^a-zA-Z0-9-]/g, '-')}`;
+
+// Footer More-articles block: the date neighbors, newest first.
+const moreArticles = [newer, older].filter((n): n is NonNullable<typeof newer> => n !== null);
 ---
 
 <Layout title={`${title} | Level One Radiology`} description={description} ogImage={ogImage}>
@@ -58,16 +71,17 @@ const vtName = `vt-${article.id.replace(/[^a-zA-Z0-9-]/g, '-')}`;
           <h1 class="article__title" style={`view-transition-name: ${vtName};`}>{title}</h1>
           <p class="article__deck">{description}</p>
           <div class="article__meta">
-            <span>{serial}</span>
-            <span class="article__meta-sep" aria-hidden="true">·</span>
             <span>Published {formattedDate}</span>
             <span class="article__meta-sep" aria-hidden="true">·</span>
             <span>{minutesRead} min read</span>
           </div>
           {reviewedStamp && (
-            <p class="article__review">Last reviewed {reviewedStamp} · Practice patterns vary</p>
+            <p class="article__review">Last reviewed {reviewedStamp}</p>
           )}
         </header>
+
+        <!-- Mobile INDEX: <details> disclosure, <80em only (the rail's dual) -->
+        <TableOfContents headings={headings} variant="index" />
 
         <!-- Key Points: reference apparatus → sans, quiet card -->
         {keyPoints && keyPoints.length > 0 && (
@@ -96,8 +110,20 @@ const vtName = `vt-${article.id.replace(/[^a-zA-Z0-9-]/g, '-')}`;
           <NewsletterSignup client:visible variant="inline" />
         </aside>
 
+        <!-- More articles: the date-neighbor titles, plainly readable.
+             Flag off → the plain back-link row this block replaced. -->
         <footer class="article__footer reading-column">
-          <a href="/" class="article__back">← Back to Level One Radiology</a>
+          {apparatus.readNext ? (
+            <nav class="read-next" aria-label="More articles">
+              <p class="read-next__label">More articles</p>
+              {moreArticles.map((n) => (
+                <a href={`/articles/${n.id}/`} class="read-next__link">{n.title}</a>
+              ))}
+              <a href="/articles/" class="read-next__all">All articles →</a>
+            </nav>
+          ) : (
+            <a href="/" class="article__back">← Back to Level One Radiology</a>
+          )}
         </footer>
       </div>
 

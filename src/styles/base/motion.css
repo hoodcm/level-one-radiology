@@ -14,6 +14,10 @@
   /* Interactive UI motion (presses, hovers, popovers, dropdowns) — snappier than reveals. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);     /* strong ease-out: the default for UI feedback */
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); /* movement / morphing on screen */
+
+  /* Arrival wash (apparatus/arrival-wash.css) — how long the :target gold
+     wash takes to fade out after a hash jump. */
+  --wash-duration: 2s;
 }
 
 [data-reveal] {

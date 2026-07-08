@@ -1,0 +1,45 @@
+/* ==============================================
+   SECTION BREAK — `hr` renders as a centered crosshair-circle registration
+   mark instead of a full-width hairline. Re-expresses the footer's
+   registration-mark grammar (structural, Footer.astro) — never the 4px
+   indicator square, which means action/signal. Muted; built from tokens and
+   currentColor only. Disable: comment out the import in main.css.
+   ============================================== */
+
+.article .prose hr {
+  position: relative;
+  height: var(--break-mark-size);
+  margin: var(--section-spacer-sm) 0;
+  border: 0;
+  color: var(--color-text-disabled);
+}
+
+/* Crosshair — vertical + horizontal hairlines through the center. */
+.article .prose hr::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: var(--break-mark-size);
+  height: var(--break-mark-size);
+  background-image:
+    linear-gradient(var(--color-text-disabled), var(--color-text-disabled)),
+    linear-gradient(var(--color-text-disabled), var(--color-text-disabled));
+  background-size: 1px 100%, 100% 1px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Registration circle — spans 3/4 of the crosshair (the footer's r = 3/8). */
+.article .prose hr::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: calc(var(--break-mark-size) * 0.75);
+  height: calc(var(--break-mark-size) * 0.75);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-pill);
+}

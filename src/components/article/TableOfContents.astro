@@ -1,15 +1,23 @@
 ---
 /**
- * TableOfContents — "On this page" rail for article h2 sections. Rendered
- * only when the article has 2+ sections; visible only ≥80em (the right
- * margin beside the reading column). Numbering mirrors the CSS section
- * counters on the prose h2s. A small scroll-spy in [slug].astro stamps
- * aria-current on the active link.
+ * TableOfContents — the article's h2 section index, in two variants:
+ *
+ * - `rail` (default): the "On this page" rail beside the reading column.
+ *   Visible only ≥80em; a scroll-spy in [slug].astro stamps aria-current.
+ * - `index`: the mobile INDEX — a mono <details> disclosure under the article
+ *   header, visible <80em (apparatus/article-index.css). Gated by the
+ *   `apparatus.mobileToc` kill switch, so disabling emits no markup.
+ *
+ * Both render only when the article has 2+ sections, and both number their
+ * entries to mirror the CSS section ordinals on the prose h2s.
  */
+import { apparatus } from '@/lib/apparatus';
+
 interface Props {
   headings: { depth: number; slug: string; text: string }[];
+  variant?: 'rail' | 'index';
 }
-const { headings } = Astro.props;
+const { headings, variant = 'rail' } = Astro.props;
 // Astro collects heading text after rehype runs, so the appended anchor "#"
 // (rehype-autolink-headings) rides along — strip it.
 const sections = headings
@@ -17,8 +25,8 @@ const sections = headings
   .map((h) => ({ ...h, text: h.text.replace(/#\s*$/, '') }));
 ---
 
-{sections.length >= 2 && (
-  <nav class="toc" aria-label="On this page" data-toc>
+{variant === 'rail' && sections.length >= 2 && (
+  <nav class="toc article__toc" aria-label="On this page" data-toc>
     <p class="type-ui">On this page</p>
     <ol class="toc__list">
       {sections.map((section) => (
@@ -28,4 +36,19 @@ const sections = headings
       ))}
     </ol>
   </nav>
+)}
+
+{variant === 'index' && apparatus.mobileToc && sections.length >= 2 && (
+  <div class="reading-column">
+    <details class="article-index">
+      <summary class="article-index__summary">Index</summary>
+      <ol class="article-index__list">
+        {sections.map((section) => (
+          <li class="article-index__item">
+            <a href={`#${section.slug}`} class="article-index__link">{section.text}</a>
+          </li>
+        ))}
+      </ol>
+    </details>
+  </div>
 )}

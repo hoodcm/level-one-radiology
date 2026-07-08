@@ -34,5 +34,7 @@ npm run lint       # Enforce design tokens (CI-gated)
 
 **Current state:** homepage and article template built (cards link through to full articles), carrying the
 design system — a 6/12/18 grid primitive, self-hosted OFL webfonts, scroll/feature animations, and
-dark-first editorial typography. A growing set of published articles, plus the interactive Case Viewer
-module (PACS-like JPEG image stacks embedded inline in articles). Open tasks live in [TODO.md](TODO.md).
+dark-first editorial typography. A growing set of published articles carrying a recurring in-article
+apparatus (footnote popovers, figure accession, mobile INDEX, section marks), plus the interactive Case
+Viewer module (PACS-like JPEG image stacks embedded inline in articles). Open tasks live in
+[TODO.md](TODO.md).

@@ -1,0 +1,24 @@
+/* ==============================================
+   ARRIVAL WASH — hash-jump feedback. The :target element (TOC-rail click,
+   heading-anchor click, in-text anchor) takes a brief gold wash that fades to
+   transparent, marking where the jump landed. `:target` only — ::target-text
+   styles text-fragment navigation, not hash jumps, and highlight
+   pseudo-elements cannot animate. Reduced motion = no wash (a persistent
+   highlight would misread as <mark>). Disable: comment out the import in
+   main.css.
+   ============================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  .prose :target {
+    animation: l1-arrival-wash var(--wash-duration) var(--ease-out);
+  }
+
+  @keyframes l1-arrival-wash {
+    from {
+      background-color: color-mix(in srgb, var(--color-primary) 25%, transparent);
+    }
+    to {
+      background-color: transparent;
+    }
+  }
+}

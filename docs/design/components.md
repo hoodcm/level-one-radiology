@@ -611,6 +611,26 @@ Uses shadcn/ui `Button` as base. Custom styling applied via Tailwind classes and
 
 ---
 
+## Article apparatus
+
+Recurring in-article delight elements — instrument-grade, CSS + platform primitives, zero new
+client-side JS islands. Each element disables in exactly one labeled place: CSS-only elements by
+commenting out their import line in `src/styles/main.css` ("Article apparatus" block); elements that
+emit markup by a boolean in `src/lib/apparatus.ts` (so disabling never leaves orphaned markup).
+
+| Element | What it does | Files | Disable |
+|---------|--------------|-------|---------|
+| Section break | `hr` renders as a centered crosshair-circle registration mark (the footer's structural grammar) | `src/styles/components/apparatus/section-break.css` | comment out import in `main.css` |
+| Arrival wash | `:target` takes a gold wash that fades ~2s after a hash jump (TOC/anchor clicks); reduced motion → no wash | `src/styles/components/apparatus/arrival-wash.css` | comment out import in `main.css` |
+| Mobile INDEX | `<details>` disclosure TOC under the article header, <80em only, numbered to mirror the section ordinals | `src/components/article/TableOfContents.astro` (variant="index") + `src/styles/components/apparatus/article-index.css` | `apparatus.ts: mobileToc` |
+| More articles | Footer related-reading block: quiet label, the date-neighbor article titles as plain readable links, then "All articles →"; replaces the back-link row (flag off restores it) | `src/pages/articles/[slug].astro` + `src/styles/components/apparatus/read-next.css` | `apparatus.ts: readNext` |
+| Footnote popovers | GFM `[^n]` refs become tap-first popover buttons with a build-time copy of the note; the endnote plate stays as the base layer (no-popover browsers lose only the card); flag off → plain GFM refs and plate (the phantom-heading fix always runs) | `rehypeFootnotePopovers` (`src/lib/markdown-plugins.mjs`, registered in `astro.config.mjs`) + `src/styles/components/apparatus/footnotes.css` | `apparatus.ts: footnotePopovers` |
+| Figure accession | Figures with a console strip get a `FIG NN` cell (CSS counter; decorative images stay unnumbered). In-text refs are authored: `Fig. N` + `#fig-n` anchors (convention in the style gallery) | `src/styles/components/apparatus/figure-accession.css` (counter reset owned by `prose.css`) | comment out import in `main.css` |
+| Readout chips | Inline measurement values (`W80 L40`, `65 HU`) as muted mono hairline chips via `<span class="readout">` — deliberately not code-violet | `src/styles/components/apparatus/readout.css` | comment out import in `main.css` |
+| Ordinal tick-in | Section ordinals tick in on scroll via a pure-CSS `view()` timeline; behind `@supports` + reduced-motion guards. A deliberate second motion grammar beside `[data-reveal]`, kept on live judgment | `src/styles/components/apparatus/ordinal-tick.css` | comment out import in `main.css` |
+
+---
+
 ## High-Touch Modules
 
 ### Comparison Slider

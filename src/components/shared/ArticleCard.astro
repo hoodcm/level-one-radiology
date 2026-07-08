@@ -12,7 +12,6 @@ interface Props {
   title: string;
   description: string;
   publishDate: Date;
-  serial: string;
   primaryTag: PrimaryTag;
   contentType: ContentType;
   slug: string;
@@ -20,7 +19,7 @@ interface Props {
   featured?: boolean;
 }
 
-const { title, description, publishDate, serial, primaryTag, contentType, slug, featured = false } =
+const { title, description, publishDate, primaryTag, contentType, slug, featured = false } =
   Astro.props;
 
 // Frontmatter dates parse as UTC midnight; render in UTC too, or the
@@ -47,7 +46,6 @@ const vtName = `vt-${slug.replace(/[^a-zA-Z0-9-]/g, '-')}`;
   <h3 class="article-card__title" style={`view-transition-name: ${vtName};`}>{title}</h3>
   <p class="article-card__excerpt">{description}</p>
   <div class="article-card__meta">
-    <span>{serial}</span>
     <span>{formattedDate}</span>
   </div>
 </a>

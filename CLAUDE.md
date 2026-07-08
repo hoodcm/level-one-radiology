@@ -62,7 +62,8 @@ src/
     utils.ts              # cn helper etc.
     tags.ts               # Single source: tag/contentType taxonomy → signal variants
     articles.ts           # getArticles(): draft-filtered, date-sorted accessor
-    markdown-plugins.mjs  # remarkCallouts, remarkCaseViewer, rehypeTableScroll, remarkReadingTime
+    apparatus.ts          # Article-apparatus kill-switch flags (markup-emitting elements)
+    markdown-plugins.mjs  # remarkCallouts, remarkCaseViewer, rehypeTableScroll, remarkReadingTime, rehypeFootnotePopovers
     case-shell.mjs        # build-time <case-viewer> shell emitter + ::case validation (shared w/ loader + case:build)
     case-loader.ts        # case-aware content loader (rev-invalidates stale ::case embeds)
   pages/
@@ -78,7 +79,7 @@ src/
   styles/
     tokens/               # colors, typography, spacing, print, fonts-ofl.generated (.css)
     base/                 # global.css, motion.css, print.css
-    components/           # Per-component CSS (homepage, prose, pages)
+    components/           # Per-component CSS (homepage, prose, pages) + apparatus/ (one file per article-apparatus element)
     main.css              # Import manifest
 
 public/

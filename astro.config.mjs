@@ -12,9 +12,11 @@ import {
   remarkCallouts,
   remarkCaseViewer,
   remarkReadingTime,
+  rehypeFootnotePopovers,
   rehypeTableScroll,
 } from './src/lib/markdown-plugins.mjs';
 import { CASE_DIRECTIVE_RE, validateCaseAssets } from './src/lib/case-shell.mjs';
+import { apparatus } from './src/lib/apparatus.ts';
 
 // Every ::case embed in a NON-DRAFT article is validated against disk at
 // build start. remarkCaseViewer validates too, but the content layer caches
@@ -62,6 +64,9 @@ export default defineConfig({
         },
       ],
       [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
+      // Always registered: the phantom-heading fix must run even when the
+      // popover upgrade is switched off (flag off → plain GFM refs + plate).
+      [rehypeFootnotePopovers, { popovers: apparatus.footnotePopovers }],
       rehypeTableScroll,
     ],
   },
