@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.9.2] - 2026-07-11
+
+### Changed
+- **Scrub position now follows the finger 1:1 — the decoded-frontier clamp is retired** on every path (engaged drag, slider, wheel, fullscreen drag/wheel; the slider clamp shipped in 0.9.1, the drag clamp dated to 0.7.0). On iPhone the clamp made the thumb and image visibly lag the finger, which read as breakage; now the counter/thumb track input exactly while the canvas holds the last decoded frame (stall glyph on) and catches up — the store already decodes the current target first, so catch-up is immediate. `clampToFrontier`/`FrameStore.frontier` and their tests removed; plan decision 6's clamp clause reversed in `docs/design/components.md` from live device testing.
+
+### Fixed
+- **Fullscreen tap-out no longer jumps the inline image** — the overlay now repaints the inline viewer to its current frame the moment close begins (new `sync` controller hook), so the CRT collapse never reveals the frame the page froze on at promote.
+- **Contrast chip animates into its locked state on tap** — the half-disk flip transition was scoped inside the `(hover: hover)` block, so touch got an instant snap; the flip now has its own reduced-motion-gated transition on all inputs.
+- **INVERTED window chip no longer stalls on tap** — new `FrameStore.warm(index)` decodes the sibling window's current frame ~300ms after the scrub position settles (skipped under saveData, like fill), and leaving a window keeps its shown frame resident so toggling back is instant.
+
 ## [0.9.1] - 2026-07-11
 
 ### Added

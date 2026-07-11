@@ -6,6 +6,7 @@ first_seen: 2026-07-11
 last_seen: 2026-07-11
 recurrence: 1
 related: [prefer-font-supported-before-transform-hacks, bezier-cannot-express-undershoot-motion]
+assessed: 2026-07-11
 ---
 
 ## Description
@@ -15,3 +16,5 @@ Sizing case-viewer icon stroke-width to match the h2 'H' stem in absolute px (0.
 ## Notes
 
 2026-07-11 — Now documented in the --cv-icon-stroke token comment. Sibling to bezier-cannot-express-undershoot-motion / prefer-font-supported-before-transform-hacks: reaching for a plausible-but-wrong first mechanism in CSS/design math.
+
+2026-07-11 — Janitor: scan flagged this as a merge candidate against both siblings (thin lexical scores, driven by the `related:` list above). Declined both — three distinct lessons in the same "wrong first mechanism" family, not one root cause; the existing `related:` cross-links stay as the connective tissue.

@@ -66,3 +66,13 @@ readout, tap-again-to-release engaged state) plus a new demo article
 the synthetic `dev-synthetic` case, not a real one, so step 15 is still open.
 Remaining scope unchanged (steps 3, 12, 13, 15); all still device-gated,
 none autonomous.
+2026-07-11 live-iPhone-testing session shipped 4 fixes verified on-device:
+scrub now follows the finger 1:1 (decoded-frontier clamp retired on every
+path), fullscreen tap-out no longer jumps the inline image (new `sync`
+controller hook), contrast chip animates into its locked state on tap, and
+the INVERTED window chip no longer stalls (`FrameStore.warm()` sibling
+pre-warm). This is real progress on Step 3 (gesture/tap discrimination) and
+Step 12 (fullscreen device pass) but neither is fully cleared — confirmed
+still `dev-synthetic` in both articles, so Steps 13 (VoiceOver) and 15 (real
+case) remain fully open and 3/12 aren't marked done. Remaining scope
+unchanged (steps 3, 12, 13, 15).

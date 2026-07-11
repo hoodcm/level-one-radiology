@@ -24,7 +24,7 @@
  * chip when non-neutral, double-tap resets while adjusting, resets on close.
  */
 import { iconSvg } from '../../lib/case-icons.mjs';
-import { clampFrame, clampToFrontier, frameForDrag } from './mapping';
+import { clampFrame, frameForDrag } from './mapping';
 import { drawContain, fitCanvas } from './render';
 
 export interface FullscreenController {
@@ -36,7 +36,9 @@ export interface FullscreenController {
   el: HTMLElement; // the <case-viewer>: cv:decoded source + focus return
   bitmap(i: number): ImageBitmap | undefined;
   target(i: number, dir: 1 | -1): void;
-  frontier(from: number, dir: 1 | -1): number;
+  /** Mirror the overlay's frame back onto the inline viewer NOW (close is
+   *  beginning; the collapse must never reveal a stale inline frame). */
+  sync(frame: number): void;
   onClose(finalFrame: number): void;
 }
 
@@ -159,6 +161,11 @@ export class CaseFullscreen {
   requestClose(): void {
     if (!this.#open || this.#closing) return;
     this.#closing = true;
+    // The inline viewer behind the scrim still shows the frame it froze on
+    // at promote — repaint it to the overlay's frame BEFORE the collapse
+    // starts, so the reveal is seamless (the back-gesture popstate path
+    // needs no sync: teardown and onClose run in one task, one paint).
+    this.#c.sync(this.#frame);
     // CRT switch-off beat before the real close (authored motion — reduced
     // motion closes immediately). A direct back-gesture popstate still tears
     // down instantly: system navigation is never animated against.
@@ -307,8 +314,7 @@ export class CaseFullscreen {
           this.#wheelSteps = 0;
           this.#wheelArmed = false;
           if (step === 0 || !this.#open) return;
-          const dir = Math.sign(step) as 1 | -1;
-          this.#setFrame(clampToFrontier(this.#frame + step, this.#c.frontier(this.#frame, dir), dir));
+          this.#setFrame(this.#frame + step);
         });
       },
       { signal, passive: false }
@@ -419,11 +425,7 @@ export class CaseFullscreen {
       // Fit: one finger scrubs. Vertical is the PACS axis; horizontal rides
       // along so the inline muscle memory transfers.
       this.#dragPx += dx + dy;
-      this.#setFrame(
-        frameForDrag(this.#dragStartFrame, this.#dragPx, this.#c.ppf, this.#c.frames, this.#frame, (f, d) =>
-          this.#c.frontier(f, d)
-        )
-      );
+      this.#setFrame(frameForDrag(this.#dragStartFrame, this.#dragPx, this.#c.ppf, this.#c.frames));
     }
   }
 

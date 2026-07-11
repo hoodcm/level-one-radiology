@@ -1,11 +1,14 @@
 /**
  * mapping.ts — pure scrub-position math for the case viewer. DOM-free.
  *
- * The gesture contract (plan decisions 6 + locked spike knob):
+ * The gesture contract (plan decision 6, frontier clamp retired 2026-07-11):
  *   - direct 1:1 px→frame mapping, integer snap, zero momentum
  *   - pxPerFrame = clamp(containerWidth / frameCount, PPF_MIN, PPF_MAX)
- *   - scrub position clamps to the decoded frontier, so the counter can
- *     never assert a slice the screen isn't showing
+ *   - the scrub position follows input exactly — it is never held back by
+ *     decode. The canvas shows the scrubbed frame when resident and holds
+ *     the last decoded one (stall glyph on) while decode catches up; the
+ *     old decoded-frontier clamp made the thumb visibly lag the finger on
+ *     iPhone, which read as breakage, not weight.
  */
 
 export const PPF_MIN = 8;
@@ -26,31 +29,7 @@ export function scrubTarget(startFrame: number, deltaPx: number, ppf: number): n
   return startFrame + deltaPx / ppf;
 }
 
-/**
- * Clamp a scrub target to the decoded frontier in the direction of travel.
- * The frontier is measured from the CURRENT frame (which the store protects
- * from eviction), so scrub never outruns decode in either direction —
- * outrunning it holds at the last decoded frame ("slight weight") and motion
- * resumes as decode catches up. The counter can never assert a slice the
- * screen isn't showing.
- */
-export function clampToFrontier(target: number, frontier: number, dir: 1 | -1): number {
-  return dir === 1 ? Math.min(target, frontier) : Math.max(target, frontier);
-}
-
-/** Full pipeline: drag delta → renderable frame index. `frontier` resolves
- *  the store's contiguous-decoded reach from the current frame toward the
- *  travel direction (eviction-protected); it is queried once, after the
- *  direction of travel is known. */
-export function frameForDrag(
-  startFrame: number,
-  deltaPx: number,
-  ppf: number,
-  frames: number,
-  currentFrame: number,
-  frontier: (frame: number, dir: 1 | -1) => number
-): number {
-  const raw = clampFrame(scrubTarget(startFrame, deltaPx, ppf), frames);
-  const dir: 1 | -1 = raw >= currentFrame ? 1 : -1;
-  return clampFrame(clampToFrontier(raw, frontier(currentFrame, dir), dir), frames);
+/** Full pipeline: drag delta → frame index, 1:1 with the finger. */
+export function frameForDrag(startFrame: number, deltaPx: number, ppf: number, frames: number): number {
+  return clampFrame(scrubTarget(startFrame, deltaPx, ppf), frames);
 }

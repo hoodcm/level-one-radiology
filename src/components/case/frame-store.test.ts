@@ -171,18 +171,19 @@ describe('FrameStore identity guard', () => {
   });
 });
 
-describe('FrameStore frontier', () => {
-  it('reports the furthest contiguous decoded index and stops at gaps', async () => {
-    const d = deferredDecoder();
-    const store = new FrameStore<FakeBitmap>({ frames: 48, url, decode: d.decode, ahead: 6, behind: 0, concurrency: 6 });
-    store.setTarget(1, 1);
-    for (const i of [1, 2, 3, 5]) d.resolve(`frame/${i}`); // 4 stays pending
+describe('FrameStore warm', () => {
+  it('decodes a single frame outside the target window; repeats and out-of-range are no-ops', async () => {
+    const { decode } = instantDecoder();
+    const store = new FrameStore<FakeBitmap>({ frames: 48, url, decode, ahead: 0, behind: 0 });
+    store.warm(24);
     await tick();
-    expect(store.frontier(1, 1)).toBe(3);
-    d.resolve('frame/4');
+    expect(store.has(24)).toBe(true);
+    expect(store.size).toBe(1); // one frame, no window pumped around it
+    store.warm(24); // resident → no-op
+    store.warm(0);
+    store.warm(49);
     await tick();
-    expect(store.frontier(1, 1)).toBeGreaterThanOrEqual(5);
-    expect(store.frontier(48, 1)).toBe(48); // undecoded start → itself
+    expect(store.size).toBe(1);
   });
 });
 

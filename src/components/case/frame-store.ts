@@ -10,8 +10,8 @@
  *     ahead of travel than behind), `concurrency` fetches in flight
  *   - a generation token discards stale decode resolutions: a slow frame
  *     resolving after flush()/dispose() is closed, never stored
- *   - frontier(from, dir): furthest contiguously-decoded index from `from`,
- *     the clamp mapping.ts applies so scrub never outruns decode
+ *   - warm(index): decode one frame outside the target window (sibling-
+ *     window pre-warm) — queued behind the wanted set, capacity rules apply
  *   - prefetch (background fill) warms the HTTP cache only — it never holds
  *     bitmaps, so the residency bound survives a full-stack fill
  */
@@ -86,12 +86,14 @@ export class FrameStore<B extends Closable> {
     return bmp;
   }
 
-  /** Furthest contiguously-decoded index from `from` (inclusive) in `dir`. */
-  frontier(from: number, dir: 1 | -1): number {
-    if (!this.#resident.has(from)) return from;
-    let i = from;
-    while (i + dir >= 1 && i + dir <= this.frames && this.#resident.has(i + dir)) i += dir;
-    return i;
+  /** Decode a single frame without moving the target window — the sibling-
+   *  window pre-warm. Queued after anything setTarget wants; a later
+   *  setTarget recomputes the queue and may drop an un-pumped warm. */
+  warm(index: number): void {
+    if (this.#disposed || index < 1 || index > this.frames) return;
+    if (this.#resident.has(index) || this.#inflight.has(index) || this.#queue.includes(index)) return;
+    this.#queue.push(index);
+    this.#pump();
   }
 
   /**

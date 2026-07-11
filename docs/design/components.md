@@ -645,7 +645,7 @@ article pages, and the design tokens cascade straight into it.
   build (render-time check + `astro:build:start` integration in `astro.config.mjs`);
   `src/lib/case-loader.ts` re-renders embedding articles when a case's manifest `rev` moves.
 - **Runtime**: `src/components/case/case-viewer.ts` upgrades the shell in place. Pure logic lives
-  in DOM-free, vitest-covered modules: `mapping.ts` (px→frame, frontier clamp) and
+  in DOM-free, vitest-covered modules: `mapping.ts` (px→frame) and
   `frame-store.ts` (ImageBitmap LRU with explicit `close()`, generation tokens,
   direction-weighted decode-ahead). `fullscreen.ts` owns the overlay: visualViewport sizing,
   popstate as the single close authority, pinch zoom, TUNE filter drag.
@@ -664,9 +664,10 @@ carries the affordance once the boot settles and retires on first engagement. **
 holds inert and semi-greyed behind a centered `ACTIVATE` button — no frame decode, no network, no
 boot HUD — until the reader taps it; the tap clears the veil and drives the boot (warming the first
 frame), then the tap-to-activate flow above takes over. Direct
-1:1 mapping, integer snap, zero momentum; the scrub position clamps to the decoded frontier so the
-counter never disagrees with the image; arriving at IM 1/N ticks the brackets inward once — the
-end-of-stack stop. Window chips switch pre-baked window exports **preserving the slice index
+1:1 mapping, integer snap, zero momentum; the scrub position follows the finger exactly — the canvas
+holds the last decoded frame (stall glyph on the counter) while decode catches up, never the reverse
+(the original decoded-frontier clamp read as a laggy scrubber on iPhone and was retired 2026-07-11);
+arriving at IM 1/N ticks the brackets inward once — the end-of-stack stop. Window chips switch pre-baked window exports **preserving the slice index
 exactly** (that index is the pedagogy) and carry the full radio keyboard pattern (roving tabindex,
 arrows); series tabs reset to the series' start frame. TUNE (fullscreen only) is an honest render
 adjustment — CSS filters with floors, reset on close — never labeled W/L. Desktop parity: wheel

@@ -6,7 +6,7 @@ first_seen: 2026-07-08
 last_seen: 2026-07-08
 recurrence: 1
 related: [prefer-font-supported-before-transform-hacks]
-assessed: 2026-07-08
+assessed: 2026-07-11
 ---
 
 ## Description
@@ -16,3 +16,5 @@ Asked for a recoil/settle-back motion (travel to 100%, bounce back to ~70%, then
 ## Notes
 
 2026-07-08 — Remediation: any non-monotonic motion (undershoot, multi-stop, hold-then-continue) needs @keyframes, not a bezier easing curve. Beziers are monotonic in position — reserve them for single-direction ease-in/out. The keyframe form also composes with a held state cleanly (final frame == the state's resting transform).
+
+2026-07-11 — Janitor: scan flagged a merge candidate against `icon-stroke-ratio-not-px` (score 0.0, `related-edge` from that item's own `related:` list). Declined — distinct lesson (bezier monotonicity vs. absolute-px-vs-ratio sizing); stays a cross-linked sibling, not a merge.

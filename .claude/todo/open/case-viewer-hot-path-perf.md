@@ -38,8 +38,11 @@ Surfaced by a parallel session's case-viewer sweep — real bugs/gaps, not
 hot-path perf, but same files/workstream so kept as one item rather than a
 scatter of siblings:
 
-- Fullscreen slider lacks the inline viewer's stall indicator + frontier
-  clamp — the counter can assert a slice that isn't actually shown yet.
+- ~~Fullscreen slider lacks the inline viewer's stall indicator + frontier
+  clamp~~ — MOOT: the decoded-frontier clamp was retired entirely (every
+  path) 2026-07-11 on live-iPhone-testing evidence that it made the thumb lag
+  the finger; there is no more frontier to fall out of sync with (see
+  `build-case-viewer-module` notes + CHANGELOG `[Unreleased]`).
 - Prefetch fan-out is uncapped (~40 fetches) mid-scrub; needs a ceiling.
 - A queued wheel rAF can land after disengage (stale-state write).
 - No `inert` behind the fullscreen overlay; no keyboard zoom/TUNE path.
@@ -58,3 +61,11 @@ path (`case-viewer.ts` `#slider` `input` handler) is now frontier-clamped,
 matching the pointer-drag path. The fullscreen slider's own stall
 indicator/frontier clamp — plus the other four bullets (prefetch cap, wheel
 rAF race, inert/keyboard, warm-decode) — remain open.
+2026-07-11 (later same day, live-iPhone-testing session) reversed the above:
+the decoded-frontier clamp is retired on every path (thumb/counter now track
+input exactly, canvas catches up). This moots the "fullscreen slider lacks
+frontier clamp" bullet outright rather than closing it — struck above. Four
+bullets remain open: prefetch fan-out cap, wheel rAF race, inert/keyboard gap,
+warm-decode-on-first-scrub (distinct from the new `FrameStore.warm()`
+sibling-window pre-warm shipped this session, which serves window-toggle, not
+first engage).

@@ -511,6 +511,17 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   }
 }
 
+/* The mode flip ANIMATES into its locked state on every input — the block
+   above is (hover: hover)-scoped, so on touch the aria-pressed flip snapped
+   with zero travel; the lock must be seen arriving. Placed after that block
+   so this one clock owns the half-disk everywhere (same specificity, later
+   wins). Authored motion — reduced motion places the flip instantly. */
+@media (prefers-reduced-motion: no-preference) {
+  .cv-fs__chip .cv-i-half {
+    transition: transform 0.2s var(--ease-out);
+  }
+}
+
 /* --- Control bar: restyled native range + fullscreen button --- */
 .cv__bar {
   display: flex;

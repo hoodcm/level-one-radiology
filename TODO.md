@@ -43,7 +43,7 @@ _as of 2026-07-11 · 3 streams startable · 2 now/next items untyped_
   LinkedIn/X placeholder links were removed from the footer this session (the bare-domain hrefs were dead links). Restore once Michael supplies real profile URLs — a one-line change in `src/components/layout/Footer.astro`; a comment in the file marks the spot ("Connect" column). Blocked on Michael supplying the URLs. Done: real LinkedIn/X links render in the footer Connect column.
   ↳ links: src/components/layout/Footer.astro
 - **Case-viewer hot-path perf items deferred from the /simplify pass**
-  Two remaining efficiency/altitude findings from the case-viewer review, judged real but profiling-gated (they change hot-path behavior that only the iPhone session can validate): 1. `#setFrame` conflates advance/retarget/repaint; splitting an explicit `#repaint()` would let it early-out on unchanged frame. The repaint-on-unchanged-frame dependency is pinned by a comment at #setFrame for now; do the split only with device profiling in hand. 2. `get #store` re-derives `` `${series.key}/${win.key}` `` + Map.get ~4× per pointermove. Negligible in isolation — bundle with the above only if profiling shows it matters (a cached field must be invalidated on window/series switch). (The third — layout-read/write interleaving in the scrub path — was applied in the 2026-07-07 polish pass: stage dimensions are now cached by the inline ResizeObserver and the fullscreen viewport handler, so the per-move handlers perform zero layout reads. Note for the device pass: CDP LayoutCount stays ~1/frame either way because the counter-text update schedules a normal render-phase layout — the win is the removed *synchronous* mid-handler reflow, which that metric can't isolate.) Done: apply-or-close each with an on-device profiling judgment during (or after) the device-gated case-viewer pass. ## Additional runtime-robustness scope (folded in, same workstream) Surfaced by a parallel session's case-viewer sweep — real bugs/gaps, not hot-path perf, but same files/workstream so kept as one item rather than a scatter of siblings: - Fullscreen slider lacks the inline viewer's stall indicator + frontier clamp — the counter can assert a slice that isn't actually shown yet. - Prefetch fan-out is uncapped (~40 fetches) mid-scrub; needs a ceiling. - A queued wheel rAF can land after disengage (stale-state write). - No `inert` behind the fullscreen overlay; no keyboard zoom/TUNE path. - No warm-decode-on-engage for first-scrub feel (cold first frame). Done (this scope): each bug fixed or explicitly closed with a written rationale.
+  Two remaining efficiency/altitude findings from the case-viewer review, judged real but profiling-gated (they change hot-path behavior that only the iPhone session can validate): 1. `#setFrame` conflates advance/retarget/repaint; splitting an explicit `#repaint()` would let it early-out on unchanged frame. The repaint-on-unchanged-frame dependency is pinned by a comment at #setFrame for now; do the split only with device profiling in hand. 2. `get #store` re-derives `` `${series.key}/${win.key}` `` + Map.get ~4× per pointermove. Negligible in isolation — bundle with the above only if profiling shows it matters (a cached field must be invalidated on window/series switch). (The third — layout-read/write interleaving in the scrub path — was applied in the 2026-07-07 polish pass: stage dimensions are now cached by the inline ResizeObserver and the fullscreen viewport handler, so the per-move handlers perform zero layout reads. Note for the device pass: CDP LayoutCount stays ~1/frame either way because the counter-text update schedules a normal render-phase layout — the win is the removed *synchronous* mid-handler reflow, which that metric can't isolate.) Done: apply-or-close each with an on-device profiling judgment during (or after) the device-gated case-viewer pass. ## Additional runtime-robustness scope (folded in, same workstream) Surfaced by a parallel session's case-viewer sweep — real bugs/gaps, not hot-path perf, but same files/workstream so kept as one item rather than a scatter of siblings: - ~~Fullscreen slider lacks the inline viewer's stall indicator + frontier clamp~~ — MOOT: the decoded-frontier clamp was retired entirely (every path) 2026-07-11 on live-iPhone-testing evidence that it made the thumb lag the finger; there is no more frontier to fall out of sync with (see `build-case-viewer-module` notes + CHANGELOG `[Unreleased]`). - Prefetch fan-out is uncapped (~40 fetches) mid-scrub; needs a ceiling. - A queued wheel rAF can land after disengage (stale-state write). - No `inert` behind the fullscreen overlay; no keyboard zoom/TUNE path. - No warm-decode-on-engage for first-scrub feel (cold first frame). Done (this scope): each bug fixed or explicitly closed with a written rationale.
   ↳ links: src/components/case/case-viewer.ts, src/components/case/fullscreen.ts
 - **Replace the React newsletter island with a static form + vanilla JS**
   The newsletter form is the site's only React island — ~72KB gzipped plus hydration cost, all to power one email field. Surfaced during the site-wide sweep as the single highest-leverage perf win available: a static HTML form + ~20 lines of vanilla JS (POST to Buttondown, swap in a success/error message) reproduces the same behavior and lets `@astrojs/react` be dropped from the dependency tree entirely (no more React runtime anywhere on the site). Touches the same component as `newsletter-buttondown-account-missing` — sequence with that item in mind (fixing the account first makes the rewrite testable end-to-end; either order is workable). Done: `NewsletterSignup` is a plain Astro component with vanilla JS, no React runtime ships to the client, and `@astrojs/react` is removed from package.json.
@@ -80,17 +80,14 @@ _as of 2026-07-11 · 3 streams startable · 2 now/next items untyped_
 <!-- todo:friction:start -->
 
 ## Friction worth addressing
-_Refreshed 2026-07-08 by end-session janitor · project store_
+_Refreshed 2026-07-11 by end-session janitor · project store_
 
-**Quick fixes (5)** — apply directly:
-- file-move-crashes-running-dev-server — a bulk file/folder move under a running `npm run dev` crashed it with a stale-path ENOENT (no actual broken ref) → add to CLAUDE.md Technical Gotchas: after a large `git mv`, restart `npm run dev` and confirm health with `npm run build`, not the dev-server overlay.
-- pull-then-install-before-dev — a cross-machine pull that added a `package.json` dep left `npm run dev` failing with module-not-found → add to CLAUDE.md Technical Gotchas: run `npm install` after any cross-machine pull touching `package.json`.
-- astro-frontmatter-regex-compiler-break — a regex literal with `\/\/` in `.astro` frontmatter broke the esbuild compile with a misleading `Unexpected "export"` → add to CLAUDE.md Technical Gotchas: avoid `\/\/` regex in `.astro` frontmatter; adjudicate single-file `.astro` diagnostics with `npm run build`.
-- prefer-font-supported-before-transform-hacks — reached for `transform: scaleX()` before checking the font's native variable axes → add to docs/design/reasoning/typography.md: check native axes / OpenType features before transform hacks.
-- bezier-cannot-express-undershoot-motion — reached for a cubic-bezier for a recoil/undershoot motion (beziers are monotonic) → add to docs/design/reasoning/motion.md: non-monotonic motion needs `@keyframes` with per-beat timing, not a bezier.
+**Quick fixes (2)** — apply directly:
+- prefer-font-supported-before-transform-hacks — encode "native font axes before transform hacks" as a stated typography ordering principle → add a numbered principle to `docs/design/reasoning/typography.md` (check native variable axes / OpenType features before transforms; flag the tradeoff when no native axis covers the need)
+- pull-then-install-before-dev — document the two-Mac pull-then-install gotcha → add to CLAUDE.md (Session Workflow or Technical Gotchas): after a cross-machine git pull touching package.json, run `npm install` before `npm run dev`, else stale node_modules surfaces as `Cannot find module`
 
 **Needs design (1)**:
-- shell-module-edits-stale-content-cache — editing the build-time shell (`case-shell.mjs`/`case-icons.mjs`) doesn't invalidate Astro's content-layer cache, so markup/icon changes stay invisible until a manual cache clear + dev restart → /hook-design .claude/friction/open/2026-07-08-shell-module-edits-stale-content-cache.md
+- shell-module-edits-stale-content-cache — editing `src/lib/case-shell.mjs` / `case-icons.mjs` doesn't invalidate the Astro content-layer cache, so icon/markup changes stay invisible until a manual `rm -rf .astro` + restart (recurrence 2, hit 4× one session) → /hook-design .claude/friction/open/2026-07-08-shell-module-edits-stale-content-cache.md
 
 <!-- todo:friction:end -->
 
@@ -100,24 +97,22 @@ _Refreshed 2026-07-08 by end-session janitor · project store_
 
 _Last session: 2026-07-11_
 
-Level One Radiology — an independent emergency-radiology publication (Astro + framework-free custom elements, dark-first, token-driven).
+Level One Radiology — an independent emergency-radiology publication website (Astro + React islands, dark-first, token-driven design system).
 
 **Accomplished:**
-- Unified the case-viewer buttons into one design system and added per-icon hover micro-motion — see CHANGELOG `[Unreleased]` → Added/Changed.
-- Replaced the fullscreen numeric TUNE readout with a live window/level X-Y indicator pad; icon set reworked (scan-eye/x/maximize-2).
-- Engaged scrub now releases by tapping the image again (inline minimize button removed).
-- Added a homepage "Latest" section and a thin "Using the Case Viewer" demo article (featured lead).
-- Fixed the slider stall-dot storm (frontier clamp), the iOS footnote-arrow emoji substitution (U+FE0E pin), and the W/L pad open delay — see CHANGELOG `[Unreleased]` → Fixed.
+- Retired the decoded-frontier scrub clamp on every path (drag, slider, wheel, fullscreen) so the scrubber follows the finger 1:1 — fixes the on-iPhone lag regression (see CHANGELOG [Unreleased]).
+- Fixed the fullscreen tap-out frame jump, the contrast chip's missing tap animation, and the INVERTED window-chip stall (sibling pre-warm) — all case-viewer polish from live-iPhone testing.
+- Verified end-to-end: vitest 32/32, `astro check` clean, headless smoke test drove activate → scrub → window-switch → fullscreen round-trip with no console errors.
 
 **Start by reading:** TODO.md, CONTEXT.md, CHANGELOG.md
 
-**Priorities:** see the TODO.md worklist `## Start here` digest and the `## Now` / `## Next` bands.
+**Priorities:**
+- See the worklist `## Start here` digest and the `## Now` / `## Next` bands in TODO.md.
 
-**Time-sensitive:** see the TODO.md `## Time-sensitive` view (domain/DNS + font-licensing questions).
+**Time-sensitive:**
+- See the worklist `## Time-sensitive` view in TODO.md.
 
 **Unverified assumptions:**
-- The footnote backref arrow now renders as a text glyph (not the blue emoji) on real iOS Safari — VS15 is the standard mechanism, but only an on-device look confirms it.
-- The slider frontier-clamp actually quiets the stall-dot storm on a real iPhone under network decode — verified in logic, not yet on device.
-- The W/L pad's vertical sense (up = brighter) matches Michael's PACS muscle memory — a one-line flip in `fullscreen.ts` if it reads inverted.
+- The scrub-feel fix is confirmed only by contract (the smoke test proves the frame tracks input 1:1 in one event), not by actual thumb-feel on device — confirm by testing the published page on iPhone.
 
 <!-- todo:continuation:end -->

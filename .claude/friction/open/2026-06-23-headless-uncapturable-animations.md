@@ -6,7 +6,8 @@ first_seen: 2026-06-23
 last_seen: 2026-06-23
 recurrence: 1
 related: [cloudflare-defeats-webfetch-and-headless-cft]
-assessed: 2026-07-07
+keep_open: true
+assessed: 2026-07-11
 ---
 
 ## Description
@@ -16,3 +17,5 @@ A subset of the design-reference animations can't be captured as GIFs in a headl
 2026-06-23 — Captured 11 GIFs successfully (CSS transitions/keyframes + scroll, via slowdown + frame-burst). The above were attempted and dropped; their text descriptions in the DESIGN docs stand. -> Consider (if visuals for these are ever wanted): screen-record a real (non-headless) browser session and convert to GIF, or capture the cursor/accordion with a real pointer device. Likely a permanent headless limitation for the GSAP ones — will auto-decay in 90d if it never recurs, which is fine.
 
 2026-06-23 — Janitor: `related:` repointed from `headless-capture-cloudflare-challenge` to `cloudflare-defeats-webfetch-and-headless-cft` after that adjacent item was promoted project→global and merged there; the old project-local id no longer exists in this store. No other change — this item carries a deliberate keep-open / 90d-observation-window note and is left open.
+
+2026-07-11 — Janitor: formalized the existing keep-open hint into the structural `keep_open: true` field (was flagged `keep_open_unclassified`) — the note above already established a clear, deliberate hold; no change to status or the observation window.

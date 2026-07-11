@@ -22,7 +22,7 @@
 import { apparatus } from '../../lib/apparatus';
 import { FrameStore } from './frame-store';
 import { CaseFullscreen } from './fullscreen';
-import { clampFrame, clampToFrontier, frameForDrag, pxPerFrame } from './mapping';
+import { clampFrame, frameForDrag, pxPerFrame } from './mapping';
 import { drawContain, fitCanvas } from './render';
 
 interface WindowSpec {
@@ -55,6 +55,7 @@ type State = 'rest' | 'scrub-h' | 'engaged' | 'fullscreen';
 const AXIS_RACE_PX = 10;
 const EDGE_DEAD_PX = 28;
 const FILL_AFTER_DISTINCT = 8;
+const WARM_SIBLINGS_MS = 300;
 const WHEEL_STEP_CAP = 3;
 const RETRY_MS = [1000, 2000, 4000];
 
@@ -98,6 +99,7 @@ export class CaseViewerElement extends HTMLElement {
   #filled = new Set<string>();
   #retryTimer = 0;
   #retryCount = 0;
+  #warmTimer = 0;
 
   // Pointer tracking
   #active = new Map<number, { x: number; y: number }>();
@@ -150,6 +152,7 @@ export class CaseViewerElement extends HTMLElement {
     this.#bootIo?.disconnect();
     this.#ro?.disconnect();
     clearTimeout(this.#retryTimer);
+    clearTimeout(this.#warmTimer);
     for (const store of this.#stores.values()) store.dispose();
     this.#stores.clear();
   }
@@ -292,12 +295,30 @@ export class CaseViewerElement extends HTMLElement {
       this.#draw();
       this.#stalled(false);
     } else {
-      // Hold the last good frame; counter follows only what the screen shows
-      // on the drag path (frontier pre-clamp), stall glyph covers the rest.
+      // Canvas holds the last good frame while decode catches up (target
+      // decodes first, so it lands next); counter and thumb stay on the
+      // scrub position — 1:1 with the finger, the stall glyph says the
+      // screen is behind. (The old frontier clamp held the position back
+      // instead, which read as a laggy scrubber on iPhone.)
       this.#stalled(true);
-      if (!viaDrag) this.#syncReadout();
+      this.#syncReadout();
     }
     this.#maybeFill();
+    this.#scheduleSiblingWarm();
+  }
+
+  /** Sibling-window pre-warm: shortly after the scrub position settles,
+   *  decode THIS frame in the series' other windows so a window-chip tap
+   *  swaps images instantly — cold, the tap sat on a visible fetch+decode
+   *  stall. One frame per sibling; skipped under saveData, like fill(). */
+  #scheduleSiblingWarm(): void {
+    clearTimeout(this.#warmTimer);
+    this.#warmTimer = window.setTimeout(() => {
+      if (this.#pendingBoot || !this.#near || supportsSaveData()) return;
+      this.series.windows.forEach((_, i) => {
+        if (i !== this.#windowIdx) this.#storeFor(this.#seriesIdx, i).warm(this.#frame);
+      });
+    }, WARM_SIBLINGS_MS);
   }
 
   /** Stack-edge acknowledgment: one inward bracket tick when a drag/wheel
@@ -448,9 +469,7 @@ export class CaseViewerElement extends HTMLElement {
           this.#wheelSteps = 0;
           this.#wheelArmed = false;
           if (step === 0) return;
-          const dir = Math.sign(step) as 1 | -1;
-          const frontier = this.#store.frontier(this.#frame, dir);
-          this.#setFrame(clampToFrontier(this.#frame + step, frontier, dir), true);
+          this.#setFrame(this.#frame + step, true);
         });
       },
       { signal: this.#wheelAbort.signal, passive: false }
@@ -515,9 +534,6 @@ export class CaseViewerElement extends HTMLElement {
     // Slider is the semantic scrubber (VO-adjustable). PageUp/Down = ±5.
     // Armed guard: snap back rather than decode — every control below waits
     // behind the ACTIVATE gate.
-    // Frontier-clamped like the drag/wheel paths: a fast slider sweep must
-    // never outrun decode into a stall storm — the shown frame advances only
-    // as far as decoded frames exist, and #syncReadout snaps the thumb back.
     this.#slider.addEventListener(
       'input',
       () => {
@@ -525,10 +541,7 @@ export class CaseViewerElement extends HTMLElement {
           this.#slider.value = String(this.#frame);
           return;
         }
-        const target = Number(this.#slider.value);
-        const dir: 1 | -1 = target >= this.#frame ? 1 : -1;
-        const frontier = this.#store.frontier(this.#frame, dir);
-        this.#setFrame(clampToFrontier(target, frontier, dir), true);
+        this.#setFrame(Number(this.#slider.value), false);
       },
       { signal }
     );
@@ -625,7 +638,9 @@ export class CaseViewerElement extends HTMLElement {
       el: this,
       bitmap: (i) => this.#store.get(i),
       target: (i, dir) => this.#store.setTarget(i, dir),
-      frontier: (from, dir) => this.#store.frontier(from, dir),
+      // Pre-paints the inline canvas the moment close begins, so the CRT
+      // collapse never reveals the stale frame the page froze on at promote.
+      sync: (i) => this.#setFrame(i, false),
       onClose: (finalFrame) => {
         // Closing returns to rest, never engaged; the slice position carries
         // back so the reader resumes where they left the exam.
@@ -725,12 +740,7 @@ export class CaseViewerElement extends HTMLElement {
   }
 
   #dragScrub(): void {
-    this.#setFrame(
-      frameForDrag(this.#dragStartFrame, this.#dragPx, this.#ppf(), this.series.frames, this.#frame, (f, d) =>
-        this.#store.frontier(f, d)
-      ),
-      true
-    );
+    this.#setFrame(frameForDrag(this.#dragStartFrame, this.#dragPx, this.#ppf(), this.series.frames), true);
   }
 
   #pointerEnd(e: PointerEvent): void {
@@ -761,8 +771,9 @@ export class CaseViewerElement extends HTMLElement {
     const idx = this.series.windows.findIndex((w) => w.key === key);
     if (idx === -1 || idx === this.#windowIdx) return;
     // Free the outgoing window's bitmaps — the LRU bound is global, so a store
-    // we leave must not keep its 12 resident (revisit-safe: flush, not dispose).
-    this.#store.flush();
+    // we leave must not keep its 12 resident (revisit-safe: flush, not
+    // dispose). The shown frame stays: toggling straight back is instant.
+    this.#store.flush([this.#frame]);
     this.#windowIdx = idx;
     this.querySelector('[data-cv-window-label]')!.textContent = this.window_.label;
     this.querySelectorAll<HTMLElement>('[data-cv-window]').forEach((b) =>
