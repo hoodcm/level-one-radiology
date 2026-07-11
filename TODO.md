@@ -5,7 +5,7 @@ Actionable tasks and open questions. Check at session start, update frequently.
 <!-- todo:worklist:start -->
 
 ## Start here
-_as of 2026-07-08 · 3 streams startable · 2 now/next items untyped_
+_as of 2026-07-11 · 3 streams startable · 2 now/next items untyped_
 
 **Decisions waiting (⚖): 8** — Judge this session's visual tuning on screen · Reconsider display/body serif if text halation persists · Remove or gate the unused data-reveal motion system · Retire legacy font payload (Utopia/Eurostile/Lab Grotesque) and re-subset Newsreader · Split primary-CTA gold from caution into distinct tokens if they conflict · Consider thin Scrib3-style gutters for full-bleed image spans · +2 more
 
@@ -98,21 +98,26 @@ _Refreshed 2026-07-08 by end-session janitor · project store_
 
 ## Continuation
 
-_Last session: 2026-07-08_
+_Last session: 2026-07-11_
+
+Level One Radiology — an independent emergency-radiology publication (Astro + framework-free custom elements, dark-first, token-driven).
 
 **Accomplished:**
-- Case-viewer tap-to-boot gate: an ACTIVATE (Lucide square-power) button holds the viewer inert and fully greyed until tapped — no decode, boot, or network until then (CHANGELOG `[Unreleased]` → Added).
-- Fullscreen now plays the beta-site CRT switch-on/off transition (dwell → spring → overshoot → settle; half-duration collapse on close) with a scrim field + ivory phosphor beam, and went overlay-only (native Fullscreen API dropped — it escalated to the host window in embedded browsers).
-- Adopted Lucide as the icon library (square-power / minimize / scan-eye / contrast), inlined via `src/lib/case-icons.mjs`; subtle `scale(1.05)` icon hover.
-- Added `npm run check` (astro check) and cleared every pre-existing diagnostic it surfaced; `npm test`, `npm run lint`, and `npm run check` all green.
+- Unified the case-viewer buttons into one design system and added per-icon hover micro-motion — see CHANGELOG `[Unreleased]` → Added/Changed.
+- Replaced the fullscreen numeric TUNE readout with a live window/level X-Y indicator pad; icon set reworked (scan-eye/x/maximize-2).
+- Engaged scrub now releases by tapping the image again (inline minimize button removed).
+- Added a homepage "Latest" section and a thin "Using the Case Viewer" demo article (featured lead).
+- Fixed the slider stall-dot storm (frontier clamp), the iOS footnote-arrow emoji substitution (U+FE0E pin), and the W/L pad open delay — see CHANGELOG `[Unreleased]` → Fixed.
 
 **Start by reading:** TODO.md, CONTEXT.md, CHANGELOG.md
 
-**Priorities:** see TODO.md `## Start here` and the `## Now` / `## Next` bands — the case-viewer module is the live workstream (its device-gated steps still need a real-hardware pass), and the icon/boot polish added another `0.15s` literal to the duplicated-style-literals straggler.
+**Priorities:** see the TODO.md worklist `## Start here` digest and the `## Now` / `## Next` bands.
 
-**Time-sensitive:** see TODO.md `## Time-sensitive` (nothing added this session).
+**Time-sensitive:** see the TODO.md `## Time-sensitive` view (domain/DNS + font-licensing questions).
 
 **Unverified assumptions:**
-- The CRT fullscreen choreography and the tap-to-boot activate gesture were exercised only in the VS Code preview + headless Playwright; real-device touch behavior (finger activate-tap discrimination, CRT motion on-device) is unconfirmed — a phone/tablet pass would confirm.
+- The footnote backref arrow now renders as a text glyph (not the blue emoji) on real iOS Safari — VS15 is the standard mechanism, but only an on-device look confirms it.
+- The slider frontier-clamp actually quiets the stall-dot storm on a real iPhone under network decode — verified in logic, not yet on device.
+- The W/L pad's vertical sense (up = brighter) matches Michael's PACS muscle memory — a one-line flip in `fullscreen.ts` if it reads inverted.
 
 <!-- todo:continuation:end -->

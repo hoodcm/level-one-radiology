@@ -373,7 +373,7 @@
   margin-bottom: var(--space-2);
 }
 
-/* Title: SANS (Lab Grotesque) — structural voice, warm-white ink. */
+/* Title: SANS (the --ff-body face) — structural voice, warm-white ink. */
 .article-card__title {
   font-family: var(--ff-body);
   font-size: var(--fz-card-title);
@@ -450,7 +450,7 @@
   gap: var(--space-1);
 }
 
-/* Privacy line rides the body voice (Lab Grotesque), not mono — the hero's
+/* Privacy line rides the body voice (--ff-body), not mono — the hero's
    reading text stays one family. Mono is reserved for article metadata. */
 .newsletter-inline__privacy {
   font-family: var(--ff-body);
@@ -889,21 +889,43 @@
   }
 }
 
-/* --- Featured Section --- */
+/* --- Featured + Latest sections — one shared section shell and header voice.
+   Featured is the curated ground (bg-primary band); Latest sits on the page
+   ground below it, the two separated by their headers and section rhythm. --- */
 .featured-section {
   background: var(--color-bg-primary);
   padding: var(--section-spacer) 0;
 }
+.latest-section {
+  padding: var(--section-spacer) 0;
+}
 
-.featured-section__header {
+.featured-section__header,
+.latest-section__header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   margin-bottom: var(--space-4);
 }
 
-/* "Featured" label: Eurostile extended, larger than the default UI label. */
-.featured-section__header h2 {
+/* Section label: Eurostile extended, larger than the default UI label. */
+.featured-section__header h2,
+.latest-section__header h2 {
   font-family: var(--ff-ui-ext);
   font-size: var(--fz-card-title);
+}
+
+/* "All articles →" — quiet mono link to the full index. */
+.latest-section__all {
+  font-family: var(--ff-mono);
+  font-size: var(--fz-ui);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.latest-section__all:hover {
+  color: var(--color-link);
+  text-decoration: none;
 }

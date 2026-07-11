@@ -8,11 +8,12 @@
  *             (10px cumulative axis race); click engages; second pointer
  *             promotes to fullscreen (wired in M4)
  *             Under apparatus.caseTapToActivate the rest drag-scrub is OFF:
- *             the viewer is inert until the engage tap (a TAP TO SCRUB chip
- *             carries the affordance), so scrub-h is unreachable.
+ *             the viewer is inert until the engage tap, so scrub-h is
+ *             unreachable.
  *   scrub-h   1:1 horizontal scrub, pointer captured, cancel = up
  *   engaged   touch-action:none — either axis scrubs (vertical = PACS axis);
- *             exits: ✕ · outside click · Esc · scrolled out of view
+ *             exits: tap the stage again · outside click · Esc · scrolled
+ *             out of view
  *
  * Memory (decision 5): ImageBitmap FrameStore per series/window, LRU 12,
  * explicit close on evict; background fill is HTTP-cache-warming only, gated
@@ -77,7 +78,6 @@ export class CaseViewerElement extends HTMLElement {
   #canvas!: HTMLCanvasElement;
   #counter!: HTMLElement;
   #slider!: HTMLInputElement;
-  #closeBtn!: HTMLButtonElement;
 
   #ro: ResizeObserver | null = null;
   #io: IntersectionObserver | null = null;
@@ -124,7 +124,6 @@ export class CaseViewerElement extends HTMLElement {
     this.#canvas = this.querySelector('[data-cv-canvas]')!;
     this.#counter = this.querySelector('[data-cv-counter]')!;
     this.#slider = this.querySelector('[data-cv-slider]')!;
-    this.#closeBtn = this.querySelector('[data-cv-close]')!;
     this.#frame = this.series.start;
 
     // Tap-to-activate (apparatus flag): CSS keys the hint chip + pointer
@@ -419,11 +418,8 @@ export class CaseViewerElement extends HTMLElement {
     const wasEngaged = this.#state === 'engaged';
     this.#state = next;
     this.dataset.state = next;
-    this.#closeBtn.hidden = next !== 'engaged';
     if (next === 'engaged') {
-      // First engagement retires the tap-to-activate hint for good. The
-      // bracket lock-in choreography is pure CSS, keyed on data-state.
-      this.classList.add('has-engaged');
+      // Bracket lock-in choreography is pure CSS, keyed on data-state.
       this.#bindWheel();
     } else if (wasEngaged) {
       this.#wheelAbort?.abort();
@@ -472,10 +468,11 @@ export class CaseViewerElement extends HTMLElement {
     // pointercancel = pointerup: the frame holds where the scrub was.
     stage.addEventListener('pointercancel', (e) => this.#pointerEnd(e), { signal });
 
-    // Engage on click — browsers suppress click on scroll-stopping taps, so
-    // the momentum-stop tap can never accidentally engage. Chrome excluded.
-    // A horizontal mouse scrub DOES synthesize a click on its mouseup (mouse
-    // clicks aren't distance-gated), so a completed scrub-h eats that click.
+    // Engage/disengage on click — the same tap enters and exits scrub mode.
+    // Browsers suppress click on scroll-stopping taps, so the momentum-stop
+    // tap can never accidentally engage. Chrome excluded. A mouse scrub DOES
+    // synthesize a click on its mouseup (mouse clicks aren't distance-gated),
+    // so a completed scrub — scrub-h or engaged drag — eats that click.
     stage.addEventListener(
       'click',
       (e) => {
@@ -486,14 +483,7 @@ export class CaseViewerElement extends HTMLElement {
           return;
         }
         if (this.#state === 'rest') this.#setState('engaged');
-      },
-      { signal }
-    );
-    this.#closeBtn.addEventListener(
-      'click',
-      (e) => {
-        e.stopPropagation();
-        this.#setState('rest');
+        else if (this.#state === 'engaged') this.#setState('rest');
       },
       { signal }
     );
@@ -525,6 +515,9 @@ export class CaseViewerElement extends HTMLElement {
     // Slider is the semantic scrubber (VO-adjustable). PageUp/Down = ±5.
     // Armed guard: snap back rather than decode — every control below waits
     // behind the ACTIVATE gate.
+    // Frontier-clamped like the drag/wheel paths: a fast slider sweep must
+    // never outrun decode into a stall storm — the shown frame advances only
+    // as far as decoded frames exist, and #syncReadout snaps the thumb back.
     this.#slider.addEventListener(
       'input',
       () => {
@@ -532,7 +525,10 @@ export class CaseViewerElement extends HTMLElement {
           this.#slider.value = String(this.#frame);
           return;
         }
-        this.#setFrame(Number(this.#slider.value), false);
+        const target = Number(this.#slider.value);
+        const dir: 1 | -1 = target >= this.#frame ? 1 : -1;
+        const frontier = this.#store.frontier(this.#frame, dir);
+        this.#setFrame(clampToFrontier(target, frontier, dir), true);
       },
       { signal }
     );
@@ -651,8 +647,8 @@ export class CaseViewerElement extends HTMLElement {
     // Armed (tap-to-boot): the pointer machinery is offline — no scrub
     // tracking, no two-finger fullscreen promote — until the ACTIVATE tap.
     if (this.#pendingBoot) return;
-    // The ✕ lives inside the stage: tracking it would capture the pointer to
-    // the stage, retargeting the button's click there — a dead close button.
+    // ACTIVATE lives inside the stage: tracking it would capture the pointer
+    // to the stage, retargeting the button's click there — a dead button.
     if ((e.target as HTMLElement).closest('button')) return;
     // System edge-back-swipes beat touch-action; leave the edges alone.
     if (
@@ -695,6 +691,10 @@ export class CaseViewerElement extends HTMLElement {
 
     if (this.#state === 'engaged') {
       this.#dragPx += dx + dy; // either axis; vertical = the PACS axis
+      // Unsigned travel: a real drag must not read as the disengage tap on
+      // release (mouse mouseup synthesizes a click regardless of distance).
+      this.#raceX += Math.abs(dx);
+      this.#raceY += Math.abs(dy);
       this.#dragScrub();
       return;
     }
@@ -739,6 +739,10 @@ export class CaseViewerElement extends HTMLElement {
     if (this.#state === 'scrub-h' && this.#active.size === 0) {
       this.#justScrubbed = true; // eat the synthesized click; a scrub isn't an engage
       this.#setState('rest');
+    }
+    // An engaged drag that actually traveled is a scrub, not the tap-out tap.
+    if (this.#state === 'engaged' && Math.max(this.#raceX, this.#raceY) >= AXIS_RACE_PX) {
+      this.#justScrubbed = true;
     }
     this.#tracking = this.#state === 'engaged' && this.#active.size > 0;
   }

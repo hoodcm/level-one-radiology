@@ -9,8 +9,9 @@
      h3    17 → 19px      / 1.2  / 600,  mt 24→32, mb 8
      li    15px / 1.4,     12px between,  2rem indent
      links underline, 0.18em offset, 0.08em thickness
-   …expressed in Level One's fonts (Utopia serif body, Lab Grotesque sans
-   titles/headings) and dark warm-white palette.
+   …expressed in Level One's faces (the token families in
+   tokens/typography.css — serif reading voice, sans structure) and dark
+   warm-white palette.
    ============================================== */
 
 /* --- Nested content widths -------------------------------------------------
@@ -40,7 +41,7 @@
   margin-bottom: var(--space-3);
 }
 
-/* Title — SANS (Lab Grotesque). 32 → 44 → 52px, line-height 1.0, weight 700. */
+/* Title — SANS (the --ff-body face). 32 → 44 → 52px, line-height 1.0, weight 700. */
 .article__title {
   font-family: var(--ff-body);
   font-size: 2rem;                 /* 32px */
@@ -54,7 +55,7 @@
 @media (min-width: 60em) { .article__title { font-size: 2.75rem; } }   /* 44px */
 @media (min-width: 80em) { .article__title { font-size: 3.25rem; } }   /* 52px */
 
-/* Deck — SANS (Lab Grotesque), like Anthropic's standfirst. 22 → 25px. */
+/* Deck — SANS (the --ff-body face), like Anthropic's standfirst. 22 → 25px. */
 .article__deck {
   font-family: var(--ff-body);
   font-size: 1.375rem;             /* 22px */
@@ -107,7 +108,7 @@
 .prose strong { font-weight: 700; }
 .prose em { font-style: italic; }
 
-/* Section headings — SANS (Lab Grotesque); sizes + rhythm mirror Anthropic.
+/* Section headings — SANS (the --ff-body face); sizes + rhythm mirror Anthropic.
    Margins collapse with the preceding paragraph's 16px to the heading's
    28/40px — a half-step above Anthropic's 24/32 (the full-step bump read as
    too much air on screen; this splits the difference). */
@@ -436,7 +437,7 @@
    signal color carried by the label's square indicator (the tag vocabulary) —
    no colored edge stripes. */
 .key-points {
-  margin-block: var(--space-5);
+  margin-block: var(--callout-gap);
   padding: var(--card-padding-md);
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-border-default);
@@ -530,7 +531,9 @@
   /* 40px — deliberately between space-4 and space-5: a full space-5 read as
      too much air around the panel, space-4 as too little. */
   margin: calc((var(--space-4) + var(--space-5)) / 2) 0;
-  padding: var(--card-padding-sm) var(--card-padding-md);
+  /* 12px / 16px — a notch tighter than the standard card paddings: the
+     callout is an aside, not a feature panel. */
+  padding: calc((var(--space-1) + var(--space-2)) / 2) var(--space-2);
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-border-default);
   background: color-mix(in srgb, var(--color-signal-cyan) 7%, var(--color-bg-secondary));

@@ -7,17 +7,26 @@
  * Imported by case-shell.mjs (build-time shell) AND fullscreen.ts (client
  * overlay) — keep this module free of node imports.
  *
- * Semantic key → Lucide icon: power → square-power · x → minimize ·
- * maximize → scan-eye · contrast → contrast.
+ * Semantic key → Lucide icon: power → scan-eye · x → x ·
+ * maximize → maximize-2 · contrast → contrast.
+ *
+ * Sub-glyph class hooks (cv-i-*) are ours, not Lucide's: case-viewer.css
+ * choreographs per-icon hover micro-motion against them — the scan-eye's
+ * corners (cv-i-tl/tr/br/bl) spread outward and its pupil (cv-i-pupil)
+ * dilates; maximize-2's arrow pairs (cv-i-ne/sw) spread along their
+ * diagonals; contrast's half-disk (cv-i-half) turns like a W/L dial.
+ * Keep the hooks when refreshing icon path data.
  */
 const ICONS = {
-  power: '<path d="M12 7v4"/><path d="M7.998 9.003a5 5 0 1 0 8-.005"/><rect x="3" y="3" width="18" height="18" rx="2"/>',
-  x: '<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>',
+  power:
+    '<path class="cv-i-tl" d="M3 7V5a2 2 0 0 1 2-2h2"/><path class="cv-i-tr" d="M17 3h2a2 2 0 0 1 2 2v2"/><path class="cv-i-br" d="M21 17v2a2 2 0 0 1-2 2h-2"/><path class="cv-i-bl" d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle class="cv-i-pupil" cx="12" cy="12" r="1"/><path d="M18.944 12.33a1 1 0 0 0 0-.66 7.5 7.5 0 0 0-13.888 0 1 1 0 0 0 0 .66 7.5 7.5 0 0 0 13.888 0"/>',
+  x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
   maximize:
-    '<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="1"/><path d="M18.944 12.33a1 1 0 0 0 0-.66 7.5 7.5 0 0 0-13.888 0 1 1 0 0 0 0 .66 7.5 7.5 0 0 0 13.888 0"/>',
-  contrast: '<circle cx="12" cy="12" r="10"/><path d="M12 18a6 6 0 0 0 0-12v12z"/>',
+    '<path class="cv-i-ne" d="M15 3h6v6"/><path class="cv-i-ne" d="m21 3-7 7"/><path class="cv-i-sw" d="m3 21 7-7"/><path class="cv-i-sw" d="M9 21H3v-6"/>',
+  contrast: '<circle cx="12" cy="12" r="10"/><path class="cv-i-half" d="M12 18a6 6 0 0 0 0-12v12z"/>',
 };
 
-/** Lucide's default SVG contract: 24px grid, stroke 2, round caps/joins. */
+/** Lucide's 24px grid + round caps/joins; stroke thinned from the Lucide
+ *  default 2 to 1.5 — the glyphs render at 32px where 2 reads heavy. */
 export const iconSvg = (name) =>
-  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;

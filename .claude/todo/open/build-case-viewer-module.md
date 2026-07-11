@@ -3,12 +3,12 @@ id: build-case-viewer-module
 title: Build Case Viewer showstopper module
 band: now
 first_surfaced: 2026-06-23
-last_touched: 2026-07-08
+last_touched: 2026-07-11
 depends_on: []
 links: [src/components/case/, docs/design/components.md, docs/archive/plans/2026-07-07-case-viewer-plan.md]
 worktype: build
 workstream: case-viewer
-assessed: 2026-07-08
+assessed: 2026-07-11
 ---
 Build the Case Viewer — the "showstopper module," a PACS-like image viewer for
 clinical cases embedded within articles. Light-DOM custom element
@@ -59,3 +59,10 @@ to the `cv-lock-in` Safari fallback already noted). Icon library switched to
 Lucide (inlined via new `src/lib/case-icons.mjs`; `@tabler/icons-react`
 dropped) — cosmetic, no new device-gate implication. Implementation still
 substantially complete; remaining scope unchanged (steps 3, 12, 13, 15).
+2026-07-11 further interaction polish this session (unified button design
+system, per-icon hover micro-motion, W/L X-Y pad replacing the numeric TUNE
+readout, tap-again-to-release engaged state) plus a new demo article
+(`src/content/articles/using-the-case-viewer.md`) — confirmed still embedding
+the synthetic `dev-synthetic` case, not a real one, so step 15 is still open.
+Remaining scope unchanged (steps 3, 12, 13, 15); all still device-gated,
+none autonomous.

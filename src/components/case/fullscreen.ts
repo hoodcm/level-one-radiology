@@ -17,9 +17,11 @@
  * Gestures: one finger scrubs (vertical = the PACS axis) at fit; pinch zooms
  * fit→4×; one finger pans when zoomed (the slider still scrubs at any zoom);
  * double-tap toggles fit↔2×; no swipe-down-dismiss (collides with scrub).
- * TUNE: drag maps to CSS filters (order pinned contrast() brightness(),
- * floors keep the image from ever reading as a dead uniform field), RESET
- * chip when non-neutral, double-tap resets while tuning, resets on close.
+ * W/L adjust (the contrast chip): drag maps to CSS filters (order pinned
+ * contrast() brightness(), floors keep the image from ever reading as a dead
+ * uniform field). The readout is a live W/L pad — a dot on an X-Y plane that
+ * mirrors the drag (right = wider window, up = brighter), no numbers. RESET
+ * chip when non-neutral, double-tap resets while adjusting, resets on close.
  */
 import { iconSvg } from '../../lib/case-icons.mjs';
 import { clampFrame, clampToFrontier, frameForDrag } from './mapping';
@@ -55,6 +57,11 @@ const TUNE_CONTRAST_PER_PX = -0.002;
 const TUNE_BRIGHTNESS_PER_PX = 0.008;
 const TUNE_CONTRAST_RANGE = [0.3, 3] as const;
 const TUNE_BRIGHTNESS_RANGE = [0.4, 2.5] as const;
+// W/L pad geometry (viewBox units; CSS renders it 1:1 via --cv-wl-pad-*).
+// The dot keeps its radius clear of the frame at the clamp extremes.
+const WL_PAD_W = 64;
+const WL_PAD_H = 44;
+const WL_DOT_R = 3;
 
 export class CaseFullscreen {
   #c: FullscreenController;
@@ -67,6 +74,7 @@ export class CaseFullscreen {
   #tuneBtn!: HTMLButtonElement;
   #resetBtn!: HTMLButtonElement;
   #tuneReadout!: HTMLElement;
+  #wlDot!: SVGCircleElement;
 
   #frame: number;
   #scale = 1;
@@ -225,13 +233,16 @@ export class CaseFullscreen {
 <div class="cv-fs__screen">
 <div class="cv-fs__meta"><span data-fs-meta></span><span class="cv-fs__counter" data-fs-counter></span></div>
 <div class="cv-fs__stage" data-fs-stage><div class="cv-fs__pan" data-fs-pan><canvas data-fs-canvas></canvas></div></div>
-<button type="button" class="cv-fs__close" data-fs-close aria-label="Close fullscreen viewer">${iconSvg('x')}</button>
+<button type="button" class="cv-fs__chip cv-fs__close" data-fs-close aria-label="Close fullscreen viewer">${iconSvg('x')}</button>
 <div class="cv-fs__bar">
 <input type="range" data-fs-slider min="1" max="${this.#c.frames}" step="1" />
-<button type="button" class="cv-fs__chip" data-fs-tune aria-pressed="false" aria-label="Tune contrast and brightness">${iconSvg('contrast')}</button>
 <button type="button" class="cv-fs__chip" data-fs-reset hidden>RESET</button>
+<button type="button" class="cv-fs__chip" data-fs-tune aria-pressed="false" aria-label="Adjust window and level">${iconSvg('contrast')}</button>
 </div>
-<div class="cv-fs__readout" data-fs-readout hidden></div>
+<div class="cv-fs__readout" data-fs-readout role="img" hidden>
+<span class="cv-fs__readout-label">W/L</span>
+<svg class="cv-fs__wl" viewBox="0 0 ${WL_PAD_W} ${WL_PAD_H}" aria-hidden="true"><line x1="${WL_PAD_W / 2}" y1="0" x2="${WL_PAD_W / 2}" y2="${WL_PAD_H}"/><line x1="0" y1="${WL_PAD_H / 2}" x2="${WL_PAD_W}" y2="${WL_PAD_H / 2}"/><circle data-fs-wl-dot cx="${WL_PAD_W / 2}" cy="${WL_PAD_H / 2}" r="${WL_DOT_R}"/></svg>
+</div>
 </div>`;
 
     this.#stage = root.querySelector('[data-fs-stage]')!;
@@ -242,6 +253,7 @@ export class CaseFullscreen {
     this.#tuneBtn = root.querySelector('[data-fs-tune]')!;
     this.#resetBtn = root.querySelector('[data-fs-reset]')!;
     this.#tuneReadout = root.querySelector('[data-fs-readout]')!;
+    this.#wlDot = root.querySelector('[data-fs-wl-dot]')!;
     (root.querySelector('[data-fs-meta]') as HTMLElement).textContent = this.#c.metaText;
     // Via setAttribute, never the innerHTML template: the title is manifest
     // prose and a quote inside it would break out of the attribute.
@@ -491,7 +503,29 @@ export class CaseFullscreen {
       ? ''
       : `contrast(${this.#contrast.toFixed(3)}) brightness(${this.#brightness.toFixed(3)})`;
     this.#resetBtn.hidden = !this.#tuning || neutral;
-    this.#tuneReadout.textContent = `TUNE C ${this.#contrast.toFixed(1)} · B ${this.#brightness.toFixed(1)}`;
+    // Live W/L pad: the dot mirrors the drag — right = lower contrast (wider
+    // window), up = brighter (lower level). Neutral (1,1) pins to the pad's
+    // center; each half-axis normalizes to its own side of the clamp range
+    // (the ranges are asymmetric around 1, and finger direction must always
+    // match dot direction).
+    const [cMin, cMax] = TUNE_CONTRAST_RANGE;
+    const [bMin, bMax] = TUNE_BRIGHTNESS_RANGE;
+    const xN =
+      this.#contrast >= 1
+        ? (1 - (this.#contrast - 1) / (cMax - 1)) * 0.5
+        : 0.5 + ((1 - this.#contrast) / (1 - cMin)) * 0.5;
+    const yN =
+      this.#brightness >= 1
+        ? (1 - (this.#brightness - 1) / (bMax - 1)) * 0.5
+        : 0.5 + ((1 - this.#brightness) / (1 - bMin)) * 0.5;
+    this.#wlDot.setAttribute('cx', (WL_DOT_R + xN * (WL_PAD_W - 2 * WL_DOT_R)).toFixed(1));
+    this.#wlDot.setAttribute('cy', (WL_DOT_R + yN * (WL_PAD_H - 2 * WL_DOT_R)).toFixed(1));
+    // AT parity for the visual pad — honest units (these are CSS filter
+    // factors, not true DICOM W/L values).
+    this.#tuneReadout.setAttribute(
+      'aria-label',
+      `Contrast ${this.#contrast.toFixed(1)}, brightness ${this.#brightness.toFixed(1)}`
+    );
   }
 
   /** Honest render adjustment only — never persisted: resets on close. */

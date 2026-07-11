@@ -10,7 +10,7 @@
  *
  * Shell contract (what case-viewer.ts binds to): data-cv-* hooks —
  * manifest (JSON script) · stage · canvas · poster · counter · series-label ·
- * window-label · slider · close · activate · fullscreen · windows/window · series/serie.
+ * window-label · slider · activate · fullscreen · windows/window · series/serie.
  */
 
 import { existsSync, readFileSync } from 'node:fs';
@@ -157,7 +157,6 @@ export function caseShellHtml(manifest, caption = '') {
 <canvas class="cv__canvas" data-cv-canvas aria-hidden="true"></canvas>
 ${hudSvg()}
 <div class="cv__brackets" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-<button type="button" class="cv__close" data-cv-close aria-label="Exit scrub mode" hidden>${iconSvg('x')}</button>
 <button type="button" class="cv__activate" data-cv-activate aria-label="Activate case viewer">${iconSvg('power')}</button>
 </div>
 <div class="cv__bar">

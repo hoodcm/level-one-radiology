@@ -12,6 +12,11 @@ const featuredArticles = allArticles.filter((a) => a.data.featured);
 
 const leadArticle = featuredArticles[0];
 const restArticles = featuredArticles.slice(1);
+
+// Latest: everything outside the curated Featured block, newest first. The
+// homepage surfaces new work on its own as it publishes, no featured flag
+// required (Featured stays the editor's picks).
+const latestArticles = allArticles.filter((a) => !a.data.featured);
 ---
 
 <Layout title="Level One Radiology: Independent Emergency Radiology">
@@ -69,6 +74,32 @@ const restArticles = featuredArticles.slice(1);
               />
             ))}
           </Col>
+        </Grid>
+      </Container>
+    </section>
+  )}
+
+  <!-- Latest — chronological feed of everything outside Featured -->
+  {latestArticles.length > 0 && (
+    <section class="latest-section">
+      <Container>
+        <div class="latest-section__header">
+          <h2 class="type-ui">Latest</h2>
+          <a href="/articles/" class="latest-section__all">All articles →</a>
+        </div>
+        <Grid rowGap="var(--gap-md)">
+          {latestArticles.map((article) => (
+            <Col span={{ md: 6, lg: 6 }}>
+              <ArticleCard
+                title={article.data.title}
+                description={article.data.description}
+                publishDate={article.data.publishDate}
+                primaryTag={article.data.primaryTag}
+                contentType={article.data.contentType}
+                slug={article.id}
+              />
+            </Col>
+          ))}
         </Grid>
       </Container>
     </section>

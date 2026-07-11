@@ -15,9 +15,9 @@ export const apparatus = {
   /** GFM footnotes → tap popover cards (rehypeFootnotePopovers). */
   footnotePopovers: true,
   /** Case viewer requires an explicit engage tap before any scrub: the
-   *  rest-state horizontal drag-scrub is disabled and a quiet TAP TO SCRUB
-   *  chip surfaces the affordance (retired on first engagement). Off restores
-   *  the drag-scrubs-at-rest model. */
+   *  rest-state horizontal drag-scrub is disabled until the tap (a DRAG TO
+   *  SCROLL chip names the gesture once engaged). Off restores the
+   *  drag-scrubs-at-rest model. */
   caseTapToActivate: true,
   /** Case viewer holds inert and dimmed — no frame decode, no boot HUD — behind
    *  a centered ACTIVATE button until the reader taps it. Off restores the

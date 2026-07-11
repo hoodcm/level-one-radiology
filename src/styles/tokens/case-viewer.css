@@ -48,14 +48,50 @@
      tap, far above the 44px minimum. Holds the boxed square-power glyph. */
   --cv-activate-h: 4.5rem;             /* 72px square */
   --cv-activate-icon: 3.25rem;         /* 52px power glyph */
+  /* Shared ring — the :focus-visible halo OUTSIDE the button box, on every
+     viewer control (keyboard parity with the console's hover language). */
+  --cv-ring: 0 0 0 4px color-mix(in srgb, var(--color-signal-cyan) 35%, transparent);
+
+  /* Hover wash — the industry-standard state layer (Material's 6% overlay;
+     Radix/Primer's translucent hover bg): a faint ivory mix over the
+     control's resting surface. Panel chips get it over bg-secondary;
+     ACTIVATE gets it over the on-image scrim. */
+  --cv-bg-hover: color-mix(in srgb, var(--color-text-ivory) 6%, var(--color-bg-secondary));
+  --cv-scrim-hover: color-mix(in srgb, var(--color-text-ivory) 6%, var(--cv-scrim));
+
+  /* Signature icon micro-motion (hover): sub-glyph travel in SVG user units
+     (24-grid; 1 unit ≈ 1.3px at the 32px render). Corners/arrows spread by
+     the travel; the scan-eye pupil dilates; the contrast half-disk flips
+     to the other side (the W/L invert gesture). */
+  --cv-icon-travel: .4px;
+  --cv-icon-pupil-scale: 1.25;
+
+  /* Icon stroke — 24-grid units, SAME VALUE at every render size: line-art
+     weight is the stroke-to-glyph RATIO, not absolute px (type scales its
+     stems the same way — a 52px H has a proportionally sized stem, not a
+     20px-H's). Holding px constant made the big ACTIVATE glyph read
+     hairline; the Lucide-native 1.5/24 ratio holds the optical weight, and
+     at the 32px buttons it renders 2px — coincidentally the article h2's
+     stem (DM Sans 600 'H' = 102/1000 em at 20px), so chrome echoes type. */
+  --cv-icon-stroke: 1.5;
+  --cv-activate-stroke: 1.5;
 
   /* Button glyphs (Lucide outline icons, inlined via case-icons.mjs); run
      large in their 44px hit areas so the icon frame reads as the button. */
   --cv-icon-size: 2rem;                /* 32px */
 
-  /* Touch targets + slider thumb. */
+  /* Touch targets + slider thumb — the thumb is a wide rectangle (a scrub
+     handle, not a knob): full hit-area width for the finger, shorter height
+     so it doesn't swallow the 2px track. */
   --cv-hit-area: 2.75rem;       /* 44px — iOS minimum hit area */
-  --cv-thumb-size: 1.25rem;     /* 20px */
+  --cv-thumb-w: 2.75rem;        /* 44px */
+  --cv-thumb-h: 2rem;           /* 32px */
+
+  /* Fullscreen W/L pad — the live X-Y indicator while adjusting (dot mirrors
+     the drag). Rendered 1:1 with the SVG viewBox authored in fullscreen.ts
+     (WL_PAD_W/H) — keep the aspect in step or the plane distorts. */
+  --cv-wl-pad-w: 4rem;          /* 64px */
+  --cv-wl-pad-h: 2.75rem;       /* 44px */
 
   /* Edge dead-zone inset (coarse pointers): system back-swipes win near the
      screen edge, so pointer-downs inside this inset are ignored. Referenced

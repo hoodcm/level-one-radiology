@@ -16,11 +16,10 @@
   .article__footer,
   .heading-anchor,
   /* Case-viewer interactive chrome — the poster/canvas prints, the slider,
-     window tabs/chips, close button, and TAP-TO-SCRUB stage chip do not. */
+     window tabs/chips, and stage hint chip do not. */
   .cv__bar,
   .cv__chips,
-  .cv__tabs,
-  .cv__close {
+  .cv__tabs {
     display: none !important;
   }
 

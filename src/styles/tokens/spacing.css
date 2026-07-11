@@ -79,6 +79,10 @@
   --section-spacer: var(--space-6);      /* 64px */
   --section-spacer-sm: var(--space-4);   /* 32px */
 
+  /* Separation between in-article boxes (Key Points, callouts) and body text —
+     one step below the section rhythm; sits between --space-4 (32) and -5 (48). */
+  --callout-gap: 2.5rem;   /* 40px */
+
   /* Component gaps */
   --gap-md: var(--space-3);   /* 24px */
   --gap-lg: var(--space-4);   /* 32px */

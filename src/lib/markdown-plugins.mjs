@@ -135,6 +135,17 @@ export function rehypeFootnotePopovers({ popovers = true } = {}) {
         : child
     );
 
+    // Backref arrows: pin the ↩ (U+21A9) GFM emits to its TEXT presentation
+    // with VARIATION SELECTOR-15 — bare U+21A9 is emoji-eligible and iOS
+    // substitutes the blue emoji face for it. Normalize-then-append so an
+    // already-pinned arrow never doubles the selector. Always runs (the
+    // plate renders regardless of the popover flag).
+    visit(section, 'text', (t) => {
+      if (t.value.includes('↩')) {
+        t.value = t.value.replaceAll('↩︎', '↩').replaceAll('↩', '↩︎');
+      }
+    });
+
     if (!popovers) return;
 
     // note li id ("user-content-fn-N") → its content

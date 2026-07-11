@@ -33,6 +33,16 @@ case-viewer {
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
+/* Console chrome is instrumentation, not copy: an iOS long-press must never
+   start a text selection on it (selection handles wreck the element). The
+   caption stays selectable — it is prose. */
+.cv__meta,
+.cv__bar,
+.cv__chips,
+.cv__tabs {
+  user-select: none;
+  -webkit-user-select: none;
+}
 .cv__meta span + span:not(.cv__counter)::before {
   content: '·';
   color: var(--color-text-disabled);
@@ -85,32 +95,27 @@ case-viewer[data-state='fullscreen'] .cv__stage {
 }
 
 /* --- Tap-to-activate (apparatus.caseTapToActivate stamps data-cv-tap):
-   at rest the stage is a button, not a scrubber — the cursor says so, and a
-   quiet console chip carries the affordance. Shown once the boot settles;
-   first engagement retires it for good (.has-engaged). --- */
+   at rest the stage is a button, not a scrubber — the cursor says so. --- */
 case-viewer[data-cv-tap][data-state='rest'] .cv__stage {
   cursor: pointer;
 }
-case-viewer[data-cv-tap] .cv__stage::after {
-  content: 'TAP TO SCRUB';
+
+/* --- Engaged hint chip: once locked in, a console chip in the imaging-active
+   cyan names the gesture. Top-right, inside the bracket; the same tap that
+   engaged disengages, so the chip is the only instruction needed. --- */
+case-viewer[data-state='engaged'] .cv__stage::after {
+  content: 'DRAG TO SCROLL';
   position: absolute;
-  bottom: var(--space-2);
-  left: 50%;
-  transform: translateX(-50%);
+  top: var(--space-2);
+  right: var(--space-2);
   padding: var(--space-0) var(--space-1);
   background: var(--cv-scrim);
   border-radius: var(--radius-xs);
   font-family: var(--ff-mono);
   font-size: var(--cv-meta-size);
   letter-spacing: var(--ls-ui);
-  color: var(--color-text-secondary);
+  color: var(--color-signal-cyan);
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-case-viewer[data-cv-tap][data-state='rest'].is-ready:not(.has-engaged) .cv__stage::after {
-  opacity: 1;
-  transition-delay: 0.9s; /* arrive after the HUD exit settles */
 }
 
 /* --- Tap-to-boot (apparatus.caseTapToBoot stamps data-cv-armed on the host):
@@ -145,6 +150,11 @@ case-viewer[data-cv-armed] .cv__stage::before {
   background: var(--cv-armed-veil);
   pointer-events: none;
 }
+/* ACTIVATE wears the shared button skeleton (border-default at rest, strong
+   on hover) at gate scale, on the on-image scrim surface. The one PRIMARY
+   invitation: rests a tier above the chips (primary vs secondary) and keeps
+   hover headroom — every control in the console brightens on pointer-over
+   (primary → ivory here). Cyan is state, never hover. */
 .cv__activate {
   position: absolute;
   top: 50%;
@@ -157,22 +167,36 @@ case-viewer[data-cv-armed] .cv__stage::before {
   min-width: var(--cv-activate-h);
   min-height: var(--cv-activate-h);
   background: var(--cv-scrim);
-  border: 1px solid var(--color-border-strong);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-xs);
-  color: var(--color-text-ivory);
+  color: var(--color-text-primary);
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .cv__activate svg {
   width: var(--cv-activate-icon);
   height: var(--cv-activate-icon);
+  stroke-width: var(--cv-activate-stroke);
 }
 case-viewer[data-cv-armed] .cv__activate {
   display: inline-flex;
 }
 .cv__activate:hover {
-  color: var(--color-signal-cyan);
-  border-color: var(--color-signal-cyan);
+  color: var(--color-text-ivory);
+  border-color: var(--color-border-strong);
+  background: var(--cv-scrim-hover);
+}
+
+/* One focus treatment for every viewer control — the shared cyan ring
+   (keyboard parity with the console's hover language). */
+.cv__activate:focus-visible,
+.cv__fs:focus-visible,
+.cv__chips button:focus-visible,
+.cv__tabs button:focus-visible,
+.cv-fs__chip:focus-visible {
+  outline: none;
+  border-color: var(--color-border-strong);
+  box-shadow: var(--cv-ring);
 }
 
 .cv__canvas,
@@ -240,7 +264,9 @@ case-viewer.is-ready .cv__canvas {
 
 @keyframes cv-fade-out { 0% { opacity: 1; } 100% { opacity: 0; } }
 @keyframes cv-fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
-@keyframes cv-slow-flicker { 0% { opacity: 0; } 30% { opacity: 0.6; } 50% { opacity: 0; } 60% { opacity: 0.9; } 100% { opacity: 0.9; } }
+/* Flicker density doubled from the prototype's 4 stops: the sparser cadence
+   read as a low frame rate rather than an instrument warming up. */
+@keyframes cv-slow-flicker { 0% { opacity: 0; } 15% { opacity: 0.5; } 25% { opacity: 0; } 35% { opacity: 0.7; } 45% { opacity: 0; } 55% { opacity: 0.9; } 70% { opacity: 0.6; } 80% { opacity: 0.9; } 100% { opacity: 0.9; } }
 @keyframes cv-cut-in { 0% { opacity: 0; } 100% { opacity: 0.6; } }
 @keyframes cv-snap-tl { 0% { transform: translate(-40px, -40px); opacity: 0; } 10% { opacity: 1; } 30% { opacity: 0; } 40% { opacity: 1; } 100% { transform: translate(0, 0); opacity: 1; } }
 @keyframes cv-snap-tr { 0% { transform: translate(40px, -40px); opacity: 0; } 10% { opacity: 1; } 30% { opacity: 0; } 40% { opacity: 1; } 100% { transform: translate(0, 0); opacity: 1; } }
@@ -335,11 +361,6 @@ case-viewer[data-state='engaged'] .cv__brackets i {
     translate: calc(var(--sx) * var(--cv-lock)) calc(var(--sy) * var(--cv-lock));
   }
 }
-/* The ✕ occupies the top-right corner while engaged; its bracket yields
-   rather than peeking out from behind the button's scrim. */
-case-viewer[data-state='engaged'] .cv__brackets i:nth-child(2) {
-  opacity: 0;
-}
 /* Promoted: the inline viewer sits dimmed under the fullscreen scrim, and
    any authored movement there (brackets sliding off the engaged lock, colour
    eases) reads as background jank under the CRT dwell — state changes snap
@@ -389,65 +410,105 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   }
 }
 
-/* --- Disengage ✕ — engaged only, 44px hit area --- */
-.cv__close {
-  position: absolute;
-  top: var(--space-1);
-  right: var(--space-1);
-  min-width: var(--cv-hit-area);
-  min-height: var(--cv-hit-area);
-  background: var(--cv-scrim);
-  font-family: var(--ff-mono);
-  color: var(--color-text-ivory);
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-xs);
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
 /* Icon buttons share the centered-glyph treatment; glyphs are Lucide
    outline SVGs at their native 24px grid. */
-.cv__close,
 .cv__fs,
-.cv-fs__close,
 .cv-fs__chip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
-.cv__close svg,
+/* Icon chips are SQUARE — one button geometry across the console (ACTIVATE
+   and maximize are already square; the ✕ and contrast chips join them).
+   Text chips (RESET, windows, tabs) keep their padded width. */
+.cv-fs__chip:has(> svg) {
+  min-width: var(--cv-hit-area);
+  padding-inline: 0;
+}
 .cv__fs svg,
-.cv-fs__close svg,
 .cv-fs__chip svg {
   width: var(--cv-icon-size);
   height: var(--cv-icon-size);
+  stroke-width: var(--cv-icon-stroke);
+}
+/* Contrast glyph: the half-disk is FILLED — the icon reads as a windowed
+   display, not a wire outline. (The svg root's fill="none" attr is a
+   presentation attribute; this property wins.) Flip pivot = the circle
+   center = the 24-grid center (view-box; the half-disk's own fill-box is
+   off-center) — lives here, not in the motion block, because the held
+   active state below needs it under reduced motion too. */
+.cv-fs__chip .cv-i-half {
+  fill: currentColor;
+  transform-box: view-box;
+  transform-origin: center;
+}
+/* Mode ON: the half-disk HOLDS the flipped side — the hover gesture's end
+   position IS the active state (position is state, travel is flourish).
+   The aria-pressed hover guard keeps re-hovers from replaying it. */
+.cv-fs__chip[aria-pressed='true'] .cv-i-half {
+  transform: scaleX(-1);
 }
 
-/* Hover micro-interaction: the glyph springs up a touch on pointer-over — the
-   button box and hit area stay put, only the icon moves (a transform is
-   GPU-composited, so it never reflows). `(hover: hover)` scopes it to real
-   pointers so a tap on a touchscreen never leaves a glyph stuck enlarged; the
-   easing overshoots slightly (--ease-out) for a bit of life. Authored, so
-   reduced motion opts out. The activate power glyph gets a hair more travel —
-   it is the primary invitation. */
+/* Hover micro-interaction — the console's one motion rule: ICONS move, text
+   never does (scaling text reads as jitter). Every icon button shares the
+   same base spring — the glyph scales up a touch while the button box and
+   hit area stay put (transforms are GPU-composited, so nothing reflows).
+   On top of that, each glyph has a signature gesture that says what the
+   button does, choreographed against the cv-i-* sub-path hooks authored in
+   case-icons.mjs:
+     scan-eye   corners spread outward + pupil dilates — the viewer opens
+     maximize-2 arrow pairs spread along their diagonals — expand
+     x          recedes slightly — close diminishes (maximize's inverse)
+     contrast   the filled half-disk flips sides — the window inverts
+                (only while the mode is off — see the aria-pressed guard)
+   Travel/scale ride the --cv-icon-* tokens (SVG user units on the 24 grid).
+   `(hover: hover)` scopes all of it to real pointers so a touchscreen tap
+   never leaves a glyph stuck mid-gesture; authored motion, so reduced
+   motion opts out wholesale. */
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .cv__close svg,
   .cv__fs svg,
-  .cv-fs__close svg,
   .cv-fs__chip svg,
   .cv__activate svg {
     transition: transform 0.15s var(--ease-out);
   }
-  .cv__close:hover svg,
+  /* :where() keeps the aria-pressed guard specificity-neutral so the ✕'s
+     own recede override below still wins its tie. An ACTIVE chip is frozen:
+     no spring, no gesture, its held flip is the state until deactivated. */
   .cv__fs:hover svg,
-  .cv-fs__close:hover svg,
-  .cv-fs__chip:hover svg,
+  .cv-fs__chip:where(:not([aria-pressed='true'])):hover svg,
   .cv__activate:hover svg {
     transform: scale(1.05);
   }
-}
-.cv__close:hover,
-.cv-fs__close:hover {
-  background: color-mix(in srgb, var(--color-bg-raised) 72%, transparent);
+  /* Signature gestures (sub-glyph): same clock as the base spring. The
+     transform reference (box/origin) lives HERE, not in the :hover rules —
+     if it only applied while hovered, the mouse-off transition would replay
+     the shrink around the SVG's top-left origin (the pupil visibly swinging
+     in from the side). */
+  .cv__fs svg path,
+  .cv__activate svg path,
+  .cv__activate svg circle,
+  .cv-fs__chip svg path {
+    transition: transform 0.15s var(--ease-out);
+  }
+  .cv__activate svg circle {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .cv__activate:hover .cv-i-tl { transform: translate(calc(-1 * var(--cv-icon-travel)), calc(-1 * var(--cv-icon-travel))); }
+  .cv__activate:hover .cv-i-tr { transform: translate(var(--cv-icon-travel), calc(-1 * var(--cv-icon-travel))); }
+  .cv__activate:hover .cv-i-br { transform: translate(var(--cv-icon-travel), var(--cv-icon-travel)); }
+  .cv__activate:hover .cv-i-bl { transform: translate(calc(-1 * var(--cv-icon-travel)), var(--cv-icon-travel)); }
+  .cv__activate:hover .cv-i-pupil { transform: scale(var(--cv-icon-pupil-scale)); }
+  .cv__fs:hover .cv-i-ne { transform: translate(var(--cv-icon-travel), calc(-1 * var(--cv-icon-travel))); }
+  .cv__fs:hover .cv-i-sw { transform: translate(calc(-1 * var(--cv-icon-travel)), var(--cv-icon-travel)); }
+  /* Gesture only while the mode is OFF — it invites the mode; replaying the
+     invitation on a control that is already active is noise. */
+  .cv-fs__chip:not([aria-pressed='true']):hover .cv-i-half { transform: scaleX(-1); }
+  /* After the base spring rule on purpose: same specificity, later wins —
+     the ✕ recedes (0.9) where maximize grows (1.05): close diminishes. */
+  .cv-fs__close:hover svg {
+    transform: scale(0.9);
+  }
 }
 
 /* --- Control bar: restyled native range + fullscreen button --- */
@@ -457,20 +518,25 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   gap: var(--space-2);
   margin-top: var(--space-1);
 }
+/* Fullscreen button — the same quiet chip as everything beside it. The
+   controls' neutral ladder: SECONDARY rest (interactive-but-quiet — muted
+   is metadata's tier and under-signals a control), primary hover, cyan
+   only as active-mode state. */
 .cv__fs {
   min-width: var(--cv-hit-area);
   min-height: var(--cv-hit-area);
   font-family: var(--ff-mono);
-  background: none;
+  background: var(--color-bg-secondary);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-xs);
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 .cv__fs:hover {
   color: var(--color-text-primary);
   border-color: var(--color-border-strong);
+  background: var(--cv-bg-hover);
 }
 
 .cv__bar input[type='range'],
@@ -489,9 +555,9 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
 .cv__bar input[type='range']::-webkit-slider-thumb,
 .cv-fs__bar input[type='range']::-webkit-slider-thumb {
   appearance: none;
-  width: var(--cv-thumb-size);
-  height: var(--cv-thumb-size);
-  margin-top: calc((var(--cv-thumb-size) - 2px) / -2);
+  width: var(--cv-thumb-w);
+  height: var(--cv-thumb-h);
+  margin-top: calc((var(--cv-thumb-h) - 2px) / -2);
   border-radius: var(--radius-xs);
   background: var(--color-text-ivory);
   border: 1px solid var(--color-border-strong);
@@ -503,8 +569,8 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
 }
 .cv__bar input[type='range']::-moz-range-thumb,
 .cv-fs__bar input[type='range']::-moz-range-thumb {
-  width: var(--cv-thumb-size);
-  height: var(--cv-thumb-size);
+  width: var(--cv-thumb-w);
+  height: var(--cv-thumb-h);
   border-radius: var(--radius-xs);
   background: var(--color-text-ivory);
   border: 1px solid var(--color-border-strong);
@@ -526,7 +592,7 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   min-height: var(--cv-hit-area);
   padding-inline: var(--space-2);
   background: var(--color-bg-secondary);
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-xs);
   cursor: pointer;
@@ -538,6 +604,7 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
 .cv__tabs button:active {
   color: var(--color-text-primary);
   border-color: var(--color-border-strong);
+  background: var(--cv-bg-hover);
 }
 .cv__chips button[aria-checked='true'],
 .cv__tabs button[aria-checked='true'] {
@@ -551,7 +618,9 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   font-size: var(--fz-body-s);
   line-height: 1.4;
   color: var(--color-text-muted);
-  margin-top: var(--space-1);
+  /* A step more air than the control rows above: the caption is prose,
+     not another chrome row. */
+  margin-top: var(--space-2);
 }
 
 /* --- Fullscreen overlay (M4) — fixed, visualViewport-sized (case-viewer.ts
@@ -599,8 +668,17 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   .cv-fs__screen {
     animation: cv-crt-on var(--cv-crt-on) ease-out;
   }
-  .cv-fs__screen > * {
+  /* :not(.cv-fs__readout): the W/L pad toggles display mid-session, and an
+     element leaving display:none REPLAYS its animation — the content-in's
+     300ms backwards-held delay would hold the pad invisible on every TUNE
+     press. It is hidden during the open morph anyway; it needs no entrance. */
+  .cv-fs__screen > :not(.cv-fs__readout) {
     animation: cv-crt-content-in var(--cv-crt-content) var(--cv-crt-content-ease) var(--cv-crt-on) backwards;
+  }
+  /* The same replay-on-unhide behavior, used deliberately: each time the
+     W/L pad unhides it plays a quick fade — present at once, never a pop. */
+  .cv-fs__readout {
+    animation: cv-fade-in 0.2s ease;
   }
   /* The phosphor beam — the bright line the screen opens from and collapses
      back to (a black slit on a dark page was invisible). Unscaled (it rides
@@ -670,8 +748,7 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   align-items: baseline;
   gap: var(--space-1);
   padding: var(--space-1) var(--space-2);
-  /* Clear the absolutely-positioned ✕ so the counter never sits under it. */
-  padding-right: calc(var(--cv-hit-area) + var(--space-2) + env(safe-area-inset-right, 0px));
+  padding-right: calc(var(--space-2) + env(safe-area-inset-right, 0px));
   font-family: var(--ff-mono);
   font-size: var(--cv-meta-size);
   letter-spacing: var(--ls-ui);
@@ -697,19 +774,14 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   width: 100%;
   height: 100%;
 }
+/* Close is a bar chip lifted just above TUNE — one thumb zone holds the
+   whole exit/adjust cluster (TUNE stays the bar's rightmost chip so the
+   two align even while RESET is showing). Offsets: bar height (hit-area +
+   2 × space-1 padding) + a space-1 gap above it. */
 .cv-fs__close {
   position: absolute;
-  top: calc(env(safe-area-inset-top) + var(--space-1));
-  right: calc(env(safe-area-inset-right) + var(--space-1));
-  min-width: var(--cv-hit-area);
-  min-height: var(--cv-hit-area);
-  background: var(--cv-scrim);
-  font-family: var(--ff-mono);
-  color: var(--color-text-ivory);
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-xs);
-  cursor: pointer;
-  transition: background-color 0.15s ease;
+  right: calc(env(safe-area-inset-right, 0px) + var(--space-2));
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--cv-hit-area) + 3 * var(--space-1));
 }
 .cv-fs__bar {
   display: flex;
@@ -724,32 +796,57 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   min-height: var(--cv-hit-area);
   padding-inline: var(--space-2);
   background: var(--color-bg-secondary);
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-xs);
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 .cv-fs__chip:hover,
 .cv-fs__chip:active {
   color: var(--color-text-primary);
   border-color: var(--color-border-strong);
+  background: var(--cv-bg-hover);
 }
 .cv-fs__chip[aria-pressed='true'] {
   color: var(--color-signal-cyan);
   border-color: var(--color-border-strong);
   background: var(--color-bg-raised);
 }
+/* W/L readout — the live pad shown while adjusting: a quiet plane with
+   hairline axes and a cyan dot that mirrors the drag (right = wider window,
+   up = brighter). The dot carries the active-state cyan; the caption stays
+   in the muted console voice. */
 .cv-fs__readout {
   position: absolute;
   bottom: calc(env(safe-area-inset-bottom) + var(--cv-hit-area) + var(--space-3));
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
   font-family: var(--ff-mono);
   font-size: var(--cv-meta-size);
   letter-spacing: var(--ls-ui);
-  color: var(--color-signal-cyan);
+  color: var(--color-text-muted);
   pointer-events: none;
+}
+/* display:flex would defeat the [hidden] attribute's UA display:none. */
+.cv-fs__readout[hidden] {
+  display: none;
+}
+.cv-fs__wl {
+  width: var(--cv-wl-pad-w);
+  height: var(--cv-wl-pad-h);
+  background: var(--cv-scrim);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xs);
+}
+.cv-fs__wl line {
+  stroke: var(--color-text-muted);
+}
+.cv-fs__wl circle {
+  fill: var(--color-signal-cyan);
 }
 /* --- Placement: article prose (media width) + edge-to-edge on mobile --- */
 .prose case-viewer {

@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-07-11
+
+### Added
+- **Homepage "Latest" section** — a chronological card grid below Featured surfacing every article outside the curated Featured block, so the homepage grows on its own as articles publish (Featured stays the editor's picks).
+- **"Using the Case Viewer" demo article** (`L1-0007`, featured lead) — a thin how-to with the interactive viewer at the top, for exercising the case viewer from the homepage.
+- **Case-viewer signature icon hover motion** — per-glyph gestures on the shared spring (scan-eye corners spread + pupil dilates, maximize-2 arrows spread, ✕ recedes, contrast half-disk flips), as pure-CSS transforms on Lucide sub-paths (class hooks in `case-icons.mjs`), reduced-motion opt-out.
+
+### Changed
+- **Case-viewer buttons unified into one design system** — single skeleton (`border-default`→strong, secondary→primary→ivory color ladder, shared cyan `:focus-visible` ring), surface by placement (scrim for the on-image ACTIVATE, panel for console chips), square icon buttons, and icon stroke set by the Lucide 1.5/24 ratio rather than absolute px (the ratio holds optical weight across render sizes). Consolidates the earlier four per-button treatments; hover conventions follow Radix/Material/shadcn (a faint ivory state-layer wash appears, glyph steps one tier whiter).
+- **Case-viewer icon set** — scan-eye = ACTIVATE, x = close, maximize-2 = open fullscreen (was square-power / minimize / scan-eye); gold dropped from the maximize button so every control shares one resting color.
+- **Fullscreen "TUNE" readout replaced with a live window/level pad** — a bottom-center X-Y plane whose cyan dot mirrors the contrast/brightness drag (right = wider window, up = brighter), no numeric values; the chip is relabeled "Adjust window and level" and holds its flipped half-disk while active.
+- **Engaged scrub state releases by tapping the image again** (mirroring entry) — the inline minimize/✕ button is gone, a cyan "DRAG TO SCROLL" chip names the gesture, and all four corner brackets stay visible.
+- **Fullscreen close moved directly above the contrast chip** (same square chip style) for one-thumb reach; the slider thumb is now a wide rectangle rather than a square knob.
+- **HUD boot flicker density doubled** so the power-on reads as a faster-warming instrument; callout card padding tightened; viewer caption-to-controls spacing increased.
+
+### Fixed
+- **Case-viewer slider scrub clamps to the decode frontier** like the drag/wheel paths — a fast slider sweep no longer outruns decode into a stall-glyph storm (the "dot fires a lot" symptom on device).
+- **Footnote backref arrows (↩) pinned to text presentation** (U+FE0E) in `rehypeFootnotePopovers` so iOS renders the glyph rather than substituting the blue emoji.
+- **Console chrome gets `user-select: none`** (meta strip, slider bar, chips, tabs) — an iOS long-press no longer starts a text selection that wrecks the controls.
+- **W/L pad no longer delayed on open** — it was inheriting the CRT content-in entrance (a `backwards`-held delay that replayed on each unhide); now excluded, with its own quick fade.
+- **Stale "Lab Grotesque" font references** in prose/homepage CSS comments repointed to the `--ff-body` token role (the site uses the OFL faces, not the retired stack).
+
 ## [0.9.0] - 2026-07-08
 
 ### Added

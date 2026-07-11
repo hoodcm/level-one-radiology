@@ -3,8 +3,8 @@ id: case-viewer-hot-path-perf
 title: Case-viewer hot-path perf items deferred from the /simplify pass
 band: next
 first_surfaced: 2026-07-07
-last_touched: 2026-07-08
-assessed: 2026-07-08
+last_touched: 2026-07-11
+assessed: 2026-07-11
 depends_on: []
 links: [src/components/case/case-viewer.ts, src/components/case/fullscreen.ts]
 workstream: case-viewer
@@ -53,3 +53,8 @@ rationale.
 parallel session's sweep (stall/frontier clamp, prefetch fan-out cap, wheel
 rAF race, inert/keyboard gaps, warm-decode-on-engage) — same files/workstream,
 kept as one item rather than fragmenting.
+2026-07-11 closed one of the five: the inline `<input type=range>` slider
+path (`case-viewer.ts` `#slider` `input` handler) is now frontier-clamped,
+matching the pointer-drag path. The fullscreen slider's own stall
+indicator/frontier clamp — plus the other four bullets (prefetch cap, wheel
+rAF race, inert/keyboard, warm-decode) — remain open.
