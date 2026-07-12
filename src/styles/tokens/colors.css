@@ -58,10 +58,6 @@
   --color-border-strong: rgba(255, 255, 255, 0.15);
   --color-border-accent: #232220;
 
-  /* Hairline grid texture — blueprint ground for HUD surfaces (hero).
-     Knob: alpha. 0.03 is near-subliminal; 0.05 reads as graph paper. */
-  --color-grid-line: rgba(255, 255, 255, 0.04);
-
   /* Legacy (deprecated — use new tokens) */
   --color-imaging-black: var(--color-bg-deepest);
   --color-control-charcoal: var(--color-bg-secondary);

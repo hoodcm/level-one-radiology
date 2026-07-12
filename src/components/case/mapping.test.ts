@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { PPF_MAX, PPF_MIN, clampFrame, frameForDrag, pxPerFrame, scrubTarget } from './mapping';
+import {
+  PPF_MAX,
+  PPF_MIN,
+  PX_PER_VIEW,
+  clampFrame,
+  frameForDrag,
+  pxPerFrame,
+  scrubTarget,
+} from './mapping';
 
 describe('pxPerFrame', () => {
   it('stays inside [PPF_MIN, PPF_MAX] across the realistic input space', () => {
@@ -46,5 +54,22 @@ describe('frameForDrag', () => {
     expect(frameForDrag(10, 5 * ppf, ppf, 48)).toBe(15);
     expect(frameForDrag(15, -5 * ppf, ppf, 48)).toBe(10);
     expect(scrubTarget(10, 6, ppf)).toBe(10.5);
+  });
+});
+
+describe('views drag-flip (PX_PER_VIEW TUNE knob)', () => {
+  it('is deliberately slower than any stack ppf the clamp can produce', () => {
+    expect(PX_PER_VIEW).toBeGreaterThan(PPF_MAX);
+  });
+
+  it('flips exactly one view per PX_PER_VIEW of drag, clamped at the rail ends', () => {
+    const views = 7;
+    expect(frameForDrag(3, PX_PER_VIEW, PX_PER_VIEW, views)).toBe(4);
+    expect(frameForDrag(3, -PX_PER_VIEW, PX_PER_VIEW, views)).toBe(2);
+    // Sub-half-flip travel snaps back — no accidental view change.
+    expect(frameForDrag(3, PX_PER_VIEW * 0.4, PX_PER_VIEW, views)).toBe(3);
+    // Ends clamp: no wraparound off the rail.
+    expect(frameForDrag(7, PX_PER_VIEW * 5, PX_PER_VIEW, views)).toBe(7);
+    expect(frameForDrag(1, -PX_PER_VIEW * 5, PX_PER_VIEW, views)).toBe(1);
   });
 });

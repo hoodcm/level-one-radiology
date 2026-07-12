@@ -14,6 +14,7 @@
 @import "./tokens/spacing.css";
 @import "./tokens/ornament.css";
 @import "./tokens/case-viewer.css";
+@import "./tokens/detector-hero.css";
 @import "./tokens/print.css";
 
 /* Base Styles */

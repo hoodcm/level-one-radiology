@@ -27,6 +27,15 @@
     content: none !important;
   }
 
+  /* Views-kind: the fallback block prints every view at full quality, so the
+     interactive stage (poster + canvas) would only duplicate view 1. */
+  .cv--views .cv__stage {
+    display: none !important;
+  }
+  .cv--views .cv__fallback {
+    display: grid !important;
+  }
+
   .article__layout {
     display: block;
   }

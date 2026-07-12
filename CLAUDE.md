@@ -63,7 +63,7 @@ src/
     layout/               # Header, Footer, Container, Grid, Col (.astro)
     article/              # TableOfContents.astro
     case/                 # <case-viewer> element + frame-store/fullscreen/mapping (.ts); see docs/archive/plans/ brief
-    shared/               # Tag, ArticleCard, FeatureBand (.astro), NewsletterSignup (.tsx)
+    shared/               # Tag, ArticleCard, FeatureBand, DetectorHero (.astro), NewsletterSignup (.tsx)
     ui/                   # shadcn/ui auto-generated components
   lib/
     utils.ts              # cn helper etc.
@@ -73,6 +73,7 @@ src/
     markdown-plugins.mjs  # remarkCallouts, remarkCaseViewer, rehypeTableScroll, remarkReadingTime, rehypeFootnotePopovers
     case-shell.mjs        # build-time <case-viewer> shell emitter + ::case validation (shared w/ loader + case:build)
     case-loader.ts        # case-aware content loader (rev-invalidates stale ::case embeds)
+    detector-hero.mjs     # Homepage detector-hero drawing generator (geometry + locked SETTINGS; knobs in tokens/detector-hero.css)
   pages/
     articles/
       [slug].astro        # Article template
@@ -84,7 +85,7 @@ src/
   layouts/
     Layout.astro          # Base layout
   styles/
-    tokens/               # colors, typography, spacing, print, fonts-ofl.generated (.css)
+    tokens/               # colors, typography, spacing, detector-hero, print, fonts-ofl.generated (.css)
     base/                 # global.css, motion.css, print.css
     components/           # Per-component CSS (homepage, prose, pages) + apparatus/ (one file per article-apparatus element)
     main.css              # Import manifest

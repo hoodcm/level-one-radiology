@@ -117,6 +117,60 @@ describe('shell DOM contract (caseShellHtml)', () => {
   });
 });
 
+describe('shell DOM contract — views kind', () => {
+  const manifest = {
+    id: 'xr-1',
+    title: 'XR ANKLE (LEFT)',
+    modality: 'XR',
+    base: '/cases/xr-1/',
+    rev: 2,
+    kind: 'views',
+    stage: { width: 1200, height: 1187 },
+    start: 2,
+    poster: 'poster.jpg',
+    views: [
+      { key: 'v01', label: 'AP ANKLE', width: 687, height: 1200, file: 'views/001.jpg', thumb: 'views/thumb-001.jpg' },
+      { key: 'v02', label: 'LAT ANKLE', width: 1200, height: 980, file: 'views/002.jpg', thumb: 'views/thumb-002.jpg' },
+    ],
+  };
+
+  it('emits the rail radiogroup, per-view buttons, and live meta hooks', () => {
+    const html = caseShellHtml(manifest, 'Cap.');
+    expect(html).toContain('data-kind="views"');
+    expect(html).toContain('data-cv-rail');
+    expect(html).toContain('role="radiogroup" aria-label="Views"');
+    expect(html).toContain('data-cv-view="v01"');
+    expect(html).toContain('data-cv-view="v02"');
+    // start=2 → v02 checked, v01 not; label + counter pre-rendered for it.
+    expect(html).toContain('aria-checked="false" data-cv-view="v01"');
+    expect(html).toContain('aria-checked="true" data-cv-view="v02"');
+    expect(html).toContain('<span data-cv-view-label>LAT ANKLE</span>');
+    expect(html).toContain('data-cv-counter>2/2</span>');
+    expect(html).toContain('aspect-ratio: 1200 / 1187'); // stage envelope, not view dims
+    expect(html).toContain('/cases/xr-1/poster.jpg');
+    expect(html).toContain('/cases/xr-1/views/thumb-001.jpg');
+  });
+
+  it('emits no slider, chips, or tabs — the rail owns selection', () => {
+    const html = caseShellHtml(manifest, '');
+    expect(html).not.toContain('data-cv-slider');
+    expect(html).not.toContain('data-cv-windows');
+    expect(html).not.toContain('data-cv-series');
+    expect(html).toContain('data-cv-fullscreen'); // fullscreen stays
+    expect(html).toContain('data-cv-activate'); // tap-to-boot gate stays
+  });
+
+  it('emits a real-<img> fallback per view with alt text, plus the no-JS unhide', () => {
+    const html = caseShellHtml(manifest, '');
+    expect(html).toContain('class="cv__fallback"');
+    expect(html).toContain('alt="AP ANKLE — XR ANKLE (LEFT)"');
+    expect(html).toContain('alt="LAT ANKLE — XR ANKLE (LEFT)"');
+    expect(html).toContain('src="/cases/xr-1/views/001.jpg"');
+    expect(html).toContain('width="687" height="1200"');
+    expect(html).toContain('<noscript><style>case-viewer .cv__fallback{display:grid}</style></noscript>');
+  });
+});
+
 afterAll(() => {
   rmSync(path.resolve('public/cases/vitest-hole'), { recursive: true, force: true });
 });

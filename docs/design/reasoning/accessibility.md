@@ -44,7 +44,7 @@ Never remove focus outlines without an equivalent visible replacement. Focus ord
 The reduced-motion **floor** lives here; the broader reasoning on *when and how* to animate is
 [motion.md](motion.md).
 
-- Honor `prefers-reduced-motion`: scroll-linked and decorative animation (the FeatureBand detector, nav
+- Honor `prefers-reduced-motion`: scroll-linked and decorative animation (the FeatureBand widen, nav
   morphs, reveals) must have a reduced/none path.
 - No essential information conveyed *only* through motion.
 

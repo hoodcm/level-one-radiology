@@ -10,6 +10,7 @@ describe('apparatus flag-name contract', () => {
     expect(Object.keys(apparatus).sort()).toEqual([
       'caseTapToActivate',
       'caseTapToBoot',
+      'detectorHero',
       'footnotePopovers',
       'mobileToc',
       'readNext',

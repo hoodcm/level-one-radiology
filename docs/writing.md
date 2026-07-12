@@ -1,6 +1,6 @@
 # Level One Radiology: Writing Style Guide
 
-*Smart Brevity structure with human voice*
+*The human voice and the structure that carries it*
 
 [← Docs](README.md)
 
@@ -8,11 +8,9 @@
 
 ## Core Philosophy
 
-> **Brevity is confidence. Length is fear. Short, not shallow.**
-
 Writing style follows the same "tight, not cramped" principle as design. Professional density with human warmth—not sparse, not padded, not performed.
 
-Smart Brevity provides the structure. The human layer provides the voice. Structure without voice feels like a textbook. Voice without structure wastes the reader's time. You need both.
+Structure organizes the piece. The human layer provides the voice. Structure without voice feels like a textbook. Voice without structure wastes the reader's time. You need both.
 
 ---
 
@@ -289,11 +287,33 @@ Every section should end with what to actually do or look for. The reader should
 
 ---
 
-## Part Two: Smart Brevity Structure
+### Prose, Not Copy
+
+Every technique in this guide can be over-applied until the writing reads as copy: polished, punchy, and constantly aware of its own quotability. That register is inauthentic and turns readers off. The grounded examples above are near-verbatim transcript of actual teaching; that register, imperfections included, is the target.
+
+#### 29. Prefer the spoken version
+
+When a revision makes a sentence more vivid but less like something you'd say out loud at the workstation, revert it. "Watched them jerk the mouse around with small movements" beats "watched them make small, twitchy drags while the image flickers through a dozen versions of itself." The second is better copy and worse voice. The test for any sentence: would you say it to the resident sitting next to you?
+
+#### 30. One crafted closer per piece
+
+A landing line—short, declarative, quotable—is a budget of about one per article, two in a long one, spent where the thesis lands. Everywhere else, a paragraph ends when its information does. The actionable ending (#28) is content stated plainly; it does not need kicker styling. A closer per paragraph is performed punchiness, the same failure as performed urgency (#15) in a different register.
+
+#### 31. Let plain sentences exist
+
+Spoken explanation has slack: connective sentences, mild redundancy, asymmetric polish. "So let's build the whole mechanism from the ground up" carries no image and no argument, and that is exactly what makes it sound like a person. Uniform maximal density—every sentence load-bearing, every noun carrying a metaphor—is the uncanny tell of generated prose. Don't edit the slack out.
+
+#### 32. Break the symmetry
+
+Parallel constructions compound into rhythm theater: the one-word topic triad ("Workflow. ... Liability. ... Cost. ..."), negation-then-assertion ("you are not looking for a line, you are looking for what the air outlines"), echo chains ("congestion becomes edema, edema becomes ischemia"), fragments for drama ("Now the constraint."). Any one of these can be earned. A piece full of them was generated, and reads that way. Budget one deliberate contrast per piece and state the rest directly, in complete sentences.
+
+---
+
+## Part Two: Content Organization
 
 These are formatting tools, not templates. Use them to organize your human voice, not to replace it.
 
-### The Core 4 Framework
+### The Core Structure
 
 Every piece of Level One content can use this architecture—but hold it loosely.
 
@@ -320,7 +340,7 @@ Use these as signposts when they help—not as mandatory headers.
 | **The bottom line** | Summarizing a takeaway |
 | **Go deeper** | Linking to sources or related content |
 
-These are tools. If a natural paragraph break works better than a labeled section, use the paragraph break.
+These are tools. If a natural paragraph break works better than a labeled section, use the paragraph break. And a label never substitutes for arrangement: if the prose hasn't already made the reader feel why it matters, a bold header announcing it is performance.
 
 ### When to Use Bullets
 
@@ -338,9 +358,9 @@ Bullets are for genuinely parallel items that benefit from visual separation. No
 
 ### Bold for Scanning
 
-Bold the phrases a skimmer needs to catch. Not every key term—just the ones that orient the reader.
+Bold the phrases a skimmer needs to catch. Not every key term—just the ones that orient the reader. Bold an orienting phrase, not a crafted aphorism: styling a kicker in bold spends the piece's one landing line (#30) on typography.
 
-> **Two transition points, not one.** This is the key. Simple SBO has a single point where dilated meets decompressed. Closed-loop has two.
+> **Reduced wall enhancement** is the most specific finding for nonviable bowel. Judge it against adjacent normal loops on the portal venous phase.
 
 ---
 
@@ -424,17 +444,6 @@ ONE MORE THING
 ---
 
 ## Part Four: Word Choice
-
-### The Syllable Rule
-
-One-syllable words beat two-syllable words beat three-syllable words—when meaning is equivalent.
-
-| Weak | Strong |
-|------|--------|
-| hemorrhage | bleed |
-| visualized | seen |
-| identified | found |
-| utilize | use |
 
 ### Purge Radiology-Speak
 
@@ -557,6 +566,10 @@ Before publishing, verify:
 - [ ] **200-word test:** Does the opening deliver value immediately?
 - [ ] **No performed urgency:** Did I state importance plainly, without drama?
 - [ ] **Human:** Does this sound like a person talking, not a textbook?
+- [ ] **Spoken test:** Would I say these sentences out loud to the resident next to me?
+- [ ] **One closer:** At most one crafted landing line, spent on the thesis?
+- [ ] **Symmetry purge:** No triads, negation-reversals, echo chains, or drama fragments beyond the one earned contrast?
+- [ ] **Slack intact:** Did plain connective sentences survive, or did every line get polished?
 
 ---
 
@@ -574,5 +587,5 @@ Writing style extends the design philosophy:
 ---
 
 *Document created: December 2024*
-*Last updated: January 2026*
-*Based on Smart Brevity methodology (Axios) + original voice analysis*
+*Last updated: July 2026*
+*Based on original voice analysis*

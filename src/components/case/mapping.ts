@@ -14,6 +14,13 @@
 export const PPF_MIN = 8;
 export const PPF_MAX = 24;
 
+/** Views kind (XR static views): FIXED pixels of horizontal drag per view
+ *  flip — the TUNE knob. The stack's pxPerFrame(stageW, frames) would be far
+ *  too twitchy at N≤10 views; a deliberate ~quarter-stage swipe per view
+ *  reads as "turn to the next radiograph", not a scrub. Overridable per
+ *  element via data-ppf (same override surface as the stack). */
+export const PX_PER_VIEW = 96;
+
 /** Pixels of drag per frame step — the primary feel-tuning knob. */
 export function pxPerFrame(containerWidth: number, frameCount: number): number {
   return Math.min(PPF_MAX, Math.max(PPF_MIN, containerWidth / frameCount));

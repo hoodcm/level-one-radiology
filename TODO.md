@@ -7,7 +7,7 @@ Actionable tasks and open questions. Check at session start, update frequently.
 ## Start here
 _as of 2026-07-11 · 3 streams startable · 2 now/next items untyped_
 
-**Decisions waiting (⚖): 8** — Judge this session's visual tuning on screen · Reconsider display/body serif if text halation persists · Remove or gate the unused data-reveal motion system · Retire legacy font payload (Utopia/Eurostile/Lab Grotesque) and re-subset Newsreader · Split primary-CTA gold from caution into distinct tokens if they conflict · Consider thin Scrib3-style gutters for full-bleed image spans · +2 more
+**Decisions waiting (⚖): 9** — Judge this session's visual tuning on screen · Judge detector-hero composition on iPhone + desktop (plan steps 7 + 10) · Reconsider display/body serif if text halation persists · Remove or gate the unused data-reveal motion system · Retire legacy font payload (Utopia/Eurostile/Lab Grotesque) and re-subset Newsreader · Split primary-CTA gold from caution into distinct tokens if they conflict · +3 more
 
 - case-viewer — next: Build Case Viewer showstopper module (build)
 - fonts — next: Retire legacy font payload (Utopia/Eurostile/Lab Grotesque) and re-subset Newsreader (decide)
@@ -20,7 +20,7 @@ _as of 2026-07-11 · 3 streams startable · 2 now/next items untyped_
   Build the Case Viewer — the "showstopper module," a PACS-like image viewer for clinical cases embedded within articles. Light-DOM custom element `<case-viewer>` (not a React island — see the archived plan), mobile-first, built and code-reviewed. Michael: "the mobile-first image viewer is key." Implementation is substantially complete (mapping/frame-store/case-viewer/ fullscreen modules, boot choreography, TUNE, build-time manifest pipeline, review hardening, /simplify pass) and is live-embedded in a published article (`src/content/articles/window-and-level.md`), but that embed is a TEMPORARY synthetic demo case (`::case{id="dev-synthetic"}`) standing in for the on-device test surface — swapping it for a real clinical case is step 15 below, not a separate deliverable. Remaining scope is purely the four **user-gated, device-only** steps from `docs/archive/plans/2026-07-07-case-viewer-plan.md` (Steps section) — none are autonomous: - Step 3 — on-device gesture-spike judgment (Michael's iPhone) - Step 12 — fullscreen device pass - Step 13 — VoiceOver full-flow a11y pass - Step 15 — first real clinical case (replaces the synthetic embed above) Done: all four device-gated steps pass on Michael's iPhone and the real-case embed (step 15) is live.
   ↳ links: src/components/case/, docs/design/components.md, docs/archive/plans/2026-07-07-case-viewer-plan.md
 - **Judge this session's visual tuning on screen**
-  One on-screen judgment pass over this session's headless-verified visual knobs — his eyes are the gate on all of these: - Deepened gold shade (`--color-signal-yellow` → #D8A82C, via `--color-primary`) now owns much more surface than before: CTAs, nav/mobile Subscribe, newsletter buttons, pull-quote stripe, links, focus rings, selection, progress hairline, subscribe accents, and the caution role (shared token). - Hero blueprint grid (`--color-grid-line` alpha 0.04, `--grid-texture-cell` 48px). - Desktop prose leading (`--lh-reading` 1.44). - De-striped apparatus cards. - Card + callout detector-plate ornament (corner field-arcs + edge fiducials, replacing the old HUD corner brackets; card radius 8px→16px). New this session, headless-only so far — confirm the ornament geometry/ink reads right and the hover brighten feels right without the old bracket step-out. - Title view-transition morph (click card → article in Chrome/Safari). - Print stylesheet (⌘P on an article). - Ordinal tick-in keep/cut: demo-gated element at `src/styles/components/apparatus/ordinal-tick.css` (import marked DEMO-GATED in `src/styles/main.css`). Scroll any article in `npm run dev`; plan's default expectation is CUT (a second motion grammar beside `[data-reveal]`). If cut: delete the file + import line, record in CHANGELOG. - On-screen pass over the 7 shipped article-apparatus elements (canonical roster: `docs/design/components.md` → Article apparatus): section break mark, arrival wash, mobile INDEX, More-articles footer block, footnote popover cards, figure accession cells, readout chips. (The cite-line element planned in the first pass was cut on review before shipping.) Done: each knob above is confirmed acceptable on screen (or re-tuned), and the ordinal tick-in keep/cut call is made.
+  One on-screen judgment pass over this session's headless-verified visual knobs — his eyes are the gate on all of these: - Deepened gold shade (`--color-signal-yellow` → #D8A82C, via `--color-primary`) now owns much more surface than before: CTAs, nav/mobile Subscribe, newsletter buttons, pull-quote stripe, links, focus rings, selection, progress hairline, subscribe accents, and the caution role (shared token). - ~~Hero blueprint grid (`--color-grid-line` alpha 0.04, `--grid-texture-cell` 48px)~~ — MOOT: the blueprint grid and both tokens were removed 2026-07-11, replaced by the detector-hero scintillator-grid drawing (see `detector-hero-device-pass`, a separate device-gated judgment item). - Desktop prose leading (`--lh-reading` 1.44). - De-striped apparatus cards. - Card + callout detector-plate ornament (corner field-arcs + edge fiducials, replacing the old HUD corner brackets; card radius 8px→16px). New this session, headless-only so far — confirm the ornament geometry/ink reads right and the hover brighten feels right without the old bracket step-out. - Title view-transition morph (click card → article in Chrome/Safari). - Print stylesheet (⌘P on an article). - Ordinal tick-in keep/cut: demo-gated element at `src/styles/components/apparatus/ordinal-tick.css` (import marked DEMO-GATED in `src/styles/main.css`). Scroll any article in `npm run dev`; plan's default expectation is CUT (a second motion grammar beside `[data-reveal]`). If cut: delete the file + import line, record in CHANGELOG. - On-screen pass over the 7 shipped article-apparatus elements (canonical roster: `docs/design/components.md` → Article apparatus): section break mark, arrival wash, mobile INDEX, More-articles footer block, footnote popover cards, figure accession cells, readout chips. (The cite-line element planned in the first pass was cut on review before shipping.) Done: each knob above is confirmed acceptable on screen (or re-tuned), and the ordinal tick-in keep/cut call is made.
   ↳ links: src/styles/tokens/colors.css, src/styles/tokens/typography.css, src/styles/tokens/ornament.css, src/styles/components/ornament.css, src/styles/components/apparatus/ordinal-tick.css, src/styles/main.css
 - **Resolve the body-serif widening (opsz vs wider OFL serif)**
   The body reading serif (Newsreader) is being widened for a sturdier text column. An `opsz` experiment is live via `--reading-opsz` (typography.css; consumed by prose.css `font-variation-settings: "opsz"`) and awaits the user's on-screen judgment. Newsreader has no `wdth` axis, so widening is only available through optical size. Next step is either lower the opsz further or evaluate a wider / more-geometric OFL body serif. Stated priority Now/Next. Done: a deliberate body-serif width direction is chosen — a settled `--reading-opsz` value or a swapped wider OFL body serif.
@@ -31,6 +31,9 @@ _as of 2026-07-11 · 3 streams startable · 2 now/next items untyped_
 - **Create the Buttondown account (or fix the slug) — Subscribe is fully broken**
   Confirmed at runtime during the site-wide sweep: the newsletter form POSTs to `buttondown.com/…/leveloneradiology`, which 404s — the Buttondown account/newsletter does not exist. Every live Subscribe click on the deployed site currently fails silently into the (now-visible) error state. Email subscribers are the site's keystone metric (CONTEXT.md) and a working signup is explicit MVP scope — this is the single most launch-blocking open item in the store. USER-ACTION: either create the `leveloneradiology` Buttondown account or correct the slug the form posts to; no code change needed once the account/slug is right. Done: a real Subscribe submission on the deployed site succeeds end-to-end.
   ↳ links: src/components/shared/NewsletterSignup.tsx
+- **Judge detector-hero composition on iPhone + desktop (plan steps 7 + 10)**
+  The homepage hero's scintillator-grid drawing (replacing the old blueprint grid) needs Michael's on-screen judgment on his iPhone and desktop: density, slab seating, drift amplitude, and beam subtlety at both 120Hz and 60Hz. This also signs off the mobile statement-in-card arrangement, which is accessibility-sensitive (dual-h1 seat between the hero statement and the page's own h1). Any retune should only touch `src/styles/tokens/detector-hero.css` tokens or the `SETTINGS` constants in `src/lib/detector-hero.mjs`, then re-run gates. Done: composition confirmed acceptable (or retuned) on both device classes, and the mobile dual-h1 arrangement is signed off.
+  ↳ links: src/styles/tokens/detector-hero.css, src/lib/detector-hero.mjs, docs/archive/plans/2026-07-11-detector-hero-plan.md
 
 ## Next
 
@@ -51,10 +54,13 @@ _as of 2026-07-11 · 3 streams startable · 2 now/next items untyped_
 - **Retire legacy font payload (Utopia/Eurostile/Lab Grotesque) and re-subset Newsreader**
   Surfaced during the site-wide latency sweep: ~2MB of retired Utopia/Eurostile/ Lab Grotesque woff2 still ships in `public/fonts/` even though the OFL trial (Newsreader/DM Sans/Michroma/Chivo Mono) is the active face set. The legacy `@font-face` blocks lack `unicode-range`, so the literal "→" glyph in "All articles →" triggers a Lab Grotesque download on every article page. Decide: delete the legacy faces outright (if the OFL trial is staying) or add `unicode-range` scoping so they never download unless actually needed. Also re-subset Newsreader — the 132KB preload could roughly halve with a tighter glyph range. Related but distinct: `is-fonts-licensing-acquired` (whether the legacy faces are even licensed) and `metric-compatible-font-fallbacks` (size-adjust fallback faces for the OFL set) — this item is the payload-weight cleanup, not licensing or CLS. Done: legacy font files are either removed or unicode-range-scoped (no accidental download), and Newsreader ships a tighter subset.
   ↳ links: public/fonts/, src/styles/tokens/fonts-ofl.generated.css
+- **Migrate the case image-processing pipeline to a separate private repo**
+  The DICOM-ingestion tooling (dicom-to-frames.py converter, case-review-server.mjs + case-review-page.html curation tool, the ingest-case skill) is gitignored/withheld from this public repo as of 0.9.3 to avoid exposing the raw-medical-image processing pipeline. Move it to a dedicated private repo; this repo keeps only the de-identified built output under public/cases/ and the case-viewer display code.
+  ↳ links: scripts/dicom-to-frames.py, scripts/case-review-server.mjs, .claude/skills/ingest-case/SKILL.md, .gitignore
 
 ## Later
 
-- **Decide and verify FeatureBand detector desktop behavior**
+- **Decide and verify FeatureBand desktop behavior (now an empty card there)**
 - **Enforce the grid primitive with a hook**
 - **Split primary-CTA gold from caution into distinct tokens if they conflict**
 - **Tokenize the duplicated 0.15s UI-transition duration literal**
@@ -97,22 +103,22 @@ _Refreshed 2026-07-11 by end-session janitor · project store_
 
 _Last session: 2026-07-11_
 
-Level One Radiology — an independent emergency-radiology publication website (Astro + React islands, dark-first, token-driven design system).
+Website for leveloneradiology.com — a dark-first, content-driven emergency radiology publication (Astro + React islands, single-source-of-truth design tokens).
 
 **Accomplished:**
-- Retired the decoded-frontier scrub clamp on every path (drag, slider, wheel, fullscreen) so the scrubber follows the finger 1:1 — fixes the on-iPhone lag regression (see CHANGELOG [Unreleased]).
-- Fixed the fullscreen tap-out frame jump, the contrast chip's missing tap animation, and the INVERTED window-chip stall (sibling pre-warm) — all case-viewer polish from live-iPhone testing.
-- Verified end-to-end: vitest 32/32, `astro check` clean, headless smoke test drove activate → scrub → window-switch → fullscreen round-trip with no console errors.
+- Retuned the detector-hero mobile composition live with Michael — taller slab, an inherent-padding fit clamp so the drawing never clips vertically, and slab-derived wordmark scaling (`--dh-wordmark-fz`) so text and drawing share one scale factor across all mobile widths (CHANGELOG `[Unreleased]`).
+- Fixed the dotted center-line load glitch — the ambient focal loop is now gated on a `settled` flag (CHANGELOG `[Unreleased]`).
+- Removed the FeatureBand HUD graphic and its boot animation entirely — the card is now text-only on the mobile composition, empty on desktop (CHANGELOG `[Unreleased]`).
+- FeatureBand card now inflates on all four sides as it scrolls (Anthropic mobile-card behavior, `--fb-card-h: 68svh`) and its copy no longer rewraps mid-scroll (CHANGELOG `[Unreleased]`).
 
 **Start by reading:** TODO.md, CONTEXT.md, CHANGELOG.md
 
-**Priorities:**
-- See the worklist `## Start here` digest and the `## Now` / `## Next` bands in TODO.md.
+**Priorities:** see the worklist `## Start here` digest and the `## Now` band in TODO.md. The two detector-hero items sit there — one covers the remaining on-device judgment (desktop composition + 120/60Hz), the other the now-empty desktop FeatureBand.
 
-**Time-sensitive:**
-- See the worklist `## Time-sensitive` view in TODO.md.
+**Time-sensitive:** see the worklist `## Time-sensitive` view in TODO.md.
 
 **Unverified assumptions:**
-- The scrub-feel fix is confirmed only by contract (the smoke test proves the frame tracks input 1:1 in one event), not by actual thumb-feel on device — confirm by testing the published page on iPhone.
+- The no-JS / reduced-motion static SVG still uses SVG `slice` cover, not the new JS `corePad` clamp — a pre-hydration flash may crop the fan bottom on squat viewports; confirm acceptable or port the clamp to the static path.
+- The 68svh expanded card height and the 0.29 text/slab wordmark ratio reproduce the on-screen look Michael approved this session but are aesthetic choices best re-judged on his actual device across the full phone→tablet range.
 
 <!-- todo:continuation:end -->

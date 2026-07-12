@@ -59,16 +59,17 @@
   --radius-lg: 1rem;      /* 16px — article cards, large media panels */
   --radius-pill: 100vw;
 
-  /* Grid texture cell — the blueprint-ground pitch (3 × gutter). */
-  --grid-texture-cell: 3rem;   /* 48px */
-
   /* Section-break registration mark (apparatus/section-break.css) — the
      crosshair-circle footprint; the circle spans 3/4 of it (footer r=3/8
      geometry). */
   --break-mark-size: 0.75rem;  /* 12px */
 
-  /* Feature-band detector card */
-  --fb-card-min-h: 23.125rem;  /* 370px — card height; kept just above the HUD width so the panel fills it with a little vertical padding */
+  /* Feature-band card — the card's EXPANDED (full-bleed) height. At rest the
+     card is inset by --grid-margin on all four sides and inflates to this as
+     it scrolls up (Anthropic mobile-card behavior: one box whose gutter
+     collapses in both dimensions; height math beside the width math in
+     homepage.css). */
+  --fb-card-h: 68svh;
 
   /* Card padding (grows at breakpoints below) */
   --card-padding-sm: 1rem;     /* 16px — code, compact */

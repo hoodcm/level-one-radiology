@@ -24,4 +24,10 @@ export const apparatus = {
    *  auto-boot-on-scroll model (boot + warm fire from the IntersectionObserver
    *  tiers as the viewer nears the viewport). */
   caseTapToBoot: true,
+  /** Homepage detector hero — the scintillator-grid drawing behind the hero
+   *  text plus the ENTIRE copy restructuring that seats on it (desktop
+   *  wordmark/tagline row, the mobile statement moving into the FeatureBand
+   *  card, the dual-instance h1). Off restores the pre-change text-only hero
+   *  wholesale: single hero h1, tagline in the hero, FeatureBand untouched. */
+  detectorHero: true,
 } as const;

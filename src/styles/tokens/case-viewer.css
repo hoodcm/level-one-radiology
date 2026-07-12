@@ -17,8 +17,8 @@
 
   /* Boot HUD reticle glow — plain white (the HUD overlays imaging, not themed
      chrome; see components/case-viewer.css §Boot HUD). 40% alpha gives the 1px
-     bloom; a raw white-alpha literal matches the --color-border-* /
-     --color-grid-line idiom in tokens/colors.css. */
+     bloom; a raw white-alpha literal matches the --color-border-* idiom in
+     tokens/colors.css. */
   --cv-hud-glow: rgba(255, 255, 255, 0.4);
 
   /* Corner brackets — the "slight HUD framing". Ivory at rest; the engaged
@@ -86,6 +86,11 @@
   --cv-hit-area: 2.75rem;       /* 44px — iOS minimum hit area */
   --cv-thumb-w: 2.75rem;        /* 44px */
   --cv-thumb-h: 2rem;           /* 32px */
+
+  /* Views rail (x-ray static views) — labeled-thumbnail height in the
+     slider's slot; the button adds its label row + padding on top, keeping
+     the whole chip comfortably above the 44px hit minimum. */
+  --cv-rail-thumb-h: 3rem;      /* 48px */
 
   /* Fullscreen W/L pad — the live X-Y indicator while adjusting (dot mirrors
      the drag). Rendered 1:1 with the SVG viewBox authored in fullscreen.ts

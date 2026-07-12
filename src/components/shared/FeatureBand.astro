@@ -1,109 +1,45 @@
 ---
 // Full-bleed feature band: the homepage's one signature scroll moment.
-// A contained card on plain black; when it scrolls well into view it BOOTS UP
-// AND WIDENS in one coordinated move — the card expands edge-to-edge while a
-// HUD of bright lines and boxes powers on (grid crosshair, center + side
-// boxes, corner brackets snap in, a scanline sweeps down). Fires exactly once,
-// then holds. The component's own script (below) arms + fires it; the boot is a
-// progressive enhancement (static HUD visible without JS, held static under
-// prefers-reduced-motion).
+// A plain contained card on black that WIDENS edge-to-edge as it scrolls up
+// the viewport. The widen is a progressive enhancement (the component's
+// script below drives it) — without JS or under prefers-reduced-motion the
+// card simply sits contained.
+//
+// Detector hero (apparatus.detectorHero): on the mobile composition the hero
+// statement lives HERE — the card carries the page h1 (statement + support,
+// passed in by index.astro), shown only when the shared composition predicate
+// reads mobile (homepage.css gates it). Without copy the band is purely
+// decorative (aria-hidden).
+import { apparatus } from '@/lib/apparatus';
+
+interface Props {
+  statement?: string;
+  support?: string;
+}
+const { statement, support } = Astro.props;
+const carriesCopy = apparatus.detectorHero && statement;
 ---
 
-<section class="feature-band" aria-hidden="true">
+<section class="feature-band" aria-hidden={carriesCopy ? undefined : 'true'}>
   <div class="feature-band__surface">
-    <div class="feature-band__visual">
-      <!-- Square viewBox + uniform scaling (meet) so the HUD keeps the
-           prototype's proportions — never squashed by the band's width. -->
-      <svg viewBox="32 32 960 960" preserveAspectRatio="xMidYMid meet" role="presentation">
-        <defs>
-          <linearGradient id="fb-scan" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="var(--color-signal-yellow)" stop-opacity="0" />
-            <stop offset="0.5" stop-color="var(--color-signal-yellow)" stop-opacity="0.9" />
-            <stop offset="1" stop-color="var(--color-signal-yellow)" stop-opacity="0" />
-          </linearGradient>
-        </defs>
-
-        <!-- grid crosshair (dashed) -->
-        <g class="fb-grid" stroke="var(--color-text-ivory)" stroke-width="3" opacity="0.5">
-          <line x1="100" y1="512" x2="924" y2="512" stroke-dasharray="60 40" stroke-dashoffset="18" />
-          <line x1="512" y1="100" x2="512" y2="924" stroke-dasharray="60 40" stroke-dashoffset="18" />
-        </g>
-
-        <!-- left + right panel boxes -->
-        <g class="fb-panel-l" fill="none" stroke="var(--color-text-ivory)" stroke-width="4" opacity="0.85">
-          <rect x="312" y="260" width="110" height="190" />
-        </g>
-        <g class="fb-panel-r" fill="none" stroke="var(--color-text-ivory)" stroke-width="4" opacity="0.85">
-          <rect x="602" y="260" width="110" height="190" />
-        </g>
-
-        <!-- center module: two stacked boxes -->
-        <g class="fb-center-1" fill="none" stroke="var(--color-text-ivory)" stroke-width="4">
-          <rect x="472" y="372" width="80" height="130" />
-        </g>
-        <g class="fb-center-2" fill="none" stroke="var(--color-text-ivory)" stroke-width="4">
-          <rect x="472" y="522" width="80" height="130" />
-        </g>
-
-        <!-- scanline (sweeps down once during boot) -->
-        <rect class="fb-scan" x="0" y="511" width="1024" height="3" fill="url(#fb-scan)" />
-
-        <!-- corner registration brackets (nested L pairs) -->
-        <g fill="none" stroke="var(--color-text-ivory)" stroke-width="4" opacity="0.9">
-          <g class="fb-bk fb-bk-tl">
-            <path d="M140 240 L140 80 L230 80" stroke-linecap="square" />
-            <path d="M270 190 L270 130 L310 130" stroke-linecap="square" />
-          </g>
-          <g class="fb-bk fb-bk-tr">
-            <path d="M884 240 L884 80 L794 80" stroke-linecap="square" />
-            <path d="M754 190 L754 130 L714 130" stroke-linecap="square" />
-          </g>
-          <g class="fb-bk fb-bk-bl">
-            <path d="M140 784 L140 944 L230 944" stroke-linecap="square" />
-            <path d="M270 834 L270 894 L310 894" stroke-linecap="square" />
-          </g>
-          <g class="fb-bk fb-bk-br">
-            <path d="M884 784 L884 944 L794 944" stroke-linecap="square" />
-            <path d="M754 834 L754 894 L714 894" stroke-linecap="square" />
-          </g>
-        </g>
-      </svg>
-    </div>
+    {carriesCopy && (
+      <h1 class="feature-band__copy">
+        <span class="feature-band__statement">{statement}</span>
+        <span class="feature-band__support">{support}</span>
+      </h1>
+    )}
   </div>
 </section>
 
-<!-- No JS: the boot script never runs, so reveal the static HUD (same override
-     the reduced-motion media query applies in homepage.css). Without this the
-     band is a permanently blank card when scripts are disabled or fail. -->
-<noscript>
-  <style is:inline>
-    .feature-band__surface .fb-grid,
-    .feature-band__surface .fb-panel-l,
-    .feature-band__surface .fb-panel-r,
-    .feature-band__surface .fb-center-1,
-    .feature-band__surface .fb-center-2,
-    .feature-band__surface .fb-bk {
-      opacity: 1;
-    }
-  </style>
-</noscript>
-
 <script>
-  // Two coordinated behaviors (iteration mode — both replay each scroll-pass):
-  //  1. HUD boot — triggered when the card is 40% in view (toggles `is-booted`).
-  //  2. Widen — scroll-LINKED, not auto: `--fb-progress` (0→1) tracks how far
-  //     the card has scrolled up the viewport, so the card only reaches the
-  //     edges once most of it is on screen. Scrolling back to the top fades the
-  //     card out with a slight drop after ~1.5s.
-  // Arming hides the HUD until boot (the static composition stays visible
-  // without JS / under reduced motion, where this script never runs).
+  // Widen — scroll-LINKED, not auto: `--fb-progress` (0→1) tracks how far the
+  // card has scrolled up the viewport, so the card only reaches the edges once
+  // most of it is on screen. Without JS / under reduced motion this script
+  // never runs and the card stays contained.
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   const band = document.querySelector<HTMLElement>('.feature-band__surface');
 
   if (band && !reduce.matches) {
-    let fadeTimer: number | null = null;
-    let resetTimer: number | null = null;
-    let seen = false; // gate the top fade-away until the card has been fully seen
     let lastProgress = '';
     const update = () => {
       const rect = band.getBoundingClientRect();
@@ -120,36 +56,6 @@
       if (next !== lastProgress) {
         band.style.setProperty('--fb-progress', next);
         lastProgress = next;
-      }
-      // Boot the detector once scrolled past the peek (progress-based, so the
-      // card is reliably BLANK at rest on every screen size). Stays booted until
-      // the top-reset below.
-      if (p >= 0.35) band.classList.add('is-booted');
-      if (p >= 0.95) seen = true;
-
-      // Back at the top AFTER the card was fully revealed: the DETECTOR (not the
-      // card) gently falls away after ~1.5s, then resets so it re-boots on the
-      // next scroll. Gated on `seen` so the initial peek is never faded on load.
-      if (seen && window.scrollY <= 8) {
-        if (fadeTimer === null && resetTimer === null) {
-          fadeTimer = window.setTimeout(() => {
-            band.classList.add('fb-faded');
-            resetTimer = window.setTimeout(() => {
-              band.classList.remove('is-booted');
-              band.classList.remove('fb-faded');
-            }, 650);
-          }, 1500);
-        }
-      } else {
-        if (fadeTimer !== null) {
-          window.clearTimeout(fadeTimer);
-          fadeTimer = null;
-        }
-        if (resetTimer !== null) {
-          window.clearTimeout(resetTimer);
-          resetTimer = null;
-        }
-        band.classList.remove('fb-faded');
       }
     };
 

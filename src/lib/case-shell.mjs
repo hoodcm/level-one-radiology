@@ -11,6 +11,8 @@
  * Shell contract (what case-viewer.ts binds to): data-cv-* hooks —
  * manifest (JSON script) · stage · canvas · poster · counter · series-label ·
  * window-label · slider · activate · fullscreen · windows/window · series/serie.
+ * Views kind (manifest.kind === "views") replaces slider/chips/tabs with —
+ * rail (radiogroup) · view (per-thumb button) · view-label (live meta text).
  */
 
 import { existsSync, readFileSync } from 'node:fs';
@@ -73,6 +75,25 @@ export function validateCaseAssets(id, where = 'article') {
     );
   }
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+  if (manifest.kind === 'views') {
+    if (!Array.isArray(manifest.views) || manifest.views.length === 0) {
+      throw new Error(`${where}: ::case{id="${id}"} — views manifest has no views[]`);
+    }
+    for (const view of manifest.views) {
+      for (const rel of [view.file, view.thumb]) {
+        if (!existsSync(path.join(caseDir, rel))) {
+          throw new Error(
+            `${where}: ::case{id="${id}"} — manifest references ${rel} but the file ` +
+              `is missing on disk (re-run case:build --kind views for this case)`
+          );
+        }
+      }
+    }
+    if (!existsSync(path.join(caseDir, manifest.poster))) {
+      throw new Error(`${where}: ::case{id="${id}"} — poster ${manifest.poster} missing on disk`);
+    }
+    return manifest;
+  }
   for (const series of manifest.series) {
     for (const win of series.windows) {
       for (let i = 1; i <= series.frames; i++) {
@@ -118,10 +139,58 @@ function hudSvg() {
 </svg>`;
 }
 
+/** Views-kind shell: thumbnail rail in the slider's slot, canvas stage, HUD
+ *  chrome — the same instrument as the stack, minus slider/chips/tabs — plus
+ *  a real-`<img>` fallback block (print via base/print.css; no-JS via the
+ *  emitted <noscript> style; both HTTP-cache-share the canvas frame URLs). */
+function viewsShellHtml(manifest, caption) {
+  const views = manifest.views;
+  const start = Math.min(views.length, Math.max(1, Number(manifest.start) || 1));
+  const active = views[start - 1];
+  const posterUrl = manifest.base + manifest.poster;
+  const json = JSON.stringify(manifest).replace(/</g, '\\u003c');
+
+  const rail = `<div class="cv__rail" role="radiogroup" aria-label="Views" data-cv-rail>${views
+    .map(
+      (v, i) =>
+        `<button type="button" role="radio" aria-checked="${i === start - 1}" data-cv-view="${esc(v.key)}"><img src="${esc(manifest.base + v.thumb)}" alt="" loading="lazy" decoding="async" /><span>${esc(v.label)}</span></button>`
+    )
+    .join('')}</div>`;
+
+  const fallback = `<div class="cv__fallback">${views
+    .map(
+      (v) =>
+        `<figure><img src="${esc(manifest.base + v.file)}" alt="${esc(v.label)} — ${esc(manifest.title)}" width="${Number(v.width)}" height="${Number(v.height)}" loading="lazy" decoding="async" /><figcaption>${esc(v.label)}</figcaption></figure>`
+    )
+    .join('')}</div><noscript><style>case-viewer .cv__fallback{display:grid}</style></noscript>`;
+
+  const counter = `${String(start).padStart(String(views.length).length, ' ')}/${views.length}`;
+
+  return `<case-viewer data-case="${esc(manifest.id)}" data-rev="${esc(manifest.rev)}" data-kind="views">
+<script type="application/json" data-cv-manifest>${json}</script>
+<figure class="cv cv--views">
+<div class="cv__meta">${manifest.modality ? `<span>${esc(manifest.modality)}</span>` : ''}<span data-cv-view-label>${esc(active.label)}</span><span class="cv__counter" data-cv-counter>${counter}</span></div>
+<div class="cv__stage" data-cv-stage style="aspect-ratio: ${Number(manifest.stage.width)} / ${Number(manifest.stage.height)};">
+<img class="cv__poster" data-cv-poster src="${esc(posterUrl)}" alt="${esc(manifest.title)}" width="${Number(manifest.stage.width)}" height="${Number(manifest.stage.height)}" loading="lazy" decoding="async" />
+<canvas class="cv__canvas" data-cv-canvas aria-hidden="true"></canvas>
+${hudSvg()}
+<div class="cv__brackets" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<button type="button" class="cv__activate" data-cv-activate aria-label="Activate case viewer">${iconSvg('power')}</button>
+</div>
+<div class="cv__bar">
+${rail}
+<button type="button" class="cv__fs" data-cv-fullscreen aria-label="Open fullscreen viewer">${iconSvg('maximize')}</button>
+</div>
+${fallback}${caption ? `<figcaption class="cv__caption">${esc(caption)}</figcaption>` : ''}
+</figure>
+</case-viewer>`;
+}
+
 /** @param {object} manifest  case manifest (see docs: manifest schema)
  *  @param {string} caption   figcaption text (directive label; may be '')
  *  @returns {string} static shell HTML */
 export function caseShellHtml(manifest, caption = '') {
+  if (manifest.kind === 'views') return viewsShellHtml(manifest, caption);
   const series = manifest.series[0];
   const win = series.windows[0];
   const posterUrl = manifest.base + series.poster;

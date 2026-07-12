@@ -112,7 +112,7 @@ tooltip after the first one opens makes the whole toolbar feel quicker.
   transitioning something expensive by accident.
 - **Transitions over keyframes for interruptible UI.** A CSS transition retargets smoothly mid-flight; a
   `@keyframes` animation restarts from zero. Use transitions for anything rapidly re-triggered (toggles,
-  stacking toasts); keyframes only for predetermined, one-shot motion (the hero rise, the FeatureBand boot).
+  stacking toasts); keyframes only for predetermined, one-shot motion (the hero rise).
 
 ---
 

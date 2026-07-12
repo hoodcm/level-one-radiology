@@ -4,7 +4,9 @@ import Container from '@/components/layout/Container.astro';
 import Grid from '@/components/layout/Grid.astro';
 import Col from '@/components/layout/Col.astro';
 import ArticleCard from '@/components/shared/ArticleCard.astro';
+import DetectorHero from '@/components/shared/DetectorHero.astro';
 import FeatureBand from '@/components/shared/FeatureBand.astro';
+import { apparatus } from '@/lib/apparatus';
 import { getArticles } from '@/lib/articles';
 
 const allArticles = await getArticles();
@@ -17,29 +19,58 @@ const restArticles = featuredArticles.slice(1);
 // homepage surfaces new work on its own as it publishes, no featured flag
 // required (Featured stays the editor's picks).
 const latestArticles = allArticles.filter((a) => !a.data.featured);
+
+// Hero statement — written once, rendered in two seats (hero h1 on the
+// desktop composition; FeatureBand card h1 on the mobile composition).
+const HERO_STATEMENT = 'An independent emergency radiology publication.';
+const HERO_SUPPORT =
+  'Clinical deep-dives, teaching cases, and field notes from a practicing radiologist.';
 ---
 
 <Layout title="Level One Radiology: Independent Emergency Radiology">
   <!-- Hero -->
-  <section class="hero">
+  <section class={apparatus.detectorHero ? 'hero hero--detector' : 'hero'}>
+    {apparatus.detectorHero && <DetectorHero />}
     <Container>
-      <!-- Brand wordmark, mobile only; on desktop the header carries it. -->
-      <a href="/" class="hero__wordmark" aria-label="Level One Radiology, home">
-        <span class="hero__wordmark-line"><span class="hero__wordmark-level">Level One</span></span>
-        <span class="hero__wordmark-line"><span class="hero__wordmark-radiology">Radiology</span></span>
-      </a>
-      <!-- One h1, two voices: on mobile the spans flow as a single quiet
-           paragraph under the wordmark; on desktop (no wordmark in the hero)
-           the statement steps up to display scale as the page's opening moment. -->
-      <h1 class="hero__tagline">
-        <span class="hero__statement">An independent emergency radiology publication.</span>
-        <span class="hero__support">Clinical deep-dives, teaching cases, and field notes from a practicing radiologist.</span>
-      </h1>
+      {
+        apparatus.detectorHero ? (
+          <!-- Detector composition: copy rides the slab band. The wordmark
+               shows at every width; the arrangement (and the h1's active seat,
+               here vs the FeatureBand card) switches on the shared viewport
+               predicate — the same one the drawing uses. -->
+          <div class="hero-copy">
+            <a href="/" class="hero__wordmark" aria-label="Level One Radiology, home">
+              <span class="hero__wordmark-line"><span class="hero__wordmark-level">Level One</span></span>
+              <span class="hero__wordmark-line"><span class="hero__wordmark-radiology">Radiology</span></span>
+            </a>
+            <h1 class="hero__tagline">
+              <span class="hero__statement">{HERO_STATEMENT}</span>
+              <span class="hero__support">{HERO_SUPPORT}</span>
+            </h1>
+          </div>
+        ) : (
+          <>
+            <!-- Brand wordmark, mobile only; on desktop the header carries it. -->
+            <a href="/" class="hero__wordmark" aria-label="Level One Radiology, home">
+              <span class="hero__wordmark-line"><span class="hero__wordmark-level">Level One</span></span>
+              <span class="hero__wordmark-line"><span class="hero__wordmark-radiology">Radiology</span></span>
+            </a>
+            <!-- One h1, two voices: on mobile the spans flow as a single quiet
+                 paragraph under the wordmark; on desktop (no wordmark in the hero)
+                 the statement steps up to display scale as the page's opening moment. -->
+            <h1 class="hero__tagline">
+              <span class="hero__statement">{HERO_STATEMENT}</span>
+              <span class="hero__support">{HERO_SUPPORT}</span>
+            </h1>
+          </>
+        )
+      }
     </Container>
   </section>
 
-  <!-- Signature full-bleed feature band (expands on scroll) -->
-  <FeatureBand />
+  <!-- Signature full-bleed feature band (expands on scroll). On the mobile
+       detector composition it carries the hero statement as the page h1. -->
+  <FeatureBand statement={HERO_STATEMENT} support={HERO_SUPPORT} />
 
   <!-- Featured Content -->
   {featuredArticles.length > 0 && (

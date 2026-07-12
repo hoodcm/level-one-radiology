@@ -14,17 +14,17 @@ keyPoints:
   - "Every window trades contrast at one part of the scale for contrast everywhere else. A head CT is read in at least three"
 ---
 
-<p class="lead">I'm sure you have sat next to a radiologist and watched them make small, twitchy drags with the mouse while the image flickers through a dozen versions of itself. You might be wondering what they are doing and why. Those drags are windowing, and they are often the difference between an image that shows the answer and the same image hiding it.</p>
+<p class="lead">I'm sure you've sat next to a radiologist and watched them jerk the mouse around with small movements that alter the image on the screen. You might be wondering what they're doing and why. Those movements are windowing, the controls that decide which part of the density scale your screen actually shows.</p>
 
-These controls are genuinely confusing when you first drive a PACS yourself, and it is understandably easiest to leave the presets alone and hope. So let's build the whole mechanism from the ground up, then come back to the presets and decode them.
+These controls are especially difficult when you first start looking at CTs yourself, and it's understandably easiest to default to the presets and hope. So let's break down what window width and window level actually mean, and then come back to the presets and decode them.
 
-## The Problem the Mouse Is Solving
+## The Problem Windowing Solves
 
-A CT scanner measures how much each small block of tissue attenuates the X-ray beam. When we call something dense on CT, that is the claim we are making: this material knocks down the beam more effectively than its neighbors. The Hounsfield scale standardizes the measurement, anchored to water at 0 and air at -1000, and it runs past +2000 for cortical bone and higher for metal. Call it four thousand meaningfully different values inside a single head CT.
+A CT scanner measures how much each small block of tissue attenuates the X-ray beam. When we call something dense on CT, that's the claim we're making: this material knocks down the beam more effectively than its neighbors. The Hounsfield scale standardizes the measurement, anchored to water at 0 and air at -1000, and it runs past +2000 for cortical bone and higher for metal. Call it four thousand meaningfully different values inside a single head CT.
 
-Now the constraint. Your monitor can display a few hundred shades of gray. Your eye can reliably tell apart a few dozen. Four thousand values, a few dozen usable grays. We cannot show everything at once, so something has to decide which densities get a gray of their own and which get lumped together.
+Since there's such a big range of densities to represent, we have a problem. Your monitor can only display a few hundred shades of gray, and your eye can only reliably distinguish a few dozen. So how do we represent all of these values? The answer is that we can't, at least not all at once. Something has to decide which densities get a gray of their own and which get lumped together, and that something is the window.
 
-That something is the window. Before defining it, it helps to know where the interesting tissues actually sit on the scale:
+Before defining it, it helps to know where the interesting tissues actually sit on the scale:
 
 <dl>
 <dt>Air</dt>
@@ -41,22 +41,22 @@ That something is the window. Before defining it, it helps to know where the int
 <dd>Several hundred to a few thousand HU depending on how cortical it is.</dd>
 </dl>
 
-Read the brain entry again. The gray-white interface you assess on every head CT lives inside a ten-unit sliver of a four-thousand-unit scale, and most of the display problem in neuroimaging comes down to giving that sliver enough grays to read.
+Read the brain entry again. The gray-white interface you assess on every head CT lives inside a ten-unit stretch of a four-thousand-unit scale, and most of the display problem in neuroimaging comes down to giving that stretch enough grays to read.
 
 ## Two Controls, One Window
 
-Windowing is zoom, but for density instead of position. **Window level** is where you point: the HU value at the center of your display, rendered as middle gray. **Window width** is how far you zoom: the range of HU values spread across the full ramp from black to white. Anything below the bottom edge of the window renders pure black, anything above the top edge renders pure white, and no detail survives outside the window no matter how large the density difference.
+Windowing is basically zoom, but for density instead of position. **Window level** is where you point: the HU value at the center of your display, rendered as middle gray. **Window width** is how far you zoom: the range of HU values spread across the full ramp from black to white. Anything below the bottom edge of the window renders pure black, anything above the top edge renders pure white, and no detail survives outside the window no matter how large the density difference.
 
-A narrow window spends all of your grays on a small stretch of the scale, so tiny density differences become visible contrast. A wide window spreads the same grays across a huge stretch, so nothing clips to black or white, but neighboring tissues converge toward the same shade.
+A narrow window spends all of your grays on a small stretch of the scale, so tiny density differences become visible contrast. A wide window spreads the same grays across a huge stretch, so nothing clips to black or white, but neighboring tissues start to converge on the same shade.
 
 ## Watch the Trade-Off Happen
 
-Put up a head CT in the standard brain window, <span class="readout">W80 L40</span>. The window runs from 0 to 80 HU: CSF near black, white matter dark gray, gray matter lighter, acute blood approaching white. The ten-unit gray-white difference gets a real, visible share of the ramp. Meanwhile the calvarium, at many hundreds of units, slams into the top of the window and renders as a featureless white band.
+Put up a head CT in the standard brain window, <span class="readout">W80 L40</span>. The window runs from 0 to 80 HU: CSF near black, white matter dark gray, gray matter lighter, acute blood approaching white. The ten-unit gray-white difference gets a real, visible share of the ramp. Meanwhile the calvarium, at many hundreds of units, is off the top of the window and renders as a featureless white band.
 
-Now drag the width open toward bone settings and watch two things happen at once. The skull develops texture: cortex, diploë, sutures, fracture lines. And the brain collapses toward a single flat gray, because its whole ten-unit interface now occupies a fraction of one displayed shade. Nothing about the data changed. You spent your grays somewhere else.
+Now watch what happens as the width opens up toward bone settings. The skull develops texture: cortex, diploë, sutures, fracture lines. And at the same time the brain converges on a single flat gray, because its whole ten-unit interface now occupies a fraction of one displayed shade. Nothing about the data changed, you've just spent the grays somewhere else.
 
 :::caution[One window, one miss]
-A window optimized for one question is blind to the others. The classic casualty is the thin subdural hematoma: at brain settings, acute clot renders near-white directly against the near-white inner table, and the two merge. The hemorrhage is in the data and absent from the display. Never call a head CT done from a single window.
+A window optimized for one question is blind to the others. The classic casualty is the thin subdural hematoma: at brain settings, acute clot renders near-white directly against the near-white inner table, and the two merge. The hemorrhage is there in the data, it just never makes it to the display. Never call a head CT done from a single window.
 :::
 
 If you like seeing the arithmetic, the whole mechanism fits in a few lines:
@@ -82,7 +82,7 @@ The same two voxels, <span class="readout">27 HU</span> apart, are separated by 
 
 ## The Presets, Decoded
 
-Presets are named positions in the trade-off, each buying contrast for one question by paying for it with the others.
+Each preset is just a named position in the same trade-off: more contrast for one question, less for everything else.
 
 | Preset | Width / Level | What it buys | What it gives up |
 |---|---|---|---|
@@ -94,10 +94,10 @@ Presets are named positions in the trade-off, each buying contrast for one quest
 
 The subdural preset <span class="readout">W200 L80</span> is worth understanding rather than memorizing. It raises the level toward clot density and opens the width just enough that bone and blood stop sharing pure white, which is exactly the failure that hides the thin subdural at brain settings.
 
-Every viewer puts these on hotkeys, usually the number row, and pairs them with a free drag: hold <kbd>W</kbd> (or the middle button, viewers disagree) and drag one axis for width, the other for level. Learning to hit the presets without looking is a real speed gain. Learning the free drag is better, because it lets you interrogate a specific pixel instead of hoping a preset covers it.
+Every viewer puts these on hotkeys, usually the number row, and pairs them with a free drag: hold <kbd>W</kbd> (or the middle button, viewers disagree) and drag one axis for width, the other for level. It's worth learning the presets until you can hit them without looking, and the free drag is even more useful, because it lets you interrogate a specific pixel instead of hoping a preset covers it.
 
 ## Reading a Head CT With This
 
-The practical sequence: brain window for the parenchyma, subdural window along the convexities and falx, bone window for the fractures, soft tissue for the scalp. The scalp hematoma tells you where the coup is, which tells you where to look hardest for the contrecoup.
+The practical sequence: brain window for the parenchyma, subdural window along the convexities and falx, bone window for the fractures, soft tissue for the scalp. The scalp hematoma tells you where the coup is, and the contrecoup you should look hardest for sits opposite it.
 
 And when a finding is equivocal at every preset, stop flipping windows and measure it. An ROI reads the data directly, with no gray ramp in the way.

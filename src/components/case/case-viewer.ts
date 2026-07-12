@@ -22,8 +22,8 @@
 import { apparatus } from '../../lib/apparatus';
 import { FrameStore } from './frame-store';
 import { CaseFullscreen } from './fullscreen';
-import { clampFrame, frameForDrag, pxPerFrame } from './mapping';
-import { drawContain, fitCanvas } from './render';
+import { PX_PER_VIEW, clampFrame, frameForDrag, pxPerFrame } from './mapping';
+import { counterText, drawContain, fitCanvas, railReveal } from './render';
 
 interface WindowSpec {
   key: string;
@@ -41,6 +41,14 @@ interface SeriesSpec {
   windows: WindowSpec[];
   poster: string;
 }
+interface ViewSpec {
+  key: string;
+  label: string;
+  width: number;
+  height: number;
+  file: string;
+  thumb: string;
+}
 interface CaseManifest {
   id: string;
   title: string;
@@ -48,6 +56,14 @@ interface CaseManifest {
   base: string;
   rev: number;
   series: SeriesSpec[];
+  /** Views kind (XR static views): kind/stage/start/poster/views replace
+   *  series[] in the manifest; a synthetic single series is derived at
+   *  connect so the frame machinery (a view = a frame) is reused as-is. */
+  kind?: 'views';
+  stage?: { width: number; height: number };
+  start?: number;
+  poster?: string;
+  views?: ViewSpec[];
 }
 
 type State = 'rest' | 'scrub-h' | 'engaged' | 'fullscreen';
@@ -78,7 +94,8 @@ export class CaseViewerElement extends HTMLElement {
   #stage!: HTMLElement;
   #canvas!: HTMLCanvasElement;
   #counter!: HTMLElement;
-  #slider!: HTMLInputElement;
+  /** Absent on views-kind shells — the rail owns selection there. */
+  #slider: HTMLInputElement | null = null;
 
   #ro: ResizeObserver | null = null;
   #io: IntersectionObserver | null = null;
@@ -122,10 +139,28 @@ export class CaseViewerElement extends HTMLElement {
     const json = this.querySelector('[data-cv-manifest]')?.textContent;
     if (!json) return;
     this.#manifest = JSON.parse(json) as CaseManifest;
+    if (this.#manifest.kind === 'views') {
+      // A view = a frame: derive one synthetic series so every store/scrub/
+      // boot path runs unchanged. #storeFor resolves views[].file URLs.
+      const views = this.#manifest.views!;
+      this.#manifest.series = [
+        {
+          key: 'views',
+          label: '',
+          plane: '',
+          frames: views.length,
+          width: this.#manifest.stage!.width,
+          height: this.#manifest.stage!.height,
+          start: Math.min(views.length, Math.max(1, this.#manifest.start ?? 1)),
+          windows: [{ key: 'views', label: '', pattern: '' }],
+          poster: this.#manifest.poster ?? '',
+        },
+      ];
+    }
     this.#stage = this.querySelector('[data-cv-stage]')!;
     this.#canvas = this.querySelector('[data-cv-canvas]')!;
     this.#counter = this.querySelector('[data-cv-counter]')!;
-    this.#slider = this.querySelector('[data-cv-slider]')!;
+    this.#slider = this.querySelector('[data-cv-slider]');
     this.#frame = this.series.start;
 
     // Tap-to-activate (apparatus flag): CSS keys the hint chip + pointer
@@ -160,6 +195,9 @@ export class CaseViewerElement extends HTMLElement {
   get series(): SeriesSpec {
     return this.#manifest.series[this.#seriesIdx];
   }
+  get #isViews(): boolean {
+    return this.#manifest.kind === 'views';
+  }
   get window_(): WindowSpec {
     return this.series.windows[this.#windowIdx];
   }
@@ -182,7 +220,9 @@ export class CaseViewerElement extends HTMLElement {
     let store = this.#stores.get(id);
     if (!store) {
       const url = (i: number) =>
-        this.#manifest.base + win.pattern.replace('{nnn}', String(i).padStart(3, '0'));
+        this.#isViews
+          ? this.#manifest.base + this.#manifest.views![i - 1].file
+          : this.#manifest.base + win.pattern.replace('{nnn}', String(i).padStart(3, '0'));
       store = new FrameStore<ImageBitmap>({
         frames: series.frames,
         url,
@@ -244,12 +284,26 @@ export class CaseViewerElement extends HTMLElement {
 
   #syncReadout(): void {
     const n = this.series.frames;
-    // "Image N/M" with N pad-aligned to M's width (space-padded; the counter's
-    // white-space:pre + monospace hold the label anchored across digit counts).
-    // Same visible/AT contract as case-shell.mjs — cannot import that node module.
-    this.#counter.textContent = `Image ${String(this.#frame).padStart(String(n).length, ' ')}/${n}`;
-    this.#slider.value = String(this.#frame);
-    this.#slider.setAttribute('aria-valuetext', `Image ${this.#frame} of ${n}`);
+    if (this.#isViews) {
+      // Views console: bare "N/M" counter + live view label + rail selection.
+      // Same visible/AT contract as case-shell.mjs's views shell.
+      const view = this.#manifest.views![this.#frame - 1];
+      this.#counter.textContent = counterText(this.#frame, n);
+      const label = this.querySelector('[data-cv-view-label]');
+      if (label) label.textContent = view.label;
+      const rail = this.querySelector<HTMLElement>('[data-cv-rail]');
+      this.querySelectorAll<HTMLElement>('[data-cv-view]').forEach((b) => {
+        const checked = b.dataset.cvView === view.key;
+        b.setAttribute('aria-checked', String(checked));
+        if (checked && rail) railReveal(rail, b);
+      });
+      this.#emit('cv:frame', { frame: this.#frame });
+      this.#emit('cv:view', { view: view.key, index: this.#frame });
+      return;
+    }
+    this.#counter.textContent = counterText(this.#frame, n, 'Image ');
+    this.#slider!.value = String(this.#frame);
+    this.#slider!.setAttribute('aria-valuetext', `Image ${this.#frame} of ${n}`);
     this.#emit('cv:frame', { frame: this.#frame });
   }
 
@@ -533,25 +587,37 @@ export class CaseViewerElement extends HTMLElement {
 
     // Slider is the semantic scrubber (VO-adjustable). PageUp/Down = ±5.
     // Armed guard: snap back rather than decode — every control below waits
-    // behind the ACTIVATE gate.
-    this.#slider.addEventListener(
+    // behind the ACTIVATE gate. Views-kind shells have no slider — the rail
+    // radiogroup is the semantic selector there.
+    this.#slider?.addEventListener(
       'input',
       () => {
         if (this.#pendingBoot) {
-          this.#slider.value = String(this.#frame);
+          this.#slider!.value = String(this.#frame);
           return;
         }
-        this.#setFrame(Number(this.#slider.value), false);
+        this.#setFrame(Number(this.#slider!.value), false);
       },
       { signal }
     );
-    this.#slider.addEventListener(
+    this.#slider?.addEventListener(
       'keydown',
       (e) => {
         if (this.#pendingBoot) return;
         if (e.key !== 'PageUp' && e.key !== 'PageDown') return;
         e.preventDefault();
         this.#setFrame(this.#frame + (e.key === 'PageUp' ? 5 : -5), false);
+      },
+      { signal }
+    );
+
+    // Views rail: tap a labeled thumbnail to show that view on the stage.
+    this.querySelector('[data-cv-rail]')?.addEventListener(
+      'click',
+      (e) => {
+        if (this.#pendingBoot) return;
+        const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-cv-view]');
+        if (btn) this.#selectView(btn.dataset.cvView!);
       },
       { signal }
     );
@@ -590,6 +656,13 @@ export class CaseViewerElement extends HTMLElement {
     // checked chip is the group's one tab stop) + arrow-key selection.
     this.#radiogroup('[data-cv-windows]', ['cv:window', 'cv:series']);
     this.#radiogroup('[data-cv-series]', ['cv:series']);
+    this.#radiogroup('[data-cv-rail]', ['cv:view']);
+  }
+
+  #selectView(key: string): void {
+    const idx = this.#manifest.views!.findIndex((v) => v.key === key);
+    if (idx === -1 || idx + 1 === this.#frame) return;
+    this.#setFrame(idx + 1, false);
   }
 
   #radiogroup(selector: string, syncOn: string[]): void {
@@ -635,6 +708,21 @@ export class CaseViewerElement extends HTMLElement {
       frames: this.series.frames,
       frame: this.#frame,
       ppf: this.#ppf(),
+      // Views kind: the overlay swaps its slider for the same labeled-thumb
+      // rail, and the meta strip tracks the shown view's label.
+      views: this.#isViews
+        ? this.#manifest.views!.map((v) => ({
+            key: v.key,
+            label: v.label,
+            thumb: this.#manifest.base + v.thumb,
+          }))
+        : undefined,
+      metaFor: this.#isViews
+        ? (i) =>
+            [this.#manifest.modality, this.#manifest.views![i - 1].label]
+              .filter(Boolean)
+              .join(' · ')
+        : undefined,
       el: this,
       bitmap: (i) => this.#store.get(i),
       target: (i, dir) => this.#store.setTarget(i, dir),
@@ -655,7 +743,10 @@ export class CaseViewerElement extends HTMLElement {
 
   #ppf(): number {
     const override = Number(this.dataset.ppf);
-    return override > 0 ? override : pxPerFrame(this.#stageSize().w, this.series.frames);
+    if (override > 0) return override;
+    // Views: fixed px-per-view (TUNE knob in mapping.ts) — pxPerFrame's
+    // stage-width division is far too twitchy at N≤10 static views.
+    return this.#isViews ? PX_PER_VIEW : pxPerFrame(this.#stageSize().w, this.series.frames);
   }
 
   #pointerDown(e: PointerEvent): void {
@@ -819,7 +910,8 @@ export class CaseViewerElement extends HTMLElement {
     // list, so switching rebuilds them (delegated listener survives).
     this.#rebuildChips();
     this.#stage.style.aspectRatio = `${s.width} / ${s.height}`;
-    this.#slider.max = String(s.frames);
+    // Series tabs never render on views-kind, so the slider exists here.
+    this.#slider!.max = String(s.frames);
     this.#frame = 0; // force redraw bookkeeping through #setFrame
     this.#setFrame(s.start, false);
     this.#emit('cv:series', { series: key });

@@ -19,6 +19,27 @@ export function fitCanvas(canvas: HTMLCanvasElement, cssW: number, cssH: number)
   return true;
 }
 
+/** The "N/M" readout, N space-padded to M's width so the label stays anchored
+ *  as the count crosses digit boundaries (the counter's monospace + white-
+ *  space:pre hold it fixed). One contract for the inline element and the
+ *  fullscreen overlay, both kinds. (case-shell.mjs emits the same shape at
+ *  build time but cannot import this browser module — that copy is the one
+ *  the node/browser boundary forces.) */
+export function counterText(frame: number, frames: number, prefix = ''): string {
+  return `${prefix}${String(frame).padStart(String(frames).length, ' ')}/${frames}`;
+}
+
+/** Keep the selected views-rail thumb visible by scrolling the RAIL only,
+ *  horizontally. scrollIntoView is off-limits here: it scrolls every
+ *  scrollable ancestor, so a rail tap could yank the whole page. Shared by
+ *  the inline element and the fullscreen overlay. */
+export function railReveal(rail: HTMLElement, btn: HTMLElement): void {
+  const left = btn.offsetLeft - rail.offsetLeft;
+  const right = left + btn.offsetWidth;
+  if (left < rail.scrollLeft) rail.scrollLeft = left;
+  else if (right > rail.scrollLeft + rail.clientWidth) rail.scrollLeft = right - rail.clientWidth;
+}
+
 export function drawContain(canvas: HTMLCanvasElement, bmp: ImageBitmap): void {
   const ctx = canvas.getContext('2d')!;
   const { width: cw, height: ch } = canvas;

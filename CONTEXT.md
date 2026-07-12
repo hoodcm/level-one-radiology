@@ -16,7 +16,8 @@ This is owned infrastructure for building a national reputation and thought lead
 - **Collectors vs Attractors** — Two content types. Collectors are SEO workhorses (educational articles, case analyses). Attractors are timely commentary pieces (LinkedIn fuel, traffic spikes).
 - **React islands** — Astro architecture pattern. Most pages are static HTML; React loads only for interactive components (the newsletter form). The case viewer is interactive but deliberately framework-free (see below), so it is not a React island.
 - **Detector-plate framing** — Signature visual treatment on cards and callouts: quarter "field arcs" in the inner corners plus T-shaped fiducials at the edge midpoints, modeled on a DR detector plate's registration marks. Values in `src/styles/tokens/ornament.css`, rendering in `src/styles/components/ornament.css` (masked `::before`, one per surface; kill-switch is the import line).
-- **Smart Brevity** — Writing structure from Axios: headline, lede, why it matters, go deeper. Combined with a human teaching voice.
+- **Detector hero** — The homepage hero backdrop: the brand's scintillator-grid cross-section drawing, generated parametrically by `src/lib/detector-hero.mjs` (geometry + locked settings) and rendered two ways by `DetectorHero.astro` — build-time static SVGs (the no-JS/reduced-motion baseline) and a live client instance with the motion set (draw-in, drift, pointer re-focus, beam sweep). Ink/motion knobs in `src/styles/tokens/detector-hero.css`. Two viewport predicates: composition (which drawing + stage height) and a stricter seat predicate (whether the statement h1 sits beside the wordmark in the slab or in the FeatureBand card — exactly one accessible h1 either way). Kill-switch `apparatus.detectorHero` restores the text-only hero wholesale.
+- **Content structure** — Headline, lede, why it matters, go deeper — combined with a human teaching voice (see `docs/writing.md`).
 - **Case Viewer** — The "showstopper module." PACS-like viewer for JPEG image stacks (deliberately not DICOM), embedded within articles via `::case[caption]{id="…"}`, mobile-first. Framework-free `<case-viewer>` custom element (`src/components/case/`), not shadcn. Requirements + architecture brief: `docs/archive/plans/2026-07-07-case-viewer-brief.md`.
 - **Surface hierarchy** — Six-level background system from near-black (#0B0A08) to mid-gray (#333230), using warm bias formula (R=G+1, B=G-2).
 - **Color semantics** — Gold (`--color-primary`) is the *action* color: links, focus, selection, CTAs, progress. Cyan is *informational apparatus* (key points, note callouts, statuses) plus taxonomy; the other signals are taxonomy/severity only. Semantic tokens (`--color-link` etc.) live in `src/styles/tokens/colors.css`.
@@ -39,4 +40,4 @@ This is owned infrastructure for building a national reputation and thought lead
 
 ---
 
-*Last updated: 2026-07-08*
+*Last updated: 2026-07-11*

@@ -1,0 +1,452 @@
+---
+// Detector hero — the scintillator-grid drawing behind the homepage hero text
+// (replaces the blueprint hairline grid). Geometry + locked settings live in
+// src/lib/detector-hero.mjs; ink/motion knobs in tokens/detector-hero.css.
+//
+// Two render paths (FeatureBand's noscript/reduced-motion stance):
+//   1. Build time (here): both compositions emitted as static SVGs at their
+//      locked settings, media-gated on the shared viewport predicate — the
+//      no-JS baseline is correct on both form factors, and reduced-motion
+//      keeps exactly this final static drawing (the script exits early).
+//   2. Client (the <script>): replaces the static pair with one live,
+//      responsively rebuilt instance carrying the approved motion — draw-in,
+//      scroll depth, focal drift, pointer re-focus, beam sweep.
+import {
+  DESKTOP,
+  SETTINGS,
+  mobileComp,
+  occluderRect,
+  slabPath,
+  stackPaths,
+  vaneDepth,
+  vaneFrontD,
+  vaneList,
+} from '../../lib/detector-hero.mjs';
+
+function staticInner(C: any): string {
+  const stack = stackPaths(C)
+    .map((l: any) => `<path vector-effect="non-scaling-stroke" d="${l.d}"/>`)
+    .join('');
+  const fan = vaneList(C)
+    .map(
+      (v: any) =>
+        `<path vector-effect="non-scaling-stroke" d="${vaneFrontD(C, v)}"/>` +
+        `<path vector-effect="non-scaling-stroke" d="${vaneDepth(C, v, 0)}"/>`
+    )
+    .join('');
+  const o = occluderRect(C);
+  return (
+    `<g class="dh-root"><g>${stack}</g><g>${fan}</g>` +
+    `<path class="dh-face" vector-effect="non-scaling-stroke" d="${slabPath(C)}"/></g>` +
+    `<rect class="dh-occluder" x="${o.x}" y="${o.y}" width="${o.width}" height="${o.height}"/>`
+  );
+}
+const MOBILE = mobileComp();
+// Locked composition: verticalShift (SETTINGS.yoff, % of hero height) — the
+// static pair carries it as an inline shift emitted from the same constant
+// the client's fitTransform uses, so a retune moves both render paths.
+const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
+---
+
+<div class="detector-hero" aria-hidden="true">
+  <svg
+    class="dh-static dh-static--desktop"
+    viewBox={`0 0 ${DESKTOP.SW} ${DESKTOP.SH}`}
+    preserveAspectRatio="xMidYMid slice"
+    role="presentation"
+    style={yoffStyle}
+    set:html={staticInner(DESKTOP)}
+  />
+  <svg
+    class="dh-static dh-static--mobile"
+    viewBox={`0 0 ${MOBILE.SW} ${MOBILE.SH}`}
+    preserveAspectRatio="xMidYMid slice"
+    role="presentation"
+    style={yoffStyle}
+    set:html={staticInner(MOBILE)}
+  />
+</div>
+
+{/* Global: the static markup arrives via set:html and the live SVG is
+    JS-built — scoped styles can reach neither. */}
+<style is:global>
+  .detector-hero {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .detector-hero svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .dh-root {
+    fill: none;
+    stroke: var(--dh-ink);
+    stroke-width: var(--dh-stroke);
+    opacity: var(--dh-opacity);
+  }
+  .dh-face {
+    fill: var(--color-bg-deepest);
+  }
+  /* Full-opacity occluder above the beam layer (invisible: bg on bg) —
+     outside .dh-root so the ink opacity never dilutes it. */
+  .dh-occluder {
+    fill: var(--color-bg-deepest);
+    stroke: none;
+  }
+  .dh-beam {
+    fill: none;
+    stroke: var(--dh-ink);
+    stroke-width: var(--dh-stroke);
+  }
+  /* Composition gate — the shared viewport predicate. Single source:
+     DESKTOP_MEDIA in src/lib/detector-hero.mjs; this media condition and the
+     client matchMedia evaluate the identical string. */
+  .dh-static--desktop {
+    display: none;
+  }
+  @media (min-width: 640px) and (min-aspect-ratio: 9/10) {
+    .dh-static--desktop {
+      display: block;
+    }
+    .dh-static--mobile {
+      display: none;
+    }
+  }
+  /* The live instance replaces the static baseline wholesale. */
+  .detector-hero.is-live .dh-static {
+    display: none;
+  }
+  /* Draw-in: per-path stroke-dashoffset reveal, staggered by draw order (the
+     script sets each delay). Reduced motion never arms it — the script exits
+     before building the live instance. */
+  .dh-live path.seg {
+    transition: stroke-dashoffset var(--dh-draw-dur) var(--reveal-ease);
+  }
+</style>
+
+<script>
+  // Client behavior, ported from the approved lab
+  // (design-assets/references/detector-hero-lab.html) at the locked settings:
+  // responsive rebuild, draw-in, focal drift, pointer re-focus (authority
+  // ramps ~1s), beam sweep via live <use> references. (The lab's scroll-
+  // linked depth was cut on device: it slid the slab out from under the
+  // seated hero text.) One rAF ambient loop + one beam interval.
+  // Composition selection is the shared VIEWPORT predicate
+  // (DESKTOP_MEDIA), never element dimensions — the ~70svh hero's element
+  // aspect diverges from the viewport's.
+  import {
+    DESKTOP,
+    DESKTOP_MEDIA,
+    SETTINGS,
+    fitTransform,
+    mobileComp,
+    occluderRect,
+    sigmaOf,
+    slabPath,
+    stackPaths,
+    vaneDepth,
+    vaneFrontD,
+    vaneList,
+    vanesFor,
+  } from '../../lib/detector-hero.mjs';
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const container = document.querySelector<HTMLElement>('.detector-hero');
+  const hero = container?.closest<HTMLElement>('.hero');
+
+  if (container && hero && !reduce) {
+    const heroEl: HTMLElement = hero; // narrowed alias for the closures below
+    const desktopMQ = window.matchMedia(DESKTOP_MEDIA);
+
+    // Style knobs come from the tokens (detector-hero.css) — retunes there
+    // reach the JS through this one read.
+    const css = getComputedStyle(container);
+    const token = (name: string) => parseFloat(css.getPropertyValue(name));
+    const INK_OPACITY = token('--dh-opacity');
+    const DRAW_S = token('--dh-draw-dur');
+    const BEAM_EVERY_S = token('--dh-beam-every');
+    const BEAM_DUR_S = token('--dh-beam-dur');
+    const BEAM_BOOST = token('--dh-beam-boost');
+
+    const svg = document.createElementNS(NS, 'svg') as SVGSVGElement;
+    svg.setAttribute('class', 'dh-live');
+    svg.setAttribute('role', 'presentation');
+    container.classList.add('is-live');
+    container.appendChild(svg);
+
+    let C: any = DESKTOP;
+    let W = 0;
+    let H = 0;
+    let k = 1;
+    let tx = 0;
+    let ty = 0;
+    let gRoot: SVGGElement, gStack: SVGGElement, gVanes: SVGGElement;
+    let occluder: SVGRectElement;
+    let vanes: any[] = [];
+    let stackLayers: { p: SVGPathElement; frac: number }[] = [];
+    let fx = C.CX;
+    let fxTarget = C.CX;
+    let pointerFx = C.CX;
+    let pointerInside = false;
+    let pw = 0; // pointer authority, 0..1 — ramps in/out so entry never lurches
+    let ambientRAF: number | null = null;
+
+    function el<T extends SVGElement>(name: string, attrs: Record<string, string | number>, parent: Element): T {
+      const e = document.createElementNS(NS, name) as unknown as T;
+      for (const key in attrs) e.setAttribute(key, String(attrs[key]));
+      parent.appendChild(e);
+      return e;
+    }
+    const rootTransform = () => `translate(${tx} ${ty}) scale(${k})`;
+
+    function build(drawIn: boolean) {
+      const prev = C;
+      C = desktopMQ.matches ? DESKTOP : mobileComp();
+      // name compare, not identity — mobileComp() returns a fresh object per
+      // call, and a same-composition rebuild (iOS URL-bar resize) must not
+      // snap the focal state back to center
+      if (C.name !== prev.name) {
+        fx = C.CX;
+        fxTarget = C.CX;
+        pointerFx = C.CX;
+      }
+      W = heroEl.clientWidth;
+      H = heroEl.clientHeight;
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      // a rebuild mid-sweep would orphan the beam's rAF against detached
+      // nodes and leave no beam until the next interval
+      if (beamRAF) {
+        cancelAnimationFrame(beamRAF);
+        beamRAF = null;
+      }
+      beamGroup = null;
+      svg.innerHTML = '';
+      vanes = [];
+      stackLayers = [];
+      ({ k, tx, ty } = fitTransform(C, W, H));
+
+      gRoot = el('g', { class: 'dh-root', transform: rootTransform() }, svg);
+
+      // en-face stack: consecutively overlapping rectangles
+      gStack = el('g', { id: 'dh-stack' }, gRoot);
+      for (const l of stackPaths(C)) {
+        const p = el<SVGPathElement>(
+          'path',
+          { class: 'seg', 'data-order': l.order, 'vector-effect': 'non-scaling-stroke', d: l.d },
+          gStack
+        );
+        stackLayers.push({ p, frac: l.frac });
+      }
+
+      // perpendicular fan — shares the slab's transform
+      gVanes = el('g', { id: 'dh-vanes' }, gRoot);
+      const sigma = sigmaOf(C, fx - C.CX);
+      for (const v of vaneList(C) as any[]) {
+        v.pF = el(
+          'path',
+          { class: 'seg', 'data-order': v.order, 'vector-effect': 'non-scaling-stroke', d: vaneFrontD(C, v) },
+          gVanes
+        );
+        v.pD = el(
+          'path',
+          { class: 'seg', 'data-order': v.order, 'vector-effect': 'non-scaling-stroke', d: vaneDepth(C, v, sigma) },
+          gVanes
+        );
+        vanes.push(v);
+      }
+
+      // detector slab (drawn last: its bg-filled face occludes the joins)
+      el(
+        'path',
+        {
+          class: 'seg dh-face',
+          'data-order': SETTINGS.layers,
+          'vector-effect': 'non-scaling-stroke',
+          d: slabPath(C),
+        },
+        el('g', {}, gRoot)
+      );
+
+      const o = occluderRect(C);
+      occluder = el<SVGRectElement>(
+        'rect',
+        { class: 'dh-occluder', x: o.x, y: o.y, width: o.width, height: o.height },
+        svg
+      );
+      occluder.setAttribute('transform', rootTransform());
+
+      if (drawIn) armDrawIn();
+      applyFocus(true);
+      seatCopy();
+    }
+
+    /* Seat the hero copy on the slab's center line — exact, from the same
+       composition the drawing was just built with (the CSS nudge tokens are
+       only the no-JS / reduced-motion approximation). */
+    function seatCopy() {
+      const copy = heroEl.querySelector<HTMLElement>('.hero-copy');
+      if (!copy) return;
+      const slabCenter = ((C.slab.top + C.slab.bot) / 2) * k + ty;
+      // measure from an explicit 0 — clearing to '' would let the CSS
+      // fallback nudge shift the rect and skew the delta
+      copy.style.top = '0px';
+      const r = copy.getBoundingClientRect();
+      const hr = heroEl.getBoundingClientRect();
+      const copyCenter = r.top + r.height / 2 - hr.top;
+      copy.style.top = `${slabCenter - copyCenter}px`;
+    }
+
+    /* ---------- draw-in ---------- */
+    // Full reveal span: base duration + the last path's stagger + slack.
+    // Doubles as the hold-off before the ambient loop may start mutating
+    // path geometry — a depth edge regrown under a stale dasharray renders
+    // as a dotted line (seen on the near-zero-length center plate).
+    const drawSettleMs = () =>
+      DRAW_S * 1000 + DRAW_S * 50 * (SETTINGS.layers + vanesFor(C) + 2) + 200;
+    let drawTimer: number | undefined;
+    function armDrawIn() {
+      const paths = svg.querySelectorAll<SVGPathElement>('path.seg');
+      paths.forEach((p) => {
+        const L = p.getTotalLength();
+        p.style.transition = 'none';
+        p.style.strokeDasharray = `${L}`;
+        p.style.strokeDashoffset = `${L}`;
+      });
+      svg.getBoundingClientRect();
+      const stepMs = DRAW_S * 50;
+      paths.forEach((p) => {
+        p.style.transition = '';
+        p.style.transitionDelay = `${Number(p.dataset.order) * stepMs}ms`;
+        p.style.strokeDashoffset = '0';
+      });
+      clearTimeout(drawTimer);
+      drawTimer = window.setTimeout(() => {
+        paths.forEach((p) => {
+          p.style.strokeDasharray = 'none';
+          p.style.transitionDelay = '';
+        });
+      }, drawSettleMs());
+    }
+
+    /* ---------- coherent focus motion ---------- */
+    function applyFocus(force: boolean) {
+      if (!force && Math.abs(fxTarget - fx) < 0.5) return;
+      const sigma = sigmaOf(C, fx - C.CX);
+      vanes.forEach((v) => v.pD.setAttribute('d', vaneDepth(C, v, sigma)));
+      stackLayers.forEach((l) => l.p.setAttribute('transform', `translate(${sigma * l.frac} 0)`));
+    }
+    function ambientTick(ts: number) {
+      pw += ((pointerInside ? 1 : 0) - pw) * 0.02; // ~1s gradual take-over and release
+      const base = C.CX + C.halfSpan * SETTINGS.driftAmt * Math.sin((ts / 1000) * ((2 * Math.PI) / 26));
+      fxTarget = base + (pointerFx - base) * pw;
+      const m = C.SW * 0.03;
+      fxTarget = Math.max(C.slab.x0 + m, Math.min(C.slab.x1 - m, fxTarget));
+      fx += (fxTarget - fx) * 0.03;
+      applyFocus(false);
+      // stop scheduling while the hero is scrolled off-screen — rAF only
+      // auto-throttles on hidden tabs, not scrolled-away elements; the
+      // IntersectionObserver below restarts the loop on re-entry
+      ambientRAF = onScreen ? requestAnimationFrame(ambientTick) : null;
+    }
+    function syncAmbient() {
+      // `settled` guards the draw-in: the IntersectionObserver fires on load
+      // and must not start the loop early — mutating a depth edge under its
+      // stale dasharray renders as a dotted line (seen on the center plate).
+      if (!ambientRAF && onScreen && settled) ambientRAF = requestAnimationFrame(ambientTick);
+    }
+    let settled = false;
+    let onScreen = true;
+    new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      if (onScreen) syncAmbient();
+    }).observe(container);
+    hero.addEventListener('pointermove', (e) => {
+      pointerInside = true;
+      pointerFx = (e.clientX - tx) / k;
+    });
+    hero.addEventListener('pointerleave', () => {
+      pointerInside = false;
+    });
+
+    /* ---------- beam sweep: soft exposure over BOTH grid layers, live refs ---------- */
+    let beamGroup: SVGGElement | null = null;
+    let beamRAF: number | null = null;
+    function sweepOnce() {
+      if (!onScreen) return;
+      if (beamGroup) beamGroup.remove();
+      if (beamRAF) cancelAnimationFrame(beamRAF);
+      svg.querySelector('defs')?.remove();
+      const defs = el<SVGDefsElement>('defs', {}, svg);
+      const grad = el('linearGradient', { id: 'dh-beam-grad', gradientUnits: 'objectBoundingBox' }, defs);
+      // white = mask luminance (fully exposed), not a themable design color
+      el('stop', { offset: '0', 'stop-color': 'white', 'stop-opacity': '0' }, grad);
+      el('stop', { offset: '0.5', 'stop-color': 'white', 'stop-opacity': '1' }, grad);
+      el('stop', { offset: '1', 'stop-color': 'white', 'stop-opacity': '0' }, grad);
+      const bw = SETTINGS.beamW * C.beamScale;
+      const mask = el(
+        'mask',
+        { id: 'dh-beam-mask', maskUnits: 'userSpaceOnUse', x: -bw - 300, y: 0, width: C.SW + 2 * bw + 600, height: C.SH },
+        defs
+      );
+      const mrect = el<SVGRectElement>(
+        'rect',
+        { x: -bw - 200, y: 0, width: bw, height: C.SH, fill: 'url(#dh-beam-grad)' },
+        mask
+      );
+      beamGroup = el<SVGGElement>(
+        'g',
+        {
+          class: 'dh-beam',
+          transform: rootTransform(),
+          // lift = opacity × (boost − 1): the transient exposure above rest
+          // ink; clamped so a sub-1 boost retune degrades to no lift instead
+          // of an invalid negative opacity
+          opacity: Math.max(0, Math.min(1, INK_OPACITY * BEAM_BOOST) - INK_OPACITY),
+          mask: 'url(#dh-beam-mask)',
+        },
+        svg
+      );
+      el('use', { href: '#dh-stack' }, beamGroup);
+      el('use', { href: '#dh-vanes' }, beamGroup);
+      svg.appendChild(occluder); // keep the occluder above the beam
+      const t0 = performance.now();
+      const dur = BEAM_DUR_S * 1000;
+      const step = (now: number) => {
+        const u = (now - t0) / dur;
+        if (u >= 1) {
+          if (beamGroup) {
+            beamGroup.remove();
+            beamGroup = null;
+          }
+          return;
+        }
+        mrect.setAttribute('x', String(-bw - 200 + u * (C.SW + bw + 400)));
+        beamRAF = requestAnimationFrame(step);
+      };
+      beamRAF = requestAnimationFrame(step);
+    }
+
+    /* ---------- responsive rebuild (draw-in only on arrival) ---------- */
+    let rsz: number | undefined;
+    window.addEventListener('resize', () => {
+      clearTimeout(rsz);
+      rsz = window.setTimeout(() => build(false), 150);
+    });
+
+    build(true);
+    // Ambient focus motion holds until the draw-in settles (dasharray reset
+    // to none) — mutating depth-edge geometry mid-reveal breaks the dashes.
+    window.setTimeout(() => {
+      settled = true;
+      syncAmbient();
+    }, drawSettleMs());
+    sweepOnce();
+    setInterval(sweepOnce, BEAM_EVERY_S * 1000);
+  }
+</script>

@@ -1,0 +1,32 @@
+{
+  "id": "xr-ankle-foot-trauma",
+  "title": "XR ANKLE 3 OR MORE VIEWS (LEFT)",
+  "modality": "XR",
+  "base": "/cases/xr-ankle-foot-trauma/",
+  "rev": 1,
+  "kind": "views",
+  "stage": {
+    "width": 1200,
+    "height": 1200
+  },
+  "start": 1,
+  "poster": "poster.jpg",
+  "views": [
+    {
+      "key": "v01",
+      "label": "L LAT ANKLE",
+      "width": 1200,
+      "height": 1158,
+      "file": "views/001.jpg",
+      "thumb": "views/thumb-001.jpg"
+    },
+    {
+      "key": "v02",
+      "label": "L OBLI ANKLE",
+      "width": 727,
+      "height": 1200,
+      "file": "views/002.jpg",
+      "thumb": "views/thumb-002.jpg"
+    }
+  ]
+}

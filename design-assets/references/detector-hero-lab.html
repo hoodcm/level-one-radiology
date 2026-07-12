@@ -1,0 +1,842 @@
+<title>Detector Hero Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  /* ============================================================
+     DETECTOR HERO LAB — L1R homepage hero iteration bench.
+     Single-theme dark by design: it simulates the site's fixed
+     dark-first hero (tokens mirrored from src/styles/tokens).
+     Model: two layers of a scintillator grid — an en-face plate
+     stack above (translates only, never rotates) and a
+     perpendicular plate fan below, each fan plate's far end
+     anchored on the posterior slab. Two compositions: the locked
+     landscape object for desktop, and a portrait recomposition
+     (same grammar, compact module) for phones.
+     ============================================================ */
+  :root {
+    color-scheme: dark;
+    --bg-deepest: #0B0A08;
+    --bg-panel: #16130E;
+    --bg-chip: #211D16;
+    --ink-ivory: #EFEAE0;
+    --ink-muted: #9D9489;
+    --ink-faint: #5C564D;
+    --gold: #D8A82C;
+    --hairline: rgba(239, 234, 224, 0.12);
+    --ease-reveal: cubic-bezier(0.22, 1, 0.36, 1);
+    --ff-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --ff-wordmark: "Helvetica Neue", Arial, sans-serif;
+    --ff-serif: Georgia, "Times New Roman", serif;
+    --console-w: 312px;
+  }
+  html, body { margin: 0; background: var(--bg-deepest); color: var(--ink-ivory); }
+  body { font-family: var(--ff-serif); }
+
+  .stage { transition: margin-right 0.3s var(--ease-reveal); }
+  @media (min-width: 960px) {
+    body.console-open .stage { margin-right: var(--console-w); }
+  }
+  .mock-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 24px;
+    font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.14em;
+    color: var(--ink-muted); text-transform: uppercase;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .mock-nav b { color: var(--ink-ivory); font-weight: 500; }
+
+  .hero {
+    position: relative;
+    min-height: 78svh;
+    display: flex; flex-direction: column; justify-content: center;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero svg#det {
+    position: absolute; inset: 0; z-index: -1;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+  .hero-copy { padding: 0 clamp(24px, 6vw, 96px); max-width: 1200px; }
+  /* Desktop: wordmark left, support text right — both riding the slab band,
+     clear of the grid lines below. */
+  @media (min-width: 960px) {
+    .hero-copy {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 56px; max-width: none;
+    }
+    .wordmark { margin: 0; flex: 0 0 auto; }
+    .tagline { max-width: 24em; }
+  }
+  .wordmark {
+    font-family: var(--ff-wordmark);
+    font-weight: 700;
+    font-size: clamp(28px, 6vw, 58px);
+    letter-spacing: 0.12em;
+    line-height: 1.08;
+    text-transform: uppercase;
+    margin: 0 0 20px;
+  }
+  .wordmark .wm2 { font-weight: 300; letter-spacing: 0.18em; }
+  .tagline {
+    font-size: clamp(17px, 2.1vw, 22px);
+    line-height: 1.5;
+    max-width: 34em;
+    margin: 0;
+  }
+  .tagline .support { display: block; color: var(--ink-muted); font-size: 0.82em; margin-top: 8px; }
+
+  .ghost-note {
+    font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ink-faint);
+    padding: 0 24px 10px;
+  }
+  .band-ghost {
+    margin: 24px; height: 46svh;
+    border: 1px solid var(--hairline); border-radius: 10px;
+    display: grid; place-items: center;
+    color: var(--ink-faint); font-family: var(--ff-mono); font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .band-copy { display: none; }
+  /* Mobile, Anthropic-style: the slab holds only the title; the statement
+     moves into the card element below. */
+  @media (max-width: 700px) {
+    .tagline { display: none; }
+    .bg-label { display: none; }
+    .band-ghost {
+      height: auto; min-height: 40svh; margin: 16px 20px;
+      background: var(--bg-panel); border-radius: 22px;
+      align-content: center;
+    }
+    .band-copy {
+      display: block;
+      font-family: var(--ff-serif); font-size: 21px; line-height: 1.45;
+      letter-spacing: normal; text-transform: none; text-align: center;
+      color: var(--ink-ivory);
+      padding: 40px 28px; max-width: 22em;
+    }
+    .band-copy p { margin: 0; }
+    .band-copy .support { color: var(--ink-muted); font-size: 0.8em; margin-top: 14px; }
+  }
+  .cards { display: grid; gap: 16px; padding: 24px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .card-ghost {
+    height: 180px; border: 1px solid var(--hairline); border-radius: 14px;
+    display: grid; place-items: center;
+    color: var(--ink-faint); font-family: var(--ff-mono); font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .lab-footer {
+    padding: 32px 24px 120px; color: var(--ink-faint);
+    font-family: var(--ff-mono); font-size: 11px; line-height: 1.7; letter-spacing: 0.04em;
+    max-width: 60em;
+  }
+  .lab-footer em { color: var(--ink-muted); font-style: normal; }
+
+  .console {
+    position: fixed; z-index: 10;
+    background: var(--bg-panel);
+    font-family: var(--ff-mono);
+    border-left: 1px solid var(--hairline);
+    display: flex; flex-direction: column;
+  }
+  @media (min-width: 960px) {
+    .console { top: 0; right: 0; bottom: 0; width: var(--console-w); transform: translateX(0); transition: transform 0.3s var(--ease-reveal); }
+    body:not(.console-open) .console { transform: translateX(100%); }
+    .console-tab { position: fixed; z-index: 11; top: 16px; right: 16px; }
+    body.console-open .console-tab { display: none; }
+  }
+  @media (max-width: 959.98px) {
+    .console {
+      left: 0; right: 0; bottom: 0; max-height: 64svh;
+      border-top: 1px solid var(--hairline); border-left: none;
+      border-radius: 14px 14px 0 0;
+      transform: translateY(calc(100% - 44px));
+      transition: transform 0.3s var(--ease-reveal);
+    }
+    body.console-open .console { transform: translateY(0); }
+    .console-tab { display: none; }
+  }
+  .console-head {
+    flex: 0 0 44px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px; cursor: pointer; user-select: none;
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-ivory);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .console-head .dot { color: var(--gold); }
+  .console-body { overflow-y: auto; padding: 14px 16px 28px; }
+  .c-section {
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-faint); margin: 20px 0 10px;
+  }
+  .c-section:first-child { margin-top: 2px; }
+  .presets { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  .preset {
+    padding: 8px 4px; background: var(--bg-chip); border: 1px solid transparent; border-radius: 8px;
+    font-family: inherit; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-muted); cursor: pointer;
+  }
+  .preset:hover { color: var(--ink-ivory); border-color: var(--hairline); }
+  .ctl { margin-bottom: 12px; }
+  .ctl label {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--ink-muted); letter-spacing: 0.06em;
+    margin-bottom: 5px;
+  }
+  .ctl label output { color: var(--ink-ivory); font-variant-numeric: tabular-nums; }
+  .ctl input[type="range"] { width: 100%; margin: 0; accent-color: var(--gold); }
+  .chip-row { display: flex; gap: 6px; margin-bottom: 12px; }
+  .chip {
+    flex: 1; padding: 7px 4px; background: var(--bg-chip); border: 1px solid transparent; border-radius: 8px;
+    font-family: inherit; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-faint); cursor: pointer; text-align: center;
+  }
+  .chip[aria-pressed="true"] { color: var(--ink-ivory); border-color: rgba(216, 168, 44, 0.55); }
+  .toggle {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    width: 100%; box-sizing: border-box; text-align: left;
+    padding: 8px 10px; margin-bottom: 8px;
+    background: var(--bg-chip); border: 1px solid transparent; border-radius: 8px;
+    font-family: inherit; font-size: 11px; letter-spacing: 0.06em; color: var(--ink-muted);
+    cursor: pointer; user-select: none;
+  }
+  .toggle[aria-pressed="true"] { color: var(--ink-ivory); border-color: rgba(216, 168, 44, 0.55); }
+  .toggle .state { font-size: 10px; letter-spacing: 0.14em; color: var(--ink-faint); }
+  .toggle[aria-pressed="true"] .state { color: var(--gold); }
+  .sub { margin-left: 10px; }
+  .btn {
+    display: block; width: 100%; box-sizing: border-box;
+    padding: 9px 10px; margin-top: 8px;
+    background: none; border: 1px solid var(--hairline); border-radius: 8px;
+    font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-ivory); cursor: pointer;
+  }
+  .btn:hover { border-color: var(--gold); }
+  .btn.primary { border-color: rgba(216, 168, 44, 0.55); color: var(--gold); }
+  .btn:focus-visible, .toggle:focus-visible, .chip:focus-visible, .preset:focus-visible,
+  input:focus-visible, .console-head:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .rm-note { display: none; font-size: 10px; color: var(--gold); line-height: 1.6; margin-top: 12px; }
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 60px);
+    background: var(--bg-chip); border: 1px solid var(--gold); border-radius: 8px;
+    color: var(--ink-ivory); font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.1em;
+    padding: 9px 16px; opacity: 0; transition: all 0.25s var(--ease-reveal); z-index: 20;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  svg#det path.seg { transition: stroke-dashoffset var(--draw-dur, 0.9s) var(--ease-reveal); }
+
+  @media (prefers-reduced-motion: reduce) {
+    svg#det path.seg { transition: none !important; }
+    .rm-note { display: block; }
+  }
+</style>
+
+<nav class="mock-nav"><b>Level One Radiology</b><span>Mock · type is a stand-in</span></nav>
+
+<div class="stage">
+  <section class="hero" id="hero">
+    <svg id="det" role="presentation" aria-hidden="true"></svg>
+    <div class="hero-copy">
+      <p class="wordmark">Level One<br /><span class="wm2">Radiology</span></p>
+      <p class="tagline">An independent emergency radiology publication.
+        <span class="support">Clinical deep-dives, teaching cases, and field notes from a practicing radiologist.</span>
+      </p>
+    </div>
+  </section>
+
+  <p class="ghost-note">Stand-ins below · scroll to judge the depth motion</p>
+  <div class="band-ghost">
+    <span class="bg-label">feature band</span>
+    <div class="band-copy">
+      <p>An independent emergency radiology publication.</p>
+      <p class="support">Clinical deep-dives, teaching cases, and field notes from a practicing radiologist.</p>
+    </div>
+  </div>
+  <div class="cards">
+    <div class="card-ghost">article card</div>
+    <div class="card-ghost">article card</div>
+    <div class="card-ghost">article card</div>
+  </div>
+  <div class="lab-footer">
+    <em>Detector Hero Lab.</em> Two layers of a scintillator grid joined by the detector slab; every
+    fan plate's far end is anchored on the posterior slab, so the viewpoint can only move the construct
+    coherently. Landscape viewports render the locked desktop object; portrait viewports render the
+    compact portrait recomposition of the same grammar — whole object, contained, never cropped.
+    Tune, then <em>Copy settings</em> and paste the result back into the chat.
+  </div>
+</div>
+
+<button class="btn console-tab" id="tabBtn" style="width:auto" aria-label="Toggle console">CONSOLE</button>
+
+<aside class="console" id="console">
+  <div class="console-head" id="consoleHead" role="button" tabindex="0" aria-label="Toggle console">
+    <span><span class="dot">●</span> DETECTOR LAB</span><span id="headArrow">⌄</span>
+  </div>
+  <div class="console-body">
+    <div class="c-section">Presets</div>
+    <div class="presets">
+      <button class="preset" data-preset="ghost">Deck ghost</button>
+      <button class="preset" data-preset="quiet">Quiet live</button>
+      <button class="preset" data-preset="show">Showpiece</button>
+    </div>
+
+    <div class="c-section">Composition</div>
+    <div class="chip-row" role="group" aria-label="Visible parts">
+      <button class="chip" id="v-stack" aria-pressed="true">Stack</button>
+      <button class="chip" id="v-slab" aria-pressed="true">Slab</button>
+      <button class="chip" id="v-grid" aria-pressed="true">Grid</button>
+    </div>
+    <button class="toggle" id="t-text" aria-pressed="true">Hero text <span class="state">ON</span></button>
+    <div class="ctl"><label>Scale <output id="o-scale">1.00</output></label>
+      <input type="range" id="p-scale" min="0.3" max="3" step="0.02" value="1" /></div>
+    <div class="ctl"><label>Vertical shift <output id="o-yoff">2%</output></label>
+      <input type="range" id="p-yoff" min="-40" max="40" step="1" value="2" /></div>
+
+    <div class="c-section">Grid geometry</div>
+    <div class="chip-row" role="group" aria-label="Fan geometry mode">
+      <button class="chip fan-chip" id="fan-derived" aria-pressed="true">Derived fan</button>
+      <button class="chip fan-chip" id="fan-measured" aria-pressed="false">Measured fan</button>
+    </div>
+    <div class="ctl"><label>Plates per side <output id="o-vanes">16</output></label>
+      <input type="range" id="p-vanes" min="5" max="24" step="1" value="16" /></div>
+    <div class="ctl"><label>Fan steepness <output id="o-fan">1.00</output></label>
+      <input type="range" id="p-fan" min="0.5" max="2" step="0.05" value="1" /></div>
+    <div class="ctl"><label>Grid height <output id="o-glen">1.00</output></label>
+      <input type="range" id="p-glen" min="0.5" max="1.5" step="0.05" value="1" /></div>
+    <div class="ctl"><label>Stack layers <output id="o-layers">10</output></label>
+      <input type="range" id="p-layers" min="2" max="12" step="1" value="10" /></div>
+
+    <div class="c-section">Portrait recomposition</div>
+    <div class="ctl"><label>Plates per side (mobile) <output id="o-mvanes">10</output></label>
+      <input type="range" id="p-mvanes" min="4" max="14" step="1" value="10" /></div>
+    <div class="ctl"><label>Slab boxiness (mobile) <output id="o-mslab">0.50</output></label>
+      <input type="range" id="p-mslab" min="0.4" max="1.5" step="0.05" value="0.5" /></div>
+
+    <div class="c-section">Ink</div>
+    <div class="chip-row" role="group" aria-label="Ink color">
+      <button class="chip ink-chip" id="ink-ivory" aria-pressed="true">Ivory</button>
+      <button class="chip ink-chip" id="ink-muted" aria-pressed="false">Muted</button>
+      <button class="chip ink-chip" id="ink-gold" aria-pressed="false">Gold</button>
+    </div>
+    <div class="ctl"><label>Opacity <output id="o-op">15%</output></label>
+      <input type="range" id="p-op" min="0.02" max="0.3" step="0.005" value="0.15" /></div>
+    <div class="ctl"><label>Stroke <output id="o-stroke">1.50</output></label>
+      <input type="range" id="p-stroke" min="0.5" max="2.5" step="0.05" value="1.5" /></div>
+
+    <div class="c-section">Motion</div>
+    <button class="toggle" id="t-draw" aria-pressed="true">Draw-in on arrival <span class="state">ON</span></button>
+    <div class="ctl sub"><label>Draw-in speed <output id="o-dur">0.9s</output></label>
+      <input type="range" id="p-dur" min="0.3" max="2" step="0.1" value="0.9" /></div>
+    <button class="btn" id="replay">Replay draw-in</button>
+    <button class="toggle" id="t-depth" aria-pressed="true" style="margin-top:12px">Scroll-linked depth <span class="state">ON</span></button>
+    <div class="ctl sub"><label>Depth strength <output id="o-depth">1.05</output></label>
+      <input type="range" id="p-depth" min="0" max="2" step="0.05" value="1.05" /></div>
+    <button class="toggle" id="t-pointer" aria-pressed="true">Pointer re-focus <span class="state">ON</span></button>
+    <button class="toggle" id="t-drift" aria-pressed="true">Focal drift <span class="state">ON</span></button>
+    <div class="ctl sub"><label>Drift amount <output id="o-drift">0.20</output></label>
+      <input type="range" id="p-drift" min="0.05" max="0.45" step="0.01" value="0.2" /></div>
+    <div class="ctl sub"><label>Stack parallax <output id="o-spar">0.30</output></label>
+      <input type="range" id="p-spar" min="0" max="0.5" step="0.01" value="0.3" /></div>
+    <button class="toggle" id="t-beam" aria-pressed="true">Beam sweep <span class="state">ON</span></button>
+    <div class="ctl sub"><label>Sweep every <output id="o-beam">7s</output></label>
+      <input type="range" id="p-beam" min="4" max="20" step="1" value="7" /></div>
+    <div class="ctl sub"><label>Sweep width <output id="o-bw">1800</output></label>
+      <input type="range" id="p-bw" min="300" max="2400" step="50" value="1800" /></div>
+    <div class="ctl sub"><label>Sweep boost <output id="o-bb">1.5×</output></label>
+      <input type="range" id="p-bb" min="1.2" max="3" step="0.1" value="1.5" /></div>
+
+    <button class="btn primary" id="copy">Copy settings</button>
+    <p class="rm-note">Reduced motion is on in your OS — draw-in and ambient modes are held static, as they would be on the site.</p>
+  </div>
+</aside>
+
+<div class="toast" id="toast">SETTINGS COPIED</div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const svg = $('det');
+  const hero = $('hero');
+  const NS = 'http://www.w3.org/2000/svg';
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ================= compositions =================
+     DESKTOP: the locked landscape object, measured from the image-board
+     drawing (units 3840 x 2160). MOBILE: the portrait recomposition — the
+     same grammar with a boxier slab and fewer plates (units 1080 x 1560).
+     All model constants derive from each composition's own span. */
+  const S_BACK = 0.433;                 // posterior slab width / slab width
+  // The hidden rear edge sits 1.294 x the grid's height above its bottom
+  // (measured: 780 / 603) — anchored to HEIGHT, so the fan re-derives
+  // naturally when the grid height changes, and the rear ends always stay
+  // hidden behind the slab (drop > grid height ⇒ no premature edge stops,
+  // and provably no edge crossings).
+  const DROP_PER_GRID_H = 780 / 603;
+  const MEASURED_NORM = 1782.5 / 603;   // measured-mode drops, per unit grid height
+  const GAP_REF_SLAB_H = 603;           // gap law was measured at this slab height
+  function makeComp(c) {
+    c.halfSpan = (c.slab.x1 - c.slab.x0) / 2;
+    c.slabH = c.slab.bot - c.slab.top;
+    c.stackH = c.slab.top - c.stackTop;
+    c.gapScale = c.slabH / GAP_REF_SLAB_H;
+    c.beamScale = c.SW / 3840;
+    return c;
+  }
+  const DESKTOP = makeComp({
+    name: 'desktop', SW: 3840, SH: 2160, CX: 1920,
+    slab: { x0: 137, x1: 3702, top: 557, bot: 1160 },
+    stackTop: 347, fit: 'cover',
+  });
+  // Portrait canvas. The stack keeps the source's proportion — its height is
+  // 0.35 x the slab's (as in the measured drawing), so the layers stay tight
+  // overlapping lips rather than spreading into a ziggurat.
+  const MOBILE_BASE = { SW: 1080, SH: 1560, CX: 540, slabX0: 38, slabH0: 520, stackRatio: 0.35 };
+
+  const SLOPE_TAB = [[0.1, 6.75], [0.2, 2.975], [0.3, 2.15], [0.4, 1.744], [0.5, 1.6],
+                     [0.6, 1.419], [0.7, 1.169], [0.8, 1.069], [0.9, 0.944], [1.0, 0.881]];
+  function slopeAt(d) {
+    d = Math.max(d, 0.03);
+    if (d <= 0.1) return 6.75 * (0.1 / d);
+    for (let i = 1; i < SLOPE_TAB.length; i++) {
+      const [d0, m0] = SLOPE_TAB[i - 1], [d1, m1] = SLOPE_TAB[i];
+      if (d <= d1) {
+        const t = (d - d0) / (d1 - d0);
+        return Math.exp(Math.log(m0) * (1 - t) + Math.log(m1) * t);
+      }
+    }
+    return SLOPE_TAB[SLOPE_TAB.length - 1][1];
+  }
+  const gapAt = (dxc) => 43 - 33 * Math.exp(-dxc / 0.09);
+
+  /* ================= parameters (Michael's locked config, 2026-07-11) ================= */
+  const INKS = { ivory: '#EFEAE0', muted: '#9D9489', gold: '#D8A82C' };
+  const P = {
+    showStack: true, showSlab: true, showGrid: true, showText: true,
+    scale: 1.0, yoff: 2,
+    vanes: 16, fan: 1.0, gridLen: 1.0, layers: 10, fanMode: 'derived',
+    mVanes: 10, mSlab: 0.5,
+    ink: 'ivory', opacity: 0.15, stroke: 1.5,
+    drawIn: !reduce, drawDur: 0.9,
+    depth: true, depthK: 1.05,
+    pointer: true, drift: true, driftAmt: 0.2, stackPar: 0.3,
+    beam: true, beamEvery: 7, beamW: 1800, beamBoost: 1.5,
+  };
+
+  let C = DESKTOP;                      // active composition
+  let vN = P.vanes;                     // active plates per side
+  let W = 0, H = 0, k = 1, tx = 0, ty = 0;
+  let gRoot, gStack, gSlab, gVanes, occluder;
+  let vanes = [], stackLayers = [];
+  let fx = C.CX, fxTarget = C.CX, ambientRAF = null;
+  let pointerInside = false, pointerFx = C.CX;
+  let depthNow = 0;
+
+  function el(name, attrs, parent) {
+    const e = document.createElementNS(NS, name);
+    for (const key in attrs) e.setAttribute(key, attrs[key]);
+    parent.appendChild(e);
+    return e;
+  }
+
+  function pickComp() {
+    W = hero.clientWidth; H = hero.clientHeight;
+    if (W / H < 0.9 || W < 640) {
+      // portrait recomposition, boxiness knob stretches the slab (and grid with it)
+      const b = MOBILE_BASE;
+      const slabH = b.slabH0 * P.mSlab;
+      // center the SLAB in the canvas: the drawing centers in the hero and the
+      // (title-only) hero text centers too, so title and slab stay seated
+      const slabTop = (b.SH - slabH) / 2;
+      return makeComp({
+        name: 'mobile', SW: b.SW, SH: b.SH, CX: b.CX,
+        slab: { x0: b.slabX0, x1: b.SW - b.slabX0, top: slabTop, bot: slabTop + slabH },
+        stackTop: slabTop - slabH * b.stackRatio, fit: 'contain',
+      });
+    }
+    return DESKTOP;
+  }
+
+  /* Each fan plate's far end sits ON the posterior slab (lateral position
+     mapped by the stack's contraction, at the hidden rear height). The
+     viewpoint shifts the back plane by sigma; the depth edges follow. As
+     run→0 they collapse onto the front vertical — continuous everywhere. */
+  function vaneRest(x) {
+    const dxc = Math.max(Math.abs(x - C.CX) / C.halfSpan, 0.004);
+    const gridH = C.slabH * P.gridLen;
+    return {
+      x,
+      top: C.slab.bot + gapAt(dxc) * C.gapScale,
+      drop: P.fanMode === 'derived'
+        ? DROP_PER_GRID_H * gridH
+        : slopeAt(Math.min(dxc, 1)) * (1 - S_BACK) * dxc * MEASURED_NORM * gridH,
+    };
+  }
+  function vaneFrontD(v) {
+    return `M ${v.x} ${v.top} L ${v.x} ${C.slab.bot + C.slabH * P.gridLen}`;
+  }
+  function vaneDepth(v, sigma) {
+    const pitch = C.halfSpan / vN;
+    const bot = C.slab.bot + C.slabH * P.gridLen;
+    const run = (C.CX + (v.x - C.CX) * S_BACK + sigma) - v.x;
+    const s = run >= 0 ? 1 : -1;
+    const m = (v.drop * P.fan) / Math.max(Math.abs(run), 0.5);
+    let d = `M ${v.x} ${v.top} L ${v.x + s * Math.min((v.top - C.slab.bot) / m, Math.abs(run)) } ${C.slab.bot}`;
+    // a depth edge ends at the EARLIEST of: its own rear endpoint (the plate
+    // physically stops there), the neighboring plate, or the slab. Edges can
+    // then touch but never cross — rear points preserve the plates' order.
+    const dxEnd = Math.min(Math.abs(run), pitch, (bot - C.slab.bot) / m);
+    d += ` M ${v.x} ${bot} L ${v.x + s * dxEnd} ${bot - m * dxEnd}`;
+    return d;
+  }
+  /* The back plane may only shift within a fraction of one plate pitch —
+     softly saturating — so near-center plates never swing drastically. */
+  function sigmaOf(dfx) {
+    const sigMax = 0.8 * C.halfSpan / vN;
+    return sigMax * Math.tanh((dfx * P.stackPar) / sigMax);
+  }
+
+  const rootTransform = () => `translate(${tx} ${ty}) scale(${k})`;
+
+  function build() {
+    const prev = C;
+    C = pickComp();
+    vN = C.name === 'mobile' ? P.mVanes : P.vanes;
+    if (C !== prev) { fx = C.CX; fxTarget = C.CX; pointerFx = C.CX; }
+
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.innerHTML = '';
+    vanes = []; stackLayers = [];
+
+    k = (C.fit === 'cover' ? Math.max(W / C.SW, H / C.SH) : Math.min(W / C.SW, H / C.SH)) * P.scale;
+    tx = (W - C.SW * k) / 2;
+    ty = (H - C.SH * k) / 2 + H * (P.yoff / 100);
+
+    gRoot = el('g', {
+      transform: rootTransform(),
+      fill: 'none', stroke: INKS[P.ink], 'stroke-width': P.stroke, opacity: P.opacity,
+    }, svg);
+
+    // --- en-face stack: consecutively overlapping rectangles ---
+    gStack = el('g', { id: 'gstack' }, gRoot);
+    if (P.showStack && P.layers > 0) {
+      const n = P.layers;
+      const slabW = C.slab.x1 - C.slab.x0;
+      const grow = n > 1 ? Math.pow(0.902 / S_BACK, 1 / (n - 1)) : 1;
+      const hs = Array.from({ length: n }, (_, i) => 26 + 5 * (n === 1 ? 1 : i / (n - 1)));
+      const hSum = hs.reduce((a, b) => a + b, 0);
+      let y = C.stackTop;
+      for (let i = 0; i < n; i++) {
+        const w = slabW * S_BACK * Math.pow(grow, i);
+        const h = hs[i] / hSum * C.stackH;
+        const x0 = C.CX - w / 2, x1 = C.CX + w / 2;
+        // the bottom layer's sides run on under the slab (occluder hides them)
+        const yEnd = i === n - 1 ? y + h + C.slabH * 0.2 : y + h;
+        const p = el('path', {
+          class: 'seg', 'data-order': i, 'vector-effect': 'non-scaling-stroke',
+          d: `M ${x0} ${yEnd} L ${x0} ${y} L ${x1} ${y} L ${x1} ${yEnd}`,
+        }, gStack);
+        stackLayers.push({ p, frac: (n - i) / n });
+        y += h;
+      }
+    }
+
+    // --- perpendicular fan — shares the slab's transform ---
+    gVanes = el('g', { id: 'gvanes' }, gRoot);
+    if (P.showGrid) {
+      const pitch = C.halfSpan / vN;
+      const sigma = sigmaOf(fx - C.CX);
+      for (let i = -vN; i <= vN; i++) {
+        const v = vaneRest(C.CX + i * pitch);
+        const order = P.layers + 1 + Math.abs(i);
+        v.pF = el('path', {
+          class: 'seg', 'data-order': order, 'vector-effect': 'non-scaling-stroke',
+          d: vaneFrontD(v),
+        }, gVanes);
+        v.pD = el('path', {
+          class: 'seg', 'data-order': order, 'vector-effect': 'non-scaling-stroke',
+          d: vaneDepth(v, sigma),
+        }, gVanes);
+        vanes.push(v);
+      }
+    }
+
+    // --- detector slab (drawn last: its face occludes the joins) ---
+    gSlab = el('g', {}, gRoot);
+    if (P.showSlab) {
+      el('path', {
+        class: 'seg', 'data-order': P.layers, 'vector-effect': 'non-scaling-stroke',
+        fill: 'var(--bg-deepest)',
+        d: `M ${C.slab.x0} ${C.slab.top} L ${C.slab.x1} ${C.slab.top} L ${C.slab.x1} ${C.slab.bot} L ${C.slab.x0} ${C.slab.bot} Z`,
+      }, gSlab);
+    }
+
+    // --- full-opacity occluder above the beam layer (invisible: bg on bg) ---
+    occluder = el('rect', {
+      x: C.slab.x0 + 6, y: C.slab.top + 6,
+      width: C.slab.x1 - C.slab.x0 - 12, height: C.slabH - 12,
+      fill: 'var(--bg-deepest)', stroke: 'none',
+    }, svg);
+    occluder.setAttribute('transform', rootTransform());
+
+    if (P.drawIn && !reduce) armDrawIn();
+    applyDepth();
+    applyFocus(true);
+  }
+
+  /* ---------- draw-in ---------- */
+  let drawTimer = null;
+  function armDrawIn() {
+    document.documentElement.style.setProperty('--draw-dur', `${P.drawDur}s`);
+    const paths = svg.querySelectorAll('path.seg');
+    paths.forEach((p) => {
+      const L = p.getTotalLength();
+      p.style.transition = 'none';
+      p.style.strokeDasharray = `${L}`;
+      p.style.strokeDashoffset = `${L}`;
+    });
+    svg.getBoundingClientRect();
+    const stepMs = P.drawDur * 50;
+    paths.forEach((p) => {
+      p.style.transition = '';
+      p.style.transitionDelay = `${p.dataset.order * stepMs}ms`;
+      p.style.strokeDashoffset = '0';
+    });
+    clearTimeout(drawTimer);
+    drawTimer = setTimeout(() => {
+      paths.forEach((p) => { p.style.strokeDasharray = 'none'; p.style.transitionDelay = ''; });
+    }, P.drawDur * 1000 + stepMs * (P.layers + vN + 2) + 200);
+  }
+
+  /* ---------- scroll-linked depth: slab + fan rigid, deep stack lags ---------- */
+  let ticking = false;
+  function applyDepth() {
+    if (!gStack) return;
+    const prog = P.depth ? Math.max(0, Math.min(1.4, window.scrollY / Math.max(1, H))) : 0;
+    depthNow = prog * P.depthK / k;
+    gStack.setAttribute('transform', `translate(0 ${-12 * depthNow})`);
+    gVanes.setAttribute('transform', `translate(0 ${-34 * depthNow})`);
+    gSlab.setAttribute('transform', `translate(0 ${-34 * depthNow})`);
+    occluder.setAttribute('transform', `${rootTransform()} translate(0 ${-34 * depthNow})`);
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(() => { applyDepth(); ticking = false; }); }
+  }, { passive: true });
+
+  /* ---------- coherent focus motion ---------- */
+  function applyFocus(force) {
+    if (!force && Math.abs(fxTarget - fx) < 0.5) return false;
+    const sigma = sigmaOf(fx - C.CX);
+    vanes.forEach((v) => v.pD.setAttribute('d', vaneDepth(v, sigma)));
+    stackLayers.forEach((l) => l.p.setAttribute('transform', `translate(${sigma * l.frac} 0)`));
+    return true;
+  }
+  let pw = 0;   // pointer authority, 0..1 — ramps in/out so entry never lurches
+  function ambientTick(ts) {
+    const engaged = P.pointer && pointerInside;
+    pw += ((engaged ? 1 : 0) - pw) * 0.02;      // ~1s gradual take-over and release
+    const base = P.drift
+      ? C.CX + C.halfSpan * P.driftAmt * Math.sin(ts / 1000 * (2 * Math.PI / 26))
+      : C.CX;
+    fxTarget = base + (pointerFx - base) * pw;
+    const m = C.SW * 0.03;
+    fxTarget = Math.max(C.slab.x0 + m, Math.min(C.slab.x1 - m, fxTarget));
+    fx += (fxTarget - fx) * 0.03;
+    applyFocus(false);
+    if (P.drift || P.pointer || pw > 0.001 || Math.abs(fx - C.CX) > 0.5) ambientRAF = requestAnimationFrame(ambientTick);
+    else ambientRAF = null;
+  }
+  function syncAmbient() {
+    if (!reduce && !ambientRAF) ambientRAF = requestAnimationFrame(ambientTick);
+  }
+  hero.addEventListener('pointermove', (e) => {
+    pointerInside = true;
+    pointerFx = (e.clientX - tx) / k;
+    if (P.pointer) syncAmbient();
+  });
+  hero.addEventListener('pointerleave', () => { pointerInside = false; });
+
+  /* ---------- beam sweep: soft exposure over BOTH grid layers, live refs ---------- */
+  let beamTimer = null, beamGroup = null, beamRAF = null;
+  function sweepOnce() {
+    if (reduce || !P.beam) return;
+    if (beamGroup) beamGroup.remove();
+    if (beamRAF) cancelAnimationFrame(beamRAF);
+    let defs = svg.querySelector('defs');
+    if (defs) defs.remove();
+    defs = el('defs', {}, svg);
+    const grad = el('linearGradient', { id: 'beamGrad', gradientUnits: 'objectBoundingBox' }, defs);
+    el('stop', { offset: '0', 'stop-color': '#fff', 'stop-opacity': '0' }, grad);
+    el('stop', { offset: '0.5', 'stop-color': '#fff', 'stop-opacity': '1' }, grad);
+    el('stop', { offset: '1', 'stop-color': '#fff', 'stop-opacity': '0' }, grad);
+    const bw = P.beamW * C.beamScale;
+    const mask = el('mask', { id: 'beamMask', maskUnits: 'userSpaceOnUse', x: -bw - 300, y: 0, width: C.SW + 2 * bw + 600, height: C.SH }, defs);
+    const mrect = el('rect', { x: -bw - 200, y: 0, width: bw, height: C.SH, fill: 'url(#beamGrad)' }, mask);
+    beamGroup = el('g', {
+      transform: rootTransform(),
+      fill: 'none', stroke: INKS[P.ink], 'stroke-width': P.stroke,
+      opacity: Math.min(1, P.opacity * P.beamBoost) - P.opacity,
+      mask: 'url(#beamMask)',
+    }, svg);
+    el('use', { href: '#gstack' }, beamGroup);
+    el('use', { href: '#gvanes' }, beamGroup);
+    svg.appendChild(occluder);                       // keep the occluder above the beam
+    const t0 = performance.now(), dur = 3000;
+    const step = (now) => {
+      const u = (now - t0) / dur;
+      if (u >= 1 || !P.beam) { if (beamGroup) { beamGroup.remove(); beamGroup = null; } return; }
+      mrect.setAttribute('x', -bw - 200 + u * (C.SW + bw + 400));
+      beamRAF = requestAnimationFrame(step);
+    };
+    beamRAF = requestAnimationFrame(step);
+  }
+  function syncBeam() {
+    clearInterval(beamTimer); beamTimer = null;
+    if (P.beam && !reduce) { sweepOnce(); beamTimer = setInterval(sweepOnce, P.beamEvery * 1000); }
+    else if (beamGroup) { beamGroup.remove(); beamGroup = null; }
+  }
+
+  /* ---------- console wiring ---------- */
+  const rebuild = () => { const d = P.drawIn; P.drawIn = false; build(); P.drawIn = d; };
+  const RANGES = [
+    ['p-scale', 'o-scale', 'scale', (v) => (+v).toFixed(2), rebuild],
+    ['p-yoff', 'o-yoff', 'yoff', (v) => `${v}%`, rebuild],
+    ['p-vanes', 'o-vanes', 'vanes', (v) => v, rebuild],
+    ['p-fan', 'o-fan', 'fan', (v) => (+v).toFixed(2), rebuild],
+    ['p-glen', 'o-glen', 'gridLen', (v) => (+v).toFixed(2), rebuild],
+    ['p-layers', 'o-layers', 'layers', (v) => v, rebuild],
+    ['p-mvanes', 'o-mvanes', 'mVanes', (v) => v, rebuild],
+    ['p-mslab', 'o-mslab', 'mSlab', (v) => (+v).toFixed(2), rebuild],
+    ['p-op', 'o-op', 'opacity', (v) => `${Math.round(v * 100)}%`, () => gRoot && gRoot.setAttribute('opacity', P.opacity)],
+    ['p-stroke', 'o-stroke', 'stroke', (v) => (+v).toFixed(2), () => gRoot && gRoot.setAttribute('stroke-width', P.stroke)],
+    ['p-dur', 'o-dur', 'drawDur', (v) => `${(+v).toFixed(1)}s`, () => {}],
+    ['p-depth', 'o-depth', 'depthK', (v) => (+v).toFixed(2), applyDepth],
+    ['p-drift', 'o-drift', 'driftAmt', (v) => (+v).toFixed(2), () => {}],
+    ['p-spar', 'o-spar', 'stackPar', (v) => (+v).toFixed(2), () => applyFocus(true)],
+    ['p-beam', 'o-beam', 'beamEvery', (v) => `${v}s`, syncBeam],
+    ['p-bw', 'o-bw', 'beamW', (v) => v, () => {}],
+    ['p-bb', 'o-bb', 'beamBoost', (v) => `${(+v).toFixed(1)}×`, () => {}],
+  ];
+  RANGES.forEach(([rid, oid, key, fmt, after]) => {
+    $(rid).addEventListener('input', (e) => {
+      P[key] = parseFloat(e.target.value);
+      $(oid).textContent = fmt(e.target.value);
+      after();
+    });
+  });
+
+  function setToggle(id, key, after) {
+    const b = $(id);
+    b.setAttribute('aria-pressed', P[key]);
+    b.querySelector('.state').textContent = P[key] ? 'ON' : 'OFF';
+    if (after) after();
+  }
+  function bindToggle(id, key, after) {
+    $(id).addEventListener('click', () => { P[key] = !P[key]; setToggle(id, key, after); });
+  }
+  bindToggle('t-text', 'showText', () => {
+    document.querySelector('.hero-copy').style.display = P.showText ? '' : 'none';
+  });
+  bindToggle('t-draw', 'drawIn');
+  bindToggle('t-depth', 'depth', applyDepth);
+  bindToggle('t-pointer', 'pointer', syncAmbient);
+  bindToggle('t-drift', 'drift', syncAmbient);
+  bindToggle('t-beam', 'beam', syncBeam);
+
+  function bindChip(id, key) {
+    $(id).addEventListener('click', () => {
+      P[key] = !P[key];
+      $(id).setAttribute('aria-pressed', P[key]);
+      rebuild();
+    });
+  }
+  bindChip('v-stack', 'showStack');
+  bindChip('v-slab', 'showSlab');
+  bindChip('v-grid', 'showGrid');
+  document.querySelectorAll('.ink-chip').forEach((c) => {
+    c.addEventListener('click', () => {
+      P.ink = c.id.replace('ink-', '');
+      document.querySelectorAll('.ink-chip').forEach((o) => o.setAttribute('aria-pressed', o === c));
+      if (gRoot) gRoot.setAttribute('stroke', INKS[P.ink]);
+    });
+  });
+  document.querySelectorAll('.fan-chip').forEach((c) => {
+    c.addEventListener('click', () => {
+      P.fanMode = c.id.replace('fan-', '');
+      document.querySelectorAll('.fan-chip').forEach((o) => o.setAttribute('aria-pressed', o === c));
+      rebuild();
+    });
+  });
+
+  $('replay').addEventListener('click', () => { if (!reduce) armDrawIn(); });
+
+  /* ---------- presets ---------- */
+  const PRESETS = {
+    ghost: { opacity: 0.10, ink: 'ivory', drawIn: false, depth: false, drift: false, pointer: false, beam: false },
+    quiet: { opacity: 0.15, ink: 'ivory', drawIn: true, depth: true, depthK: 0.7, drift: false, pointer: false, beam: false },
+    show:  { opacity: 0.15, ink: 'ivory', drawIn: true, depth: true, depthK: 1.05, drift: true, driftAmt: 0.2, stackPar: 0.3, pointer: true, beam: true, beamBoost: 1.5, beamW: 1800, beamEvery: 7 },
+  };
+  function syncUI() {
+    RANGES.forEach(([rid, oid, key, fmt]) => { $(rid).value = P[key]; $(oid).textContent = fmt(P[key]); });
+    ['ivory', 'muted', 'gold'].forEach((n) => $('ink-' + n).setAttribute('aria-pressed', P.ink === n));
+    ['derived', 'measured'].forEach((n) => $('fan-' + n).setAttribute('aria-pressed', P.fanMode === n));
+    $('v-stack').setAttribute('aria-pressed', P.showStack);
+    $('v-slab').setAttribute('aria-pressed', P.showSlab);
+    $('v-grid').setAttribute('aria-pressed', P.showGrid);
+    setToggle('t-draw', 'drawIn'); setToggle('t-depth', 'depth', applyDepth);
+    setToggle('t-pointer', 'pointer', syncAmbient); setToggle('t-drift', 'drift', syncAmbient);
+    setToggle('t-beam', 'beam', syncBeam);
+  }
+  document.querySelectorAll('.preset').forEach((b) => {
+    b.addEventListener('click', () => {
+      Object.assign(P, PRESETS[b.dataset.preset]);
+      if (reduce) { P.drawIn = false; P.drift = false; P.pointer = false; P.beam = false; }
+      syncUI();
+      build();
+      if (P.drawIn && !reduce) armDrawIn();
+    });
+  });
+
+  /* ---------- copy settings ---------- */
+  $('copy').addEventListener('click', async () => {
+    const out = JSON.stringify({
+      composition: { showStack: P.showStack, showSlab: P.showSlab, showGrid: P.showGrid, scale: P.scale, verticalShift: P.yoff },
+      grid: { platesPerSide: P.vanes, fanMode: P.fanMode, fanSteepness: P.fan, gridHeight: P.gridLen, stackLayers: P.layers },
+      mobile: { platesPerSide: P.mVanes, slabBoxiness: P.mSlab },
+      ink: { color: P.ink, opacity: P.opacity, strokePx: P.stroke },
+      motion: {
+        drawIn: P.drawIn, drawDur: P.drawDur, scrollDepth: P.depth, depthStrength: P.depthK,
+        pointerFocus: P.pointer, focalDrift: P.drift, driftAmount: P.driftAmt, stackParallax: P.stackPar,
+        beamSweep: P.beam, beamEverySec: P.beamEvery, beamWidth: P.beamW, beamBoost: P.beamBoost,
+      },
+    }, null, 2);
+    try { await navigator.clipboard.writeText(out); } catch { window.prompt('Copy settings:', out); }
+    const t = $('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1600);
+  });
+
+  /* ---------- console open/close ---------- */
+  const setConsole = (open) => {
+    document.body.classList.toggle('console-open', open);
+    $('headArrow').textContent = open ? '⌄' : '⌃';
+  };
+  $('consoleHead').addEventListener('click', () => setConsole(!document.body.classList.contains('console-open')));
+  $('consoleHead').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setConsole(!document.body.classList.contains('console-open')); }
+  });
+  $('tabBtn').addEventListener('click', () => setConsole(!document.body.classList.contains('console-open')));
+  setConsole(window.innerWidth >= 960);
+
+  let rsz = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(rsz);
+    rsz = setTimeout(rebuild, 150);
+  });
+
+  build();
+  syncAmbient();
+  syncBeam();
+})();
+</script>

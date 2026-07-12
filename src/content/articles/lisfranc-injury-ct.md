@@ -14,21 +14,21 @@ keyPoints:
   - "A fleck of bone in the space between the first and second metatarsal bases is an avulsed Lisfranc ligament until proven otherwise"
 ---
 
-The order comes through at 1 a.m.: CT right foot, rule out fracture. The story is a head-on collision with the right foot braced against the brake pedal at impact. Radiographs from four hours earlier were read as normal. The foot is now too swollen for the walking boot they tried to fit, and there is bruising coming up along the sole.
+The order comes through at 1 a.m.: CT right foot, rule out fracture. The story is a head-on collision with the right foot braced against the brake pedal at impact. Radiographs from four hours earlier were read as normal. The foot is now too swollen for the walking boot they tried to fit, and there's bruising coming up along the sole.
 
-That bruising, plantar ecchymosis, is worth pausing on. Blood reaching the sole means deep midfoot structures are bleeding, and in this mechanism it should put Lisfranc injury on your list before the first image loads. The images will make more sense after the anatomy, so start there.
+That bruising, plantar ecchymosis, is worth pausing on. Blood reaching the sole means something deep in the midfoot is bleeding, and with this mechanism it should put Lisfranc injury on your list before the first image loads. The images will make more sense after the anatomy, so let's start there.
 
 ## The Architecture of the Midfoot
 
-Think of the midfoot as an arched tic-tac-toe board. The three cuneiforms and the cuboid form one row, the five metatarsal bases the next, and the whole grid is bent into a transverse arch. The base of the second metatarsal is the keystone: it sits recessed into a mortise between the medial and lateral cuneiforms, locked in like the center stone of a Roman arch.
+Think of the midfoot as an arched tic-tac-toe board. The three cuneiforms and the cuboid form one row, the five metatarsal bases the next, and the whole grid is bent into a transverse arch. The base of the second metatarsal is the keystone: it sits recessed into a mortise between the medial and lateral cuneiforms.
 
-Ligaments hold the grid together, with one deliberate gap. There is no transverse ligament between the first and second metatarsal bases. The only structure tying the medial column to the rest of the foot is the Lisfranc ligament, running obliquely from the medial cuneiform to the base of the second metatarsal, stronger on its plantar side than its dorsal side.
+Ligaments hold the grid together, with one important gap. There is no transverse ligament between the first and second metatarsal bases. The only structure tying the medial column to the rest of the foot is the Lisfranc ligament, which runs obliquely from the medial cuneiform to the base of the second metatarsal, and it's stronger on its plantar side than its dorsal side.
 
 So the whole tarsometatarsal complex hangs on one ligament and one recessed keystone. Load the arch violently, the way a brake pedal loads a plantarflexed foot in a head-on collision, and the failure is predictable: the ligament tears or pulls off its attachment, the keystone unlocks, and the columns of the foot are free to splay.
 
 ## The Case, Read Properly
 
-Here is the image that settles it ([Fig. 1](#fig-1)).
+Here's the image that settles it ([Fig. 1](#fig-1)).
 
 <figure id="fig-1">
 <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'><rect width='16' height='9' fill='%231B1A18'/><text x='8' y='4.9' font-family='monospace' font-size='0.9' fill='%236D655B' text-anchor='middle'>CASE IMAGE PENDING</text></svg>" alt="Placeholder panel standing in for the axial CT of the midfoot" />
@@ -38,37 +38,37 @@ Here is the image that settles it ([Fig. 1](#fig-1)).
 
 On bone windows (the same width-and-level trade covered in [Window and Level](/articles/window-and-level)), three findings line up:
 
-1. **A fleck of bone in the first intermetatarsal space.** This is the fleck sign, and it is worth being literal about what it represents: <mark>the fragment is the ligament's footprint</mark>, avulsed from the medial cuneiform or the second metatarsal base at the moment the ligament failed.
+1. **A fleck of bone in the first intermetatarsal space.** This is the fleck sign, and it's worth being literal about what it represents: <mark>the fragment is the ligament's footprint</mark>, avulsed from the medial cuneiform or the second metatarsal base at the moment the ligament failed.
 2. **Widening between the medial cuneiform and the second metatarsal base.** Compare it to the other foot when you have one. More than 2 mm of asymmetry is real.
 3. **Dorsal subluxation of the second tarsometatarsal joint on the sagittal reformat.** The keystone has started to lift out of its mortise.
 
-Each of these findings is subtle on its own. Together they describe an unstable midfoot.
+Each of these findings is subtle on its own, but together they describe an unstable midfoot.
 
 ## Why the Radiographs Were Called Normal
 
-The overnight read was not lazy. A purely or mostly ligamentous Lisfranc injury can sit perfectly reduced on a non-weight-bearing radiograph: nothing is displaced at the moment of exposure because nothing is loading the arch. When the injury pattern is subtle and the film is taken off-load, misses follow. Roughly one in five Lisfranc injuries is missed at first presentation, and the missed ones present later with arch collapse.
+The overnight read wasn't lazy. A purely or mostly ligamentous Lisfranc injury can sit perfectly reduced on a non-weight-bearing radiograph: nothing is displaced at the moment of exposure because nothing is loading the arch. Roughly one in five Lisfranc injuries is missed at first presentation, and the missed ones come back later with arch collapse.
 
-That being said, the films usually carry a clue for the reader who checks alignment on purpose:
+That being said, the films usually have a clue for the reader who checks the alignment lines deliberately:
 
 - On the AP view, the medial border of the **second metatarsal** is continuous with the medial border of the **middle cuneiform**.
 - On the oblique, the medial border of the **fourth metatarsal** is continuous with the medial border of the **cuboid**.
 - On the lateral, the tarsometatarsal joints show no dorsal step-off.
 
-Any break in those lines, or a fleck in the first intermetatarsal space, ends the "normal" read.
+A break in any of those lines, or a fleck in the first intermetatarsal space, means the study isn't normal.
 
 :::caution[Where people miss it]
-The trap is the negative radiograph in a foot that clinically will not bear weight. Swelling out of proportion and plantar ecchymosis are the pattern. That combination earns weight-bearing views, CT, or both, and the report should say so rather than closing with "no acute fracture."
+The trap is the negative radiograph in a foot that clinically won't bear weight. Swelling out of proportion plus plantar ecchymosis is the combination to respect. It earns weight-bearing views, CT, or both, and the report should say so rather than closing with "no acute fracture."
 :::
 
 :::note[Why weight-bearing views work]
-Loading the arch does what the brake pedal did, gently: it stresses the one ligament holding the medial column. An injury that reduces on the table declares itself as widening the moment the foot takes weight. When the patient cannot tolerate standing, CT trades the stress test for resolution, and MRI shows the ligament itself.
+Loading the arch does what the brake pedal did, gently: it stresses the one ligament holding the medial column. An injury that reduces on the table shows up as widening the moment the foot takes weight. When the patient can't tolerate standing, CT gives you the anatomy without the stress test, and MRI shows the ligament itself.
 :::
 
 ## What Happens to This Foot
 
-This patient went to fixation within the week, which is the point of catching it. The Lisfranc ligament does not heal itself back to competence. An unstable midfoot left to collapse remodels into a flat, arthritic, chronically painful foot, and the salvage operation at that stage is fusion. What usually separates the two outcomes is whether the first reader checked the joint.
+This patient went to fixation within the week, which is the point of catching it. The Lisfranc ligament doesn't heal itself back to competence, and an unstable midfoot left to collapse remodels into a flat, arthritic, chronically painful foot. The salvage operation at that stage is fusion. What usually separates the two outcomes is whether the first reader checked the joint.
 
-The decision to fix is the surgeon's. Your job is a report that makes the instability impossible to ignore, and a phone call when the report might sit unread until the clinic visit.
+The decision to fix is the surgeon's. Your job is a report that's unambiguous about the instability, and a phone call if the report might sit unread until the clinic visit.
 
 <div class="reference-card">
 <p class="reference-card__title">Lisfranc: the read</p>
@@ -93,4 +93,4 @@ The decision to fix is the surgeon's. Your job is a report that makes the instab
 
 ## The Takeaway
 
-Every foot imaged after an axial load gets the second tarsometatarsal joint checked deliberately: alignment lines, the first intermetatarsal space, the keystone. The check takes ten seconds. Go deeper on the injury spectrum at [Radiopaedia's Lisfranc injury entry](https://radiopaedia.org/articles/lisfranc-injury).
+After any axial load to the midfoot, check the second tarsometatarsal joint deliberately: the alignment lines, the first intermetatarsal space, and the position of the keystone. It takes about ten seconds. Go deeper on the injury spectrum at [Radiopaedia's Lisfranc injury entry](https://radiopaedia.org/articles/lisfranc-injury).

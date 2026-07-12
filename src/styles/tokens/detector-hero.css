@@ -1,0 +1,66 @@
+/* ==============================================
+   DETECTOR HERO — component tokens
+   The scintillator-grid hero backdrop's ink + motion knobs (locked settings,
+   2026-07-11). Geometry and the remaining numeric scalars live in
+   src/lib/detector-hero.mjs (SETTINGS); the client script reads THESE via
+   getComputedStyle, so retunes here need no code change.
+   ============================================== */
+
+:root {
+  /* Ink: the drawing IS ivory — the brand's technical line, at title-slide
+     weight. Stroke matches the case-viewer icon weight (1.5/24 Lucide ratio
+     at its render size); non-scaling-stroke keeps it screen-true. */
+  --dh-ink: var(--color-text-ivory);
+  --dh-opacity: 0.15;
+  --dh-stroke: 1.5px;
+
+  /* Draw-in: one stroke-dashoffset reveal per path, staggered by draw order,
+     played once on arrival. Eased by --reveal-ease (motion.css). */
+  --dh-draw-dur: 0.9s;
+
+  /* Beam sweep: a gradient-masked re-exposure of both grid layers.
+     Boost is the transient opacity multiplier at the beam's crest
+     (lift = opacity × (boost − 1), floor 0 — keep boost ≥ 1); a bare
+     number, JS-consumed. Duration values are SECONDS (the client
+     parseFloat()s them — never retune into ms). */
+  --dh-beam-every: 7s;
+  --dh-beam-dur: 3s;
+  --dh-beam-boost: 1.5;
+
+  /* Copy-seating fallback (no-JS / reduced-motion): the flex-centered hero
+     copy nudges from hero center onto the slab's center line. The client
+     script computes the exact seat from the live composition and overrides
+     these. Derivations, from the canvas geometry in detector-hero.mjs at the
+     locked 2% shift, hero ≈ 70svh:
+     mobile — the drawn content core is canvas-centered, which puts the slab
+       center 101.4 canvas px (101.4/1080 = 9.39vw width-bound) ABOVE canvas
+       center: nudge = 2% × 56svh − 9.39vw ≈ 1.1svh − 9.39vw.
+     desktop (width-bound cover) — slabCenter = 0.52H − (SH/2 − slabCenterY)
+       / SW × W = 0.52H − (1080 − 858.5)/3840 × W: nudge = 1.4svh − 5.77vw. */
+  --dh-copy-nudge-mobile: calc(1.1svh - 9.39vw);
+  --dh-copy-nudge-desktop: calc(1.4svh - 5.77vw);
+
+}
+
+/* Mobile-composition wordmark size — ONE SCALE FACTOR with the drawing.
+   The wordmark is part of the composition (it sits in the slab), so its
+   size derives from the slab's rendered height, not an independent
+   viewport clamp (the old --fz-wordmark-hero cap froze the text at 2.25rem
+   while the slab kept growing toward tablet widths — text/slab fell from
+   64% to 30%). Derivation mirrors fitTransform's k = min(width-bound,
+   corePad height clamp) at the locked geometry (detector-hero.mjs:
+   slabH 312, SW 1080, coreH 733.2, corePad 0.04), × the approved
+   fz/slabH ratio 0.29 (36px in a 124px slab at 430w):
+     width term  — 0.29 × 312 × 100vw/1080           = 8.37vw
+     height term — 0.29 × 312 × 0.92 × heroH/733.2   = 0.1135 × heroH
+   where heroH is the hero's min-height expression (homepage.css).
+   Declared on .hero--detector, NOT :root: a custom property resolves its
+   var() references where it is DECLARED, and --hero-stage only exists on
+   the hero (56svh mobile / 70svh desktop via homepage.css). On :root the
+   token computes to guaranteed-invalid and every use falls back. */
+.hero--detector {
+  --dh-wordmark-fz: min(
+    8.37vw,
+    calc(0.1135 * (var(--hero-stage) - var(--nav-height) - var(--space-3)))
+  );
+}

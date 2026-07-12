@@ -76,3 +76,10 @@ Step 12 (fullscreen device pass) but neither is fully cleared — confirmed
 still `dev-synthetic` in both articles, so Steps 13 (VoiceOver) and 15 (real
 case) remain fully open and 3/12 aren't marked done. Remaining scope
 unchanged (steps 3, 12, 13, 15).
+2026-07-11 Step 15 progress: a first real case is now ingested
+(`xr-ankle-foot-trauma`, left ankle trauma) and embedded in a drafted article
+(`src/content/articles/xr-ankle-foot-trauma.md`, `draft: true` — not yet
+published); the two live demo articles still embed the synthetic
+`dev-synthetic` case. Step 15's actual gate — "the embed scrubs ironclad on
+real images on the real phone" — is not yet confirmed; still open. Steps 3,
+12, 13 unchanged.

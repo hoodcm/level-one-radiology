@@ -593,8 +593,10 @@
      binding constraint (subtracting header + the band's small top gap), so on a
      short phone the card peeks viewport-relative instead of being shoved off.
      Vertical padding is restored for breathing room above the wordmark — it sits
-     inside min-height (border-box), so it doesn't eat the peek. */
-  min-height: calc(70svh - var(--nav-height) - var(--space-3));
+     inside min-height (border-box), so it doesn't eat the peek.
+     --hero-stage is the one knob; .hero--detector retunes it per composition. */
+  --hero-stage: 70svh;
+  min-height: calc(var(--hero-stage) - var(--nav-height) - var(--space-3));
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -604,21 +606,6 @@
   /* Own stacking context so the z:-1 grid paints above THIS background
      instead of vanishing behind it. */
   isolation: isolate;
-}
-
-/* Blueprint ground: a faint hairline grid behind the hero, fading out toward
-   the band below. Paints above the background, below the text (z -1). */
-.hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image:
-    linear-gradient(var(--color-grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--color-grid-line) 1px, transparent 1px);
-  background-size: var(--grid-texture-cell) var(--grid-texture-cell);
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent 88%);
 }
 
 /* Brand wordmark in the hero — shown only on mobile, where the header
@@ -687,8 +674,10 @@
   .hero__wordmark-radiology { transform: none; animation: none; }
 }
 
+/* Original (non-detector) hero only — the detector composition keeps the
+   wordmark at every width, riding the slab band. */
 @media (min-width: 48em) {
-  .hero__wordmark { display: none; }
+  .hero:not(.hero--detector) .hero__wordmark { display: none; }
 }
 
 /* Subtitle: a short serif statement of what the site is (Anthropic-style
@@ -704,11 +693,14 @@
   color: var(--color-text-secondary);
 }
 
+/* Original (non-detector) hero only — the display-scale statement is the
+   text-only hero's opening moment; the detector composition keeps the quiet
+   one-paragraph tagline beside the wordmark instead. */
 @media (min-width: 48em) {
-  .hero__tagline {
+  .hero:not(.hero--detector) .hero__tagline {
     max-width: none;
   }
-  .hero__statement {
+  .hero:not(.hero--detector) .hero__statement {
     display: block;
     max-width: 18ch;
     font-size: var(--fz-display-l);
@@ -717,7 +709,7 @@
     color: var(--color-text-ivory);
     text-wrap: balance;
   }
-  .hero__support {
+  .hero:not(.hero--detector) .hero__support {
     display: block;
     max-width: 34ch;
     margin-top: var(--space-3);
@@ -726,6 +718,121 @@
     color: var(--color-text-secondary);
   }
 }
+
+/* --- Detector hero copy (apparatus.detectorHero) ---
+   The text arrangement switches on the SAME viewport predicate the detector
+   composition uses — one condition, so copy and drawing can never disagree.
+   Single source: DESKTOP_MEDIA in src/lib/detector-hero.mjs; every media
+   query below mirrors it verbatim. */
+.hero--detector .hero__wordmark {
+  margin-bottom: 0;
+  /* Mobile composition: the title-only slab centers its wordmark, and the
+     type scales WITH the drawing — one scale factor (--dh-wordmark-fz derives
+     from the slab's rendered height; see tokens/detector-hero.css). The
+     desktop-composition block below restores the standard fluid size. */
+  align-items: center;
+  font-size: var(--dh-wordmark-fz);
+}
+/* Mobile composition: the drawn content core is far shorter than the text
+   hero, so the 70svh stage read as dead space above the title (Michael
+   2026-07-11: halve it) — the detector hero runs shorter on mobile; the
+   composition predicate below restores the full stage and applies the
+   desktop copy-nudge fallback (the desktop DRAWING is what the nudge seats
+   against, even while the subtext still sits in the card). */
+.hero--detector {
+  --hero-stage: 56svh;
+}
+@media (min-width: 640px) and (min-aspect-ratio: 9/10) {
+  .hero--detector {
+    --hero-stage: 70svh;
+  }
+  .hero--detector .hero-copy {
+    top: var(--dh-copy-nudge-desktop);
+  }
+  /* Desktop composition: wordmark + statement share the slab row at the
+     standard fluid size (approved arrangement) — the slab-derived scaling
+     above is a mobile-composition behavior. */
+  .hero--detector .hero__wordmark {
+    font-size: var(--fz-wordmark-hero);
+  }
+}
+/* Seat the copy on the slab's center line: the flex-centered block nudges by
+   a computed offset — exact value set inline by the DetectorHero script from
+   the live composition; these tokens are the no-JS / reduced-motion
+   approximation (derivations in tokens/detector-hero.css). */
+.hero--detector .hero-copy {
+  position: relative;
+  top: var(--dh-copy-nudge-mobile);
+}
+/* Mobile composition (predicate false): the slab holds only the wordmark —
+   the statement's active seat is the FeatureBand card h1 below. display:none
+   removes the inactive seat from paint AND the accessibility tree, so exactly
+   one accessible h1 exists at every viewport, with or without JS. */
+.hero--detector .hero__tagline {
+  display: none;
+}
+/* SEAT predicate — where the subtext may join the wordmark in the slab.
+   Stricter than the composition predicate: the slab row (wordmark + subtext)
+   only fits where the slab is tall enough (slab height ≈ 15.7vw width-bound),
+   so the subtext seats in the hero from the site's 48em desktop breakpoint
+   and stays in the FeatureBand card below it — Anthropic's hero grammar
+   (side-by-side row where it fits, relocated support where it doesn't).
+   The height term keeps landscape phones out: their ~190px hero crops the
+   slab too short for the row even at desktop widths. Where the composition
+   predicate holds but this one doesn't, the desktop drawing renders a
+   title-only slab. */
+@media (min-width: 48em) and (min-height: 30em) and (min-aspect-ratio: 9/10) {
+  /* Desktop object: wordmark left, statement right, both riding the slab
+     band (lab arrangement), clear of the fan lines below. */
+  .hero--detector .hero-copy {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+  }
+  .hero--detector .hero__wordmark {
+    flex: 0 0 auto;
+    align-items: flex-start;
+  }
+  .hero--detector .hero__tagline {
+    display: block;
+    max-width: 24em;
+  }
+  /* The card seat retires in the same block so the two h1 seats can only
+     ever flip together (exactly one accessible h1 at every viewport). */
+  .feature-band__copy {
+    display: none;
+  }
+}
+
+/* FeatureBand card statement — the mobile composition's h1 seat (Anthropic-
+   style: rounded panel card, centered serif). Hidden on the desktop
+   composition, where the hero h1 seat is active instead. */
+.feature-band__copy {
+  position: relative;
+  margin: auto;
+  /* Pinned to the card's REST (contained) width, not the live card width —
+     the copy must not rewrap as the card widens on scroll. */
+  width: min(22em, calc(100vw - var(--grid-margin) * 2));
+  padding: var(--space-5) var(--space-3);
+  font-family: var(--ff-display);
+  font-size: var(--fz-hero-subtitle);
+  font-weight: 400;
+  line-height: var(--lh-body-xs);
+  text-align: center;
+  color: var(--color-text-ivory);
+}
+.feature-band__statement {
+  display: block;
+}
+.feature-band__support {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--fz-body);
+  color: var(--color-text-muted);
+}
+/* Desktop seat: hidden inside the SEAT-predicate block above, alongside the
+   hero tagline's display:block — one @media, seats can't half-flip. */
 
 /* --- Feature Band (full-bleed scroll-expand) --- */
 .feature-band {
@@ -739,11 +846,11 @@
   background: var(--color-bg-deepest);
 }
 
-/* Contained card that WIDENS to full-bleed as it scrolls up the viewport. The
-   widen is scroll-LINKED: `--fb-progress` (0→1, set per frame by the component
-   script) interpolates width / max-width / radius / border, so the card sits at
-   page-width gutters at rest and only reaches the edges as it scrolls in. The
-   DETECTOR (not the card) falls away at the top via `fb-faded`. */
+/* Contained card that INFLATES to full-bleed as it scrolls up the viewport
+   (Anthropic mobile-card behavior): one box inset by the page gutter on all
+   four sides at rest, and the inset collapses to zero — width AND height — as
+   `--fb-progress` (0→1, set per frame by the component script) advances,
+   radius and border melting with it. */
 .feature-band__surface {
   --fb-progress: 0;
   position: relative;
@@ -751,7 +858,7 @@
   align-items: center;
   width: calc(100% - var(--grid-margin) * 2 * (1 - var(--fb-progress)));
   max-width: calc(var(--grid-max-width) + (100% - var(--grid-max-width)) * var(--fb-progress));
-  min-height: var(--fb-card-min-h);
+  min-height: calc(var(--fb-card-h) - var(--grid-margin) * 2 * (1 - var(--fb-progress)));
   overflow: hidden;
   /* --color-border-default faded toward transparent as the card widens —
      identical alpha math to the old rgba literal, but riding the token. */
@@ -761,131 +868,13 @@
   background: var(--color-bg-primary);
 }
 
-.feature-band__visual {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  /* The detector just fades out (card stays) when fb-faded is set at the top —
-     subtle, no fall. */
-  transition: opacity 0.7s ease;
-}
-.feature-band__surface.fb-faded .feature-band__visual {
-  opacity: 0;
-}
-.feature-band__visual svg {
-  /* Square panel sized to the DEFAULT (contained) card width and held there:
-     it fills the card at rest and does NOT scale or shift as the card widens on
-     scroll, so it reads as a steady X-ray panel rather than stretching lines.
-     Capped by the card height so the square never overflows vertically. */
-  width: min(calc(100vw - var(--grid-margin) * 2), var(--fb-card-min-h));
-  height: auto;
-  aspect-ratio: 1 / 1;
-  display: block;
-  /* glow so the bright HUD strokes read crisply on the dark panel */
-  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--color-text-ivory) 45%, transparent));
-}
-
-/* --- Boot-up sequence ---
-   The HUD is hidden by default (opacity 0) so it never flashes on first paint —
-   the card reads as blank at rest until you scroll. `is-booted` runs the boot
-   choreography (forwards fill holds the resolved state until toggled off on the
-   top-reset). Under reduced motion the static HUD is shown instead (below). */
-.feature-band__surface .fb-grid,
-.feature-band__surface .fb-panel-l,
-.feature-band__surface .fb-panel-r,
-.feature-band__surface .fb-center-1,
-.feature-band__surface .fb-center-2,
-.feature-band__surface .fb-scan,
-.feature-band__surface .fb-bk {
-  opacity: 0;
-}
-
-.feature-band__surface.is-booted .fb-grid {
-  animation: fb-cut 200ms linear 200ms forwards;
-}
-.feature-band__surface.is-booted .fb-panel-l {
-  animation: fb-flicker 320ms steps(1, jump-start) 350ms forwards;
-}
-.feature-band__surface.is-booted .fb-panel-r {
-  animation: fb-flicker 320ms steps(1, jump-start) 420ms forwards;
-}
-.feature-band__surface.is-booted .fb-center-1 {
-  animation: fb-flicker 300ms steps(1, jump-start) 500ms forwards;
-}
-.feature-band__surface.is-booted .fb-center-2 {
-  animation: fb-flicker 300ms steps(1, jump-start) 580ms forwards;
-}
-.feature-band__surface.is-booted .fb-bk-tl { animation: fb-snap-tl 420ms cubic-bezier(0.1, 1.5, 0.92, 1) 300ms forwards; }
-.feature-band__surface.is-booted .fb-bk-tr { animation: fb-snap-tr 420ms cubic-bezier(0.1, 1.5, 0.92, 1) 300ms forwards; }
-.feature-band__surface.is-booted .fb-bk-bl { animation: fb-snap-bl 420ms cubic-bezier(0.1, 1.5, 0.92, 1) 300ms forwards; }
-.feature-band__surface.is-booted .fb-bk-br { animation: fb-snap-br 420ms cubic-bezier(0.1, 1.5, 0.92, 1) 300ms forwards; }
-.feature-band__surface.is-booted .fb-scan {
-  animation: fb-sweep 820ms cubic-bezier(0.4, 0, 0.2, 1) 500ms forwards;
-}
-
-@keyframes fb-cut { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fb-flicker {
-  0% { opacity: 0; }
-  25% { opacity: 0.6; }
-  40% { opacity: 0; }
-  55% { opacity: 1; }
-  70% { opacity: 0.4; }
-  100% { opacity: 1; }
-}
-@keyframes fb-sweep {
-  0%   { transform: translateY(-512px); opacity: 0; }
-  12%  { opacity: 1; }
-  88%  { opacity: 1; }
-  100% { transform: translateY(512px); opacity: 0; }
-}
-@keyframes fb-snap-tl {
-  0%   { transform: translate(-40px, -40px); opacity: 0; }
-  10%  { opacity: 1; }
-  30%  { opacity: 0; }
-  40%  { opacity: 1; }
-  100% { transform: translate(0, 0); opacity: 1; }
-}
-@keyframes fb-snap-tr {
-  0%   { transform: translate(40px, -40px); opacity: 0; }
-  10%  { opacity: 1; }
-  30%  { opacity: 0; }
-  40%  { opacity: 1; }
-  100% { transform: translate(0, 0); opacity: 1; }
-}
-@keyframes fb-snap-bl {
-  0%   { transform: translate(-40px, 40px); opacity: 0; }
-  10%  { opacity: 1; }
-  30%  { opacity: 0; }
-  40%  { opacity: 1; }
-  100% { transform: translate(0, 0); opacity: 1; }
-}
-@keyframes fb-snap-br {
-  0%   { transform: translate(40px, 40px); opacity: 0; }
-  10%  { opacity: 1; }
-  30%  { opacity: 0; }
-  40%  { opacity: 1; }
-  100% { transform: translate(0, 0); opacity: 1; }
-}
-
 /* Reduced motion: the script never runs, so --fb-progress stays 0 and the card
    is contained. Pin border-color (the alpha calc above resolves to the same
-   value at progress 0) and drop the fade transition for safety. */
+   value at progress 0) for safety. */
 @media (prefers-reduced-motion: reduce) {
   .feature-band__surface {
     border-color: var(--color-border-default);
     transition: none;
-  }
-  /* No boot runs, so reveal the static HUD (sans the sweep scanline). */
-  .feature-band__surface .fb-grid,
-  .feature-band__surface .fb-panel-l,
-  .feature-band__surface .fb-panel-r,
-  .feature-band__surface .fb-center-1,
-  .feature-band__surface .fb-center-2,
-  .feature-band__surface .fb-bk {
-    opacity: 1;
   }
 }
 

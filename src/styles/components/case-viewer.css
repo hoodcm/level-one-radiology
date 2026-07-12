@@ -59,15 +59,16 @@ case-viewer {
   white-space: pre;
 }
 /* Decode stall: subtle glyph on the counter, never a spinner on the image.
-   The glyph's slot is ALWAYS reserved (transparent) so toggling stall during
-   a fast scrub only changes its colour, never the counter's width — a
-   width change would shift the right-anchored counter left and strobe. */
-.cv__counter::after {
+   The dot sits LEFT of the label so the digits stay flush on the prose
+   right rail — the console's shared alignment edge. The slot is reserved
+   (transparent at rest) on the left, where toggling stall during a fast
+   scrub only changes its colour and the right-anchored digits never move. */
+.cv__counter::before {
   content: '·';
   color: transparent;
-  margin-left: 0.4em;
+  margin-right: 0.4em;
 }
-.is-stalled .cv__counter::after {
+.is-stalled .cv__counter::before {
   color: var(--color-signal-cyan);
 }
 
@@ -623,6 +624,83 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   border-color: var(--color-border-strong);
   background: var(--color-bg-raised);
 }
+/* --- Views rail (kind:"views") — labeled thumbnails in the slider's slot;
+   tap shows that view on the stage (the Visage bottom-rail interaction).
+   Chips share the console button skin; the checked view is the one tab stop
+   (roving tabindex, same #radiogroup contract as chips/tabs). --- */
+.cv__rail {
+  display: flex;
+  flex: 1;
+  min-width: 0; /* let the strip shrink and scroll inside the flex bar */
+  gap: var(--space-1);
+  overflow-x: auto;
+  scrollbar-width: none; /* partial thumbs at the edge are the scroll cue */
+}
+.cv__rail button {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-0);
+  padding: var(--space-0);
+  font-family: var(--ff-mono);
+  font-size: var(--cv-meta-size);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+.cv__rail button:focus-visible {
+  outline: none;
+  border-color: var(--color-border-strong);
+  box-shadow: var(--cv-ring);
+}
+.cv__rail img {
+  display: block;
+  height: var(--cv-rail-thumb-h);
+  width: auto;
+  background: var(--color-bg-deepest);
+}
+.cv__rail button:hover,
+.cv__rail button:active {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
+  background: var(--cv-bg-hover);
+}
+.cv__rail button[aria-checked='true'] {
+  color: var(--color-text-ivory);
+  border-color: var(--color-border-strong);
+  background: var(--color-bg-raised);
+}
+
+/* --- Views fallback: real <img> per view. Screen-hidden while the canvas
+   viewer owns the figure; print shows every view (base/print.css); no-JS
+   shows them via the shell's emitted <noscript> style override. Grid props
+   live here so both overrides inherit the same layout. --- */
+.cv__fallback {
+  display: none;
+  gap: var(--space-2);
+}
+.cv__fallback img {
+  max-width: 100%;
+  height: auto;
+}
+.cv__fallback figure {
+  margin: 0;
+}
+.cv__fallback figcaption {
+  font-family: var(--ff-mono);
+  font-size: var(--cv-meta-size);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-top: var(--space-0);
+}
+
 /* --- Caption: the prose figcaption voice --- */
 .cv__caption {
   font-family: var(--ff-body);

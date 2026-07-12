@@ -7,7 +7,7 @@ The map of this project's docs — start here.
 | [brand.md](brand.md) | Strategy, audience, keystone metrics, conversion flow, content types, navigation |
 | [design/](design/README.md) | The design system — philosophy, tokens, components, and the reasoning layer |
 | [engineering.md](engineering.md) | Stack, architecture, performance, publishing workflow, SEO, security |
-| [writing.md](writing.md) | Prose voice — Smart Brevity structure and the human layer |
+| [writing.md](writing.md) | Prose voice — the human layer and content organization |
 
 ## Conventions
 

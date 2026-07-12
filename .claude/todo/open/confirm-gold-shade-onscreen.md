@@ -3,7 +3,7 @@ id: confirm-gold-shade-onscreen
 title: Judge this session's visual tuning on screen
 band: now
 first_surfaced: 2026-06-28
-last_touched: 2026-07-08
+last_touched: 2026-07-11
 depends_on: []
 links: [src/styles/tokens/colors.css, src/styles/tokens/typography.css, src/styles/tokens/ornament.css, src/styles/components/ornament.css, src/styles/components/apparatus/ordinal-tick.css, src/styles/main.css]
 worktype: decide
@@ -16,8 +16,10 @@ One on-screen judgment pass over this session's headless-verified visual knobs
   now owns much more surface than before: CTAs, nav/mobile Subscribe, newsletter
   buttons, pull-quote stripe, links, focus rings, selection, progress hairline,
   subscribe accents, and the caution role (shared token).
-- Hero blueprint grid (`--color-grid-line` alpha 0.04, `--grid-texture-cell`
-  48px).
+- ~~Hero blueprint grid (`--color-grid-line` alpha 0.04, `--grid-texture-cell`
+  48px)~~ — MOOT: the blueprint grid and both tokens were removed 2026-07-11,
+  replaced by the detector-hero scintillator-grid drawing (see
+  `detector-hero-device-pass`, a separate device-gated judgment item).
 - Desktop prose leading (`--lh-reading` 1.44).
 - De-striped apparatus cards.
 - Card + callout detector-plate ornament (corner field-arcs + edge fiducials,
@@ -42,6 +44,10 @@ Done: each knob above is confirmed acceptable on screen (or re-tuned), and
 the ordinal tick-in keep/cut call is made.
 
 ## Notes
+2026-07-11 blueprint-grid sub-item struck as moot (grid + its two tokens
+removed, replaced by the detector-hero drawing); rest of this item's scope
+(gold shade, prose leading, apparatus cards, ornament, view-transition,
+print, ordinal tick-in, article-apparatus roster) still stands.
 2026-07-07 broadened from "confirm gold shade" to cover this session's full
 set of visual tuning knobs (gold now site-wide action color raises the stakes;
 folding in the other headless-only knobs from the same session avoids a

@@ -25,7 +25,7 @@
  */
 import { iconSvg } from '../../lib/case-icons.mjs';
 import { clampFrame, frameForDrag } from './mapping';
-import { drawContain, fitCanvas } from './render';
+import { counterText, drawContain, fitCanvas, railReveal } from './render';
 
 export interface FullscreenController {
   title: string;
@@ -34,6 +34,11 @@ export interface FullscreenController {
   frame: number;
   ppf: number;
   el: HTMLElement; // the <case-viewer>: cv:decoded source + focus return
+  /** Views kind: labeled thumbnails replace the slider (the inline rail,
+   *  reused); a frame index is a 1-based view index. */
+  views?: { key: string; label: string; thumb: string }[];
+  /** Views kind: live meta-strip text for the shown view. */
+  metaFor?(i: number): string;
   bitmap(i: number): ImageBitmap | undefined;
   target(i: number, dir: 1 | -1): void;
   /** Mirror the overlay's frame back onto the inline viewer NOW (close is
@@ -72,7 +77,9 @@ export class CaseFullscreen {
   #pan!: HTMLElement;
   #canvas!: HTMLCanvasElement;
   #counter!: HTMLElement;
-  #slider!: HTMLInputElement;
+  /** Absent on views kind — the rail owns selection there. */
+  #slider: HTMLInputElement | null = null;
+  #meta!: HTMLElement;
   #tuneBtn!: HTMLButtonElement;
   #resetBtn!: HTMLButtonElement;
   #tuneReadout!: HTMLElement;
@@ -236,13 +243,23 @@ export class CaseFullscreen {
     // The __screen wrapper is the CRT rect: it morphs while the root stays
     // full-size — a scrim field over the page (masking any reflow behind the
     // animation) and the input surface from the first frame.
+    // Views kind: the inline rail (same classes — the overlay is light DOM,
+    // so component CSS applies) sits in the slider's slot.
+    const scrubber = this.#c.views
+      ? `<div class="cv__rail" role="radiogroup" aria-label="Views" data-fs-rail>${this.#c.views
+          .map(
+            (v, i) =>
+              `<button type="button" role="radio" aria-checked="${i + 1 === this.#frame}" data-fs-view="${i + 1}"><img src="${v.thumb}" alt="" loading="lazy" decoding="async" /><span></span></button>`
+          )
+          .join('')}</div>`
+      : `<input type="range" data-fs-slider min="1" max="${this.#c.frames}" step="1" />`;
     root.innerHTML = `
 <div class="cv-fs__screen">
 <div class="cv-fs__meta"><span data-fs-meta></span><span class="cv-fs__counter" data-fs-counter></span></div>
 <div class="cv-fs__stage" data-fs-stage><div class="cv-fs__pan" data-fs-pan><canvas data-fs-canvas></canvas></div></div>
 <button type="button" class="cv-fs__chip cv-fs__close" data-fs-close aria-label="Close fullscreen viewer">${iconSvg('x')}</button>
 <div class="cv-fs__bar">
-<input type="range" data-fs-slider min="1" max="${this.#c.frames}" step="1" />
+${scrubber}
 <button type="button" class="cv-fs__chip" data-fs-reset hidden>RESET</button>
 <button type="button" class="cv-fs__chip" data-fs-tune aria-pressed="false" aria-label="Adjust window and level">${iconSvg('contrast')}</button>
 </div>
@@ -256,15 +273,21 @@ export class CaseFullscreen {
     this.#pan = root.querySelector('[data-fs-pan]')!;
     this.#canvas = root.querySelector('[data-fs-canvas]')!;
     this.#counter = root.querySelector('[data-fs-counter]')!;
-    this.#slider = root.querySelector('[data-fs-slider]')!;
+    this.#slider = root.querySelector('[data-fs-slider]');
+    this.#meta = root.querySelector('[data-fs-meta]')!;
     this.#tuneBtn = root.querySelector('[data-fs-tune]')!;
     this.#resetBtn = root.querySelector('[data-fs-reset]')!;
     this.#tuneReadout = root.querySelector('[data-fs-readout]')!;
     this.#wlDot = root.querySelector('[data-fs-wl-dot]')!;
-    (root.querySelector('[data-fs-meta]') as HTMLElement).textContent = this.#c.metaText;
-    // Via setAttribute, never the innerHTML template: the title is manifest
-    // prose and a quote inside it would break out of the attribute.
-    this.#slider.setAttribute('aria-label', `Image position, ${this.#c.title}`);
+    this.#meta.textContent = this.#c.metaText;
+    // Via setAttribute/textContent, never the innerHTML template: titles and
+    // view labels are manifest prose and could break out of the markup.
+    this.#slider?.setAttribute('aria-label', `Image position, ${this.#c.title}`);
+    if (this.#c.views) {
+      root.querySelectorAll<HTMLElement>('[data-fs-view]').forEach((b, i) => {
+        b.querySelector('span')!.textContent = this.#c.views![i].label;
+      });
+    }
 
     const { signal } = this.#abort;
     root.querySelector('[data-fs-close]')!.addEventListener('click', () => this.requestClose(), { signal });
@@ -282,9 +305,9 @@ export class CaseFullscreen {
       { signal }
     );
 
-    this.#slider.addEventListener('input', () => this.#setFrame(Number(this.#slider.value)), { signal });
+    this.#slider?.addEventListener('input', () => this.#setFrame(Number(this.#slider!.value)), { signal });
     // PageUp/Down = ±5, matching the inline slider.
-    this.#slider.addEventListener(
+    this.#slider?.addEventListener(
       'keydown',
       (e) => {
         if (e.key !== 'PageUp' && e.key !== 'PageDown') return;
@@ -293,6 +316,35 @@ export class CaseFullscreen {
       },
       { signal }
     );
+    // Views rail: tap selects; arrows/Home/End move selection (the same
+    // radio-pattern keyboard contract as the inline rail).
+    const rail = root.querySelector<HTMLElement>('[data-fs-rail]');
+    if (rail) {
+      rail.addEventListener(
+        'click',
+        (e) => {
+          const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-fs-view]');
+          if (btn) this.#setFrame(Number(btn.dataset.fsView));
+        },
+        { signal }
+      );
+      rail.addEventListener(
+        'keydown',
+        (e) => {
+          const n = this.#c.frames;
+          let to: number;
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') to = (this.#frame % n) + 1;
+          else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') to = ((this.#frame - 2 + n) % n) + 1;
+          else if (e.key === 'Home') to = 1;
+          else if (e.key === 'End') to = n;
+          else return;
+          e.preventDefault();
+          this.#setFrame(to);
+          rail.querySelector<HTMLElement>(`[data-fs-view="${to}"]`)?.focus();
+        },
+        { signal }
+      );
+    }
     this.#tuneBtn.addEventListener('click', () => this.#toggleTune(), { signal });
     this.#resetBtn.addEventListener('click', () => this.#resetTune(), { signal });
 
@@ -366,10 +418,24 @@ export class CaseFullscreen {
 
   #syncFrame(frame: number): void {
     this.#frame = frame;
-    // "Image N/M", N pad-aligned to M's width — anchored label (see case-viewer.ts #syncReadout).
-    this.#counter.textContent = `Image ${String(frame).padStart(String(this.#c.frames).length, ' ')}/${this.#c.frames}`;
-    this.#slider.value = String(frame);
-    this.#slider.setAttribute('aria-valuetext', `Image ${frame} of ${this.#c.frames}`);
+    const n = this.#c.frames;
+    if (this.#c.views) {
+      // Views console: bare "N/M" + live view label + rail selection —
+      // mirrors the inline element's views readout contract.
+      this.#counter.textContent = counterText(frame, n);
+      if (this.#c.metaFor) this.#meta.textContent = this.#c.metaFor(frame);
+      const rail = this.#root.querySelector<HTMLElement>('[data-fs-rail]');
+      this.#root.querySelectorAll<HTMLElement>('[data-fs-view]').forEach((b) => {
+        const checked = Number(b.dataset.fsView) === frame;
+        b.setAttribute('aria-checked', String(checked));
+        b.tabIndex = checked ? 0 : -1;
+        if (checked && rail) railReveal(rail, b);
+      });
+    } else {
+      this.#counter.textContent = counterText(frame, n, 'Image ');
+      this.#slider!.value = String(frame);
+      this.#slider!.setAttribute('aria-valuetext', `Image ${frame} of ${n}`);
+    }
     this.#redraw();
   }
 
