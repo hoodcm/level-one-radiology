@@ -8,7 +8,7 @@ tags: ["msk", "trauma", "ankle", "fracture"]
 primaryTag: "MSK"
 contentType: "educational"
 featured: false
-draft: true
+draft: false
 keyPoints:
   - "Pronation-external rotation fails from the medial side first. By the time the fibula breaks, the syndesmosis is already torn up to the level of the fracture"
   - "A widened medial clear space with no fibular fracture on the ankle views means the fibula broke higher up. Image the whole leg to find it"

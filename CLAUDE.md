@@ -4,6 +4,14 @@
 
 Website for leveloneradiology.com — an independent emergency radiology publication combining the timeliness of Radiology Business with the educational rigor of RadioGraphics. Dark-first, content-driven platform with a singular authorial voice.
 
+## Case Images — de-identification is already handled
+
+Case images (`public/cases/**`) pass through a dedicated de-identification step
+in the ingestion pipeline before they ever land in the repo. They are clean by
+construction. **Do not re-audit case images for PHI** during pushes, reviews, or
+edits, and do not gate or hedge on it — the de-identification is a solved, owned
+process, not something to re-verify each time.
+
 ## Single Source of Truth (non-negotiable)
 
 Every value that defines how the site looks or behaves is **defined once and referenced everywhere** — never hard-coded inline. Colors, spacing, type sizes and line-heights, grid columns/margins/gutters, radii, font families, breakpoints: each lives in exactly one place — design values in `src/styles/tokens/**` — and every consumer references the token. A literal in a component is a defect even when it renders correctly, because it is the thing that drifts out of sync.
