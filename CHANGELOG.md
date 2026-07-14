@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-07-14
+
+### Changed
+- **Blueprint grid extended behind the FeatureBand card** — the hairline field now lives on a `.hero-field--detector` wrapper spanning hero + feature band (both sections' backgrounds handed up to it), so the grid runs continuously from under the header to where the articles start and the expanding card covers the same lines; the drawing's core-band carve-out is unchanged (the script publishes `--dh-core-top/-bot` on the wrapper — hero coords = field coords).
+- **Hero touch now owns single-finger strokes in both axes** — `touch-action: pan-y pinch-zoom` → `pinch-zoom` on the detector hero, so playing with the drawing no longer scrolls the page out from under the finger (pinch-zoom stays native; scrolling resumes below the hero). The hero also gets `user-select: none` + `-webkit-touch-callout: none` so touch play can't pop text selection on the wordmark/statement or the iOS long-press link callout.
+
+### Fixed
+- **Touch-pull rear-tip snap on near-center fan plates** — two discontinuities in `vaneDepth` under pull: (1) the neighbor-ride `rearShift` toggled as a hard boolean at the exact cap handoff, snapping a pulled tip between the slab underside and the neighbor's hook as focal drift moved the caps across each other — it now ramps over `SETTINGS.touchRearBlend` × pitch of cap dominance (weight 0 wherever the old boolean was false, so rest geometry is bit-identical); (2) the tip math used the 0.5-clamped slope, which raced the bottom-capped tip a full grid height across the `|run| < 0.5` band — hidden on the front line at rest but exposed as a center flicker once the pull displaced the front line; division-free per-cap forms now pin the slab-capped tip exactly on the underside, continuous through center (numerically verified: worst per-step tip motion 90 → 0.7 canvas px, rest paths unchanged to 1e-13 outside the old racing band).
+- **FeatureBand card copy no longer rewraps as the card expands** — the copy was width-pinned but still a shrinkable flex item, so the card's 1px borders shaved its box at rest and handed the pixels back mid-scroll, hopping words at the wrap boundary; `flex: none` keeps the pin honest (measured: 326px at both expansion extremes).
+
 ## [0.10.0] - 2026-07-14
 
 ### Added

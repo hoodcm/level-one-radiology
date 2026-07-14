@@ -37,6 +37,7 @@ export const SETTINGS = {
   // tokens/detector-hero.css with the other style values.
   touchRadius: 2.5, // touch-response reach, × plate pitch
   touchPull: 0.12, // touch plate pull-out depth, × grid height
+  touchRearBlend: 0.35, // rear-tip neighbor-ride ramp band, × plate pitch (smooths the cap handoff)
   copyInsetX: 0.025, // hero-copy horizontal seat inset, × slab width
 };
 
@@ -201,9 +202,14 @@ export function vanePullOffset(C, v, sigma, pull, settings = SETTINGS) {
  *      drift off the hook as it stretches — rearShift.minY (the neighbor's
  *      displaced front-top corner) clamps the tip onto that corner, the one
  *      point always on the neighbor's visible boundary.
- *  The cap-type handoff always happens while the tip is hidden behind the
- *  slab face (drop = 1.294 × grid height keeps capped tips above slab.bot
- *  there), so the rearShift on/off transition can never pop on screen. */
+ *  The rearShift contribution RAMPS in over touchRearBlend × pitch of
+ *  pitch-cap dominance rather than switching at the exact cap handoff: at
+ *  rest the handoff hides behind the slab face, but under pull the minY
+ *  clamp holds a riding tip down on the neighbor's visible hook, so a hard
+ *  on/off snapped near-center tips between anchor points as focal drift
+ *  moved the caps across each other (Michael 2026-07-14). The weight is 0
+ *  wherever the old boolean was false, so rest geometry is untouched.
+ *  @param {{ dx: number, dy: number, minY?: number } | null} [rearShift] */
 export function vaneDepth(C, v, sigma, pull = 0, settings = SETTINGS, rearShift = null) {
   const vN = vanesFor(C, settings);
   const pitch = C.halfSpan / vN;
@@ -216,11 +222,36 @@ export function vaneDepth(C, v, sigma, pull = 0, settings = SETTINGS, rearShift 
   // a depth edge ends at the EARLIEST of: its own rear endpoint (the plate
   // physically stops there), the neighboring plate, or the slab. Edges can
   // then touch but never cross — rear points preserve the plates' order.
-  const dxEnd = Math.min(Math.abs(run), pitch, (bot - C.slab.bot) / m);
-  const ride = rearShift && dxEnd === pitch;
-  const tipX = v.x + s * dxEnd + (ride ? rearShift.dx : 0);
-  let tipY = bot - m * dxEnd + (ride ? rearShift.dy : 0);
-  if (ride && rearShift.minY !== undefined && tipY < rearShift.minY) tipY = rearShift.minY;
+  // The tip uses the TRUE slope, not the 0.5-clamped m above: under the
+  // clamp the bottom-capped tip raced the full grid height across the
+  // |run| < 0.5 band (m frozen while dxEnd kept shrinking) — invisible at
+  // rest where the edge hides on the front line, but a pulled front line is
+  // displaced off it, exposing the racing stub as a center flicker (Michael
+  // 2026-07-14). Division-free per-cap forms so run = 0 needs no slope at
+  // all: the slab cap lands the tip exactly ON the underside and it slides
+  // continuously through center.
+  const absRun = Math.abs(run);
+  const rise = v.drop * settings.fan; // the edge's vertical drop over absRun
+  const gridDx = (absRun * (bot - C.slab.bot)) / rise; // dx where the slab underside cuts the edge
+  const dxOther = Math.min(absRun, gridDx);
+  const dxEnd = Math.min(dxOther, pitch);
+  let tipX = v.x + s * dxEnd;
+  let tipY =
+    dxEnd === gridDx
+      ? C.slab.bot // slab cap (includes run = 0, where every cap collapses to 0)
+      : dxEnd === pitch
+        ? bot - (rise * pitch) / absRun // neighbor cap (absRun > pitch > 0 here)
+        : bot - rise; // own rear endpoint
+  // neighbor-ride weight: 0 unless the pitch cap binds, ramping to 1 as it
+  // dominates the other caps (see the doc block above — the smooth ramp is
+  // what keeps a pulled tip from snapping between anchor points)
+  const w = rearShift ? Math.max(0, Math.min(1, (dxOther / pitch - 1) / settings.touchRearBlend)) : 0;
+  if (w > 0) {
+    let rideY = tipY + rearShift.dy;
+    if (rearShift.minY !== undefined && rideY < rearShift.minY) rideY = rearShift.minY;
+    tipX += w * rearShift.dx;
+    tipY += w * (rideY - tipY);
+  }
   d += ` M ${v.x + ex} ${bot + ey} L ${tipX} ${tipY}`;
   return d;
 }

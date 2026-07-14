@@ -185,6 +185,10 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
 
   if (container && hero && !reduce) {
     const heroEl: HTMLElement = hero; // narrowed alias for the closures below
+    // the blueprint grid's host: the hero-field wrapper (hero + feature band,
+    // index.astro) whose ::before draws the hairlines — build() publishes the
+    // core band there; hero fallback keeps a bare DetectorHero harmless
+    const gridHost: HTMLElement = hero.closest<HTMLElement>('.hero-field--detector') ?? heroEl;
     const desktopMQ = window.matchMedia(DESKTOP_MEDIA);
 
     // Style knobs come from the tokens (detector-hero.css) — retunes there
@@ -283,10 +287,12 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
 
       // Publish the drawn core's live band (px, hero coords) — the blueprint
       // grid prototype masks itself OUT of this band, living only in the
-      // black field around the drawing (tokens/detector-hero.css fallbacks
-      // are the no-JS approximation).
-      heroEl.style.setProperty('--dh-core-top', `${C.coreTop * k + ty}px`);
-      heroEl.style.setProperty('--dh-core-bot', `${C.coreBot * k + ty}px`);
+      // black field around the drawing (homepage.css fallbacks are the no-JS
+      // approximation). Set on the hero-field wrapper (hero + feature band),
+      // whose ::before carries the grid; the hero is the field's first child
+      // at y 0, so hero-coord px are field-coord px.
+      gridHost.style.setProperty('--dh-core-top', `${C.coreTop * k + ty}px`);
+      gridHost.style.setProperty('--dh-core-bot', `${C.coreBot * k + ty}px`);
 
       gRoot = el('g', { class: 'dh-root', transform: rootTransform() }, svg);
 
@@ -545,9 +551,10 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
     }).observe(container);
     /* The mouse steers the focal point from hover; a coarse pointer steers it
        from touch — and additionally drives the pull/re-exposure (touchTick).
-       No preventDefault anywhere: vertical pans scroll normally (the hero's
-       touch-action reserves only horizontal strokes) and the browser claiming
-       a scroll fires pointercancel, which releases the touch cleanly. */
+       No preventDefault anywhere: the hero's touch-action (pinch-zoom only,
+       homepage.css) keeps single-finger strokes with the drawing in both
+       axes — the page no longer scrolls out from under a pull — while
+       pointercancel (pinch, system gestures) still releases cleanly. */
     const canvasX = (clientX: number) => (clientX - tx) / k;
     hero.addEventListener('pointerdown', (e) => {
       if (e.pointerType === 'mouse') return;

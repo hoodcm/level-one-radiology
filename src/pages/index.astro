@@ -28,6 +28,10 @@ const HERO_SUPPORT =
 ---
 
 <Layout title="Level One Radiology: Independent Emergency Radiology">
+  <!-- Hero field: one wrapper over hero + feature band so the blueprint grid
+       (.hero-field--detector::before, homepage.css) runs continuously behind
+       both — the expanding card covers the same hairlines the hero shows. -->
+  <div class:list={['hero-field', apparatus.detectorHero && 'hero-field--detector']}>
   <!-- Hero -->
   <section class={apparatus.detectorHero ? 'hero hero--detector' : 'hero'}>
     {apparatus.detectorHero && <DetectorHero />}
@@ -71,6 +75,7 @@ const HERO_SUPPORT =
   <!-- Signature full-bleed feature band (expands on scroll). On the mobile
        detector composition it carries the hero statement as the page h1. -->
   <FeatureBand statement={HERO_STATEMENT} support={HERO_SUPPORT} />
+  </div>
 
   <!-- Featured Content -->
   {featuredArticles.length > 0 && (

@@ -746,23 +746,45 @@
      margin at every viewport (squat windows grow the hero instead of
      shrinking the drawing off the margins). */
   min-height: var(--dh-hero-h);
-  /* Horizontal strokes belong to the drawing's touch response (DetectorHero
-     script); vertical pans and pinches stay the browser's. */
-  touch-action: pan-y pinch-zoom;
+  /* The hero doubles as the drawing's touch surface: single-finger strokes
+     belong to the touch response in BOTH axes — pan-y let a vertical drift
+     mid-pull scroll the page out from under the finger (Michael 2026-07-14).
+     Pinch-zoom stays the browser's; scrolling resumes below the hero. */
+  touch-action: pinch-zoom;
+  /* Playing with the drawing must not pop text selection on the wordmark or
+     statement, nor the iOS long-press link callout. */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 /* PROTOTYPE (2026-07-14, hero-enrichment round): faint blueprint grid in the
-   black field AROUND the drawing (Michael: not over it) — under the detector
-   layer (z below the drawing's -1 in the hero's isolated context), spanning
-   the CONTENT BOX so the hairlines register on the page margins like the
-   mobile drawing. Column pitch is content-width / --dh-grid-cols (percentage
-   stops of the layer's own box); the single right-edge gradient supplies the
-   last line the repeat tile can't; rows reuse the column pitch for square
-   cells. The mask carves out the drawing's live core band (+ one --space-2
-   of clearance each side) — the DetectorHero script publishes the exact
-   --dh-core-top/-bot px per build; the percentage fallbacks are the no-JS
+   black field AROUND the drawing (Michael: not over it). The field is the
+   .hero-field--detector WRAPPER (hero + feature band, index.astro), so the
+   hairlines continue down behind the expanding card and the card covers
+   them as it widens (Michael 2026-07-14). Column pitch is
+   content-width / --dh-grid-cols with the tile phase shifted by the page
+   margin, so hairlines register ON both margins and the pattern continues
+   past them to the edges; rows reuse the column pitch for square cells.
+   The mask carves out the drawing's live core band (+ one --space-2 of
+   clearance each side) — the DetectorHero script publishes the exact
+   --dh-core-top/-bot px per build (hero coords = field coords: the hero is
+   the field's first child at y 0); the percentage fallbacks are the no-JS
    approximation at phone proportions. Knobs + kill instructions live with
    the --dh-grid-* tokens (tokens/detector-hero.css). */
-.hero--detector::before {
+.hero-field--detector {
+  position: relative;
+  /* The wrapper owns the deepest ground for BOTH sections (they go
+     transparent below) and isolates — same trick as .hero's isolation —
+     so the z:-2 grid paints above this background instead of vanishing
+     behind it. */
+  isolation: isolate;
+  background: var(--color-bg-deepest);
+}
+.hero-field--detector .hero,
+.hero-field--detector .feature-band {
+  background: transparent;
+}
+.hero-field--detector::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -790,10 +812,10 @@
   mask-image: linear-gradient(
     to bottom,
     black 0,
-    black calc(var(--dh-core-top, 21%) - var(--space-2)),
-    transparent calc(var(--dh-core-top, 21%) - var(--space-2)),
-    transparent calc(var(--dh-core-bot, 86%) + var(--space-2)),
-    black calc(var(--dh-core-bot, 86%) + var(--space-2)),
+    black calc(var(--dh-core-top, 11%) - var(--space-2)),
+    transparent calc(var(--dh-core-top, 11%) - var(--space-2)),
+    transparent calc(var(--dh-core-bot, 47%) + var(--space-2)),
+    black calc(var(--dh-core-bot, 47%) + var(--space-2)),
     black 100%
   );
 }
@@ -892,7 +914,11 @@
   position: relative;
   margin: auto;
   /* Pinned to the card's REST (contained) width, not the live card width —
-     the copy must not rewrap as the card widens on scroll. */
+     the copy must not rewrap as the card widens on scroll. flex: none keeps
+     the pin honest: as a shrinkable flex item the card's borders shaved the
+     box at rest and handed the pixels back as the card widened — a live
+     measure change that rehopped words mid-scroll (Michael 2026-07-14). */
+  flex: none;
   width: min(22em, calc(100vw - var(--grid-margin) * 2));
   padding: var(--space-5) var(--space-3);
   font-family: var(--ff-display);

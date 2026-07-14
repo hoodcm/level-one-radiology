@@ -21,14 +21,16 @@
   --dh-ink-exposure: var(--color-primary);
 
   /* PROTOTYPE (2026-07-14, hero-enrichment round): faint blueprint grid in
-     the hero's black field (.hero--detector::before, homepage.css). The old
-     page grid was removed 2026-07-11 with the drawing's arrival — this is
-     the quieter reintroduction under judgment. The field spans the FULL
-     hero (margins included), masked out of the drawing's core band; the
-     pitch is content-width / --dh-grid-cols with the tile phase shifted by
-     the page margin, so hairlines register ON both margins and the pattern
-     continues past them to the edges (square cells: rows reuse the column
-     pitch). Kill: delete these three tokens + the ::before rule. */
+     the black field around the drawing (.hero-field--detector::before,
+     homepage.css). The old page grid was removed 2026-07-11 with the
+     drawing's arrival — this is the quieter reintroduction under judgment.
+     The field spans the hero AND the feature band below it (margins
+     included), ending where the articles start, masked out of the drawing's
+     core band; the pitch is content-width / --dh-grid-cols with the tile
+     phase shifted by the page margin, so hairlines register ON both margins
+     and the pattern continues past them to the edges (square cells: rows
+     reuse the column pitch). Kill: delete these three tokens + the
+     .hero-field--detector rules. */
   --dh-grid-line: color-mix(in srgb, var(--color-text-ivory) 4%, transparent);
   --dh-grid-hair: 1px;
   --dh-grid-cols: 20;
