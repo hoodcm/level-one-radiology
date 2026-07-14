@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.10.2] - 2026-07-14
+
+### Changed
+- **Blueprint-grid mask recomposed: soft fades, grid-free above the drawing, margin slivers beside it** — the field above the drawing (header to stack top) is now pure background; below the drawing the grid fades in over `--dh-grid-fade` instead of cutting off sharply; and a subtle grid presence persists in the page margins beside the drawing (full at the viewport edge, gone at the margin line, strength `--dh-grid-margin-mask`), bounded to start at the drawing's top via a three-layer `mask-composite` fold (main ∪ (slivers ∩ bound); engines without mask-composite degrade to a union, only re-admitting the faint slivers up top).
+
 ## [0.10.1] - 2026-07-14
 
 ### Changed

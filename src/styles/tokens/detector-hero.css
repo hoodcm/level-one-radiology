@@ -29,11 +29,18 @@
      core band; the pitch is content-width / --dh-grid-cols with the tile
      phase shifted by the page margin, so hairlines register ON both margins
      and the pattern continues past them to the edges (square cells: rows
-     reuse the column pitch). Kill: delete these three tokens + the
+     reuse the column pitch). Kill: delete these five tokens + the
      .hero-field--detector rules. */
   --dh-grid-line: color-mix(in srgb, var(--color-text-ivory) 4%, transparent);
   --dh-grid-hair: 1px;
   --dh-grid-cols: 20;
+  /* Core-band mask knobs (Michael 2026-07-14: soft fade, not a hard cutoff;
+     a subtle presence kept in the page margins beside the drawing). Fade is
+     the gradient run from full grid to clear at each band edge; the margin
+     mask is MASK strength (alpha over the already-faint grid ink), not a
+     design color — full at the viewport edge, gone at the margin line. */
+  --dh-grid-fade: 2.5rem;
+  --dh-grid-margin-mask: color-mix(in srgb, black 35%, transparent);
 
   /* Draw-in: one stroke-dashoffset reveal per path, staggered by draw order,
      played once on arrival. Eased by --reveal-ease (motion.css). */
