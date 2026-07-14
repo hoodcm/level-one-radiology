@@ -4,7 +4,7 @@ title: Restore footer LinkedIn/X links with real profile URLs
 band: next
 first_surfaced: 2026-07-07
 last_touched: 2026-07-07
-assessed: 2026-07-11
+assessed: 2026-07-14
 depends_on: []
 links: [src/components/layout/Footer.astro]
 worktype: build

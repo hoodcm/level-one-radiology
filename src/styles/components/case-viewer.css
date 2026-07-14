@@ -872,6 +872,12 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   right: calc(env(safe-area-inset-right, 0px) + var(--space-2));
   bottom: calc(env(safe-area-inset-bottom, 0px) + var(--cv-hit-area) + 3 * var(--space-1));
 }
+/* Views kind: the bar hosts the thumbnail rail, which is taller than the
+   slider bar the offset above assumes — lift the close to clear the rail bar
+   by the same space-1 gap, so it never lands on the TUNE chip below it. */
+.cv-fs:has([data-fs-rail]) .cv-fs__close {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--cv-rail-bar-h) + var(--space-1));
+}
 .cv-fs__bar {
   display: flex;
   align-items: center;

@@ -68,8 +68,11 @@
      card is inset by --grid-margin on all four sides and inflates to this as
      it scrolls up (Anthropic mobile-card behavior: one box whose gutter
      collapses in both dimensions; height math beside the width math in
-     homepage.css). */
-  --fb-card-h: 68svh;
+     homepage.css). Mobile composition: content-fitted — short enough that the
+     statement + subscribe route read inside the first screen and the Featured
+     section peeks at the fold; the desktop-composition override below restores
+     the tall panel. */
+  --fb-card-h: 42svh;
 
   /* Card padding (grows at breakpoints below) */
   --card-padding-sm: 1rem;     /* 16px — code, compact */
@@ -87,6 +90,15 @@
   /* Component gaps */
   --gap-md: var(--space-3);   /* 24px */
   --gap-lg: var(--space-4);   /* 32px */
+}
+
+/* Detector-hero desktop composition: the feature card is the tall Anthropic-
+   style panel again. Mirrors DESKTOP_MEDIA in src/lib/detector-hero.mjs
+   verbatim (single source), like the homepage.css composition blocks. */
+@media (min-width: 640px) and (min-aspect-ratio: 9/10) {
+  :root {
+    --fb-card-h: 68svh;
+  }
 }
 
 /* Token values change at shared breakpoints — components reference the

@@ -741,10 +741,68 @@
    against, even while the subtext still sits in the card). */
 .hero--detector {
   --hero-stage: 56svh;
+  /* Height rides --dh-hero-h (tokens/detector-hero.css): the svh stage,
+     floored by the width-bound drawing's need so the slab spans margin to
+     margin at every viewport (squat windows grow the hero instead of
+     shrinking the drawing off the margins). */
+  min-height: var(--dh-hero-h);
+  /* Horizontal strokes belong to the drawing's touch response (DetectorHero
+     script); vertical pans and pinches stay the browser's. */
+  touch-action: pan-y pinch-zoom;
+}
+/* PROTOTYPE (2026-07-14, hero-enrichment round): faint blueprint grid in the
+   black field AROUND the drawing (Michael: not over it) — under the detector
+   layer (z below the drawing's -1 in the hero's isolated context), spanning
+   the CONTENT BOX so the hairlines register on the page margins like the
+   mobile drawing. Column pitch is content-width / --dh-grid-cols (percentage
+   stops of the layer's own box); the single right-edge gradient supplies the
+   last line the repeat tile can't; rows reuse the column pitch for square
+   cells. The mask carves out the drawing's live core band (+ one --space-2
+   of clearance each side) — the DetectorHero script publishes the exact
+   --dh-core-top/-bot px per build; the percentage fallbacks are the no-JS
+   approximation at phone proportions. Knobs + kill instructions live with
+   the --dh-grid-* tokens (tokens/detector-hero.css). */
+.hero--detector::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  /* Field fills the FULL hero (margins included — Michael 2026-07-14);
+     the tile phase shifts by the page margin so hairlines register ON both
+     margins and the pattern continues past them to the viewport edges. */
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--dh-grid-line) 0 var(--dh-grid-hair),
+      transparent var(--dh-grid-hair)
+        calc((100vw - 2 * var(--grid-margin)) / var(--dh-grid-cols))
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      var(--dh-grid-line) 0 var(--dh-grid-hair),
+      transparent var(--dh-grid-hair)
+        calc((100vw - 2 * var(--grid-margin)) / var(--dh-grid-cols))
+    );
+  background-position:
+    var(--grid-margin) 0,
+    0 0;
+  mask-image: linear-gradient(
+    to bottom,
+    black 0,
+    black calc(var(--dh-core-top, 21%) - var(--space-2)),
+    transparent calc(var(--dh-core-top, 21%) - var(--space-2)),
+    transparent calc(var(--dh-core-bot, 86%) + var(--space-2)),
+    black calc(var(--dh-core-bot, 86%) + var(--space-2)),
+    black 100%
+  );
 }
 @media (min-width: 640px) and (min-aspect-ratio: 9/10) {
   .hero--detector {
     --hero-stage: 70svh;
+    /* Desktop drawing is full-bleed cover — no width floor; the height
+       expression collapses back to the plain stage term. */
+    --dh-hero-h: calc(var(--hero-stage) - var(--nav-height) - var(--space-3));
   }
   .hero--detector .hero-copy {
     top: var(--dh-copy-nudge-desktop);
@@ -803,11 +861,33 @@
   .feature-band__copy {
     display: none;
   }
+  /* Live-JS squat fallback (.dh-squat on <html>, set by DetectorHero's
+     seatCopy): on short, wide windows the live drawing's corePad clamp
+     shrinks the slab until the seated row can't fit inside it — the hero
+     falls back to a title-only slab (wordmark centered, landscape-phone
+     grammar) and the statement returns to its card seat. Declared inside
+     this same block so the flip stays paired with the seats it overrides;
+     the static render paths never shrink (slice-fit), so no-JS and
+     reduced-motion never need the class. */
+  :root.dh-squat .hero--detector .hero-copy {
+    justify-content: center;
+  }
+  :root.dh-squat .hero--detector .hero__wordmark {
+    align-items: center;
+  }
+  :root.dh-squat .hero--detector .hero__tagline {
+    display: none;
+  }
+  :root.dh-squat .feature-band__copy {
+    display: block;
+  }
 }
 
-/* FeatureBand card statement — the mobile composition's h1 seat (Anthropic-
-   style: rounded panel card, centered serif). Hidden on the desktop
-   composition, where the hero h1 seat is active instead. */
+/* FeatureBand card copy — the mobile composition's h1 seat plus the gold
+   subscribe route (Anthropic-style: rounded panel card, centered serif).
+   Hidden on the desktop composition, where the hero h1 seat is active
+   instead. The inner h1 (.feature-band__heading) inherits this block's type
+   wholesale (Tailwind preflight zeroes heading margins/size). */
 .feature-band__copy {
   position: relative;
   margin: auto;
@@ -831,6 +911,31 @@
   font-size: var(--fz-body);
   color: var(--color-text-muted);
 }
+/* Subscribe route — same gold voice as the header/mobile-menu CTAs; the
+   keystone-metric action, on screen at load in the mobile composition. */
+.feature-band__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  color: var(--color-on-primary);
+  font-family: var(--ff-ui);
+  font-size: var(--fz-nav);
+  font-weight: 700;
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  border-radius: var(--radius-xs);
+  text-decoration: none;
+}
+.feature-band__cta:hover {
+  background: var(--color-bg-deepest);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  text-decoration: none;
+}
 /* Desktop seat: hidden inside the SEAT-predicate block above, alongside the
    hero tagline's display:block — one @media, seats can't half-flip. */
 
@@ -839,11 +944,18 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  /* Small top gap (matches the hero min-height math so the peek lands at 30svh);
-     normal section spacing below. */
+  /* Small top gap (matches the hero min-height math so the peek lands at 30svh).
+     Below: tightened on the mobile composition so the Featured header peeks
+     inside the first screen (proof-of-publication at the fold); the desktop-
+     composition block restores the normal section spacing. */
   padding-top: var(--space-3);
-  padding-bottom: var(--section-spacer);
+  padding-bottom: var(--space-4);
   background: var(--color-bg-deepest);
+}
+@media (min-width: 640px) and (min-aspect-ratio: 9/10) {
+  .feature-band {
+    padding-bottom: var(--section-spacer);
+  }
 }
 
 /* Contained card that INFLATES to full-bleed as it scrolls up the viewport
@@ -883,7 +995,15 @@
    ground below it, the two separated by their headers and section rhythm. --- */
 .featured-section {
   background: var(--color-bg-primary);
-  padding: var(--section-spacer) 0;
+  /* Mobile composition: tight top padding lets the FEATURED header crest the
+     fold under the shortened feature card — the first screen's proof-of-
+     publication peek. The desktop-composition block restores section rhythm. */
+  padding: var(--space-2) 0 var(--section-spacer);
+}
+@media (min-width: 640px) and (min-aspect-ratio: 9/10) {
+  .featured-section {
+    padding-top: var(--section-spacer);
+  }
 }
 .latest-section {
   padding: var(--section-spacer) 0;

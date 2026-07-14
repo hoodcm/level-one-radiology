@@ -525,10 +525,11 @@ side.
 ::case[Scroll through the exam. Portal venous phase at the transition point.]{id="ct-abd-001"}
 ```
 
-The `[caption]` renders as the figcaption; the `id` names a case under `public/cases/<id>/`
-produced by `npm run case:build -- --in <exported-frames> --id <id>` (one run per series+window —
-see the header of `scripts/build-case.mjs` for the full flags). A build fails loudly if the case's
-manifest or any referenced frame is missing.
+The `[caption]` renders as the figcaption; the `id` names a case under `public/cases/<id>/`,
+assembled from a prepared case folder in the private `prepare-radiology-cases` repo:
+`npm run case:build -- --id <id> --in ../prepare-radiology-cases/cases/<id>` (see the header of
+`scripts/build-case.mjs` for the full flags). A build fails loudly if the case's manifest or any
+referenced frame is missing.
 
 ### Caption micro-copy
 
@@ -539,12 +540,14 @@ reader the figure moves. Keep it to one or two sentences in the figure-caption v
 
 Short, hand-picked runs beat whole exams. Trim the stack to the slices that carry the finding plus
 enough approach for context (30–90 frames), and set `--start` to the key image — that's the frame
-the reader lands on, and the slice index is preserved when they switch windows.
+the reader lands on, and the slice index is preserved when they switch windows. Curation itself
+(which images, order, labels, crops) happens in the private pipeline's review tool, not here.
 
 ### De-identification
 
-Happens at export, in the clinical workflow, before frames ever reach the repo. The ingest strips
-file metadata (EXIF) as hygiene, but it never inspects content — exporting clean pixels is on you.
+Handled entirely upstream in the private `prepare-radiology-cases` pipeline — anonymized export,
+human redaction gate, metadata strip. Prepared images arrive clean by construction; this repo's
+assembler only downscales them (see CLAUDE.md → Case Images).
 
 ---
 

@@ -8,9 +8,9 @@
 //      locked settings, media-gated on the shared viewport predicate — the
 //      no-JS baseline is correct on both form factors, and reduced-motion
 //      keeps exactly this final static drawing (the script exits early).
-//   2. Client (the <script>): replaces the static pair with one live,
+//   2. Client (the script block below): replaces the static pair with one live,
 //      responsively rebuilt instance carrying the approved motion — draw-in,
-//      scroll depth, focal drift, pointer re-focus, beam sweep.
+//      scroll depth, focal drift, pointer re-focus, beam sweep, touch response.
 import {
   DESKTOP,
   SETTINGS,
@@ -57,9 +57,13 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
     style={yoffStyle}
     set:html={staticInner(DESKTOP)}
   />
+  {/* Slab-tight viewBox + the CSS grid-margin inset below = the static
+      analogue of the client's content-box fit: the slab lands on the page
+      margins (nothing draws outside the slab's x-range, so the crop is
+      lossless bar a half-stroke on the outermost edges). */}
   <svg
     class="dh-static dh-static--mobile"
-    viewBox={`0 0 ${MOBILE.SW} ${MOBILE.SH}`}
+    viewBox={`${MOBILE.slab.x0} 0 ${MOBILE.slab.x1 - MOBILE.slab.x0} ${MOBILE.SH}`}
     preserveAspectRatio="xMidYMid slice"
     role="presentation"
     style={yoffStyle}
@@ -83,6 +87,17 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
     width: 100%;
     height: 100%;
   }
+  /* Mobile composition fits the CONTENT BOX: inset the static instance by the
+     page grid margins (pairs with its slab-tight viewBox — together the
+     static analogue of the client fit's insetX). Compound selector so it
+     outweighs the `.detector-hero svg` inset/width base rule above. Explicit
+     width, not left+right+auto: svg is a replaced element, so auto width
+     between insets resolves from the intrinsic viewBox aspect instead of the
+     inset constraint. */
+  .detector-hero .dh-static--mobile {
+    left: var(--grid-margin);
+    width: calc(100% - 2 * var(--grid-margin));
+  }
   .dh-root {
     fill: none;
     stroke: var(--dh-ink);
@@ -98,9 +113,13 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
     fill: var(--color-bg-deepest);
     stroke: none;
   }
+  /* Shared exposure treatment: the beam sweep and the touch response both
+     re-ink the grid through this class (each with its own gradient mask).
+     Exposure ink is its own token — currently the gold prototype
+     (tokens/detector-hero.css). */
   .dh-beam {
     fill: none;
-    stroke: var(--dh-ink);
+    stroke: var(--dh-ink-exposure);
     stroke-width: var(--dh-stroke);
   }
   /* Composition gate — the shared viewport predicate. Single source:
@@ -133,15 +152,18 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
   // Client behavior, ported from the approved lab
   // (design-assets/references/detector-hero-lab.html) at the locked settings:
   // responsive rebuild, draw-in, focal drift, pointer re-focus (authority
-  // ramps ~1s), beam sweep via live <use> references. (The lab's scroll-
-  // linked depth was cut on device: it slid the slab out from under the
-  // seated hero text.) One rAF ambient loop + one beam interval.
+  // ramps ~1s), beam sweep via live <use> references, and the touch response
+  // (a coarse pointer steers the focal point and pulls/re-exposes the fan
+  // plates under the finger). (The lab's scroll-linked depth was cut on
+  // device: it slid the slab out from under the seated hero text.) One rAF
+  // ambient loop + one beam interval.
   // Composition selection is the shared VIEWPORT predicate
   // (DESKTOP_MEDIA), never element dimensions — the ~70svh hero's element
   // aspect diverges from the viewport's.
   import {
     DESKTOP,
     DESKTOP_MEDIA,
+    S_BACK,
     SETTINGS,
     fitTransform,
     mobileComp,
@@ -152,6 +174,7 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
     vaneDepth,
     vaneFrontD,
     vaneList,
+    vanePullOffset,
     vanesFor,
   } from '../../lib/detector-hero.mjs';
 
@@ -173,6 +196,13 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
     const BEAM_EVERY_S = token('--dh-beam-every');
     const BEAM_DUR_S = token('--dh-beam-dur');
     const BEAM_BOOST = token('--dh-beam-boost');
+    const TOUCH_BOOST = token('--dh-touch-boost');
+    // lift = opacity × (boost − 1), floored like the beam's
+    const TOUCH_LIFT = Math.max(0, Math.min(1, INK_OPACITY * TOUCH_BOOST) - INK_OPACITY);
+    // per-frame authority lerp factors from the SECONDS ramp tokens (~60fps —
+    // the same frame-rate assumption as the 0.02/0.03 focus eases below)
+    const F_IN = 1 - Math.exp(-1 / (60 * token('--dh-touch-ramp-in')));
+    const F_OUT = 1 - Math.exp(-1 / (60 * token('--dh-touch-ramp-out')));
 
     const svg = document.createElementNS(NS, 'svg') as SVGSVGElement;
     svg.setAttribute('class', 'dh-live');
@@ -195,6 +225,14 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
     let pointerFx = C.CX;
     let pointerInside = false;
     let pw = 0; // pointer authority, 0..1 — ramps in/out so entry never lurches
+    let touchOn = false; // a coarse pointer is down on the hero
+    let touchX = C.CX; // finger x, canvas coords
+    let gx = C.CX; // eased touch-response center
+    let gw = 0; // touch authority, 0..1 — F_IN/F_OUT ramps
+    let touchApplied = false; // pull transforms are live and need clearing at rest
+    let glowGroup: SVGGElement | null = null;
+    let glowGrad: SVGElement | null = null;
+    let glowRect: SVGRectElement | null = null;
     let ambientRAF: number | null = null;
 
     function el<T extends SVGElement>(name: string, attrs: Record<string, string | number>, parent: Element): T {
@@ -215,10 +253,17 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
         fx = C.CX;
         fxTarget = C.CX;
         pointerFx = C.CX;
+        touchX = C.CX;
+        gx = C.CX;
       }
       W = heroEl.clientWidth;
       H = heroEl.clientHeight;
       svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      // Mobile composition fits the CONTENT BOX (slab on the page grid
+      // margins). Measured from the copy's natural box rather than the
+      // --grid-margin token — getComputedStyle returns custom properties
+      // unresolved (clamp()/rem), not as px.
+      const insetX = C.name === 'mobile' ? contentMargin() : 0;
       // a rebuild mid-sweep would orphan the beam's rAF against detached
       // nodes and leave no beam until the next interval
       if (beamRAF) {
@@ -226,10 +271,22 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
         beamRAF = null;
       }
       beamGroup = null;
+      beamDefs = null;
+      glowGroup = null;
+      glowGrad = null;
+      glowRect = null;
+      touchApplied = false;
       svg.innerHTML = '';
       vanes = [];
       stackLayers = [];
-      ({ k, tx, ty } = fitTransform(C, W, H));
+      ({ k, tx, ty } = fitTransform(C, W, H, SETTINGS, insetX));
+
+      // Publish the drawn core's live band (px, hero coords) — the blueprint
+      // grid prototype masks itself OUT of this band, living only in the
+      // black field around the drawing (tokens/detector-hero.css fallbacks
+      // are the no-JS approximation).
+      heroEl.style.setProperty('--dh-core-top', `${C.coreTop * k + ty}px`);
+      heroEl.style.setProperty('--dh-core-bot', `${C.coreBot * k + ty}px`);
 
       gRoot = el('g', { class: 'dh-root', transform: rootTransform() }, svg);
 
@@ -286,18 +343,57 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
       seatCopy();
     }
 
-    /* Seat the hero copy on the slab's center line — exact, from the same
+    /* The page grid margin, measured as the copy's natural offset in the
+       hero (the copy rides the Container, so its unstyled box IS the content
+       box). Cleared styles are re-seated by seatCopy at the end of the same
+       build — no paint in between. */
+    function contentMargin(): number {
+      const copy = heroEl.querySelector<HTMLElement>('.hero-copy');
+      if (!copy) return 0;
+      copy.style.left = '0px';
+      copy.style.width = '';
+      return copy.getBoundingClientRect().left - heroEl.getBoundingClientRect().left;
+    }
+
+    /* Seat the hero copy ON the slab — both axes, exact, from the same
        composition the drawing was just built with (the CSS nudge tokens are
-       only the no-JS / reduced-motion approximation). */
+       only the no-JS / reduced-motion approximation; those paths render the
+       static SVGs slice-fit, so their slab always spans the viewport and the
+       container box already sits inside it). Live-only wrinkle this handles:
+       fitTransform's corePad clamp renders the slab NARROWER than the
+       container on short, wide windows — the copy box clamps into the slab's
+       inner span, and where even that can't hold the row's height (extreme
+       squat), .dh-squat falls back to a title-only slab with the statement
+       in its FeatureBand card seat (same pair-flip as the seat predicate, so
+       still exactly one accessible h1). */
     function seatCopy() {
       const copy = heroEl.querySelector<HTMLElement>('.hero-copy');
       if (!copy) return;
-      const slabCenter = ((C.slab.top + C.slab.bot) / 2) * k + ty;
-      // measure from an explicit 0 — clearing to '' would let the CSS
-      // fallback nudge shift the rect and skew the delta
+      const root = document.documentElement;
+      root.classList.remove('dh-squat');
+      // measure from explicit zeros — clearing top to '' would let the CSS
+      // fallback nudge shift the rect and skew the deltas
       copy.style.top = '0px';
-      const r = copy.getBoundingClientRect();
+      copy.style.left = '0px';
+      copy.style.width = '';
       const hr = heroEl.getBoundingClientRect();
+      const slabX0 = C.slab.x0 * k + tx;
+      const slabX1 = C.slab.x1 * k + tx;
+      const inset = SETTINGS.copyInsetX * (slabX1 - slabX0);
+      const nat = copy.getBoundingClientRect();
+      const natL = nat.left - hr.left;
+      const natR = nat.right - hr.left;
+      const seatL = Math.max(natL, slabX0 + inset);
+      const seatR = Math.min(natR, slabX1 - inset);
+      if (seatL > natL + 0.5 || seatR < natR - 0.5) {
+        copy.style.left = `${seatL - natL}px`;
+        copy.style.width = `${seatR - seatL}px`;
+      }
+      if (copy.getBoundingClientRect().height > C.slabH * k) {
+        root.classList.add('dh-squat'); // row taller than the slab: title-only fallback
+      }
+      const slabCenter = ((C.slab.top + C.slab.bot) / 2) * k + ty;
+      const r = copy.getBoundingClientRect();
       const copyCenter = r.top + r.height / 2 - hr.top;
       copy.style.top = `${slabCenter - copyCenter}px`;
     }
@@ -349,10 +445,91 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
       fxTarget = Math.max(C.slab.x0 + m, Math.min(C.slab.x1 - m, fxTarget));
       fx += (fxTarget - fx) * 0.03;
       applyFocus(false);
+      touchTick();
       // stop scheduling while the hero is scrolled off-screen — rAF only
       // auto-throttles on hidden tabs, not scrolled-away elements; the
       // IntersectionObserver below restarts the loop on re-entry
       ambientRAF = onScreen ? requestAnimationFrame(ambientTick) : null;
+    }
+
+    /* ---------- touch response: finger-local pull + re-exposure ----------
+       The metaphor is physical: press the detector and the plates under the
+       finger slide out of the comb and scintillate. Pull is a rigid translate
+       with gaussian falloff around the touch; the re-exposure reuses the
+       beam's treatment (white-mask lift over live <use> refs), stationary
+       under the finger. Runs inside the ambient loop, so it inherits the
+       draw-in hold-off and the off-screen stop. */
+    const touchR = () => SETTINGS.touchRadius * (C.halfSpan / vanesFor(C));
+    function ensureGlow() {
+      if (glowGroup) return;
+      const R = touchR();
+      const defs = el<SVGDefsElement>('defs', {}, svg);
+      glowGrad = el('linearGradient', { id: 'dh-touch-grad', gradientUnits: 'userSpaceOnUse', x1: 0, x2: 0, y1: 0, y2: 0 }, defs);
+      // white = mask luminance (fully exposed), not a themable design color
+      el('stop', { offset: '0', 'stop-color': 'white', 'stop-opacity': '0' }, glowGrad);
+      el('stop', { offset: '0.5', 'stop-color': 'white', 'stop-opacity': '1' }, glowGrad);
+      el('stop', { offset: '1', 'stop-color': 'white', 'stop-opacity': '0' }, glowGrad);
+      const mask = el(
+        'mask',
+        { id: 'dh-touch-mask', maskUnits: 'userSpaceOnUse', x: -C.SW, y: -C.SH, width: 3 * C.SW, height: 3 * C.SH },
+        defs
+      );
+      glowRect = el<SVGRectElement>('rect', { x: 0, y: 0, width: 4 * R, height: C.SH, fill: 'url(#dh-touch-grad)' }, mask);
+      glowGroup = el<SVGGElement>(
+        'g',
+        { class: 'dh-beam dh-touch', transform: rootTransform(), opacity: 0, mask: 'url(#dh-touch-mask)' },
+        svg
+      );
+      el('use', { href: '#dh-vanes' }, glowGroup);
+      svg.appendChild(occluder); // occluder stays topmost
+    }
+    function touchTick() {
+      gw += ((touchOn ? 1 : 0) - gw) * (touchOn ? F_IN : F_OUT);
+      if (gw < 0.004) {
+        if (touchApplied) {
+          const sigma = sigmaOf(C, fx - C.CX);
+          for (const v of vanes) {
+            v.pF.removeAttribute('transform');
+            // depth edges are REGENERATED under pull (dy), not transformed —
+            // re-seat the rest geometry on release
+            v.pD.setAttribute('d', vaneDepth(C, v, sigma));
+          }
+          if (glowGroup) glowGroup.setAttribute('opacity', '0');
+          touchApplied = false;
+        }
+        return;
+      }
+      touchApplied = true;
+      gx += (touchX - gx) * 0.3;
+      const R = touchR();
+      const pull = SETTINGS.touchPull * C.slabH * SETTINGS.gridLen * gw;
+      // Each pane slides OUT ALONG ITS OWN DEPTH AXIS (vanePullOffset). Two
+      // passes: offsets first, because a pane's bottom depth edge ends where
+      // its NEIGHBOR occludes it — that rear tip must ride the neighbor's
+      // own offset (vaneDepth rearShift) so differential pull leaves no gap
+      // and no poke-through. vanes[] is in x order; the kissed neighbor sits
+      // one step toward the pane's back-run side. Runs after applyFocus in
+      // the same rAF, so its pull-less regen never reaches paint mid-touch.
+      const sigma = sigmaOf(C, fx - C.CX);
+      for (const v of vanes) {
+        v.pullT = pull * Math.exp(-(((v.x - gx) / R) ** 2));
+        v.pullOff = vanePullOffset(C, v, sigma, v.pullT);
+      }
+      vanes.forEach((v, i) => {
+        const s = C.CX + (v.x - C.CX) * S_BACK + sigma - v.x >= 0 ? 1 : -1;
+        const nb = vanes[i + s];
+        v.pF.setAttribute('transform', `translate(${v.pullOff.dx} ${v.pullOff.dy})`);
+        const rearShift = nb
+          ? { dx: nb.pullOff.dx, dy: nb.pullOff.dy, minY: nb.top + nb.pullOff.dy }
+          : null;
+        v.pD.setAttribute('d', vaneDepth(C, v, sigma, v.pullT, SETTINGS, rearShift));
+      });
+      ensureGlow();
+      if (!glowGroup || !glowGrad || !glowRect) return;
+      glowGrad.setAttribute('x1', String(gx - 2 * R));
+      glowGrad.setAttribute('x2', String(gx + 2 * R));
+      glowRect.setAttribute('x', String(gx - 2 * R));
+      glowGroup.setAttribute('opacity', String(TOUCH_LIFT * gw));
     }
     function syncAmbient() {
       // `settled` guards the draw-in: the IntersectionObserver fires on load
@@ -366,23 +543,50 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
       onScreen = entry.isIntersecting;
       if (onScreen) syncAmbient();
     }).observe(container);
-    hero.addEventListener('pointermove', (e) => {
+    /* The mouse steers the focal point from hover; a coarse pointer steers it
+       from touch — and additionally drives the pull/re-exposure (touchTick).
+       No preventDefault anywhere: vertical pans scroll normally (the hero's
+       touch-action reserves only horizontal strokes) and the browser claiming
+       a scroll fires pointercancel, which releases the touch cleanly. */
+    const canvasX = (clientX: number) => (clientX - tx) / k;
+    hero.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse') return;
+      touchOn = true;
       pointerInside = true;
-      pointerFx = (e.clientX - tx) / k;
+      touchX = pointerFx = canvasX(e.clientX);
+      if (gw < 0.02) gx = touchX; // fresh touch: the response blooms AT the finger
     });
-    hero.addEventListener('pointerleave', () => {
+    hero.addEventListener('pointermove', (e) => {
+      const cx = canvasX(e.clientX);
+      if (e.pointerType === 'mouse') {
+        pointerInside = true;
+        pointerFx = cx;
+      } else if (touchOn) {
+        touchX = pointerFx = cx;
+      }
+    });
+    const touchEnd = (e: PointerEvent) => {
+      if (e.pointerType === 'mouse') return;
+      touchOn = false;
       pointerInside = false;
+    };
+    hero.addEventListener('pointerup', touchEnd);
+    hero.addEventListener('pointercancel', touchEnd);
+    hero.addEventListener('pointerleave', (e) => {
+      if (e.pointerType === 'mouse') pointerInside = false;
     });
 
     /* ---------- beam sweep: soft exposure over BOTH grid layers, live refs ---------- */
     let beamGroup: SVGGElement | null = null;
+    let beamDefs: SVGDefsElement | null = null;
     let beamRAF: number | null = null;
     function sweepOnce() {
       if (!onScreen) return;
       if (beamGroup) beamGroup.remove();
       if (beamRAF) cancelAnimationFrame(beamRAF);
-      svg.querySelector('defs')?.remove();
-      const defs = el<SVGDefsElement>('defs', {}, svg);
+      // remove only the beam's OWN defs — the touch response keeps its own
+      beamDefs?.remove();
+      const defs = (beamDefs = el<SVGDefsElement>('defs', {}, svg));
       const grad = el('linearGradient', { id: 'dh-beam-grad', gradientUnits: 'objectBoundingBox' }, defs);
       // white = mask luminance (fully exposed), not a themable design color
       el('stop', { offset: '0', 'stop-color': 'white', 'stop-opacity': '0' }, grad);

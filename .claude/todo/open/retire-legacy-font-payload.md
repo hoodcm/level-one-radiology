@@ -4,7 +4,7 @@ title: Retire legacy font payload (Utopia/Eurostile/Lab Grotesque) and re-subset
 band: next
 first_surfaced: 2026-07-08
 last_touched: 2026-07-08
-assessed: 2026-07-11
+assessed: 2026-07-14
 depends_on: []
 links: [public/fonts/, src/styles/tokens/fonts-ofl.generated.css]
 worktype: decide

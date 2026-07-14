@@ -7,9 +7,10 @@
 //
 // Detector hero (apparatus.detectorHero): on the mobile composition the hero
 // statement lives HERE — the card carries the page h1 (statement + support,
-// passed in by index.astro), shown only when the shared composition predicate
-// reads mobile (homepage.css gates it). Without copy the band is purely
-// decorative (aria-hidden).
+// passed in by index.astro) plus the gold subscribe route (the keystone-metric
+// action, above the fold on mobile), shown only when the shared composition
+// predicate reads mobile (homepage.css gates it). Without copy the band is
+// purely decorative (aria-hidden).
 import { apparatus } from '@/lib/apparatus';
 
 interface Props {
@@ -23,10 +24,13 @@ const carriesCopy = apparatus.detectorHero && statement;
 <section class="feature-band" aria-hidden={carriesCopy ? undefined : 'true'}>
   <div class="feature-band__surface">
     {carriesCopy && (
-      <h1 class="feature-band__copy">
-        <span class="feature-band__statement">{statement}</span>
-        <span class="feature-band__support">{support}</span>
-      </h1>
+      <div class="feature-band__copy">
+        <h1 class="feature-band__heading">
+          <span class="feature-band__statement">{statement}</span>
+          <span class="feature-band__support">{support}</span>
+        </h1>
+        <a href="#subscribe" class="feature-band__cta">Subscribe</a>
+      </div>
     )}
   </div>
 </section>
@@ -45,9 +49,14 @@ const carriesCopy = apparatus.detectorHero && statement;
       const rect = band.getBoundingClientRect();
       const vh = window.innerHeight || 1;
       // Contained (page-width gutters) at the rest/peek position, widening to
-      // full-bleed as you scroll the card up: p=0 while the card top is at the
-      // ~70svh peek line, reaching p=1 once it nears the top of the viewport.
-      const start = vh * 0.7;
+      // full-bleed as you scroll the card up, reaching p=1 once it nears the
+      // top of the viewport. p=0 anchors at the card's own rest line — its
+      // document offset, i.e. where its top sits at scrollY 0 — capped at the
+      // classic 70% line so a tall hero keeps the old dead zone. A fixed 70%
+      // start alone pre-fired the expansion on the mobile detector
+      // composition, whose shorter hero rests the card above that line.
+      const rest = rect.top + window.scrollY;
+      const start = Math.min(rest, vh * 0.7);
       const end = vh * 0.1;
       const p = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
       // p is pinned at 0 or 1 for most of the page's scroll range — skip the

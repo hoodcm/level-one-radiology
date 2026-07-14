@@ -4,6 +4,7 @@ title: Remove or gate the unused data-reveal motion system
 band: later
 first_surfaced: 2026-07-08
 last_touched: 2026-07-08
+assessed: 2026-07-14
 depends_on: []
 links: [src/styles/base/motion.css]
 worktype: decide

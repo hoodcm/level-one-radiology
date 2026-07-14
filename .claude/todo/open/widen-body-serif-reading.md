@@ -8,7 +8,7 @@ depends_on: []
 links: [src/styles/tokens/typography.css, src/styles/components/prose.css]
 worktype: decide
 workstream: fonts
-assessed: 2026-07-11
+assessed: 2026-07-14
 ---
 The body reading serif (Newsreader) is being widened for a sturdier text column.
 An `opsz` experiment is live via `--reading-opsz` (typography.css; consumed by

@@ -17,6 +17,7 @@ import {
   vaneDepth,
   vaneFrontD,
   vaneList,
+  vanePullOffset,
   vaneRest,
   vanesFor,
 } from './detector-hero.mjs';
@@ -83,6 +84,60 @@ describe('detector-hero generator contract', () => {
     }
   });
 
+  it('touch pull: rigid pane along its plane, top edge stretching from the pinned slab anchor', () => {
+    const nums = (d: string) => (d.match(/-?[\d.]+/g) ?? []).map(Number);
+    for (const C of comps) {
+      const list = vaneList(C);
+      // center, mid, and outermost plates exercise all three dxEnd caps
+      for (const v of [list[0], list[Math.floor(list.length / 4)], list[Math.floor(list.length / 2)]]) {
+        for (const sigma of [0, sigmaOf(C, 200)]) {
+          const t = SETTINGS.touchPull * C.slabH * SETTINGS.gridLen;
+          const { dx, dy } = vanePullOffset(C, v, sigma, t);
+          // along-plane: downward, magnitude t, and zero at rest
+          expect(dy).toBeGreaterThan(0);
+          expect(Math.hypot(dx, dy)).toBeCloseTo(t, 6);
+          const rest = vanePullOffset(C, v, sigma, 0);
+          expect(Math.hypot(rest.dx, rest.dy)).toBe(0);
+          expect(vaneDepth(C, v, sigma, 0)).toBe(vaneDepth(C, v, sigma));
+          const [rx1, ry1, rx2, ry2, rx3, ry3, rx4, ry4] = nums(vaneDepth(C, v, sigma));
+          const [px1, py1, px2, py2, px3, py3, px4, py4] = nums(vaneDepth(C, v, sigma, t));
+          // top edge: front rides the pane, rear stays pinned ON the slab —
+          // and a slab-capped edge stretches colinearly with its rest line
+          // (run-capped near-center edges are degenerate-vertical; their pull
+          // direction carries the max(|run|, 0.5) clamp's sub-pixel lateral,
+          // so colinearity is only the slab-capped contract)
+          expect([px1, py1]).toEqual([rx1 + dx, ry1 + dy]);
+          expect([px2, py2]).toEqual([rx2, ry2]);
+          expect(ry2).toBe(C.slab.bot);
+          const run = C.CX + (v.x - C.CX) * 0.433 + sigma - v.x;
+          const m = (v.drop * SETTINGS.fan) / Math.max(Math.abs(run), 0.5);
+          if ((v.top - C.slab.bot) / m < Math.abs(run)) {
+            const cross = (px1 - rx2) * (ry1 - ry2) - (py1 - ry2) * (rx1 - rx2);
+            expect(Math.abs(cross)).toBeLessThan(1e-6 * Math.hypot(rx1 - rx2, ry1 - ry2) ** 2 + 1e-6);
+          }
+          // bottom edge: front rides the pane; the rear tip is an occlusion
+          // boundary — pinned by default, and riding the kissed neighbor's
+          // shift ONLY when the neighbor (pitch) cap binds
+          expect([px3, py3]).toEqual([rx3 + dx, ry3 + dy]);
+          expect([px4, py4]).toEqual([rx4, ry4]);
+          const bot = C.slab.bot + C.slabH * SETTINGS.gridLen;
+          const pitch = C.halfSpan / vanesFor(C);
+          const dxEnd = Math.min(Math.abs(run), pitch, (bot - C.slab.bot) / m);
+          const shifted = nums(vaneDepth(C, v, sigma, t, SETTINGS, { dx: 5, dy: 9 }));
+          if (dxEnd === pitch) {
+            expect([shifted[6], shifted[7]]).toEqual([rx4 + 5, ry4 + 9]);
+            // a tip that would rise above the neighbor's front-top corner
+            // clamps onto it (minY)
+            const clamped = nums(vaneDepth(C, v, sigma, t, SETTINGS, { dx: 5, dy: 9, minY: ry4 + 109 }));
+            expect(clamped[7]).toBe(ry4 + 109);
+          } else {
+            expect([shifted[6], shifted[7]]).toEqual([rx4, ry4]);
+          }
+        }
+      }
+    }
+  });
+
   it('saturates sigma inside 0.8 of one plate pitch, odd-symmetric', () => {
     for (const C of comps) {
       const sigMax = (0.8 * C.halfSpan) / vanesFor(C);
@@ -95,15 +150,40 @@ describe('detector-hero generator contract', () => {
     }
   });
 
-  it('fitTransform covers both compositions (mobile spans the hero width)', () => {
-    for (const [W, H] of [[1440, 900], [390, 844], [768, 1024]]) {
-      const dk = fitTransform(DESKTOP, W, H);
-      expect(dk.k).toBeCloseTo(Math.max(W / DESKTOP.SW, H / DESKTOP.SH) * SETTINGS.scale, 9);
-      const M = mobileComp();
-      const mk = fitTransform(M, W, H);
-      expect(mk.k).toBeCloseTo(Math.max(W / M.SW, H / M.SH) * SETTINGS.scale, 9);
-      // in a hero squatter than the canvas the width binds — the slab spans it
-      if (W / H > M.SW / M.SH) expect(mk.k).toBeCloseTo((W / M.SW) * SETTINGS.scale, 9);
+  it('fitTransform: cover fit over the fit span, clamped so the drawn core keeps its padding', () => {
+    // cover math × scale over the composition's fitSpan (full canvas when
+    // absent), then the INHERENT PADDING GUARANTEE: k is clamped so the core
+    // (stack top → fan bottom) fits with corePad × H clear above and below —
+    // on short heroes the clamp binds and the drawing shrinks inside the
+    // width (the copy's horizontal seat handles the text there)
+    for (const [W, H] of [[1440, 900], [390, 844], [768, 1024], [1398, 377]]) {
+      for (const C of [DESKTOP, mobileComp()]) {
+        const { k } = fitTransform(C, W, H);
+        const spanW = C.fitSpan ? C.fitSpan.x1 - C.fitSpan.x0 : C.SW;
+        const cover = Math.max(W / spanW, H / C.SH) * SETTINGS.scale;
+        const clamp = (H * (1 - 2 * SETTINGS.corePad)) / (C.coreBot - C.coreTop);
+        expect(k).toBeCloseTo(Math.min(cover, clamp), 9);
+        expect((C.coreBot - C.coreTop) * k).toBeLessThanOrEqual(H * (1 - 2 * SETTINGS.corePad) + 1e-9);
+      }
+    }
+  });
+
+  it('fitTransform seats the mobile slab on the page margins (insetX)', () => {
+    // the content-box fit: at a width-bound k the slab's edges land exactly
+    // on the grid margins, like every other element on the page
+    const M = mobileComp();
+    for (const [W, H, m] of [[390, 384, 32], [430, 420, 32], [820, 573, 40]]) {
+      const { k, tx } = fitTransform(M, W, H, SETTINGS, m);
+      const widthBound = ((W - 2 * m) / (M.slab.x1 - M.slab.x0)) * SETTINGS.scale;
+      const clamp = (H * (1 - 2 * SETTINGS.corePad)) / (M.coreBot - M.coreTop);
+      if (widthBound <= clamp) {
+        expect(M.slab.x0 * k + tx).toBeCloseTo(m, 6);
+        expect(M.slab.x1 * k + tx).toBeCloseTo(W - m, 6);
+      } else {
+        // clamp binds: the slab sits centered INSIDE the margins, never past
+        expect(M.slab.x0 * k + tx).toBeGreaterThanOrEqual(m - 1e-6);
+        expect(M.slab.x1 * k + tx).toBeLessThanOrEqual(W - m + 1e-6);
+      }
     }
   });
 

@@ -24,12 +24,20 @@ export const SETTINGS = {
   gridLen: 1.0, // grid height, × slab height
   layers: 10, // en-face stack layers
   fanMode: 'derived', // 'measured' retained only as an A/B reference
-  mVanes: 10, // plates per side (mobile)
+  mVanes: 9, // plates per side (mobile) — was 10 at lock; dropped one when the
+  // mobile fit narrowed to the page grid margins so the on-screen plate pitch
+  // stays at the approved density (Michael OK'd 1–2 fewer, 2026-07-13)
   mSlab: 0.6, // slab boxiness (mobile) — raised from the locked 0.5: too tight around the wordmark on device
   driftAmt: 0.2, // focal drift amount
   stackPar: 0.3, // stack parallax
   beamW: 1800, // beam sweep width (desktop canvas units)
   corePad: 0.04, // min clear space above AND below the drawn core, × hero height
+  // Post-lock additions (not in the Copy-settings JSON): geometry scalars for
+  // the touch response and the copy's horizontal seat. Ink/ramp knobs live in
+  // tokens/detector-hero.css with the other style values.
+  touchRadius: 2.5, // touch-response reach, × plate pitch
+  touchPull: 0.12, // touch plate pull-out depth, × grid height
+  copyInsetX: 0.025, // hero-copy horizontal seat inset, × slab width
 };
 
 /** The COMPOSITION predicate — which drawing renders — shared verbatim by
@@ -84,6 +92,12 @@ export function makeComp(c, settings = SETTINGS) {
   c.beamScale = c.SW / 3840;
   // Drawn content core (stack top → fan bottom) — fitTransform guarantees
   // this whole span stays on screen with corePad clear above and below.
+  // The touch pull's excursion below the fan is deliberately NOT reserved
+  // here: inflating the core shrinks every clamp-bound render (Michael
+  // rejected the ~5% desktop shrink, 2026-07-14). The mobile composition
+  // reserves it in the width-derived hero floor instead (--dh-core-fit,
+  // tokens/detector-hero.css), which grows the HERO rather than shrinking
+  // the drawing.
   c.coreTop = c.stackTop;
   c.coreBot = c.slab.bot + c.slabH * settings.gridLen;
   return c;
@@ -103,14 +117,18 @@ const MOBILE_BASE = { SW: 1080, SH: 1560, CX: 540, slabX0: 38, slabH0: 520, stac
 
 /** The portrait recomposition — same grammar, boxier slab, fewer plates.
  *  Cover-fit (deviation, Michael 2026-07-11): the site hero is squatter than
- *  the portrait canvas, so cover makes the WIDTH bind — the slab spans the
- *  screen — and the vertical crop consumes only the canvas's empty margins
- *  (contain-fit height-bound there and shrank the object). The DRAWN CONTENT
- *  CORE (stack top → fan bottom), not the slab, centers in the canvas: the
- *  fan hangs a full grid height below the slab while the stack rises only
- *  0.35 slab heights above it, so slab-centering biased the drawing low and
- *  cover-cropped the fan's bottom on real phones/tablets. The title still
- *  seats exactly on the slab (seatCopy / the nudge tokens). */
+ *  the portrait canvas, so cover makes the WIDTH bind — and the vertical crop
+ *  consumes only the canvas's empty margins (contain-fit height-bound there
+ *  and shrank the object). The width the drawing fits is the CONTENT BOX, not
+ *  the hero: fitSpan (the slab's span) lands on the page grid margins like
+ *  every other element (Michael 2026-07-13 — the drawing previously bled
+ *  ~18px past them; nothing draws outside the slab's x-range, so the span is
+ *  the drawing's true width). The DRAWN CONTENT CORE (stack top → fan
+ *  bottom), not the slab, centers in the canvas: the fan hangs a full grid
+ *  height below the slab while the stack rises only 0.35 slab heights above
+ *  it, so slab-centering biased the drawing low and cover-cropped the fan's
+ *  bottom on real phones/tablets. The title still seats exactly on the slab
+ *  (seatCopy / the nudge tokens). */
 export function mobileComp(settings = SETTINGS) {
   const b = MOBILE_BASE;
   const slabH = b.slabH0 * settings.mSlab;
@@ -121,6 +139,7 @@ export function mobileComp(settings = SETTINGS) {
   return makeComp({
     name: 'mobile', SW: b.SW, SH: b.SH, CX: b.CX,
     slab: { x0: b.slabX0, x1: b.SW - b.slabX0, top: slabTop, bot: slabTop + slabH },
+    fitSpan: { x0: b.slabX0, x1: b.SW - b.slabX0 },
     stackTop: slabTop - stackH, fit: 'cover',
   });
 }
@@ -150,19 +169,59 @@ export function vaneFrontD(C, v, settings = SETTINGS) {
   return `M ${v.x} ${v.top} L ${v.x} ${C.slab.bot + C.slabH * settings.gridLen}`;
 }
 
-export function vaneDepth(C, v, sigma, settings = SETTINGS) {
+/** Touch pull displacement for one plate: `pull` canvas units ALONG the
+ *  plate's own depth axis (the depth edges' direction), continuing rear →
+ *  front — the pane slides out of its slot toward the viewer. A straight-
+ *  down displacement sheared the implied rectangle ("pulling it more down
+ *  than towards the screen" — Michael, 2026-07-14); along-plane motion
+ *  keeps the depth edges on their own line (slope preserved, rectangle
+ *  rigid): near-center plates still travel almost vertically (their depth
+ *  axis is vertical), flank plates drift outward as they come. */
+export function vanePullOffset(C, v, sigma, pull, settings = SETTINGS) {
+  const run = (C.CX + (v.x - C.CX) * S_BACK + sigma) - v.x;
+  const s = run >= 0 ? 1 : -1;
+  const m = (v.drop * settings.fan) / Math.max(Math.abs(run), 0.5);
+  const hyp = Math.hypot(1, m);
+  return { dx: (-s * pull) / hyp, dy: (m * pull) / hyp };
+}
+
+/** pull = touch pull-out along the plate plane (see vanePullOffset). FRONT
+ *  endpoints ride the pulled pane; each REAR endpoint stays seated on
+ *  whatever bounds its visibility, because every rear point is an anchor or
+ *  an occlusion boundary, not part of the moving pane:
+ *    - top edge rear: pinned ON the slab (the pane's connection) — the edge
+ *      stretches colinearly, more of it emerging as the pane comes out;
+ *    - bottom edge rear, slab- or |run|-capped: pinned (slab underside /
+ *      the anchored rear corner hidden behind the slab face);
+ *    - bottom edge rear, pitch-capped: rides the NEIGHBOR pane it kisses
+ *      (rearShift = that neighbor's own pull offset), so differential pull
+ *      neither floats the tip in vacated space nor pokes it through the
+ *      neighbor's displaced front line (both seen 2026-07-14). A tip whose
+ *      rest seat was the neighbor's TOP HOOK (the comb-gap band) would
+ *      drift off the hook as it stretches — rearShift.minY (the neighbor's
+ *      displaced front-top corner) clamps the tip onto that corner, the one
+ *      point always on the neighbor's visible boundary.
+ *  The cap-type handoff always happens while the tip is hidden behind the
+ *  slab face (drop = 1.294 × grid height keeps capped tips above slab.bot
+ *  there), so the rearShift on/off transition can never pop on screen. */
+export function vaneDepth(C, v, sigma, pull = 0, settings = SETTINGS, rearShift = null) {
   const vN = vanesFor(C, settings);
   const pitch = C.halfSpan / vN;
   const bot = C.slab.bot + C.slabH * settings.gridLen;
   const run = (C.CX + (v.x - C.CX) * S_BACK + sigma) - v.x;
   const s = run >= 0 ? 1 : -1;
   const m = (v.drop * settings.fan) / Math.max(Math.abs(run), 0.5);
-  let d = `M ${v.x} ${v.top} L ${v.x + s * Math.min((v.top - C.slab.bot) / m, Math.abs(run))} ${C.slab.bot}`;
+  const { dx: ex, dy: ey } = vanePullOffset(C, v, sigma, pull, settings);
+  let d = `M ${v.x + ex} ${v.top + ey} L ${v.x + s * Math.min((v.top - C.slab.bot) / m, Math.abs(run))} ${C.slab.bot}`;
   // a depth edge ends at the EARLIEST of: its own rear endpoint (the plate
   // physically stops there), the neighboring plate, or the slab. Edges can
   // then touch but never cross — rear points preserve the plates' order.
   const dxEnd = Math.min(Math.abs(run), pitch, (bot - C.slab.bot) / m);
-  d += ` M ${v.x} ${bot} L ${v.x + s * dxEnd} ${bot - m * dxEnd}`;
+  const ride = rearShift && dxEnd === pitch;
+  const tipX = v.x + s * dxEnd + (ride ? rearShift.dx : 0);
+  let tipY = bot - m * dxEnd + (ride ? rearShift.dy : 0);
+  if (ride && rearShift.minY !== undefined && tipY < rearShift.minY) tipY = rearShift.minY;
+  d += ` M ${v.x + ex} ${bot + ey} L ${tipX} ${tipY}`;
   return d;
 }
 
@@ -234,20 +293,29 @@ export function occluderRect(C) {
   };
 }
 
-/** Client fit: cover/contain the composition canvas in a W×H hero, plus the
- *  locked scale and vertical shift. Returns { k, tx, ty }.
+/** Client fit: cover/contain the composition in a W×H hero, plus the locked
+ *  scale and vertical shift. Returns { k, tx, ty }.
+ *  The width term fits the composition's fitSpan (the horizontal extent that
+ *  must land on the available width; defaults to the full canvas) into
+ *  W − 2·insetX — insetX is the page grid margin on the mobile composition
+ *  (its slab aligns to the content box) and 0 on desktop (full-bleed cover).
+ *  Both compositions are symmetric about CX, so centering the canvas centers
+ *  the fitSpan: at a width-bound k the span's edges land exactly on the
+ *  margins.
  *  INHERENT PADDING GUARANTEE: whatever the cover/contain math says, k is
  *  clamped so the drawn core (coreTop → coreBot) always fits vertically with
  *  corePad × H clear above and below — a cover crop may only ever eat the
  *  canvas's empty margins, never the drawing. Without this, every geometry
  *  retune that grows the core (taller slab, longer fan) silently re-clips the
  *  fan bottom on squat viewports. */
-export function fitTransform(C, W, H, settings = SETTINGS) {
-  let k = (C.fit === 'cover' ? Math.max(W / C.SW, H / C.SH) : Math.min(W / C.SW, H / C.SH)) * settings.scale;
+export function fitTransform(C, W, H, settings = SETTINGS, insetX = 0) {
+  const spanW = C.fitSpan ? C.fitSpan.x1 - C.fitSpan.x0 : C.SW;
+  const availW = W - 2 * insetX;
+  let k = (C.fit === 'cover' ? Math.max(availW / spanW, H / C.SH) : Math.min(availW / spanW, H / C.SH)) * settings.scale;
   k = Math.min(k, (H * (1 - 2 * settings.corePad)) / (C.coreBot - C.coreTop));
   return {
     k,
-    tx: (W - C.SW * k) / 2,
+    tx: W / 2 - C.CX * k,
     ty: (H - C.SH * k) / 2 + H * (settings.yoff / 100),
   };
 }

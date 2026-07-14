@@ -522,7 +522,11 @@ export class CaseViewerElement extends HTMLElement {
           const step = Math.max(-WHEEL_STEP_CAP, Math.min(WHEEL_STEP_CAP, this.#wheelSteps));
           this.#wheelSteps = 0;
           this.#wheelArmed = false;
-          if (step === 0) return;
+          // A rAF armed on the last engaged wheel tick can land after a
+          // disengage tap (the abort removes the listener but never cancels an
+          // already-queued frame) — writing a stale scrub at rest. Guard on
+          // state, mirroring the fullscreen twin's `!this.#open` check.
+          if (step === 0 || this.#state !== 'engaged') return;
           this.#setFrame(this.#frame + step, true);
         });
       },

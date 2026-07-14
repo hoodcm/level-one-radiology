@@ -7,7 +7,7 @@ last_touched: 2026-07-11
 depends_on: []
 links: [src/styles/tokens/colors.css, src/styles/tokens/typography.css, src/styles/tokens/ornament.css, src/styles/components/ornament.css, src/styles/components/apparatus/ordinal-tick.css, src/styles/main.css]
 worktype: decide
-assessed: 2026-07-11
+assessed: 2026-07-14
 ---
 One on-screen judgment pass over this session's headless-verified visual knobs
 — his eyes are the gate on all of these:

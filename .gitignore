@@ -11,23 +11,6 @@ node_modules/
 dist/
 .astro/
 
-# Case-ingestion source + staging (local working data — never published).
-# Holds selection.json (embeds the local MGB source path) and the DICOM
-# converter's staging/ PNGs + index.json. Only the built, de-identified
-# output under public/cases/<id>/ ships.
-cases-src/
-
-# Case-ingestion tooling — kept local (migrating to a separate private repo):
-# the stage that reads raw DICOM + the local curation server. The de-identified
-# output under public/cases/ and the case-viewer *display* code stay public.
-scripts/dicom-to-frames.py
-scripts/dicom-to-frames.test.mjs
-scripts/case-review-server.mjs
-scripts/case-review-server.test.mjs
-scripts/case-review-page.html
-.claude/skills/ingest-case/
-docs/archive/plans/2026-07-11-dicom-ingestion-pipeline-plan.md
-
 # Browser-automation debris (Playwright MCP — console/page dumps, can capture auth tokens)
 .playwright-mcp/
 

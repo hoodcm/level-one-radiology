@@ -4,7 +4,7 @@ title: Tokenize the duplicated 0.15s UI-transition duration literal
 band: later
 first_surfaced: 2026-07-08
 last_touched: 2026-07-08
-assessed: 2026-07-08
+assessed: 2026-07-14
 depends_on: []
 links: [src/styles/tokens/]
 worktype: build

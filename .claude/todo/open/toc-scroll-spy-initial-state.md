@@ -4,6 +4,7 @@ title: Give the TOC scroll-spy an initial / deep-link active state
 band: later
 first_surfaced: 2026-07-08
 last_touched: 2026-07-08
+assessed: 2026-07-14
 depends_on: []
 links: [src/components/article/TableOfContents.astro]
 worktype: build

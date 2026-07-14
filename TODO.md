@@ -5,17 +5,21 @@ Actionable tasks and open questions. Check at session start, update frequently.
 <!-- todo:worklist:start -->
 
 ## Start here
-_as of 2026-07-11 · 3 streams startable · 2 now/next items untyped_
+_as of 2026-07-14 · 4 streams startable · 1 now/next items untyped_
 
-**Decisions waiting (⚖): 9** — Judge this session's visual tuning on screen · Judge detector-hero composition on iPhone + desktop (plan steps 7 + 10) · Reconsider display/body serif if text halation persists · Remove or gate the unused data-reveal motion system · Retire legacy font payload (Utopia/Eurostile/Lab Grotesque) and re-subset Newsreader · Split primary-CTA gold from caution into distinct tokens if they conflict · +3 more
+**Decisions waiting (⚖): 10** — Judge detector-hero composition on iPhone + desktop (plan steps 7 + 10) (→ unblocks 1) · Judge this session's visual tuning on screen · Explore radiograph imagery in/near the homepage hero · Reconsider display/body serif if text halation persists · Remove or gate the unused data-reveal motion system · Retire legacy font payload (Utopia/Eurostile/Lab Grotesque) and re-subset Newsreader · +4 more
 
 - case-viewer — next: Build Case Viewer showstopper module (build)
+- cloudflare-migration — next: Go live on Cloudflare (hosting + DNS + registrar + analytics) (build)
 - fonts — next: Retire legacy font payload (Utopia/Eurostile/Lab Grotesque) and re-subset Newsreader (decide)
 - newsletter — next: Replace the React newsletter island with a static form + vanilla JS (build)
-- standalone: Restore footer LinkedIn/X links with real profile URLs (build)
+- standalone: Judge detector-hero composition on iPhone + desktop (plan steps 7 + 10) (decide)
 
 ## Now
 
+- **Judge detector-hero composition on iPhone + desktop (plan steps 7 + 10)**
+  The homepage hero's scintillator-grid drawing (replacing the old blueprint grid) needs Michael's on-screen judgment on his iPhone and desktop: density, slab seating, drift amplitude, and beam subtlety at both 120Hz and 60Hz. This also signs off the mobile statement-in-card arrangement, which is accessibility-sensitive (dual-h1 seat between the hero statement and the page's own h1). Any retune should only touch `src/styles/tokens/detector-hero.css` tokens or the `SETTINGS` constants in `src/lib/detector-hero.mjs`, then re-run gates. Done: composition confirmed acceptable (or retuned) on both device classes, the mobile dual-h1 arrangement is signed off, the touch interaction (steering + beam re-exposure) feels right on a real finger, and the mobile drawing's grid-margin alignment holds on device.
+  ↳ links: src/styles/tokens/detector-hero.css, src/lib/detector-hero.mjs, docs/archive/plans/2026-07-11-detector-hero-plan.md
 - **Build Case Viewer showstopper module**
   Build the Case Viewer — the "showstopper module," a PACS-like image viewer for clinical cases embedded within articles. Light-DOM custom element `<case-viewer>` (not a React island — see the archived plan), mobile-first, built and code-reviewed. Michael: "the mobile-first image viewer is key." Implementation is substantially complete (mapping/frame-store/case-viewer/ fullscreen modules, boot choreography, TUNE, build-time manifest pipeline, review hardening, /simplify pass) and is live-embedded in a published article (`src/content/articles/window-and-level.md`), but that embed is a TEMPORARY synthetic demo case (`::case{id="dev-synthetic"}`) standing in for the on-device test surface — swapping it for a real clinical case is step 15 below, not a separate deliverable. Remaining scope is purely the four **user-gated, device-only** steps from `docs/archive/plans/2026-07-07-case-viewer-plan.md` (Steps section) — none are autonomous: - Step 3 — on-device gesture-spike judgment (Michael's iPhone) - Step 12 — fullscreen device pass - Step 13 — VoiceOver full-flow a11y pass - Step 15 — first real clinical case (replaces the synthetic embed above) Done: all four device-gated steps pass on Michael's iPhone and the real-case embed (step 15) is live.
   ↳ links: src/components/case/, docs/design/components.md, docs/archive/plans/2026-07-07-case-viewer-plan.md
@@ -31,17 +35,15 @@ _as of 2026-07-11 · 3 streams startable · 2 now/next items untyped_
 - **Create the Buttondown account (or fix the slug) — Subscribe is fully broken**
   Confirmed at runtime during the site-wide sweep: the newsletter form POSTs to `buttondown.com/…/leveloneradiology`, which 404s — the Buttondown account/newsletter does not exist. Every live Subscribe click on the deployed site currently fails silently into the (now-visible) error state. Email subscribers are the site's keystone metric (CONTEXT.md) and a working signup is explicit MVP scope — this is the single most launch-blocking open item in the store. USER-ACTION: either create the `leveloneradiology` Buttondown account or correct the slug the form posts to; no code change needed once the account/slug is right. Done: a real Subscribe submission on the deployed site succeeds end-to-end.
   ↳ links: src/components/shared/NewsletterSignup.tsx
-- **Judge detector-hero composition on iPhone + desktop (plan steps 7 + 10)**
-  The homepage hero's scintillator-grid drawing (replacing the old blueprint grid) needs Michael's on-screen judgment on his iPhone and desktop: density, slab seating, drift amplitude, and beam subtlety at both 120Hz and 60Hz. This also signs off the mobile statement-in-card arrangement, which is accessibility-sensitive (dual-h1 seat between the hero statement and the page's own h1). Any retune should only touch `src/styles/tokens/detector-hero.css` tokens or the `SETTINGS` constants in `src/lib/detector-hero.mjs`, then re-run gates. Done: composition confirmed acceptable (or retuned) on both device classes, and the mobile dual-h1 arrangement is signed off.
-  ↳ links: src/styles/tokens/detector-hero.css, src/lib/detector-hero.mjs, docs/archive/plans/2026-07-11-detector-hero-plan.md
 
 ## Next
 
-- **Configure GitHub Pages DNS**
-  Configure DNS so leveloneradiology.com resolves to GitHub Pages (A/AAAA + CNAME records at the registrar; enable Pages custom domain + HTTPS). `public/CNAME` already holds `leveloneradiology.com` and the deploy workflow exists — the remaining work is the registrar-side DNS, an external/infra step. Stated priority #2. Related open question: whether the domain is registered yet (see is-domain-dns-configured). Done: leveloneradiology.com serves the deployed site over HTTPS.
-- **Set up Plausible analytics**
-  Wire Plausible analytics — add the tracking script (gated on `PUBLIC_PLAUSIBLE_DOMAIN`, already declared in CLAUDE.md env vars) to the base layout. No `plausible` reference exists anywhere in `src/` yet. Privacy- respecting analytics is the listed measurement tool; subscriber conversion is the keystone metric. Stated priority #2. Done: Plausible script loads on production pages for the configured domain.
-  ↳ links: src/layouts/Layout.astro
+- **Go live on Cloudflare (hosting + DNS + registrar + analytics)**
+  Supersedes the prior "configure GitHub Pages DNS" task (decided 2026-07-13). The site is not yet confirmed live, so its **first go-live goes straight to Cloudflare** — DNS is pointed at Cloudflare, never at GitHub Pages. Execute the migration plan `docs/plans/hosting-migration-cloudflare.md`: repo prep (wrangler.jsonc, ci.yml) → create the Cloudflare Workers project → QA the `*.workers.dev` preview → point the domain's nameservers at Cloudflare → transfer the registrar GoDaddy → Cloudflare → decommission the GH Pages deploy path → hardening (analytics beacon, cache headers, redirects). Most phases are USER-GATED (Cloudflare account, GoDaddy dashboard, one real test-subscribe, outward DNS + registrar changes). Blocked on the domain confirmation (`is-domain-dns-configured`) for the registrar step. Done: leveloneradiology.com serves over HTTPS from Cloudflare, DNS + registrar on Cloudflare, GH Pages deploy path removed, Cloudflare Web Analytics live.
+  ↳ links: docs/plans/hosting-migration-cloudflare.md, is-domain-dns-configured
+- **Wire Cloudflare Web Analytics (replaces Plausible)**
+  Analytics provider decision changed 2026-07-13: **drop Plausible, use Cloudflare Web Analytics** (free, cookieless, no banner) — it folds into the Cloudflare platform the site is migrating to, dropping a vendor and a $9/mo line. Plausible was never installed, so this is a re-point, not a migration. Privacy-respecting analytics is the listed measurement tool; subscriber conversion is the keystone metric. Mechanics live in the migration plan (`docs/plans/hosting-migration-cloudflare.md` Phase 6, "Cloudflare Web Analytics"): create the Web Analytics site in the Cloudflare dashboard, then add the beacon `<script>` (public token, not a secret) to `src/layouts/Layout.astro`'s `<head>`, gated to production. Best done after the host is on Cloudflare (Phase 4), so the account exists — but the beacon can be committed earlier; it just won't report until the site is live and the Web Analytics site is created. Done: the production `<head>` loads exactly one Cloudflare Web Analytics beacon (none in dev/preview); the dashboard shows page views for leveloneradiology.com.
+  ↳ links: src/layouts/Layout.astro, docs/plans/hosting-migration-cloudflare.md
 - **Restore footer LinkedIn/X links with real profile URLs**
   LinkedIn/X placeholder links were removed from the footer this session (the bare-domain hrefs were dead links). Restore once Michael supplies real profile URLs — a one-line change in `src/components/layout/Footer.astro`; a comment in the file marks the spot ("Connect" column). Blocked on Michael supplying the URLs. Done: real LinkedIn/X links render in the footer Connect column.
   ↳ links: src/components/layout/Footer.astro
@@ -54,9 +56,6 @@ _as of 2026-07-11 · 3 streams startable · 2 now/next items untyped_
 - **Retire legacy font payload (Utopia/Eurostile/Lab Grotesque) and re-subset Newsreader**
   Surfaced during the site-wide latency sweep: ~2MB of retired Utopia/Eurostile/ Lab Grotesque woff2 still ships in `public/fonts/` even though the OFL trial (Newsreader/DM Sans/Michroma/Chivo Mono) is the active face set. The legacy `@font-face` blocks lack `unicode-range`, so the literal "→" glyph in "All articles →" triggers a Lab Grotesque download on every article page. Decide: delete the legacy faces outright (if the OFL trial is staying) or add `unicode-range` scoping so they never download unless actually needed. Also re-subset Newsreader — the 132KB preload could roughly halve with a tighter glyph range. Related but distinct: `is-fonts-licensing-acquired` (whether the legacy faces are even licensed) and `metric-compatible-font-fallbacks` (size-adjust fallback faces for the OFL set) — this item is the payload-weight cleanup, not licensing or CLS. Done: legacy font files are either removed or unicode-range-scoped (no accidental download), and Newsreader ships a tighter subset.
   ↳ links: public/fonts/, src/styles/tokens/fonts-ofl.generated.css
-- **Migrate the case image-processing pipeline to a separate private repo**
-  The DICOM-ingestion tooling (dicom-to-frames.py converter, case-review-server.mjs + case-review-page.html curation tool, the ingest-case skill) is gitignored/withheld from this public repo as of 0.9.3 to avoid exposing the raw-medical-image processing pipeline. Move it to a dedicated private repo; this repo keeps only the de-identified built output under public/cases/ and the case-viewer display code.
-  ↳ links: scripts/dicom-to-frames.py, scripts/case-review-server.mjs, .claude/skills/ingest-case/SKILL.md, .gitignore
 
 ## Later
 
@@ -66,6 +65,7 @@ _as of 2026-07-11 · 3 streams startable · 2 now/next items untyped_
 - **Tokenize the duplicated 0.15s UI-transition duration literal**
 - **Remove or gate the unused data-reveal motion system**
 - **Give the TOC scroll-spy an initial / deep-link active state**
+- **Explore radiograph imagery in/near the homepage hero** — blocked on Judge detector-hero composition on iPhone + desktop (plan steps 7 + 10)
 
 ## Someday
 
@@ -76,8 +76,8 @@ _as of 2026-07-11 · 3 streams startable · 2 now/next items untyped_
 
 ## Open questions
 
-- **Confirm leveloneradiology.com registered + pointed at GitHub Pages**
-  Open question: is leveloneradiology.com registered, and is it pointed at GitHub Pages? `public/CNAME` declares the domain but that does not confirm registrar ownership or live DNS records. (The actionable follow-up, once answered, is configure-github-pages-dns.)
+- **Confirm leveloneradiology.com registered at GoDaddy + transfer-eligible**
+  Open question, reframed 2026-07-13 (DNS now goes straight to Cloudflare, not GH Pages — see go-live-cloudflare): is leveloneradiology.com **registered at GoDaddy**, and what is its **registration date**? `public/CNAME` declares the domain but does not confirm registrar ownership. The date matters because Cloudflare Registrar (migration plan Phase 5) requires the domain be > 60 days since registration/last transfer; if registered recently, the registrar transfer waits for the 60-day mark while the rest of the go-live proceeds. If it's not registered anywhere yet, register it at Cloudflare directly and skip the transfer. Answered when: registrar ownership + registration date are known (feeds go-live-cloudflare Phase 0).
 - **Confirm font licensing acquired (Utopia/Lab Grotesque/Eurostile)**
   Open question: are Utopia Std, Lab Grotesque, and Eurostile LT Std properly licensed for web use? The font files are placed in `public/fonts/` and self- hosted, but licensing acquisition is unconfirmed — a web-embedding license is distinct from having the files on disk.
 
@@ -101,24 +101,26 @@ _Refreshed 2026-07-11 by end-session janitor · project store_
 
 ## Continuation
 
-_Last session: 2026-07-11_
+_Last session: 2026-07-14_
 
-Website for leveloneradiology.com — a dark-first, content-driven emergency radiology publication (Astro + React islands, single-source-of-truth design tokens).
+Website for leveloneradiology.com — a dark-first, content-driven emergency-radiology publication (Astro + React islands, single-source-of-truth design tokens).
 
-**Accomplished:**
-- Retuned the detector-hero mobile composition live with Michael — taller slab, an inherent-padding fit clamp so the drawing never clips vertically, and slab-derived wordmark scaling (`--dh-wordmark-fz`) so text and drawing share one scale factor across all mobile widths (CHANGELOG `[Unreleased]`).
-- Fixed the dotted center-line load glitch — the ambient focal loop is now gated on a `settled` flag (CHANGELOG `[Unreleased]`).
-- Removed the FeatureBand HUD graphic and its boot animation entirely — the card is now text-only on the mobile composition, empty on desktop (CHANGELOG `[Unreleased]`).
-- FeatureBand card now inflates on all four sides as it scrolls (Anthropic mobile-card behavior, `--fb-card-h: 68svh`) and its copy no longer rewraps mid-scroll (CHANGELOG `[Unreleased]`).
+**Accomplished (homepage hero enrichment round):**
+- Recomposed the mobile hero's first screen — a shortened FeatureBand card seats the statement plus a gold Subscribe CTA above the fold, with Featured cresting the fold (CHANGELOG → Added).
+- Fixed the FeatureBand card loading pre-expanded on the mobile detector composition — p=0 now anchors at the card's measured rest position (CHANGELOG → Fixed).
+- Reformulated the detector-hero vane touch-pull to slide panes along their own depth axis with occlusion-seated rear tips (rigid, no broken/intersecting lines), verified by a headless multi-position drag sweep with numeric artifact detection (CHANGELOG → Added).
+- Added gold exposure ink and a margin-registered blueprint grid to the hero, plus a width-derived hero-height floor so the drawing spans the page margins at every viewport (CHANGELOG → Added/Changed).
 
 **Start by reading:** TODO.md, CONTEXT.md, CHANGELOG.md
 
-**Priorities:** see the worklist `## Start here` digest and the `## Now` band in TODO.md. The two detector-hero items sit there — one covers the remaining on-device judgment (desktop composition + 120/60Hz), the other the now-empty desktop FeatureBand.
+**Priorities:**
+- The natural next step is the detector-hero **on-device judgment pass**, now enlarged to also gate this session's gold exposure ink, the blueprint grid, the touch-pull kinematics, and the margin-spanning floor (`detector-hero-device-pass` in the worklist `## Now` band). Otherwise take priorities from the worklist `## Start here` digest and `## Now`/`## Next` bands.
 
-**Time-sensitive:** see the worklist `## Time-sensitive` view in TODO.md.
+**Time-sensitive:** see the worklist `## Time-sensitive` view.
 
 **Unverified assumptions:**
-- The no-JS / reduced-motion static SVG still uses SVG `slice` cover, not the new JS `corePad` clamp — a pre-hydration flash may crop the fan bottom on squat viewports; confirm acceptable or port the clamp to the static path.
-- The 68svh expanded card height and the 0.29 text/slab wordmark ratio reproduce the on-screen look Michael approved this session but are aesthetic choices best re-judged on his actual device across the full phone→tablet range.
+- The entire hero-enrichment round is headless-verified only (emulated viewports + synthetic pointer events). The gold exposure's readability on a real OLED, the touch-pull's feel under a continuous finger, and the grid density all await Michael's iPhone — the `--dh-beam-boost`/`--dh-touch-boost` and `--dh-grid-*` tokens are the knobs.
+- The vane-pull artifact sweep samples held drag positions; a continuous finger sweep could still expose a sub-pixel hairline where a pulled tip meets a neighbor's hook.
+- The gold-exposure and blueprint-grid layers are explicit prototypes that may be cut at the device pass (kept out of CONTEXT for that reason).
 
 <!-- todo:continuation:end -->

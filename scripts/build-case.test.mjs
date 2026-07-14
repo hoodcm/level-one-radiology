@@ -1,14 +1,17 @@
-// Contract tests for the case:build CLI (plan step 4 contracts: manifest
-// schema shape + CLI flags). Exercised at the level the contract is exposed:
-// a real child-process invocation against tiny generated frames.
+// Contract tests for the case:build CLI: a prepared case folder (from the
+// private prepare-radiology-cases repo — case.json + de-identified images)
+// → the public/cases/<id>/ viewer payload. Exercised at the level the
+// contract is exposed: a real child-process invocation against tiny
+// generated fixtures, cwd inside a temp root so public/cases/ resolves
+// there, never in the repo tree.
 import { execFileSync } from 'node:child_process';
 import {
+  existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
   readdirSync,
   rmSync,
-  existsSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -17,272 +20,156 @@ import sharp from 'sharp';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const CLI = path.resolve('scripts/build-case.mjs');
-const CASE_DIR = path.resolve('public/cases/vitest-ingest');
-let srcA, srcB, srcShort;
 
-const run = (args) =>
-  execFileSync('node', [CLI, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+const grey = (w, h, seed = 128) =>
+  sharp({ create: { width: w, height: h, channels: 3, background: { r: seed, g: seed, b: seed } } });
 
-beforeAll(async () => {
-  srcA = mkdtempSync(path.join(tmpdir(), 'case-a-'));
-  srcB = mkdtempSync(path.join(tmpdir(), 'case-b-'));
-  srcShort = mkdtempSync(path.join(tmpdir(), 'case-c-'));
-  const px = (seed) =>
-    sharp({ create: { width: 64, height: 48, channels: 3, background: { r: seed, g: seed, b: seed } } });
-  for (let i = 0; i < 3; i++) {
-    // Deliberately unsorted, mixed-extension names: ingestion renumbers.
-    await px(40 + i).jpeg().toFile(path.join(srcA, `IMG_${9 - i}.jpeg`));
-    await px(90 + i).png().toFile(path.join(srcB, `scan ${100 + i}.png`));
-  }
-  await px(10).jpeg().toFile(path.join(srcShort, `only.jpg`));
-});
-
-afterAll(() => {
-  for (const d of [srcA, srcB, srcShort]) rmSync(d, { recursive: true, force: true });
-  rmSync(CASE_DIR, { recursive: true, force: true });
-});
-
-describe('case:build CLI contract', () => {
-  it('ingests a folder into numbered frames + poster + schema-shaped manifest', () => {
-    run(['--in', srcA, '--id', 'vitest-ingest', '--series', 'axial:AXIAL',
-      '--window', 'soft:SOFT TISSUE', '--start', '2', '--title', 'T', '--modality', 'CT']);
-
-    expect(readdirSync(path.join(CASE_DIR, 'axial/soft')).sort()).toEqual(
-      ['001.jpg', '002.jpg', '003.jpg']);
-    expect(existsSync(path.join(CASE_DIR, 'axial/poster.jpg'))).toBe(true);
-
-    const m = JSON.parse(readFileSync(path.join(CASE_DIR, 'manifest.json'), 'utf8'));
-    expect(m).toMatchObject({
-      id: 'vitest-ingest',
-      title: 'T',
-      modality: 'CT',
-      base: '/cases/vitest-ingest/',
-      rev: 1,
-    });
-    const s = m.series[0];
-    expect(s).toMatchObject({ key: 'axial', label: 'AXIAL', plane: 'axial', frames: 3, start: 2 });
-    expect(typeof s.width).toBe('number');
-    expect(typeof s.height).toBe('number');
-    expect(s.poster).toBe('axial/poster.jpg');
-    expect(s.windows).toEqual([
-      { key: 'soft', label: 'SOFT TISSUE', pattern: 'axial/soft/{nnn}.jpg' },
-    ]);
+const run = (root, cliArgs) =>
+  execFileSync('node', [CLI, ...cliArgs], {
+    encoding: 'utf8',
+    cwd: root,
+    stdio: ['ignore', 'pipe', 'pipe'],
   });
 
-  it('upserts a second window into the same series and bumps rev', () => {
-    run(['--in', srcB, '--id', 'vitest-ingest', '--series', 'axial:AXIAL', '--window', 'lung:LUNG']);
-    const m = JSON.parse(readFileSync(path.join(CASE_DIR, 'manifest.json'), 'utf8'));
-    expect(m.rev).toBe(2);
-    expect(m.series).toHaveLength(1);
-    expect(m.series[0].windows.map((w) => w.key)).toEqual(['soft', 'lung']);
-    expect(m.series[0].start).toBe(2); // untouched by the second run
-  });
-
-  it('rejects a window whose frame count breaks the index-preservation contract', () => {
-    expect(() =>
-      run(['--in', srcShort, '--id', 'vitest-ingest', '--series', 'axial:AXIAL', '--window', 'bone:BONE'])
-    ).toThrow(/frame count mismatch/);
-  });
-
-  it('requires --in and --id, and slug-safe ids', () => {
-    expect(() => run(['--id', 'x'])).toThrow(/required/);
-    expect(() => run(['--in', srcA, '--id', 'Bad Slug!'])).toThrow(/URL-safe slug/);
-  });
-});
-
-describe('case:build --stack-key (stack-wide transform from selection.json)', () => {
-  const ID = 'vitest-stack-crop';
-  let root, src;
-
-  beforeAll(async () => {
-    root = mkdtempSync(path.join(tmpdir(), 'stackcrop-'));
-    src = path.join(root, 'frames');
-    mkdirSync(src, { recursive: true });
-    mkdirSync(path.join(root, 'cases-src', ID), { recursive: true });
-    for (let i = 0; i < 3; i++) {
-      await sharp({ create: { width: 64, height: 48, channels: 3, background: { r: 80, g: 80, b: 80 } } })
-        .png()
-        .toFile(path.join(src, `f${i}.png`));
-    }
-    writeFileSync(
-      path.join(root, 'cases-src', ID, 'selection.json'),
-      JSON.stringify({
-        case: ID,
-        views: [],
-        stacks: [{ key: 's003', transform: { crop: { x: 0.25, y: 0.25, w: 0.5, h: 0.5 } } }],
-      })
-    );
-  });
-
-  afterAll(() => rmSync(root, { recursive: true, force: true }));
-
-  it('applies the stored crop to every frame (geometry contract intact)', () => {
-    execFileSync(
-      'node',
-      [CLI, '--in', src, '--id', ID, '--series', 'axial:AXIAL', '--stack-key', 's003'],
-      { encoding: 'utf8', cwd: root, stdio: ['ignore', 'pipe', 'pipe'] }
-    );
-    const m = JSON.parse(
-      readFileSync(path.join(root, 'public/cases', ID, 'manifest.json'), 'utf8')
-    );
-    expect(m.series[0]).toMatchObject({ frames: 3, width: 32, height: 24 });
-  });
-
-  it('is inert without --stack-key: same input keeps native geometry', () => {
-    execFileSync(
-      'node',
-      [CLI, '--in', src, '--id', `${ID}-plain`, '--series', 'axial:AXIAL'],
-      { encoding: 'utf8', cwd: root, stdio: ['ignore', 'pipe', 'pipe'] }
-    );
-    const m = JSON.parse(
-      readFileSync(path.join(root, 'public/cases', `${ID}-plain`, 'manifest.json'), 'utf8')
-    );
-    expect(m.series[0]).toMatchObject({ width: 64, height: 48 });
-  });
-});
-
-// --- views kind (XR static views via selection.json) ------------------------
-// Runs with cwd inside a temp root so cases-src/ and public/cases/ resolve
-// there, never in the repo tree.
-describe('case:build --kind views contract', () => {
+describe('case:build views payload from a prepared case', () => {
   const ID = 'vitest-views';
-  let root, staging, caseDir;
-
-  const runViews = (extra = []) =>
-    execFileSync('node', [CLI, '--kind', 'views', '--id', ID, '--in', staging, ...extra], {
-      encoding: 'utf8',
-      cwd: root,
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
-
-  const writeSelection = (selection) =>
-    writeFileSync(
-      path.join(root, 'cases-src', ID, 'selection.json'),
-      JSON.stringify(selection, null, 2)
-    );
-
-  /** Mean channel value of a normalized region in a written JPEG. */
-  async function regionMean(file, rx, ry, rw, rh) {
-    const img = sharp(path.join(caseDir, file));
-    const { width, height } = await img.metadata();
-    const { data } = await img
-      .extract({
-        left: Math.round(rx * width),
-        top: Math.round(ry * height),
-        width: Math.max(1, Math.round(rw * width)),
-        height: Math.max(1, Math.round(rh * height)),
-      })
-      .greyscale()
-      .raw()
-      .toBuffer({ resolveWithObject: true });
-    return data.reduce((a, b) => a + b, 0) / data.length;
-  }
-
-  const baseSelection = () => ({
-    case: ID,
-    source: 'synthetic',
-    title: 'XR TEST CASE',
-    views: [
-      // order deliberately reversed vs array position; one excluded
-      { src: 'b.png', include: true, order: 2, label: 'LAT TEST', boxes: [] },
-      { src: 'excluded.png', include: false, order: 3, label: 'SKIP', boxes: [] },
-      {
-        src: 'a.png',
-        include: true,
-        order: 1,
-        label: 'AP TEST',
-        boxes: [{ x: 0.5, y: 0.5, w: 0.25, h: 0.25 }],
-      },
-    ],
-  });
+  let root, prepared, caseDir;
 
   beforeAll(async () => {
-    root = mkdtempSync(path.join(tmpdir(), 'views-'));
-    staging = path.join(root, 'staging');
+    root = mkdtempSync(path.join(tmpdir(), 'build-views-'));
+    prepared = path.join(root, 'prepared', ID);
     caseDir = path.join(root, 'public/cases', ID);
-    mkdirSync(path.join(staging, 'originals'), { recursive: true });
-    mkdirSync(path.join(root, 'cases-src', ID), { recursive: true });
-    const white = (w, h) =>
-      sharp({ create: { width: w, height: h, channels: 3, background: { r: 255, g: 255, b: 255 } } });
-    await white(200, 160).png().toFile(path.join(staging, 'originals/a.png'));
-    await white(100, 50).png().toFile(path.join(staging, 'originals/b.png'));
-    await white(40, 40).png().toFile(path.join(staging, 'originals/excluded.png'));
+    mkdirSync(prepared, { recursive: true });
+    await grey(200, 160).jpeg().toFile(path.join(prepared, '01-ap-test.jpg'));
+    // Oversized view: the assembler must downscale to the ≤1200px long edge.
+    await grey(1600, 800).jpeg().toFile(path.join(prepared, '02-lat-test.jpg'));
     writeFileSync(
-      path.join(staging, 'index.json'),
-      JSON.stringify({ study: { modality: 'DX', studyDescription: 'T' }, images: [], stacks: [] })
+      path.join(prepared, 'case.json'),
+      JSON.stringify({
+        id: ID,
+        title: 'XR TEST CASE',
+        modality: 'XR',
+        rev: 3,
+        start: 1,
+        views: [
+          { file: '01-ap-test.jpg', label: 'AP TEST', width: 200, height: 160 },
+          { file: '02-lat-test.jpg', label: 'LAT TEST', width: 1600, height: 800 },
+        ],
+        stacks: [],
+      })
     );
   });
 
   afterAll(() => rmSync(root, { recursive: true, force: true }));
 
-  it('builds included views in order with burned boxes, thumbs, poster, manifest', async () => {
-    writeSelection(baseSelection());
-    runViews();
+  it('assembles numbered views + thumbs + poster + schema-shaped manifest', () => {
+    run(root, ['--id', ID, '--in', prepared]);
 
-    // Order: view 001 = order 1 = a.png (200×160); 002 = b.png (100×50).
-    // Excluded view is absent entirely.
     expect(readdirSync(path.join(caseDir, 'views')).sort()).toEqual([
       '001.jpg', '002.jpg', 'thumb-001.jpg', 'thumb-002.jpg',
     ]);
+    expect(existsSync(path.join(caseDir, 'poster.jpg'))).toBe(true);
 
     const m = JSON.parse(readFileSync(path.join(caseDir, 'manifest.json'), 'utf8'));
     expect(m).toMatchObject({
       id: ID,
       title: 'XR TEST CASE',
-      modality: 'XR', // mapped from the staging index's DX
+      modality: 'XR',
       base: `/cases/${ID}/`,
-      rev: 1,
+      rev: 1, // site-side rev, independent of the prepared case.json rev
       kind: 'views',
-      stage: { width: 200, height: 160 }, // max envelope across 200×160, 100×50
+      stage: { width: 1200, height: 600 }, // max envelope AFTER delivery resize
       start: 1,
       poster: 'poster.jpg',
     });
     expect(m.views).toEqual([
       { key: 'v01', label: 'AP TEST', width: 200, height: 160, file: 'views/001.jpg', thumb: 'views/thumb-001.jpg' },
-      { key: 'v02', label: 'LAT TEST', width: 100, height: 50, file: 'views/002.jpg', thumb: 'views/thumb-002.jpg' },
+      { key: 'v02', label: 'LAT TEST', width: 1200, height: 600, file: 'views/002.jpg', thumb: 'views/thumb-002.jpg' },
     ]);
-    expect(existsSync(path.join(caseDir, 'poster.jpg'))).toBe(true);
-
-    // Burn lands where the normalized box says: box region opaque black on
-    // the white field, region outside untouched.
-    expect(await regionMean('views/001.jpg', 0.55, 0.55, 0.15, 0.15)).toBeLessThan(10);
-    expect(await regionMean('views/001.jpg', 0.05, 0.05, 0.2, 0.2)).toBeGreaterThan(245);
   });
 
-  it('applies rotate and crop before the resize; draws arrows; bumps rev', async () => {
-    const sel = baseSelection();
-    // a.png (200×160): rotate 90 → 160×200, then crop the top-left half → 80×100.
-    sel.views[2].transform = { rotate: 90, crop: { x: 0, y: 0, w: 0.5, h: 0.5 } };
-    sel.views[2].boxes = [];
-    // Arrow across the white field of b.png — verify dark outline ink lands.
-    sel.views[0].arrows = [{ x1: 0.2, y1: 0.2, x2: 0.8, y2: 0.8 }];
-    writeSelection(sel);
-    runViews();
-
+  it('rebuilds wholesale but carries the rev forward (cache invalidation)', () => {
+    run(root, ['--id', ID, '--in', prepared, '--title', 'RETITLED']);
     const m = JSON.parse(readFileSync(path.join(caseDir, 'manifest.json'), 'utf8'));
     expect(m.rev).toBe(2);
-    expect(m.views[0]).toMatchObject({ width: 80, height: 100 });
-    // The arrow's black underlay must darken the shaft midpoint region of an
-    // otherwise-white image.
-    expect(await regionMean('views/002.jpg', 0.45, 0.45, 0.1, 0.1)).toBeLessThan(245);
+    expect(m.title).toBe('RETITLED'); // flag overrides case.json
   });
 
-  it('rejects a selection for a different case id and an all-excluded selection', () => {
-    const wrongId = baseSelection();
-    wrongId.case = 'someone-else';
-    writeSelection(wrongId);
-    expect(() => runViews()).toThrow(/is for case "someone-else"/);
+  it('requires a prepared case folder, --in/--id, and slug-safe ids', () => {
+    expect(() => run(root, ['--id', 'x'])).toThrow(/required/);
+    expect(() => run(root, ['--in', prepared, '--id', 'Bad Slug!'])).toThrow(/URL-safe slug/);
+    const empty = mkdtempSync(path.join(tmpdir(), 'not-prepared-'));
+    expect(() => run(root, ['--id', 'x-y', '--in', empty])).toThrow(/case\.json/);
+    rmSync(empty, { recursive: true, force: true });
+  });
+});
 
-    const none = baseSelection();
-    for (const v of none.views) v.include = false;
-    writeSelection(none);
-    expect(() => runViews()).toThrow(/includes no views/);
+describe('case:build stack payload from a prepared case', () => {
+  const ID = 'vitest-stack';
+  let root, prepared, caseDir;
+
+  const caseJson = () => ({
+    id: ID,
+    title: 'CT TEST CASE',
+    modality: 'CT',
+    rev: 1,
+    stacks: [
+      { dir: 'stacks/s003-soft', series: 's003', seriesLabel: 'AXIAL', window: 'soft', windowLabel: 'SOFT TISSUE', plane: 'axial', frames: 3, width: 64, height: 48 },
+      { dir: 'stacks/s003-bone', series: 's003', seriesLabel: 'AXIAL', window: 'bone', windowLabel: 'BONE', plane: 'axial', frames: 3, width: 64, height: 48 },
+    ],
   });
 
-  it('rejects malformed normalized rects loudly', () => {
-    const bad = baseSelection();
-    bad.views[2].boxes = [{ x: 0.9, y: 0.9, w: 0.5, h: 0.5 }]; // overflows 0–1
-    writeSelection(bad);
-    expect(() => runViews()).toThrow(/invalid normalized rect/);
+  beforeAll(async () => {
+    root = mkdtempSync(path.join(tmpdir(), 'build-stack-'));
+    prepared = path.join(root, 'prepared', ID);
+    caseDir = path.join(root, 'public/cases', ID);
+    for (const win of ['soft', 'bone']) {
+      const d = path.join(prepared, 'stacks', `s003-${win}`);
+      mkdirSync(d, { recursive: true });
+      for (let i = 1; i <= 3; i++) await grey(64, 48, 60 + i).jpeg().toFile(path.join(d, `00${i}.jpg`));
+    }
+    writeFileSync(path.join(prepared, 'case.json'), JSON.stringify(caseJson()));
+  });
+
+  afterAll(() => rmSync(root, { recursive: true, force: true }));
+
+  it('assembles every series×window with per-series poster and manifest', () => {
+    run(root, ['--id', ID, '--in', prepared, '--start', '2']);
+
+    expect(readdirSync(path.join(caseDir, 's003/soft')).sort()).toEqual(['001.jpg', '002.jpg', '003.jpg']);
+    expect(readdirSync(path.join(caseDir, 's003/bone')).sort()).toEqual(['001.jpg', '002.jpg', '003.jpg']);
+    expect(existsSync(path.join(caseDir, 's003/poster.jpg'))).toBe(true);
+
+    const m = JSON.parse(readFileSync(path.join(caseDir, 'manifest.json'), 'utf8'));
+    expect(m).toMatchObject({ id: ID, title: 'CT TEST CASE', modality: 'CT', base: `/cases/${ID}/`, rev: 1 });
+    const s = m.series[0];
+    expect(s).toMatchObject({ key: 's003', label: 'AXIAL', plane: 'axial', frames: 3, width: 64, height: 48, start: 2, poster: 's003/poster.jpg' });
+    expect(s.windows).toEqual([
+      { key: 'soft', label: 'SOFT TISSUE', pattern: 's003/soft/{nnn}.jpg' },
+      { key: 'bone', label: 'BONE', pattern: 's003/bone/{nnn}.jpg' },
+    ]);
+  });
+
+  it('rejects a window whose frame count breaks the index-preservation contract', async () => {
+    const d = path.join(prepared, 'stacks', 's003-lung');
+    mkdirSync(d, { recursive: true });
+    await grey(64, 48).jpeg().toFile(path.join(d, '001.jpg'));
+    const cj = caseJson();
+    cj.stacks.push({ dir: 'stacks/s003-lung', series: 's003', seriesLabel: 'AXIAL', window: 'lung', windowLabel: 'LUNG', plane: 'axial', frames: 1, width: 64, height: 48 });
+    writeFileSync(path.join(prepared, 'case.json'), JSON.stringify(cj));
+    expect(() => run(root, ['--id', ID, '--in', prepared])).toThrow(/frame count mismatch/);
+  });
+
+  it('demands --kind when a prepared case carries both views and stacks', async () => {
+    const cj = caseJson();
+    cj.views = [{ file: '01-key.jpg', label: 'KEY', width: 64, height: 48 }];
+    cj.stacks.pop(); // drop the mismatched lung window again
+    await grey(64, 48).jpeg().toFile(path.join(prepared, '01-key.jpg'));
+    writeFileSync(path.join(prepared, 'case.json'), JSON.stringify(cj));
+    expect(() => run(root, ['--id', ID, '--in', prepared])).toThrow(/pass --kind/);
+    // Explicit --kind resolves it.
+    run(root, ['--id', ID, '--in', prepared, '--kind', 'views']);
+    const m = JSON.parse(readFileSync(path.join(caseDir, 'manifest.json'), 'utf8'));
+    expect(m.kind).toBe('views');
   });
 });

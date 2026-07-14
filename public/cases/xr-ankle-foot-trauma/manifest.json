@@ -3,7 +3,7 @@
   "title": "XR ANKLE 3 OR MORE VIEWS (LEFT)",
   "modality": "XR",
   "base": "/cases/xr-ankle-foot-trauma/",
-  "rev": 1,
+  "rev": 2,
   "kind": "views",
   "stage": {
     "width": 1200,

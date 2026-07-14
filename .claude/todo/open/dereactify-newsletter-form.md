@@ -4,7 +4,7 @@ title: Replace the React newsletter island with a static form + vanilla JS
 band: next
 first_surfaced: 2026-07-08
 last_touched: 2026-07-08
-assessed: 2026-07-11
+assessed: 2026-07-14
 depends_on: []
 links: [src/components/shared/NewsletterSignup.tsx]
 worktype: build

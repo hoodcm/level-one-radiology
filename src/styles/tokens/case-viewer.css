@@ -92,6 +92,16 @@
      the whole chip comfortably above the 44px hit minimum. */
   --cv-rail-thumb-h: 3rem;      /* 48px */
 
+  /* Fullscreen views rail bar — the .cv-fs__bar's rendered height when it
+     hosts the thumbnail rail instead of the slider track. The fullscreen
+     close chip is lifted to clear this taller bar (a slider bar is only
+     hit-area tall). Derived: thumb + bar padding (2×space-1) + button
+     padding/gap (3×space-0) + border (2px) + the ~15px label line
+     (cv-meta-size at its line-height). Verified: close→bar gap = space-1. */
+  --cv-rail-bar-h: calc(
+    var(--cv-rail-thumb-h) + 2 * var(--space-1) + 3 * var(--space-0) + 2px + 15px
+  );                            /* ≈93px */
+
   /* Fullscreen W/L pad — the live X-Y indicator while adjusting (dot mirrors
      the drag). Rendered 1:1 with the SVG viewBox authored in fullscreen.ts
      (WL_PAD_W/H) — keep the aspect in step or the plane distorts. */

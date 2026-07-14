@@ -7,7 +7,7 @@ last_touched: 2026-07-07
 depends_on: []
 links: [src/styles/tokens/colors.css]
 worktype: decide
-assessed: 2026-07-07
+assessed: 2026-07-14
 ---
 The gold brand primary and the caution signal currently share one token
 (`--color-signal-yellow`, → `--color-primary`). If the dual role ever conflicts —

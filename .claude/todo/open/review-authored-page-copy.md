@@ -4,7 +4,7 @@ title: Review/edit Claude-drafted page copy
 band: now
 first_surfaced: 2026-07-07
 last_touched: 2026-07-07
-assessed: 2026-07-11
+assessed: 2026-07-14
 depends_on: []
 links: [src/pages/about.astro, src/pages/404.astro, src/pages/articles/[slug].astro]
 worktype: think

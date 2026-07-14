@@ -3,8 +3,8 @@ id: feature-band-sizing-iterations
 status: open
 tags: [pattern-only]
 first_seen: 2026-06-23
-last_seen: 2026-06-23
-recurrence: 1
+last_seen: 2026-07-14
+recurrence: 2
 related: []
 assessed: 2026-07-11
 ---
@@ -14,3 +14,5 @@ Dialing in the feature-band detector's on-load peek + sizing took several rounds
 
 ## Notes
 2026-06-23 — Resolved this session: boot is now progress-based (`p >= 0.35`) not threshold-based; hero padding zeroed so `min-height` binds; HUD width = `min(contained-width, --fb-card-min-h)` with a separate `viewBox` crop for fill. Logged so a future session changing the feature band knows these three knobs interact before re-deriving them. Low recurrence risk — likely auto-decays.
+
+2026-07-14 — 2026-07-14 recurred hard during the hero-enrichment round: the detector-hero geometry's non-obvious coupling forced several reformulation rounds — the FeatureBand pre-expansion anchor, the width-derived hero-height floor (drawing must span margins at every viewport), and especially the vane touch-pull, which needed three full geometric rewrites (rigid translate -> along-plane offset -> occlusion-seated rear tips) before the pulled panes read as rigid with no broken/intersecting lines.

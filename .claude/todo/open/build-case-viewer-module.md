@@ -3,12 +3,12 @@ id: build-case-viewer-module
 title: Build Case Viewer showstopper module
 band: now
 first_surfaced: 2026-06-23
-last_touched: 2026-07-11
+last_touched: 2026-07-14
 depends_on: []
 links: [src/components/case/, docs/design/components.md, docs/archive/plans/2026-07-07-case-viewer-plan.md]
 worktype: build
 workstream: case-viewer
-assessed: 2026-07-11
+assessed: 2026-07-14
 ---
 Build the Case Viewer — the "showstopper module," a PACS-like image viewer for
 clinical cases embedded within articles. Light-DOM custom element
@@ -83,3 +83,8 @@ published); the two live demo articles still embed the synthetic
 `dev-synthetic` case. Step 15's actual gate — "the embed scrubs ironclad on
 real images on the real phone" — is not yet confirmed; still open. Steps 3,
 12, 13 unchanged.
+2026-07-14 correction: `xr-ankle-foot-trauma` published (`draft: false`,
+commit a3c3968, later the same day as the note above) — the real case is now
+live, not just drafted. Step 15's actual gate (on-device scrub judgment on
+real images) is still unconfirmed, so the item stays open; only the
+publication half of step 15 is done. Steps 3, 12, 13 unchanged.

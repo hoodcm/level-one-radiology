@@ -6,8 +6,12 @@ Website for leveloneradiology.com — an independent emergency radiology publica
 
 ## Case Images — de-identification is already handled
 
-Case images (`public/cases/**`) pass through a dedicated de-identification step
-in the ingestion pipeline before they ever land in the repo. They are clean by
+Case images (`public/cases/**`) are prepared in the **private
+`prepare-radiology-cases` repo** (sibling checkout: `../prepare-radiology-cases`)
+— DICOM conversion, human redaction gate, curation, metadata strip all live
+there. This repo only assembles a prepared case into the viewer payload
+(`npm run case:build -- --id <id> --in ../prepare-radiology-cases/cases/<id>`),
+which downscales but never edits pixels. Case images are therefore clean by
 construction. **Do not re-audit case images for PHI** during pushes, reviews, or
 edits, and do not gate or hedge on it — the de-identification is a solved, owned
 process, not something to re-verify each time.

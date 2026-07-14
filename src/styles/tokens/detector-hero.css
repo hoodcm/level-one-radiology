@@ -14,6 +14,25 @@
   --dh-opacity: 0.15;
   --dh-stroke: 1.5px;
 
+  /* PROTOTYPE (2026-07-14, hero-enrichment round): exposure ink — the beam
+     sweep and touch response re-ink in GOLD while the structure stays ivory
+     (gold = the live energy in the system, matching its action semantics).
+     Revert to ivory exposure: set this back to var(--dh-ink). */
+  --dh-ink-exposure: var(--color-primary);
+
+  /* PROTOTYPE (2026-07-14, hero-enrichment round): faint blueprint grid in
+     the hero's black field (.hero--detector::before, homepage.css). The old
+     page grid was removed 2026-07-11 with the drawing's arrival — this is
+     the quieter reintroduction under judgment. The field spans the FULL
+     hero (margins included), masked out of the drawing's core band; the
+     pitch is content-width / --dh-grid-cols with the tile phase shifted by
+     the page margin, so hairlines register ON both margins and the pattern
+     continues past them to the edges (square cells: rows reuse the column
+     pitch). Kill: delete these three tokens + the ::before rule. */
+  --dh-grid-line: color-mix(in srgb, var(--color-text-ivory) 4%, transparent);
+  --dh-grid-hair: 1px;
+  --dh-grid-cols: 20;
+
   /* Draw-in: one stroke-dashoffset reveal per path, staggered by draw order,
      played once on arrival. Eased by --reveal-ease (motion.css). */
   --dh-draw-dur: 0.9s;
@@ -27,40 +46,70 @@
   --dh-beam-dur: 3s;
   --dh-beam-boost: 1.5;
 
+  /* Touch response (coarse pointers): a finger on the hero steers the focal
+     point like the mouse, and the fan plates near it pull out and re-expose.
+     Boost shares the beam's law (lift = opacity × (boost − 1), floor 0 —
+     keep ≥ 1). Ramps are the authority time-constants, SECONDS (JS
+     parseFloat()s them — never retune into ms): in on touch, out on release.
+     Reach/pull-depth are geometry scalars in SETTINGS (detector-hero.mjs). */
+  --dh-touch-boost: 2.2;
+  --dh-touch-ramp-in: 0.2s;
+  --dh-touch-ramp-out: 0.6s;
+
   /* Copy-seating fallback (no-JS / reduced-motion): the flex-centered hero
      copy nudges from hero center onto the slab's center line. The client
      script computes the exact seat from the live composition and overrides
      these. Derivations, from the canvas geometry in detector-hero.mjs at the
      locked 2% shift, hero ≈ 70svh:
-     mobile — the drawn content core is canvas-centered, which puts the slab
-       center 101.4 canvas px (101.4/1080 = 9.39vw width-bound) ABOVE canvas
-       center: nudge = 2% × 56svh − 9.39vw ≈ 1.1svh − 9.39vw.
+     mobile (content-box fit: slab span 1004 lands on the grid margins, so
+       k = (100vw − 2·margin)/1004 width-bound) — the drawn content core is
+       canvas-centered, which puts the slab center 101.4 canvas px
+       (101.4/1004 = 0.101 of the content width) ABOVE canvas center:
+       nudge = 2% × 56svh − 101.4k ≈ 1.1svh − 0.101 × content width.
      desktop (width-bound cover) — slabCenter = 0.52H − (SH/2 − slabCenterY)
        / SW × W = 0.52H − (1080 − 858.5)/3840 × W: nudge = 1.4svh − 5.77vw. */
-  --dh-copy-nudge-mobile: calc(1.1svh - 9.39vw);
+  --dh-copy-nudge-mobile: calc(1.1svh - (100vw - 2 * var(--grid-margin)) * 0.101);
   --dh-copy-nudge-desktop: calc(1.4svh - 5.77vw);
 
 }
 
-/* Mobile-composition wordmark size — ONE SCALE FACTOR with the drawing.
-   The wordmark is part of the composition (it sits in the slab), so its
-   size derives from the slab's rendered height, not an independent
-   viewport clamp (the old --fz-wordmark-hero cap froze the text at 2.25rem
-   while the slab kept growing toward tablet widths — text/slab fell from
-   64% to 30%). Derivation mirrors fitTransform's k = min(width-bound,
-   corePad height clamp) at the locked geometry (detector-hero.mjs:
-   slabH 312, SW 1080, coreH 733.2, corePad 0.04), × the approved
-   fz/slabH ratio 0.29 (36px in a 124px slab at 430w):
-     width term  — 0.29 × 312 × 100vw/1080           = 8.37vw
-     height term — 0.29 × 312 × 0.92 × heroH/733.2   = 0.1135 × heroH
-   where heroH is the hero's min-height expression (homepage.css).
-   Declared on .hero--detector, NOT :root: a custom property resolves its
-   var() references where it is DECLARED, and --hero-stage only exists on
-   the hero (56svh mobile / 70svh desktop via homepage.css). On :root the
-   token computes to guaranteed-invalid and every use falls back. */
+/* Mobile-composition sizing — ONE SCALE FACTOR with the drawing. These
+   tokens derive from the locked geometry (detector-hero.mjs: slabH 312,
+   slab span 1004 fit to the CONTENT BOX — 100vw minus the grid margins —
+   core height 733.2, corePad 0.04, yoff 2%, touchPull 0.12). Declared on
+   .hero--detector, NOT :root: a custom property resolves its var()
+   references where it is DECLARED, and --hero-stage only exists on the
+   hero (56svh mobile / 70svh desktop via homepage.css). On :root the
+   tokens compute to guaranteed-invalid and every use falls back.
+
+   --dh-core-fit — hero height needed PER CONTENT-BOX WIDTH so the
+   width-bound drawing keeps corePad clear above AND the touch pull's full
+   excursion clear below. The pull is reserved HERE, in the hero's growth —
+   never in the drawing's fit clamp, which would shrink every clamp-bound
+   render (Michael rejected that ~5% desktop shrink). At width-bound
+   k = cw/1004: rendered core 733.2k = 0.7302cw, canvas-centered then
+   shifted down yoff 2%H; pull 0.12 × 312k = 0.0373cw. Bottom clearance
+   (H − 0.7302cw)/2 − 0.02H ≥ 0.04H + 0.0373cw ⇒ 0.44H ≥ 0.4024cw
+   ⇒ H ≥ 0.9146cw.
+   --dh-hero-h — the hero's height expression: the stage's svh height,
+   floored by the width-bound need above, so the drawing spans margin to
+   margin at EVERY viewport — where the svh stage would force the corePad
+   clamp to shrink the drawing off the margins (squat windows, portrait
+   tablets), the hero grows instead (Michael 2026-07-14). Phones are
+   unaffected: the svh term wins there. Consumed as min-height by
+   homepage.css (the desktop composition redefines it to the plain stage
+   term — its drawing is full-bleed cover, no width floor).
+
+   --dh-wordmark-fz — × the approved fz/slabH ratio 0.29 (36px in a 124px
+   slab at 430w): 0.29 × 312 × (100vw − 2·margin)/1004
+   = 0.0901 × (100vw − 2·margin). The hero floor guarantees k is
+   width-bound on this composition, so the old height-clamp guard term is
+   gone — one term, one scale factor with the drawing. */
 .hero--detector {
-  --dh-wordmark-fz: min(
-    8.37vw,
-    calc(0.1135 * (var(--hero-stage) - var(--nav-height) - var(--space-3)))
+  --dh-core-fit: 0.9146;
+  --dh-hero-h: max(
+    calc(var(--hero-stage) - var(--nav-height) - var(--space-3)),
+    calc(var(--dh-core-fit) * (100vw - 2 * var(--grid-margin)))
   );
+  --dh-wordmark-fz: calc((100vw - 2 * var(--grid-margin)) * 0.0901);
 }
