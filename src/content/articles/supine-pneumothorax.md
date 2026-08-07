@@ -9,9 +9,9 @@ primaryTag: "Chest"
 contentType: "educational"
 featured: false
 keyPoints:
-  - "On a supine film, pleural air collects anteriorly and inferiorly. The apical line you were taught to find usually isn't there"
-  - "The deep sulcus sign is a costophrenic angle that is deeper, sharper, and more lucent than its neighbor"
-  - "An unusually crisp heart border or hemidiaphragm means air is outlining it. Compare sides before calling the film clear"
+  - "On a supine film, pleural air collects anteriorly and inferiorly. The apical line you were taught to find usually isn't there."
+  - "The deep sulcus sign is a costophrenic angle that is deeper, sharper, and more lucent than its neighbor."
+  - "An unusually crisp heart border or hemidiaphragm means air is outlining it. Compare sides before calling the film clear."
 ---
 
 A supine AP chest goes up during the primary survey, and the question comes from the foot of the bed before the patient is anywhere near a scanner: any pneumothorax? You look, and both lungs seem expanded, with no pleural line at either apex. That apical check is the one erect films taught you, and on a supine patient it's looking in the wrong place.

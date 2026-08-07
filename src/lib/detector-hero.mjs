@@ -210,7 +210,7 @@ export function vanePullOffset(C, v, sigma, pull, settings = SETTINGS) {
  *  moved the caps across each other (Michael 2026-07-14). The weight is 0
  *  wherever the old boolean was false, so rest geometry is untouched.
  *  @param {{ dx: number, dy: number, minY?: number } | null} [rearShift] */
-export function vaneDepth(C, v, sigma, pull = 0, settings = SETTINGS, rearShift = null) {
+function vaneEnds(C, v, sigma, pull = 0, settings = SETTINGS, rearShift = null) {
   const vN = vanesFor(C, settings);
   const pitch = C.halfSpan / vN;
   const bot = C.slab.bot + C.slabH * settings.gridLen;
@@ -218,7 +218,7 @@ export function vaneDepth(C, v, sigma, pull = 0, settings = SETTINGS, rearShift 
   const s = run >= 0 ? 1 : -1;
   const m = (v.drop * settings.fan) / Math.max(Math.abs(run), 0.5);
   const { dx: ex, dy: ey } = vanePullOffset(C, v, sigma, pull, settings);
-  let d = `M ${v.x + ex} ${v.top + ey} L ${v.x + s * Math.min((v.top - C.slab.bot) / m, Math.abs(run))} ${C.slab.bot}`;
+  const topEndX = v.x + s * Math.min((v.top - C.slab.bot) / m, Math.abs(run));
   // a depth edge ends at the EARLIEST of: its own rear endpoint (the plate
   // physically stops there), the neighboring plate, or the slab. Edges can
   // then touch but never cross — rear points preserve the plates' order.
@@ -252,8 +252,41 @@ export function vaneDepth(C, v, sigma, pull = 0, settings = SETTINGS, rearShift 
     tipX += w * rearShift.dx;
     tipY += w * (rideY - tipY);
   }
-  d += ` M ${v.x + ex} ${bot + ey} L ${tipX} ${tipY}`;
-  return d;
+  return {
+    frontTopX: v.x + ex,
+    frontTopY: v.top + ey,
+    frontBotY: bot + ey,
+    topEndX,
+    topEndY: C.slab.bot,
+    tipX,
+    tipY,
+  };
+}
+
+/** The two depth edges (top + bottom) as stroked open segments — the
+ *  wireframe's original vocabulary. Endpoint math shared with vaneFaceD
+ *  via vaneEnds (doc block above).
+ *  @param {{ dx: number, dy: number, minY?: number } | null} [rearShift] */
+export function vaneDepth(C, v, sigma, pull = 0, settings = SETTINGS, rearShift = null) {
+  const e = vaneEnds(C, v, sigma, pull, settings, rearShift);
+  return (
+    `M ${e.frontTopX} ${e.frontTopY} L ${e.topEndX} ${e.topEndY}` +
+    ` M ${e.frontTopX} ${e.frontBotY} L ${e.tipX} ${e.tipY}`
+  );
+}
+
+/** The plate's visible face as a CLOSED quad — front edge, top depth edge,
+ *  rear boundary, bottom depth edge. Filled bg-on-bg by the occlusion layer
+ *  (DetectorHero .dh-occ) so backdrops (the wireframe tunnel) never read
+ *  through a plate; same endpoint math as the stroked edges, so the fill
+ *  always sits exactly under its own wireframe.
+ *  @param {{ dx: number, dy: number, minY?: number } | null} [rearShift] */
+export function vaneFaceD(C, v, sigma, pull = 0, settings = SETTINGS, rearShift = null) {
+  const e = vaneEnds(C, v, sigma, pull, settings, rearShift);
+  return (
+    `M ${e.frontTopX} ${e.frontTopY} L ${e.topEndX} ${e.topEndY}` +
+    ` L ${e.tipX} ${e.tipY} L ${e.frontTopX} ${e.frontBotY} Z`
+  );
 }
 
 /** All fan plates at rest, with their draw-in order (center-out after the
@@ -311,6 +344,20 @@ export function stackPaths(C, settings = SETTINGS) {
  *  the joins). Draw-in order = settings.layers. */
 export function slabPath(C) {
   return `M ${C.slab.x0} ${C.slab.top} L ${C.slab.x1} ${C.slab.top} L ${C.slab.x1} ${C.slab.bot} L ${C.slab.x0} ${C.slab.bot} Z`;
+}
+
+/** The fan's full band — slab span wide, slab underside down to the fan
+ *  bottom (every front edge ends there). Filled bg-on-bg by the occlusion
+ *  layer: per-plate faces alone left the backdrop pouring through the
+ *  between-plate comb gaps, which read as the grid running through the
+ *  instrument — the whole band is solid; the strokes keep the comb. */
+export function fanBandRect(C, settings = SETTINGS) {
+  return {
+    x: C.slab.x0,
+    y: C.slab.bot,
+    width: C.slab.x1 - C.slab.x0,
+    height: C.slabH * settings.gridLen,
+  };
 }
 
 /** Full-opacity occluder above the beam layer (invisible: bg on bg) —

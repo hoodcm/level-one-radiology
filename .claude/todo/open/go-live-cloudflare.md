@@ -8,7 +8,7 @@ depends_on: []
 links: [docs/plans/hosting-migration-cloudflare.md, is-domain-dns-configured]
 worktype: build
 workstream: cloudflare-migration
-assessed: 2026-07-14
+assessed: 2026-08-07
 ---
 Supersedes the prior "configure GitHub Pages DNS" task (decided 2026-07-13). The
 site is not yet confirmed live, so its **first go-live goes straight to

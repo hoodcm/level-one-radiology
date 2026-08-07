@@ -3,10 +3,10 @@ id: toc-scroll-spy-initial-state
 title: Give the TOC scroll-spy an initial / deep-link active state
 band: later
 first_surfaced: 2026-07-08
-last_touched: 2026-07-08
-assessed: 2026-07-14
+last_touched: 2026-08-07
+assessed: 2026-08-07
 depends_on: []
-links: [src/components/article/TableOfContents.astro]
+links: [src/components/article/TableOfContents.astro, src/pages/articles/[slug].astro]
 worktype: build
 ---
 Surfaced during the site-wide sweep: the desktop "On this page" rail's
@@ -17,3 +17,9 @@ rail item is marked current until the reader scrolls.
 
 Done: loading the article (fresh or via a `#section` deep link) shows the
 correct TOC item highlighted before any scroll occurs.
+
+## Notes
+2026-08-07 the TOC rail's grid position was moved (now starts beside the Key
+Points card instead of the title, `src/pages/articles/[slug].astro` +
+prose.css) — layout only, the scroll-spy's initial-state bug itself is
+untouched and still open.

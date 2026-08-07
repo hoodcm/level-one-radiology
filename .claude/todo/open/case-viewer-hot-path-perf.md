@@ -4,9 +4,10 @@ title: Case-viewer hot-path perf items deferred from the /simplify pass
 band: next
 first_surfaced: 2026-07-07
 last_touched: 2026-07-11
-assessed: 2026-07-14
+assessed: 2026-08-07
 depends_on: []
 links: [src/components/case/case-viewer.ts, src/components/case/fullscreen.ts]
+worktype: build
 workstream: case-viewer
 ---
 Two remaining efficiency/altitude findings from the case-viewer review, judged

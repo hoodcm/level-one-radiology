@@ -6,7 +6,7 @@ first_seen: 2026-07-08
 last_seen: 2026-07-08
 recurrence: 1
 related: [prefer-font-supported-before-transform-hacks]
-assessed: 2026-07-11
+assessed: 2026-08-07
 ---
 
 ## Description

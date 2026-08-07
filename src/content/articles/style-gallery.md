@@ -10,9 +10,9 @@ contentType: "educational"
 featured: false
 draft: true
 keyPoints:
-  - "This page exists to exercise the full markdown pipeline in dev"
-  - "If an element looks wrong here, it looks wrong in every article"
-  - "Drafts render in the dev server only and never build to production"
+  - "This page exists to exercise the full markdown pipeline in dev."
+  - "If an element looks wrong here, it looks wrong in every article."
+  - "Drafts render in the dev server only and never build to production."
 ---
 
 The first paragraph carries the opening weight. It should read comfortably at the reading measure, with the serif voice doing narrative work. Inline elements live here too: **bold for scanning**, *italic for emphasis*, `inline code` in the violet mono voice, and a [link to another article](/articles/closed-loop-obstruction) plus an [external link](https://www.acr.org) that opens in a new tab.

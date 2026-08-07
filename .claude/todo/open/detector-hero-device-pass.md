@@ -3,10 +3,10 @@ id: detector-hero-device-pass
 title: Judge detector-hero composition on iPhone + desktop (plan steps 7 + 10)
 band: now
 first_surfaced: 2026-07-11
-last_touched: 2026-07-14
-assessed: 2026-07-14
+last_touched: 2026-08-07
+assessed: 2026-08-07
 depends_on: []
-links: [src/styles/tokens/detector-hero.css, src/lib/detector-hero.mjs, docs/archive/plans/2026-07-11-detector-hero-plan.md]
+links: [src/styles/tokens/detector-hero.css, src/lib/detector-hero.mjs, src/components/shared/DetectorHero.astro, src/lib/wireframe-tunnel.mjs, src/components/shared/WireframeTunnel.astro, src/styles/components/homepage.css, docs/archive/plans/2026-07-11-detector-hero-plan.md]
 worktype: decide
 ---
 The homepage hero's scintillator-grid drawing (replacing the old blueprint
@@ -44,12 +44,27 @@ folded into this item's on-device gate rather than spun into a sibling
 (same "his eyes/hands are the gate" shape, same composition).
 2026-07-14 (hero-enrichment round, same day, judged live on screen with
 Michael mid-build): further surfaces folded into this gate — gold exposure
-ink (`--dh-ink-exposure`: beam + touch re-ink in gold), the blueprint-grid
-prototype (`--dh-grid-*`, margin-registered, masked to the field around the
-drawing), the touch pull's depth-edge stretch (vaneDepth `dy` — rear anchors
+ink (`--dh-ink-exposure`: beam + touch re-ink in gold), the touch pull's
+depth-edge stretch (vaneDepth `dy` — rear anchors
 pinned; replaces the rigid translate that broke the illusion), the pull
 excursion reserved in the drawn core (no more bottom clipping), the
 width-derived hero floor (`--dh-core-fit`/`--dh-hero-h`: drawing spans the
 margins at every viewport), and the recomposed mobile first screen
 (statement + gold Subscribe in a shortened FeatureBand card, FEATURED
 cresting the fold). All headless-verified; on-device feel still pending.
+2026-08-07 the blueprint-grid prototype (`--dh-grid-*`) was retired — judged
+live with Michael and replaced by the field-mounted wireframe tunnel
+(frameless, wordmark-anchored, extending to the feature band; drawing made
+opaque via the `.dh-occ` occlusion layer). That backdrop's own on-device
+judgment rides this same gate; the grid sub-item is moot.
+2026-08-07 (later same day, ~6 live-iteration rounds) tunnel now mounts on
+the whole hero FIELD (hero + feature band), converging on the wordmark
+center, with a pixel-anchored fixed-height overdraw so the feature card's
+scroll expansion can't stretch/redraw it (a glitch caught and fixed
+mid-session). The `.dh-occ` occlusion layer was refined once more — user
+feedback "close, but not perfect" — to also fill the fan's full band (per-
+plate faces alone left the backdrop showing through the comb gaps), and the
+touch re-exposure glow now covers the stack layer too, boosted
+(`--dh-touch-boost` 2.2→3). All headless-verified only (astro check 0
+errors, token lint clean, vitest 48/48); still rides this same on-device
+gate, not a separate item.

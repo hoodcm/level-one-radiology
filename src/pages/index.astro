@@ -5,6 +5,7 @@ import Grid from '@/components/layout/Grid.astro';
 import Col from '@/components/layout/Col.astro';
 import ArticleCard from '@/components/shared/ArticleCard.astro';
 import DetectorHero from '@/components/shared/DetectorHero.astro';
+import WireframeTunnel from '@/components/shared/WireframeTunnel.astro';
 import FeatureBand from '@/components/shared/FeatureBand.astro';
 import { apparatus } from '@/lib/apparatus';
 import { getArticles } from '@/lib/articles';
@@ -28,10 +29,12 @@ const HERO_SUPPORT =
 ---
 
 <Layout title="Level One Radiology: Independent Emergency Radiology">
-  <!-- Hero field: one wrapper over hero + feature band so the blueprint grid
-       (.hero-field--detector::before, homepage.css) runs continuously behind
-       both — the expanding card covers the same hairlines the hero shows. -->
+  <!-- Hero field: one wrapper over hero + feature band so the tunnel backdrop
+       runs continuously behind both — field-mounted (figure = the hero's box,
+       converging on the wordmark; rays extend on down to the feature band),
+       with the opaque feature card covering the lines it rides over. -->
   <div class:list={['hero-field', apparatus.detectorHero && 'hero-field--detector']}>
+  {apparatus.tunnelHero && <WireframeTunnel field />}
   <!-- Hero -->
   <section class={apparatus.detectorHero ? 'hero hero--detector' : 'hero'}>
     {apparatus.detectorHero && <DetectorHero />}

@@ -7,7 +7,7 @@ last_touched: 2026-07-11
 depends_on: []
 links: [src/components/shared/FeatureBand.astro, src/styles/components/homepage.css]
 worktype: decide
-assessed: 2026-07-14
+assessed: 2026-08-07
 ---
 The homepage FeatureBand is a plain card tuned for mobile — on-load ~30svh
 peek, scroll-linked widen (contained→full-bleed via `--fb-progress`), and on

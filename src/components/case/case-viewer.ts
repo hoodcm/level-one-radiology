@@ -73,6 +73,11 @@ const EDGE_DEAD_PX = 28;
 const FILL_AFTER_DISTINCT = 8;
 const WARM_SIBLINGS_MS = 300;
 const WHEEL_STEP_CAP = 3;
+/** Wheel px per slice step — the wheel-feel TUNE knob (higher = calmer).
+ *  A mouse notch (~100px in Chrome) lands 1–2 slices; a trackpad swipe
+ *  advances by distance, not by event count. Keep in step with fullscreen.ts. */
+const WHEEL_PX_PER_STEP = 45;
+const WHEEL_LINE_PX = 16; // deltaMode LINE (Firefox) → px approximation
 const RETRY_MS = [1000, 2000, 4000];
 
 const supportsSaveData = () =>
@@ -129,7 +134,7 @@ export class CaseViewerElement extends HTMLElement {
   #tracking = false;
   #scrubId: number | null = null;
   #justScrubbed = false;
-  #wheelSteps = 0;
+  #wheelPx = 0;
   #wheelArmed = false;
   #wheelAbort: AbortController | null = null;
 
@@ -515,13 +520,14 @@ export class CaseViewerElement extends HTMLElement {
       (e) => {
         e.preventDefault();
         const dy = e.deltaY; // read before deltaMode (Firefox order quirk)
-        this.#wheelSteps += Math.sign(dy);
+        this.#wheelPx += e.deltaMode === 1 ? dy * WHEEL_LINE_PX : dy;
         if (this.#wheelArmed) return;
         this.#wheelArmed = true;
         requestAnimationFrame(() => {
-          const step = Math.max(-WHEEL_STEP_CAP, Math.min(WHEEL_STEP_CAP, this.#wheelSteps));
-          this.#wheelSteps = 0;
+          const raw = Math.trunc(this.#wheelPx / WHEEL_PX_PER_STEP);
+          this.#wheelPx -= raw * WHEEL_PX_PER_STEP; // sub-step remainder carries
           this.#wheelArmed = false;
+          const step = Math.max(-WHEEL_STEP_CAP, Math.min(WHEEL_STEP_CAP, raw));
           // A rAF armed on the last engaged wheel tick can land after a
           // disengage tap (the abort removes the listener but never cancels an
           // already-queued frame) — writing a stale scrub at rest. Guard on

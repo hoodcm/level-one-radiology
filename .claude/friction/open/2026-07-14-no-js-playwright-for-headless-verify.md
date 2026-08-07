@@ -6,6 +6,7 @@ first_seen: 2026-07-14
 last_seen: 2026-07-14
 recurrence: 1
 related: []
+assessed: 2026-08-07
 ---
 
 ## Description

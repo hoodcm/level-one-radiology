@@ -1,0 +1,47 @@
+/* ==============================================
+   WIREFRAME TUNNEL — title-region backdrop mount
+   Fills its positioned ancestor; sits behind the region's content
+   (z-index -1 inside the mount's own stacking context — give the mount
+   `position: relative; isolation: isolate` so the figure can neither cover
+   the text nor escape below the page background).
+   ============================================== */
+
+.wireframe-tunnel {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  color: var(--wt-ink);
+}
+
+.wireframe-tunnel svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.wireframe-tunnel path {
+  stroke-width: var(--wt-stroke);
+}
+
+/* The bottom edge doubles as the article meta rule — it keeps the rule's
+   original ink while the rest of the figure sits a step fainter. */
+.wireframe-tunnel .wt-base {
+  stroke: var(--wt-ink-base);
+}
+
+/* Title-band variant: pinned to the mount's top, full width. The height here
+   is the no-JS fallback — the article script sizes the band so its bottom
+   frame edge lands exactly on the meta line (the rule before "PUBLISHED"). */
+.wireframe-tunnel--band {
+  inset: 0 0 auto 0;
+  height: var(--wt-band-h);
+}
+
+/* With the band mounted, its full-bleed bottom frame IS the meta line — the
+   meta's own rule hands off (layout kept, line hidden) so the two identical
+   hairlines don't stack to double brightness in the reading column. */
+.article:has(.wireframe-tunnel--band) .article__meta {
+  border-top-color: transparent;
+}

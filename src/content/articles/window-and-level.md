@@ -9,9 +9,9 @@ primaryTag: "Neuro"
 contentType: "educational"
 featured: false
 keyPoints:
-  - "Your monitor shows a few hundred grays and your eye resolves a few dozen. The Hounsfield scale spans thousands of values. Windowing decides which slice of it you see"
-  - "Level picks the center of the visible slice. Width decides how many densities on either side of center get a gray of their own"
-  - "Every window trades contrast at one part of the scale for contrast everywhere else. A head CT is read in at least three"
+  - "Your monitor shows a few hundred grays and your eye resolves a few dozen. The Hounsfield scale spans thousands of values. Windowing decides which slice of it you see."
+  - "Level picks the center of the visible slice. Width decides how many densities on either side of center get a gray of their own."
+  - "Every window trades contrast at one part of the scale for contrast everywhere else. A head CT is read in at least three."
 ---
 
 <p class="lead">I'm sure you've sat next to a radiologist and watched them jerk the mouse around with small movements that alter the image on the screen. You might be wondering what they're doing and why. Those movements are windowing, the controls that decide which part of the density scale your screen actually shows.</p>

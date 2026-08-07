@@ -1,0 +1,89 @@
+---
+/**
+ * WireframeTunnel — one-point-perspective tunnel backdrop for title regions.
+ * Geometry from src/lib/wireframe-tunnel.mjs (single source, both render
+ * paths); ink/weight from tokens/wireframe-tunnel.css. The frontmatter render
+ * is the no-JS fallback (stretched to the mount, non-scaling strokes); the
+ * client script rebuilds at the mount's live aspect so the grid cells stay
+ * square, and again on resize.
+ *
+ * `field` variant (homepage hero-field): the FIGURE is the sibling .hero's
+ * box — the tunnel keeps converging on the wordmark — while the mount runs
+ * on to the field's end, rays and floor rings extending frameless and
+ * base-less down to the feature band. Mount it on the hero-field wrapper
+ * (positioned + isolated), never inside the hero.
+ */
+import { tunnelSVG } from '@/lib/wireframe-tunnel.mjs';
+
+const { class: className, field = false } = Astro.props;
+
+// Field fallback proportions: figure ≈ the hero's share of the field
+// (~58%); the client script rebuilds at the live boxes.
+const fallback = field
+  ? tunnelSVG(1200, 700, { frame: false, base: false, extendH: 1200 })
+  : tunnelSVG(1200, 800);
+---
+
+<div
+  class:list={['wireframe-tunnel', className]}
+  data-field={field ? '' : undefined}
+  aria-hidden="true"
+  set:html={fallback}
+/>
+
+<script>
+  import { tunnelSVG } from '@/lib/wireframe-tunnel.mjs';
+
+  for (const el of document.querySelectorAll<HTMLElement>('.wireframe-tunnel')) {
+    const isField = 'field' in el.dataset;
+    let lastKey = '';
+    let drawnH = 0;
+    const draw = () => {
+      const mount = el.getBoundingClientRect();
+      const { width, height } = mount;
+      if (!(width > 0 && height > 0)) return;
+      // The grid governs the first ring: it sits 2/3 of the page-margin
+      // width in, read live off the container (px-resolved, breakpoint-aware).
+      const container = document.querySelector('.container');
+      const margin = container ? parseFloat(getComputedStyle(container).paddingLeft) : NaN;
+      const opts: Record<string, number | boolean> = Number.isNaN(margin)
+        ? {}
+        : { inset1: (margin * 2) / 3 };
+      let figH = height;
+      if (isField) {
+        // Field mount: the figure is the sibling hero's box (the field's
+        // first child at y 0, so hero coords = mount coords), converging on
+        // the wordmark container's center.
+        const hero = el.parentElement?.querySelector<HTMLElement>('.hero');
+        if (hero) figH = hero.getBoundingClientRect().height;
+        const copy = el.parentElement?.querySelector<HTMLElement>('.hero-copy');
+        if (copy) {
+          const r = copy.getBoundingClientRect();
+          opts.cy = r.top + r.height / 2 - mount.top;
+        }
+        // The drawing is ANCHORED, never stretched: the feature card's
+        // scroll expansion resizes the field every frame, so the svg renders
+        // at a fixed pixel height with the extension overdrawn past the live
+        // bottom — the mount's overflow clip absorbs the resize, and a
+        // redraw only fires when the figure itself changed (width, hero
+        // height, convergence center), never on the scroll-driven jitter.
+        const key = `${width}|${figH}|${opts.cy ?? ''}`;
+        if (key === lastKey && drawnH >= height) return;
+        lastKey = key;
+        drawnH = Math.max(height, figH) * 1.25;
+        Object.assign(opts, { frame: false, base: false, extendH: drawnH });
+      }
+      el.innerHTML = tunnelSVG(width, figH, opts);
+      if (isField) {
+        const svg = el.firstElementChild as SVGElement | null;
+        if (svg) svg.style.height = `${drawnH}px`;
+      }
+    };
+    draw();
+    let t: ReturnType<typeof setTimeout>;
+    new ResizeObserver(() => {
+      clearTimeout(t);
+      t = setTimeout(draw, 150);
+    }).observe(el);
+  }
+</script>

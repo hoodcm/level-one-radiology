@@ -4,7 +4,7 @@ title: Explore radiograph imagery in/near the homepage hero
 band: later
 first_surfaced: 2026-07-14
 last_touched: 2026-07-14
-assessed: 2026-07-14
+assessed: 2026-08-07
 depends_on: [detector-hero-device-pass]
 links: [src/pages/index.astro, src/components/shared/DetectorHero.astro, public/cases/]
 worktype: decide

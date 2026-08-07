@@ -4,7 +4,7 @@ title: Add size-adjust metric-compatible fallbacks for OFL fonts
 band: someday
 first_surfaced: 2026-07-07
 last_touched: 2026-07-07
-assessed: 2026-07-07
+assessed: 2026-08-07
 depends_on: []
 links: [src/styles/tokens/fonts-ofl.generated.css, scripts/fetch-ofl-fonts.mjs]
 worktype: build

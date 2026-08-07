@@ -6,7 +6,10 @@
  *     [--kind views|stack]  required only when case.json carries BOTH views
  *                           and stacks (pick which payload to assemble)
  *     [--title "..."] [--modality CT]   override the case.json values
- *     [--start N]           author-chosen key image (stacks; default 1)
+ *     [--start N]           key-image override (stacks; default: the prepared
+ *                           case.json entry's start — the annotator's pick —
+ *                           else 1). The viewer opens here; the poster and
+ *                           thumbnail are cut from this frame.
  *
  * The input is a prepared case folder from the private
  * prepare-radiology-cases repo (typically ../prepare-radiology-cases/
@@ -207,7 +210,9 @@ async function buildStacks() {
         frames: inputs.length,
         width,
         height,
-        start: Math.min(inputs.length, Math.max(1, Number(args.start) || 1)),
+        // Author-chosen key image: --start overrides; else the prepared
+        // case.json entry (the annotator's pick, mid-range default); else 1.
+        start: Math.min(inputs.length, Math.max(1, Number(args.start) || Number(entry.start) || 1)),
         windows: [],
         poster: `${entry.series}/poster.jpg`,
       };

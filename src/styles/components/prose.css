@@ -31,8 +31,13 @@
 }
 
 /* --- Article shell --- */
+/* The article mounts the wireframe-tunnel title band (full-bleed, from the
+   nav's bottom edge): relative + isolate keeps the figure behind the content
+   but above the page background. */
 .article {
   padding-block: var(--section-spacer-sm) var(--section-spacer);
+  position: relative;
+  isolation: isolate;
 }
 
 .article__tags {
@@ -99,7 +104,9 @@
   font-family: var(--ff-display);
   font-size: 1.0625rem;            /* 17px */
   line-height: var(--lh-reading);
-  color: var(--color-text-primary);
+  /* One ramp step below primary: long-form reading at ~12:1 instead of
+     ~15:1 — still AAA, less halation strain over a full article. */
+  color: var(--color-text-secondary);
   /* Pin Newsreader to its sturdier text-grade optical cut (font-supported). */
   font-variation-settings: "opsz" var(--reading-opsz);
 }
@@ -151,7 +158,9 @@
   font-weight: 400;
   font-size: 0.65em;
   letter-spacing: 0.04em;
-  color: var(--color-text-muted);
+  /* Disabled, not muted — the ordinal is a coordinate, not a label; it
+     matches the TOC rail's numbering ink. */
+  color: var(--color-text-disabled);
 }
 
 /* Anchored headings (rehype-slug): land below the sticky header, and carry a
@@ -363,19 +372,29 @@
     grid-template-columns: var(--article-rail-columns);
     column-gap: var(--space-5);
   }
+  /* Header in row 1, content + rail in row 2: the rail can then never sit
+     alongside the title — it enters top-aligned with the Key Points card. */
+  .article__layout > .article__header {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+  }
   .article__main {
     grid-column: 2;
+    grid-row: 2;
     min-width: 0;
   }
   .article__toc {
     display: block;
     grid-column: 3;
+    grid-row: 2;
     justify-self: start;
     align-self: start;
     position: sticky;
     top: calc(var(--nav-height) + var(--space-4));
     max-width: 14rem;
-    padding-top: var(--space-1);
+    /* Top-align with the Key Points card (its top margin), then follow. */
+    margin-top: var(--callout-gap);
   }
 }
 .toc__list {
@@ -453,8 +472,12 @@
 }
 .key-points__list {
   margin: 0;
-  padding-left: var(--space-3);
-  list-style: disc;
+  /* Bullets flush with the card's text edge, wrapped lines flush too — a
+     hanging indent reads as too much air inside a card. Explicit ::before
+     bullets (not `inside` markers): the marker's built-in gap is UA-fixed
+     and too wide. */
+  padding-left: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -463,7 +486,34 @@
   line-height: 1.5;
   color: var(--color-text-secondary);
 }
-.key-points__list li::marker { color: var(--color-text-muted); }
+/* Card-list geometry, shared by Key Points and callout lists: the bullet
+   sits flush at the card's text edge inside a fixed gutter, and the text
+   block keeps ONE left edge — wrapped lines align under the first word
+   (Michael 2026-08-07). The inline-block marker's width IS the gutter, so
+   the gap never drifts with the UA's marker spacing. */
+.key-points__list li,
+.callout :is(ul, ol) li {
+  --bullet-gutter: 0.75em;
+  padding-left: var(--bullet-gutter);
+  text-indent: calc(-1 * var(--bullet-gutter));
+}
+.key-points__list li::before,
+.callout ul li::before {
+  content: '•';
+  display: inline-block;
+  width: var(--bullet-gutter);
+  text-indent: 0;
+  color: var(--color-text-muted);
+}
+.callout ol li { --bullet-gutter: 1.15em; } /* room for "1." */
+.callout ol li::before {
+  counter-increment: l1-callout-item;
+  content: counter(l1-callout-item) '.';
+  display: inline-block;
+  width: var(--bullet-gutter);
+  text-indent: 0;
+  color: var(--color-text-muted);
+}
 
 /* ==============================================
    EXTENDED PROSE ELEMENTS (Anthropic-style apparatus)
@@ -543,6 +593,14 @@
   color: var(--color-text-secondary);
 }
 .callout > :last-child { margin-bottom: 0; }
+/* Card lists sit flush — geometry + markers shared with .key-points__list
+   (defined beside it, "Card-list geometry"). */
+.callout ul,
+.callout ol {
+  padding-left: 0;
+  list-style: none;
+}
+.callout ol { counter-reset: l1-callout-item; }
 .callout__label {
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);

@@ -12,6 +12,7 @@ describe the system and point to it.
 | **Tokens** | [tokens.md](tokens.md) | The map of token families → the CSS files that define them; plus the measured contrast-ratio table |
 | **Components** | [components.md](components.md) | Module catalog + specs (authoritative CSS lives in `src/styles/`) |
 | **Reasoning** | [reasoning/](reasoning/) | *How to choose* a value when a spec is silent |
+| **Reference** | [claude-com-reference.md](claude-com-reference.md) | Scraped claude.com token set — the external design system we draw on for hierarchy (sizing, spacing, color); study copy, never our source of truth |
 
 ## Reasoning layer
 

@@ -15,6 +15,7 @@
 @import "./tokens/ornament.css";
 @import "./tokens/case-viewer.css";
 @import "./tokens/detector-hero.css";
+@import "./tokens/wireframe-tunnel.css";
 @import "./tokens/print.css";
 
 /* Base Styles */
@@ -28,6 +29,7 @@
 @import "./components/prose.css";
 @import "./components/pages.css";
 @import "./components/case-viewer.css";
+@import "./components/wireframe-tunnel.css";
 
 /* Article apparatus — one import per element; disable = comment out the line.
    Elements that also emit markup carry a flag in src/lib/apparatus.ts. */

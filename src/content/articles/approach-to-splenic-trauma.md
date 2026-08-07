@@ -9,9 +9,9 @@ primaryTag: "Trauma"
 contentType: "educational"
 featured: true
 keyPoints:
-  - "Active extravasation alone does not mandate surgery. Contained versus free is the distinction the report needs to make"
-  - "The AAST grade is really asking how much spleen is devascularized. Grade it, but let the vascular findings drive the conversation"
-  - "Delayed rupture is a real entity, so nonoperative management includes follow-up imaging at 48 to 72 hours"
+  - "Active extravasation alone does not mandate surgery. Contained versus free is the distinction the report needs to make."
+  - "The AAST grade is really asking how much spleen is devascularized. Grade it, but let the vascular findings drive the conversation."
+  - "Delayed rupture is a real entity, so nonoperative management includes follow-up imaging at 48 to 72 hours."
 ---
 
 The spleen is the most commonly injured solid organ in blunt abdominal trauma, so this is the read you'll do most often on a trauma service. Whether the patient goes to the OR, to angiography, or to a monitored bed hangs largely on the CT. The lacerations themselves are usually easy to see, and they're rarely the problem. The trouble comes from missing the vascular findings, and from treating the grade as the whole answer.

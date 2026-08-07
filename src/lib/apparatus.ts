@@ -30,4 +30,11 @@ export const apparatus = {
    *  card, the dual-instance h1). Off restores the pre-change text-only hero
    *  wholesale: single hero h1, tagline in the hero, FeatureBand untouched. */
   detectorHero: true,
+  /** Wireframe-tunnel backdrop behind article title headers. */
+  tunnelTitle: true,
+  /** EXPERIMENT (2026-08-07, look-see): the tunnel behind the homepage hero
+   *  FIELD (hero + feature band), under the detector drawing — frameless,
+   *  converging on the wordmark, extending to the feature band's end. On to
+   *  preview, off to remove. */
+  tunnelHero: true,
 } as const;

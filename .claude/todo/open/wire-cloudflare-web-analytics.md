@@ -8,7 +8,7 @@ depends_on: []
 links: [src/layouts/Layout.astro, docs/plans/hosting-migration-cloudflare.md]
 worktype: build
 workstream: cloudflare-migration
-assessed: 2026-07-14
+assessed: 2026-08-07
 ---
 Analytics provider decision changed 2026-07-13: **drop Plausible, use Cloudflare
 Web Analytics** (free, cookieless, no banner) — it folds into the Cloudflare

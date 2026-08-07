@@ -16,6 +16,11 @@ construction. **Do not re-audit case images for PHI** during pushes, reviews, or
 edits, and do not gate or hedge on it — the de-identification is a solved, owned
 process, not something to re-verify each time.
 
+The invocable front door from prepared case to started article is the
+**`/case-article <case-id>`** skill (`.claude/skills/case-article/SKILL.md`):
+payload build + validation, teaching-angle interview, schema-valid draft
+scaffolded live in dev.
+
 ## Single Source of Truth (non-negotiable)
 
 Every value that defines how the site looks or behaves is **defined once and referenced everywhere** — never hard-coded inline. Colors, spacing, type sizes and line-heights, grid columns/margins/gutters, radii, font families, breakpoints: each lives in exactly one place — design values in `src/styles/tokens/**` — and every consumer references the token. A literal in a component is a defect even when it renders correctly, because it is the thing that drifts out of sync.
@@ -75,7 +80,7 @@ src/
     layout/               # Header, Footer, Container, Grid, Col (.astro)
     article/              # TableOfContents.astro
     case/                 # <case-viewer> element + frame-store/fullscreen/mapping (.ts); see docs/archive/plans/ brief
-    shared/               # Tag, ArticleCard, FeatureBand, DetectorHero (.astro), NewsletterSignup (.tsx)
+    shared/               # Tag, ArticleCard, FeatureBand, DetectorHero, WireframeTunnel (.astro), NewsletterSignup (.tsx)
     ui/                   # shadcn/ui auto-generated components
   lib/
     utils.ts              # cn helper etc.

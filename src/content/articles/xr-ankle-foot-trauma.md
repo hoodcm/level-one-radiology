@@ -10,9 +10,9 @@ contentType: "educational"
 featured: false
 draft: false
 keyPoints:
-  - "Pronation-external rotation fails from the medial side first. By the time the fibula breaks, the syndesmosis is already torn up to the level of the fracture"
-  - "A widened medial clear space with no fibular fracture on the ankle views means the fibula broke higher up. Image the whole leg to find it"
-  - "A fracture above the syndesmosis is unstable and usually needs fixation. What changes management is instability, not the Weber letter by itself"
+  - "Pronation-external rotation fails from the medial side first. By the time the fibula breaks, the syndesmosis is already torn up to the level of the fracture."
+  - "A widened medial clear space with no fibular fracture on the ankle views means the fibula broke higher up. Image the whole leg to find it."
+  - "A fracture above the syndesmosis is unstable and usually needs fixation. What changes management is instability, not the Weber letter by itself."
 ---
 
 You get an ankle series after a twisting fall, and there's a fibula fracture. The temptation is to describe the fracture and move on. But the question that actually changes management is whether the ankle is stable, and the fibula fracture on its own doesn't answer it.
@@ -37,7 +37,7 @@ A pronation-external rotation injury lands in the Weber C row. The fracture is a
 
 ## What to Check on the Films
 
-::case[Left ankle trauma, lateral and oblique views.]{id="xr-ankle-foot-trauma"}
+::case[Left ankle trauma, lateral and oblique views.]{id="xr-ankle-trauma-weber-c"}
 
 The case above is a high-grade pronation-external rotation injury. Work the same four checks across both views:
 

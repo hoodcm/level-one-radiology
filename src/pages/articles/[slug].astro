@@ -7,6 +7,7 @@ import NewsletterSignup from '@/components/shared/NewsletterSignup.tsx';
 import { getArticles } from '@/lib/articles';
 import { tagVariant, contentTypeVariant, contentTypeLabel } from '@/lib/tags';
 import { apparatus } from '@/lib/apparatus';
+import WireframeTunnel from '@/components/shared/WireframeTunnel.astro';
 
 export async function getStaticPaths() {
   // getArticles() is newest-first, so index i-1 is the newer neighbor and
@@ -66,26 +67,29 @@ const moreArticles = [newer, older].filter((n): n is NonNullable<typeof newer> =
   <div class="article-progress" aria-hidden="true"></div>
 
   <article class="article">
+    {apparatus.tunnelTitle && <WireframeTunnel class="wireframe-tunnel--band" />}
     <div class="container article__layout">
-      <div class="article__main">
-        <!-- Header: SANS title (structure) over a SERIF deck (editorial voice) -->
-        <header class="article__header reading-column">
-          <div class="article__tags">
-            <Tag label={primaryTag.toUpperCase()} variant={tagVariant(primaryTag)} />
-            <Tag label={contentTypeLabel(contentType)} variant={contentTypeVariant(contentType)} />
-          </div>
-          <h1 class="article__title" style={`view-transition-name: ${vtName};`}>{title}</h1>
-          <p class="article__deck">{description}</p>
-          <div class="article__meta">
-            <span>Published {formattedDate}</span>
-            <span class="article__meta-sep" aria-hidden="true">·</span>
-            <span>{minutesRead} min read</span>
-          </div>
-          {reviewedStamp && (
-            <p class="article__review">Last reviewed {reviewedStamp}</p>
-          )}
-        </header>
+      <!-- Header: SANS title (structure) over a SERIF deck (editorial voice).
+           A direct grid child (row 1) so the TOC rail's row starts below it,
+           top-aligned with the Key Points card. -->
+      <header class="article__header reading-column">
+        <div class="article__tags">
+          <Tag label={primaryTag.toUpperCase()} variant={tagVariant(primaryTag)} />
+          <Tag label={contentTypeLabel(contentType)} variant={contentTypeVariant(contentType)} />
+        </div>
+        <h1 class="article__title" style={`view-transition-name: ${vtName};`}>{title}</h1>
+        <p class="article__deck">{description}</p>
+        <div class="article__meta">
+          <span>Published {formattedDate}</span>
+          <span class="article__meta-sep" aria-hidden="true">·</span>
+          <span>{minutesRead} min read</span>
+        </div>
+        {reviewedStamp && (
+          <p class="article__review">Last reviewed {reviewedStamp}</p>
+        )}
+      </header>
 
+      <div class="article__main">
         <!-- Mobile INDEX: <details> disclosure, <80em only (the rail's dual) -->
         <TableOfContents headings={headings} variant="index" />
 
@@ -140,6 +144,22 @@ const moreArticles = [newer, older].filter((n): n is NonNullable<typeof newer> =
   {hasCaseViewer && <script>import '@/components/case/case-viewer';</script>}
 
   <script>
+    // Wireframe-tunnel band: its bottom frame edge IS the thin rule before
+    // "PUBLISHED" — the meta line — so the figure's four edges adapt to any
+    // viewport and title length (the CSS --wt-band-h is only the no-JS
+    // fallback). The header resize covers title rewrap and late font swaps.
+    const band = document.querySelector<HTMLElement>('.wireframe-tunnel--band');
+    const meta = document.querySelector<HTMLElement>('.article__meta');
+    const shell = document.querySelector<HTMLElement>('.article');
+    if (band && meta && shell) {
+      const size = () => {
+        const h = meta.getBoundingClientRect().top - shell.getBoundingClientRect().top + 1;
+        band.style.height = `${h}px`;
+      };
+      size();
+      new ResizeObserver(size).observe(meta.closest('.article__header') ?? shell);
+    }
+
     // Scroll-spy for the TOC rail: stamp aria-current on the link whose
     // section heading most recently crossed the top third of the viewport.
     const toc = document.querySelector('[data-toc]');

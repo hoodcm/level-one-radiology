@@ -57,6 +57,8 @@ const DOUBLE_TAP_ZOOM = 2;
 const DOUBLE_TAP_MS = 300;
 const DOUBLE_TAP_SLOP_PX = 24;
 const WHEEL_STEP_CAP = 3; // per animation frame — keep in step with case-viewer.ts
+const WHEEL_PX_PER_STEP = 45; // wheel px per slice — keep in step with case-viewer.ts
+const WHEEL_LINE_PX = 16; // deltaMode LINE (Firefox) → px approximation
 // TUNE mapping — prototype math (case-viewer-loading-hud.html), floors from
 // the plan: contrast 0.3–3, brightness 0.4–2.5. Never zero: a uniform gray/
 // black void reads as breakage, not adjustment.
@@ -107,7 +109,7 @@ export class CaseFullscreen {
   #lastTapX = 0;
   #lastTapY = 0;
   #lastPointerType = '';
-  #wheelSteps = 0;
+  #wheelPx = 0;
   #wheelArmed = false;
   // Stage rect, cached per viewport event so the per-frame path (#redraw,
   // pinch/pan clamps) never reads getBoundingClientRect after #syncFrame's
@@ -358,13 +360,15 @@ ${scrubber}
       'wheel',
       (e) => {
         e.preventDefault();
-        this.#wheelSteps += Math.sign(e.deltaY);
+        const dy = e.deltaY; // read before deltaMode (Firefox order quirk)
+        this.#wheelPx += e.deltaMode === 1 ? dy * WHEEL_LINE_PX : dy;
         if (this.#wheelArmed) return;
         this.#wheelArmed = true;
         requestAnimationFrame(() => {
-          const step = Math.max(-WHEEL_STEP_CAP, Math.min(WHEEL_STEP_CAP, this.#wheelSteps));
-          this.#wheelSteps = 0;
+          const raw = Math.trunc(this.#wheelPx / WHEEL_PX_PER_STEP);
+          this.#wheelPx -= raw * WHEEL_PX_PER_STEP; // sub-step remainder carries
           this.#wheelArmed = false;
+          const step = Math.max(-WHEEL_STEP_CAP, Math.min(WHEEL_STEP_CAP, raw));
           if (step === 0 || !this.#open) return;
           this.#setFrame(this.#frame + step);
         });

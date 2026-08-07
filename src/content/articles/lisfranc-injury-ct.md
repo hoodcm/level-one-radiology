@@ -9,9 +9,9 @@ primaryTag: "MSK"
 contentType: "case-analysis"
 featured: false
 keyPoints:
-  - "Normal radiographs do not exclude a Lisfranc injury. Roughly one in five is missed at first presentation"
-  - "The alignment check that matters: the medial border of the second metatarsal lines up with the medial border of the middle cuneiform, on every view"
-  - "A fleck of bone in the space between the first and second metatarsal bases is an avulsed Lisfranc ligament until proven otherwise"
+  - "Normal radiographs do not exclude a Lisfranc injury. Roughly one in five is missed at first presentation."
+  - "The alignment check that matters: the medial border of the second metatarsal lines up with the medial border of the middle cuneiform, on every view."
+  - "A fleck of bone in the space between the first and second metatarsal bases is an avulsed Lisfranc ligament until proven otherwise."
 ---
 
 The order comes through at 1 a.m.: CT right foot, rule out fracture. The story is a head-on collision with the right foot braced against the brake pedal at impact. Radiographs from four hours earlier were read as normal. The foot is now too swollen for the walking boot they tried to fit, and there's bruising coming up along the sole.

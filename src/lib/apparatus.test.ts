@@ -14,6 +14,8 @@ describe('apparatus flag-name contract', () => {
       'footnotePopovers',
       'mobileToc',
       'readNext',
+      'tunnelHero',
+      'tunnelTitle',
     ]);
     for (const value of Object.values(apparatus)) {
       expect(typeof value).toBe('boolean');

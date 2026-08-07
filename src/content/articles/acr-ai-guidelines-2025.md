@@ -8,9 +8,9 @@ primaryTag: "AI & Policy"
 contentType: "commentary"
 featured: true
 keyPoints:
-  - "Vendor benchmark data no longer counts as validation. Every site has to test AI tools against its own patients and scanners"
-  - "Continuous monitoring is now a defined expectation, and most departments haven't decided whose job it is"
-  - "The guidelines say nothing about liability, cost, or how AI results should reach a single overnight reader"
+  - "Vendor benchmark data no longer counts as validation. Every site has to test AI tools against its own patients and scanners."
+  - "Continuous monitoring is now a defined expectation, and most departments haven't decided whose job it is."
+  - "The guidelines say nothing about liability, cost, or how AI results should reach a single overnight reader."
 ---
 
 ## What Changed

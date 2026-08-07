@@ -1,0 +1,60 @@
+{
+  "id": "ct-orbit-trauma-blowout-fracture-entrapment",
+  "title": "CT FACE WITHOUT CONTRAST",
+  "modality": "CT",
+  "base": "/cases/ct-orbit-trauma-blowout-fracture-entrapment/",
+  "rev": 1,
+  "series": [
+    {
+      "key": "s003",
+      "label": "AXIAL",
+      "plane": "axial",
+      "frames": 16,
+      "width": 351,
+      "height": 351,
+      "start": 9,
+      "windows": [
+        {
+          "key": "bone",
+          "label": "BONE",
+          "pattern": "s003/bone/{nnn}.jpg"
+        }
+      ],
+      "poster": "s003/poster.jpg"
+    },
+    {
+      "key": "s006",
+      "label": "CORONAL",
+      "plane": "coronal",
+      "frames": 20,
+      "width": 206,
+      "height": 206,
+      "start": 12,
+      "windows": [
+        {
+          "key": "bone",
+          "label": "BONE",
+          "pattern": "s006/bone/{nnn}.jpg"
+        }
+      ],
+      "poster": "s006/poster.jpg"
+    },
+    {
+      "key": "s008",
+      "label": "CORONAL",
+      "plane": "coronal",
+      "frames": 20,
+      "width": 202,
+      "height": 202,
+      "start": 10,
+      "windows": [
+        {
+          "key": "soft",
+          "label": "SOFT TISSUE",
+          "pattern": "s008/soft/{nnn}.jpg"
+        }
+      ],
+      "poster": "s008/poster.jpg"
+    }
+  ]
+}

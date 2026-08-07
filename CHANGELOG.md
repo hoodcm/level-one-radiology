@@ -6,10 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [0.10.2] - 2026-07-14
+## [0.11.0] - 2026-08-07
+
+### Added
+- **Wireframe-tunnel backdrop** — a one-point-perspective wireframe figure behind the homepage hero and article title bands; ring spacing derives from the page grid margin, and the article mount's bottom edge is measured to land exactly on the meta rule (Published date / read time), replacing it as a single full-bleed hairline.
+- **Homepage tunnel mount extended to the hero field** — spans hero + feature band, frameless and base-less, converging on the wordmark container and extending to the feature band's end; pixel-anchored so the feature card's scroll expansion can't stretch or redraw it.
+- **`docs/design/claude-com-reference.md`** — a scraped snapshot of claude.com's design tokens (color ramp, type scale, layout/shape values), kept as an external maturity reference for future token work; not a source of truth for this site's own tokens.
+- **`/case-article` skill** — hand-off from a prepared case to a started article: payload build+validate, an expert-first teaching-angle interview, and a schema-valid draft scaffolded live in dev.
+- **`/seo-grade` skill** — pre-publish SEO gate split out of `/case-article`'s embedded grade step; grades finalized prose (one article, a set, or the whole corpus) against the search-central-SEO probes via `/codex-second-opinion`.
+- **New case payload: `ct-face`** (CT facial bones — axial/coronal bone + coronal soft windows) and a draft article scaffold, "Orbital Floor Fracture Entrapment" (`draft: true`, not yet published).
 
 ### Changed
-- **Blueprint-grid mask recomposed: soft fades, grid-free above the drawing, margin slivers beside it** — the field above the drawing (header to stack top) is now pure background; below the drawing the grid fades in over `--dh-grid-fade` instead of cutting off sharply; and a subtle grid presence persists in the page margins beside the drawing (full at the viewport edge, gone at the margin line, strength `--dh-grid-margin-mask`), bounded to start at the drawing's top via a three-layer `mask-composite` fold (main ∪ (slivers ∩ bound); engines without mask-composite degrade to a union, only re-admitting the faint slivers up top).
+- **Article title header restructured as its own grid row** — the "On This Page" rail can no longer sit beside the title; it now enters top-aligned with the Key Points card and stays sticky from there.
+- **Card bullet lists (Key Points, callouts) use an explicit flush bullet in a fixed gutter** — wrapped lines align under the first word instead of hanging-indenting or returning under the bullet; `keyPoints` frontmatter across all articles now ends each item with a terminal period.
+- **Case-viewer wheel scrub now advances by scroll distance** rather than event count, in both the inline and fullscreen viewers.
+- Header wordmark tracking matched to the hero wordmark's letter-spacing.
+- Section-ordinal numbers beside article `h2`s dimmed to the disabled-text ink.
+- Footer copyright/data-plate switched from the mono face to the body sans.
+- **Project skills wired into the observability run-log** — every project skill now carries a mandatory run-record block, and `.claude/observability.json` opts the project into the `/end-session` completion gate.
+- **Blueprint-grid prototype retired for the tunnel** (Michael 2026-08-07) — the hairline field and its core-band mask are gone (`.hero-field--detector::before`, the five `--dh-grid-*` tokens, the script's `--dh-core-top/-bot` publication); the hero-field wrapper now hosts the tunnel's field mount instead. Supersedes this cycle's earlier mask recomposition, which never shipped.
+- **Detector drawing made opaque to backdrops** — new `.dh-occ` occlusion layer under the wireframe (stack cards, per-plate face quads riding drift/pull, the fan's full band, the slab face), full opacity outside the ink-diluted `.dh-root` so the tunnel behind it never shows through.
+- **Touch re-exposure covers both grid layers and runs hotter** — the en-face stack now joins the finger-following gold glow (previously vanes only), and `--dh-touch-boost` steps 2.2 → 3.
+
+### Fixed
+- **Subscribe button text now sits vertically centered** (Michroma's caps ride low in the em box; padding rebalanced).
 
 ## [0.10.1] - 2026-07-14
 

@@ -9,9 +9,9 @@ primaryTag: "Abdomen"
 contentType: "educational"
 featured: true
 keyPoints:
-  - "A closed loop has two transition points along one bowel segment. Count them, usually on the coronals"
-  - "Reduced wall enhancement predicts ischemia better than wall thickening does. Compare against adjacent normal loops"
-  - "Pneumatosis and portal venous gas are late findings. Call the surgeon before they appear"
+  - "A closed loop has two transition points along one bowel segment. Count them, usually on the coronals."
+  - "Reduced wall enhancement predicts ischemia better than wall thickening does. Compare against adjacent normal loops."
+  - "Pneumatosis and portal venous gas are late findings. Call the surgeon before they appear."
 ---
 
 You've probably read SBOs where you scroll back and forth and can't settle on a single transition point. Some of those are closed loops, and the distinction is worth the extra minutes, because a closed loop is a surgical emergency. It means a segment of bowel that's obstructed at both ends, so it can't decompress in either direction, and it strangulates faster than a simple obstruction.

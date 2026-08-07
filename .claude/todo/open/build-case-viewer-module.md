@@ -3,12 +3,12 @@ id: build-case-viewer-module
 title: Build Case Viewer showstopper module
 band: now
 first_surfaced: 2026-06-23
-last_touched: 2026-07-14
+last_touched: 2026-08-07
 depends_on: []
 links: [src/components/case/, docs/design/components.md, docs/archive/plans/2026-07-07-case-viewer-plan.md]
 worktype: build
 workstream: case-viewer
-assessed: 2026-07-14
+assessed: 2026-08-07
 ---
 Build the Case Viewer — the "showstopper module," a PACS-like image viewer for
 clinical cases embedded within articles. Light-DOM custom element
@@ -88,3 +88,11 @@ commit a3c3968, later the same day as the note above) — the real case is now
 live, not just drafted. Step 15's actual gate (on-device scrub judgment on
 real images) is still unconfirmed, so the item stays open; only the
 publication half of step 15 is done. Steps 3, 12, 13 unchanged.
+2026-07-14 rename: case ids adopted the prepare-repo slug convention —
+`xr-ankle-foot-trauma` is now `xr-ankle-trauma-weber-c`, `ct-face` is now
+`ct-orbit-trauma-blowout-fracture-entrapment` (payload dirs and article embeds
+updated; article slugs/URLs unchanged).
+2026-08-07 wheel-scrub retuned from event-count to distance-based stepping
+(`WHEEL_PX_PER_STEP`, case-viewer.ts + fullscreen.ts) — sensitivity polish,
+not a device-gate close; Steps 3, 12, 13, 15 still fully open and unconfirmed
+on-device.

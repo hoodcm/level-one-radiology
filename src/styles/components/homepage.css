@@ -48,7 +48,9 @@
   gap: 0.5em;
   font-family: var(--ff-ui-ext);
   font-size: var(--fz-branding);
-  letter-spacing: 0.08em;
+  /* Tracking mirrors the hero wordmark (its base / LEVEL ONE pair) so the
+     two instances read as one mark at desktop widths. */
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 /* Michroma has one weight — synthesize bold/semibold via text-stroke
@@ -56,7 +58,8 @@
    bold on top of the stroke). */
 .site-logo__level-one {
   font-weight: 400;
-  letter-spacing: 0.04em;
+  /* Opened like the hero's — offsets the heavy stroke crowding the stems. */
+  letter-spacing: 0.16em;
   -webkit-text-stroke: var(--wordmark-stroke-bold) currentColor;
 }
 .site-logo__radiology {
@@ -102,7 +105,9 @@
   border: 1px solid var(--color-primary);
   color: var(--color-on-primary);
   border-radius: var(--radius-xs);
-  padding: 7px 12px 5px;
+  /* Bottom-biased: Michroma's caps ride low in the em box (measured 13px
+     above ink vs 9 below at even padding-equivalent) — this recenters. */
+  padding: 5px 12px 7px;
 }
 
 .site-nav__item--cta:hover {
@@ -560,7 +565,7 @@
 }
 
 .site-footer__copyright {
-  font-family: var(--ff-mono);
+  font-family: var(--ff-body);
   font-size: var(--fz-plate);
   letter-spacing: 0.05em;
   color: var(--color-text-disabled);
@@ -568,7 +573,7 @@
 
 /* Data plate — version + build date, stamped at build (Footer.astro). */
 .site-footer__plate {
-  font-family: var(--ff-mono);
+  font-family: var(--ff-body);
   font-size: var(--fz-plate);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -757,25 +762,16 @@
   -webkit-user-select: none;
   -webkit-touch-callout: none;
 }
-/* PROTOTYPE (2026-07-14, hero-enrichment round): faint blueprint grid in the
-   black field AROUND the drawing (Michael: not over it). The field is the
-   .hero-field--detector WRAPPER (hero + feature band, index.astro), so the
-   hairlines continue down behind the expanding card and the card covers
-   them as it widens (Michael 2026-07-14). Column pitch is
-   content-width / --dh-grid-cols with the tile phase shifted by the page
-   margin, so hairlines register ON both margins and the pattern continues
-   past them to the edges; rows reuse the column pitch for square cells.
-   The mask carves out the drawing's live core band (+ one --space-2 of
-   clearance each side) — the DetectorHero script publishes the exact
-   --dh-core-top/-bot px per build (hero coords = field coords: the hero is
-   the field's first child at y 0); the percentage fallbacks are the no-JS
-   approximation at phone proportions. Knobs + kill instructions live with
-   the --dh-grid-* tokens (tokens/detector-hero.css). */
+/* The hero FIELD wrapper (hero + feature band, index.astro) — the backdrop
+   host: the wireframe tunnel mounts here (field variant, z:-1) so its rays
+   run continuously from the hero down behind the expanding card, which
+   covers them as it widens. (The 2026-07-14 blueprint-grid prototype that
+   lived here was retired for the tunnel — Michael 2026-08-07.) */
 .hero-field--detector {
   position: relative;
   /* The wrapper owns the deepest ground for BOTH sections (they go
      transparent below) and isolates — same trick as .hero's isolation —
-     so the z:-2 grid paints above this background instead of vanishing
+     so the z:-1 tunnel paints above this background instead of vanishing
      behind it. */
   isolation: isolate;
   background: var(--color-bg-deepest);
@@ -783,67 +779,6 @@
 .hero-field--detector .hero,
 .hero-field--detector .feature-band {
   background: transparent;
-}
-.hero-field--detector::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  pointer-events: none;
-  /* Field fills the FULL hero (margins included — Michael 2026-07-14);
-     the tile phase shifts by the page margin so hairlines register ON both
-     margins and the pattern continues past them to the viewport edges. */
-  background-image:
-    repeating-linear-gradient(
-      to right,
-      var(--dh-grid-line) 0 var(--dh-grid-hair),
-      transparent var(--dh-grid-hair)
-        calc((100vw - 2 * var(--grid-margin)) / var(--dh-grid-cols))
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      var(--dh-grid-line) 0 var(--dh-grid-hair),
-      transparent var(--dh-grid-hair)
-        calc((100vw - 2 * var(--grid-margin)) / var(--dh-grid-cols))
-    );
-  background-position:
-    var(--grid-margin) 0,
-    0 0;
-  /* Mask = main ∪ (slivers ∩ bound), soft --dh-grid-fade ramps throughout
-     (a hard cutoff read as a shelf — Michael 2026-07-14):
-       main    — grid BELOW the drawing only, fading in past the core band;
-                 everything above the drawing, header to stack top, stays
-                 pure background (Michael 2026-07-14).
-       slivers — a subtle grid presence in the page margins BESIDE the
-                 drawing: full at the viewport edge, gone at the margin
-                 line (strength --dh-grid-margin-mask).
-       bound   — starts the slivers at the drawing's top so they don't
-                 climb into the grid-free strip above it.
-     Composite fold is A add (B intersect C) — first layer is topmost. On
-     engines without mask-composite (pre-2022) the layers union, which only
-     re-admits the faint slivers above the drawing: quiet degradation. */
-  mask-image:
-    linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent calc(var(--dh-core-bot, 47%) + var(--space-2)),
-      black calc(var(--dh-core-bot, 47%) + var(--space-2) + var(--dh-grid-fade)),
-      black 100%
-    ),
-    linear-gradient(
-      to right,
-      var(--dh-grid-margin-mask) 0,
-      transparent var(--grid-margin),
-      transparent calc(100% - var(--grid-margin)),
-      var(--dh-grid-margin-mask) 100%
-    ),
-    linear-gradient(
-      to bottom,
-      transparent calc(var(--dh-core-top, 11%) - var(--space-2) - var(--dh-grid-fade)),
-      black calc(var(--dh-core-top, 11%) - var(--space-2)),
-      black 100%
-    );
-  mask-composite: add, intersect, add;
 }
 @media (min-width: 640px) and (min-aspect-ratio: 9/10) {
   .hero--detector {

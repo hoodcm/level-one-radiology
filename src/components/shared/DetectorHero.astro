@@ -14,16 +14,29 @@
 import {
   DESKTOP,
   SETTINGS,
+  fanBandRect,
   mobileComp,
   occluderRect,
   slabPath,
   stackPaths,
   vaneDepth,
+  vaneFaceD,
   vaneFrontD,
   vaneList,
 } from '../../lib/detector-hero.mjs';
 
 function staticInner(C: any): string {
+  // Occlusion layer UNDER the wireframe: every card/plate face filled
+  // bg-on-bg at full opacity (fill closes the stack's open paths into their
+  // card rects), so backdrops — the wireframe tunnel — never read through
+  // the drawing's polygons. The internal wireframe overlap look is
+  // untouched: all strokes still paint above all fills.
+  const b = fanBandRect(C);
+  const occ =
+    stackPaths(C).map((l: any) => `<path d="${l.d}"/>`).join('') +
+    `<rect x="${b.x}" y="${b.y}" width="${b.width}" height="${b.height}"/>` +
+    vaneList(C).map((v: any) => `<path d="${vaneFaceD(C, v, 0)}"/>`).join('') +
+    `<path d="${slabPath(C)}"/>`;
   const stack = stackPaths(C)
     .map((l: any) => `<path vector-effect="non-scaling-stroke" d="${l.d}"/>`)
     .join('');
@@ -36,6 +49,7 @@ function staticInner(C: any): string {
     .join('');
   const o = occluderRect(C);
   return (
+    `<g class="dh-occ">${occ}</g>` +
     `<g class="dh-root"><g>${stack}</g><g>${fan}</g>` +
     `<path class="dh-face" vector-effect="non-scaling-stroke" d="${slabPath(C)}"/></g>` +
     `<rect class="dh-occluder" x="${o.x}" y="${o.y}" width="${o.width}" height="${o.height}"/>`
@@ -97,6 +111,15 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
   .detector-hero .dh-static--mobile {
     left: var(--grid-margin);
     width: calc(100% - 2 * var(--grid-margin));
+  }
+  /* Occlusion layer under the wireframe: every card/plate face filled
+     bg-on-bg at FULL opacity — outside .dh-root so the ink opacity never
+     dilutes it (the occluder's precedent). Backdrops (the wireframe tunnel)
+     must never read through the drawing's polygons; the drawing's own
+     internal wireframe overlaps are untouched (strokes all paint above). */
+  .dh-occ {
+    fill: var(--color-bg-deepest);
+    stroke: none;
   }
   .dh-root {
     fill: none;
@@ -165,6 +188,7 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
     DESKTOP_MEDIA,
     S_BACK,
     SETTINGS,
+    fanBandRect,
     fitTransform,
     mobileComp,
     occluderRect,
@@ -172,6 +196,7 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
     slabPath,
     stackPaths,
     vaneDepth,
+    vaneFaceD,
     vaneFrontD,
     vaneList,
     vanePullOffset,
@@ -185,10 +210,6 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
 
   if (container && hero && !reduce) {
     const heroEl: HTMLElement = hero; // narrowed alias for the closures below
-    // the blueprint grid's host: the hero-field wrapper (hero + feature band,
-    // index.astro) whose ::before draws the hairlines — build() publishes the
-    // core band there; hero fallback keeps a bare DetectorHero harmless
-    const gridHost: HTMLElement = hero.closest<HTMLElement>('.hero-field--detector') ?? heroEl;
     const desktopMQ = window.matchMedia(DESKTOP_MEDIA);
 
     // Style knobs come from the tokens (detector-hero.css) — retunes there
@@ -220,10 +241,10 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
     let k = 1;
     let tx = 0;
     let ty = 0;
-    let gRoot: SVGGElement, gStack: SVGGElement, gVanes: SVGGElement;
+    let gRoot: SVGGElement, gStack: SVGGElement, gVanes: SVGGElement, gOcc: SVGGElement;
     let occluder: SVGRectElement;
     let vanes: any[] = [];
-    let stackLayers: { p: SVGPathElement; frac: number }[] = [];
+    let stackLayers: { p: SVGPathElement; occ: SVGPathElement; frac: number }[] = [];
     let fx = C.CX;
     let fxTarget = C.CX;
     let pointerFx = C.CX;
@@ -285,32 +306,34 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
       stackLayers = [];
       ({ k, tx, ty } = fitTransform(C, W, H, SETTINGS, insetX));
 
-      // Publish the drawn core's live band (px, hero coords) — the blueprint
-      // grid prototype masks itself OUT of this band, living only in the
-      // black field around the drawing (homepage.css fallbacks are the no-JS
-      // approximation). Set on the hero-field wrapper (hero + feature band),
-      // whose ::before carries the grid; the hero is the field's first child
-      // at y 0, so hero-coord px are field-coord px.
-      gridHost.style.setProperty('--dh-core-top', `${C.coreTop * k + ty}px`);
-      gridHost.style.setProperty('--dh-core-bot', `${C.coreBot * k + ty}px`);
+      // occlusion layer UNDER the wireframe (see staticInner): every card/
+      // plate face filled bg-on-bg at full opacity — outside .dh-root so the
+      // ink opacity never dilutes it (the occluder's precedent)
+      gOcc = el('g', { class: 'dh-occ', transform: rootTransform() }, svg);
 
       gRoot = el('g', { class: 'dh-root', transform: rootTransform() }, svg);
 
       // en-face stack: consecutively overlapping rectangles
       gStack = el('g', { id: 'dh-stack' }, gRoot);
       for (const l of stackPaths(C)) {
+        const occ = el<SVGPathElement>('path', { d: l.d }, gOcc);
         const p = el<SVGPathElement>(
           'path',
           { class: 'seg', 'data-order': l.order, 'vector-effect': 'non-scaling-stroke', d: l.d },
           gStack
         );
-        stackLayers.push({ p, frac: l.frac });
+        stackLayers.push({ p, occ, frac: l.frac });
       }
+
+      // the fan's full band, solid under the plate faces (fanBandRect doc)
+      const b = fanBandRect(C);
+      el('rect', { x: b.x, y: b.y, width: b.width, height: b.height }, gOcc);
 
       // perpendicular fan — shares the slab's transform
       gVanes = el('g', { id: 'dh-vanes' }, gRoot);
       const sigma = sigmaOf(C, fx - C.CX);
       for (const v of vaneList(C) as any[]) {
+        v.face = el('path', { d: vaneFaceD(C, v, sigma) }, gOcc);
         v.pF = el(
           'path',
           { class: 'seg', 'data-order': v.order, 'vector-effect': 'non-scaling-stroke', d: vaneFrontD(C, v) },
@@ -323,6 +346,10 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
         );
         vanes.push(v);
       }
+      // slab face into the occlusion layer too — .dh-face's own bg fill
+      // rides .dh-root's diluted opacity, which let the backdrop ghost
+      // through the 6px ring the occluder leaves visible
+      el('path', { d: slabPath(C) }, gOcc);
 
       // detector slab (drawn last: its bg-filled face occludes the joins)
       el(
@@ -440,8 +467,15 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
     function applyFocus(force: boolean) {
       if (!force && Math.abs(fxTarget - fx) < 0.5) return;
       const sigma = sigmaOf(C, fx - C.CX);
-      vanes.forEach((v) => v.pD.setAttribute('d', vaneDepth(C, v, sigma)));
-      stackLayers.forEach((l) => l.p.setAttribute('transform', `translate(${sigma * l.frac} 0)`));
+      vanes.forEach((v) => {
+        v.pD.setAttribute('d', vaneDepth(C, v, sigma));
+        v.face.setAttribute('d', vaneFaceD(C, v, sigma));
+      });
+      stackLayers.forEach((l) => {
+        const t = `translate(${sigma * l.frac} 0)`;
+        l.p.setAttribute('transform', t);
+        l.occ.setAttribute('transform', t);
+      });
     }
     function ambientTick(ts: number) {
       pw += ((pointerInside ? 1 : 0) - pw) * 0.02; // ~1s gradual take-over and release
@@ -486,6 +520,10 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
         { class: 'dh-beam dh-touch', transform: rootTransform(), opacity: 0, mask: 'url(#dh-touch-mask)' },
         svg
       );
+      // both grid layers ride the finger — the stack re-inks under the same
+      // gx-following gradient as the fan, not only the plates (the mask rect
+      // already spans the full canvas height)
+      el('use', { href: '#dh-stack' }, glowGroup);
       el('use', { href: '#dh-vanes' }, glowGroup);
       svg.appendChild(occluder); // occluder stays topmost
     }
@@ -499,6 +537,7 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
             // depth edges are REGENERATED under pull (dy), not transformed —
             // re-seat the rest geometry on release
             v.pD.setAttribute('d', vaneDepth(C, v, sigma));
+            v.face.setAttribute('d', vaneFaceD(C, v, sigma));
           }
           if (glowGroup) glowGroup.setAttribute('opacity', '0');
           touchApplied = false;
@@ -529,6 +568,9 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
           ? { dx: nb.pullOff.dx, dy: nb.pullOff.dy, minY: nb.top + nb.pullOff.dy }
           : null;
         v.pD.setAttribute('d', vaneDepth(C, v, sigma, v.pullT, SETTINGS, rearShift));
+        // the face bakes the pull offset in (same endpoint math), so the
+        // fill rides the pulled pane exactly
+        v.face.setAttribute('d', vaneFaceD(C, v, sigma, v.pullT, SETTINGS, rearShift));
       });
       ensureGlow();
       if (!glowGroup || !glowGrad || !glowRect) return;
