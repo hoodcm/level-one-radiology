@@ -40,6 +40,6 @@
   translate: -50% -50%;
   width: calc(var(--break-mark-size) * 0.75);
   height: calc(var(--break-mark-size) * 0.75);
-  border: 1px solid currentColor;
+  border: var(--border-w) solid currentColor;
   border-radius: var(--radius-pill);
 }

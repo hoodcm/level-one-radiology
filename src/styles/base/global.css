@@ -26,8 +26,8 @@ body {
 
 /* Focus indicators — the gold action color (see colors.css semantics) */
 :focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
+  outline: var(--focus-ring-w) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
 }
 
 /* Skip link — visually hidden until keyboard-focused, then pinned above the
@@ -36,7 +36,7 @@ body {
   position: fixed;
   top: var(--space-1);
   left: var(--space-1);
-  z-index: 60;
+  z-index: var(--z-skip);
   padding: var(--space-1) var(--space-2);
   background: var(--color-bg-elevated);
   color: var(--color-text-primary);

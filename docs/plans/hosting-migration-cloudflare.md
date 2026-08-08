@@ -10,13 +10,37 @@ server code and no secrets exist anywhere in the build**. Confirmed 2026-07-08:
 no source file references `BUTTONDOWN_API_KEY` or `PUBLIC_PLAUSIBLE_DOMAIN`; no
 analytics script is installed yet.
 
-**The site is not yet confirmed live** (open item `is-domain-dns-configured`:
-DNS resolution to GitHub Pages was never verified). That makes this migration
-the site's **first go-live** — so DNS is pointed **straight at Cloudflare and
-never at GitHub Pages.** The prior "configure GitHub Pages DNS" task is
-superseded by this plan. (If it turns out the domain *is* already resolving to
-GH Pages, Phase 4 notes the zero-downtime overlap variant; the default path
-assumes not-yet-live.)
+**The site is live on GitHub Pages** (verified 2026-08-08: `leveloneradiology.com`
+returns 200 from `server: GitHub.com`, serving v0.11.0; A records are the four
+GH Pages IPs `185.199.108-111.153`; nameservers are GoDaddy's
+`ns15/ns16.domaincontrol.com`; the GH Pages custom domain is verified with an
+approved TLS cert). This migration is therefore a **cutover of a live site, not
+a first go-live** — Phase 4 takes the zero-downtime overlap path (keep GH Pages
+serving until the Workers deploy is green on `*.workers.dev`, then move
+nameservers), and the GH Pages deploy path is decommissioned only after
+Cloudflare is confirmed serving.
+
+**Registrar facts (resolved 2026-08-08 by `whois`, closing
+`is-domain-dns-configured`):** registrar **GoDaddy**, created **2024-10-02**,
+registry expiry **2026-10-02**. The domain is years past the 60-day ICANN
+transfer lock, so Phase 5 is eligible immediately and gates nothing. Expiry is
+the live constraint: an inbound `.com` transfer adds a year to the current
+expiry, so transferring before **mid-September 2026** replaces the GoDaddy
+renewal instead of paying it. Don't leave the transfer to the final week — a
+transfer initiated too close to expiry can fail and force a renewal anyway.
+
+**Taking the repo private makes this migration a prerequisite, not a
+preference** (Michael, 2026-08-08 — he intends to go private before pushing the
+site forward). GitHub Pages is available on public repositories only under
+GitHub Free; publishing from a private repository requires GitHub Pro or above.
+Flipping this repo to private while it is still served by Pages therefore
+unpublishes the live site unless a paid plan is in place. Cloudflare Workers
+Builds has no such gate — it builds from private repositories on the free plan.
+**Ordering constraint: complete the cutover through Phase 4 (Cloudflare
+serving), then take the repo private.** Reversing that order takes the site
+down. Note also that repo-private never means site-private: the published pages
+stay public on every path here (privately *published* Pages sites require an
+organization on Enterprise Cloud).
 
 This plan does two things at once:
 
@@ -107,17 +131,16 @@ Two accounts actively managed (Cloudflare + email), with GitHub underneath.
 - `/Users/michael/GitHub/level-one-radiology/src/components/shared/NewsletterSignup.tsx` — the email endpoint (provider-open; not changed here)
 - Cloudflare docs: https://developers.cloudflare.com/workers/framework-guides/web-apps/astro/ · https://developers.cloudflare.com/workers/static-assets/ · https://developers.cloudflare.com/web-analytics/ · https://developers.cloudflare.com/registrar/
 
-## Phase 0 — Confirm the domain (resolves `is-domain-dns-configured`)
+## Phase 0 — Confirm the domain — DONE (2026-08-08)
 
-Before any Cloudflare work: confirm `leveloneradiology.com` **is registered at
-GoDaddy** and note its **registration date**. Cloudflare Registrar (Phase 5)
-requires the domain be **> 60 days** since registration or its last transfer
-(ICANN lock); if it was registered recently, Phase 5 waits until the 60-day mark
-while Phases 1–4 and 6–7 proceed regardless. If the domain is *not* registered
-anywhere yet, register it — at Cloudflare directly if possible, which skips
-Phase 5 entirely.
-→ verify: GoDaddy dashboard shows the domain under Michael's account with a
-known registration date.
+Registrar, registration date, and transfer eligibility are resolved above (see
+"Registrar facts"). Nothing here gates the later phases; the only carried
+constraint is the **mid-September transfer window** ahead of the 2026-10-02
+expiry.
+
+One thing still needs Michael's eyes, and only his: **that the GoDaddy account
+holding the domain is one he controls and can sign into**, since Phases 4 and 5
+both drive that dashboard. `whois` proves the registrar, not the login.
 
 ## Phase 1 — Repo prep (no behavior change; the GH Pages build keeps working before and after)
 

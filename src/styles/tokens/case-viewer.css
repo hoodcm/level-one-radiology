@@ -15,10 +15,45 @@
   /* Poster blur-up (the static ~96px thumb upscaled under the boot). */
   --cv-poster-blur: 12px;
 
+  /* --- Borders over imaging: the one alpha carve-out on the site ---
+
+     Site-wide, border roles are OPAQUE ramp steps (tokens/colors.css): an
+     opaque hairline holds one weight on every surface, which is the whole
+     point. That reasoning stops at the edge of a slice. A border drawn on
+     top of CT pixels has no fixed ground — the pixels under it run from
+     air-black to bone-white and change every frame — so an opaque step
+     either vanishes on bright anatomy or blocks it on dark. Alpha is the
+     correct mechanism here precisely because it composites with whatever is
+     beneath it.
+
+     The discriminator is COMPOSITING CONTEXT, and it is narrower than
+     "floats over the stage": the question is whether SLICE PIXELS are what
+     the border actually composites against. Only two elements qualify —
+     .cv__activate and .cv-fs__wl — and both qualify because they sit on the
+     translucent --cv-scrim, which lets the image through to their edges.
+     Everything in .cv__bar / .cv-fs__bar is chrome on an opaque ground below
+     the stage and uses the normal opaque roles.
+
+     The instructive near-miss is .cv-fs__close. It IS absolutely positioned
+     over the stage, but it is a .cv-fs__chip, and that rule gives it an
+     opaque background which (background-clip: border-box) paints beneath its
+     own border. An alpha border there composites against a fixed, known
+     colour — so it is not a carve-out case at all, just a slightly different
+     opaque hairline from its siblings. Position is not the test; what is
+     underneath the border is.
+
+     Deliberately NOT carved out: the shared :focus-visible rule in
+     components/case-viewer.css. It groups five selectors, four of them not
+     over imaging, and the focus cue over a slice is the cyan --cv-ring
+     box-shadow, not the 1px border. Splitting a working rule to alpha-ize
+     one border buys no visible fidelity — leave it opaque. */
+  --cv-border-overlay: rgba(255, 255, 255, 0.08);
+  --cv-border-overlay-strong: rgba(255, 255, 255, 0.15);
+
   /* Boot HUD reticle glow — plain white (the HUD overlays imaging, not themed
      chrome; see components/case-viewer.css §Boot HUD). 40% alpha gives the 1px
-     bloom; a raw white-alpha literal matches the --color-border-* idiom in
-     tokens/colors.css. */
+     bloom; like the overlay borders above, it is a white-alpha literal because
+     it composites over slice pixels rather than over a known ground. */
   --cv-hud-glow: rgba(255, 255, 255, 0.4);
 
   /* Corner brackets — the "slight HUD framing". Ivory at rest; the engaged
@@ -34,11 +69,11 @@
      whole engaged stay (entry overshoots once and settles — the lock click). */
   --cv-bracket-lock: 3px;
 
-  /* Chrome scrim — the translucent imaging-black behind controls that float
+  /* Chrome scrim — the translucent near-black behind controls that float
      over the slice (✕ buttons, tap-to-activate hint). */
   --cv-scrim: color-mix(in srgb, var(--color-bg-deepest) 72%, transparent);
 
-  /* Tap-to-boot veil — the semi-greyed imaging-black that dims the inert stage
+  /* Tap-to-boot veil — the semi-greyed near-black that dims the inert stage
      until the ACTIVATE tap fires the boot (apparatus.caseTapToBoot). */
   --cv-armed-veil: color-mix(in srgb, var(--color-bg-deepest) 55%, transparent);
   /* Armed chrome mute — the meta strip / slider / chips fade to this opacity

@@ -3,7 +3,7 @@ title: "Pronation-External Rotation Ankle Injuries"
 publishDate: "2026-07-11"
 serial: "L1-0008"
 lastReviewed: "2026-07-11"
-description: "How a pronation-external rotation ankle injury fails from the medial side out, why the fibula fractures high in a Weber C, and when a widened medial clear space means you need to image the whole leg."
+description: "How a pronation-external rotation ankle injury fails from the medial side out, why the fibula breaks high in a Weber C, and when to image the whole leg."
 tags: ["msk", "trauma", "ankle", "fracture"]
 primaryTag: "MSK"
 contentType: "educational"
@@ -15,13 +15,13 @@ keyPoints:
   - "A fracture above the syndesmosis is unstable and usually needs fixation. What changes management is instability, not the Weber letter by itself."
 ---
 
-You get an ankle series after a twisting fall, and there's a fibula fracture. The temptation is to describe the fracture and move on. But the question that actually changes management is whether the ankle is stable, and the fibula fracture on its own doesn't answer it.
+You get an ankle series after a twisting fall, and there's a fibula fracture. The temptation is to describe the fracture and move on. The question that actually changes management is whether the ankle is stable, and the fibula fracture on its own doesn't answer it.
 
 ## How the Injury Happens
 
 Picture the foot planted and pronated while the body keeps turning, so the talus rotates outward and drives against the fibula. The restraints fail in order, from the medial side outward. The medial structures go first: either the deltoid ligament tears or the medial malleolus avulses. The anterior part of the syndesmosis tears next. Then the fibula itself breaks, above the syndesmosis, and finally the posterior structures give.
 
-The useful part of that sequence is where the fibula sits in it. The fibula is one of the last things to fail, and it fails above the syndesmosis. By the time you can see a fibula fracture, the medial side and the syndesmosis below the fracture have already come apart. So the level of the fibula fracture is really telling you how far the injury traveled up the leg before the bone finally broke.
+The useful part of that sequence is where the fibula sits in it. The fibula is one of the last things to fail, and it fails above the syndesmosis. By the time you can see a fibula fracture, the medial side and the syndesmosis below the fracture have already come apart. So the level of the fibula fracture is a record of how far the injury traveled up the leg before the bone finally broke.
 
 ## Weber Level Is a Stability Question
 
@@ -33,7 +33,7 @@ The Weber classification sorts distal fibula fractures by where they sit relativ
 | B | At the syndesmosis | Variable | Depends on the medial side |
 | C | Above the syndesmosis | Torn below the fracture | Unstable |
 
-A pronation-external rotation injury lands in the Weber C row. The fracture is above the syndesmosis, which means everything holding the fibula to the tibia below the fracture has already torn. The letter is shorthand for one question: how much of the syndesmosis is still doing its job.
+A pronation-external rotation injury lands in the Weber C row. The fracture is above the syndesmosis, which means everything holding the fibula to the tibia below the fracture has already torn. Treat the letter as shorthand for one question: how much of the syndesmosis is still doing its job.
 
 ## What to Check on the Films
 

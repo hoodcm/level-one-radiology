@@ -1,0 +1,103 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Container from '@/components/layout/Container.astro';
+
+// NOTE: the reuse policy below (noncommercial teaching use allowed with
+// attribution) is the drafted recommendation, not a settled decision —
+// Michael confirms it in the copy review before launch.
+const description =
+  'Terms of use for Level One Radiology: what you can do with the articles and case images, and the limits of what this site promises.';
+---
+
+<Layout title="Terms | Level One Radiology" description={description}>
+  <section class="page">
+    <Container width="reading">
+      <header class="page-header">
+        <p class="type-ui">Terms</p>
+        <h1 class="page-header__title">Terms of Use</h1>
+      </header>
+      <div class="prose">
+        <p class="lead">
+          These Terms of Use govern your access to and use of leveloneradiology.com. Please
+          read them together with the <a href="/privacy/">Privacy Policy</a> and the
+          <a href="/disclaimer/">Medical Disclaimer</a>, which are incorporated into these
+          terms.
+        </p>
+
+        <h2>Acceptance of terms</h2>
+        <p>
+          By accessing or using this site, you agree to be bound by these terms. If you do
+          not agree, do not use the site.
+        </p>
+
+        <h2>Intellectual property</h2>
+        <p>
+          All articles, case images, illustrations, and site design are the property of
+          Michael Hood and are protected by copyright. All rights are reserved except as
+          expressly granted below.
+        </p>
+
+        <h2>Permitted use</h2>
+        <p>
+          You may read, link to, and share links to any content on this site. You may use
+          excerpts and case images for noncommercial educational purposes — including
+          lectures, resident conferences, and journal clubs — provided you attribute the
+          material to Level One Radiology and cite or link to the source article. Case images
+          must be used as published; they are de-identified teaching material, and any
+          attempt to re-identify the individuals depicted is prohibited.
+        </p>
+
+        <h2>Uses requiring permission</h2>
+        <p>
+          Republication of full articles, any commercial use of site content, and use in paid
+          courses or products require prior written permission. Requests may be sent to the
+          contact address below.
+        </p>
+
+        <h2>Medical disclaimer</h2>
+        <p>
+          The content of this site is educational and is not medical advice. The
+          <a href="/disclaimer/">Medical Disclaimer</a> is part of these terms. Clinical
+          decisions remain the responsibility of the treating clinicians.
+        </p>
+
+        <h2>Disclaimer of warranties</h2>
+        <p>
+          This site and its content are provided "as is" and "as available," without
+          warranties of any kind, express or implied, including any warranty that the content
+          is complete, current, or error-free.
+        </p>
+
+        <h2>Limitation of liability</h2>
+        <p>
+          To the fullest extent permitted by law, Michael Hood and Level One Radiology shall
+          not be liable for any damages arising out of or in connection with your use of, or
+          reliance on, this site or its content.
+        </p>
+
+        <h2>Third-party links</h2>
+        <p>
+          Links to third-party websites are provided for convenience only and do not
+          constitute endorsement. We are not responsible for the content or practices of
+          those sites.
+        </p>
+
+        <h2>Changes to these terms</h2>
+        <p>
+          These terms may be revised from time to time. The current version will always be
+          posted at this address, and continued use of the site after changes are posted
+          constitutes acceptance of the revised terms.
+        </p>
+
+        <h2>Governing law and contact</h2>
+        <p>
+          These terms are governed by the laws of the Commonwealth of Massachusetts, without
+          regard to conflict-of-law principles. Questions about these terms may be directed
+          to <a href="mailto:privacy@leveloneradiology.com">privacy@leveloneradiology.com</a>.
+        </p>
+
+        <p><em>Last updated August 8, 2026.</em></p>
+      </div>
+    </Container>
+  </section>
+</Layout>

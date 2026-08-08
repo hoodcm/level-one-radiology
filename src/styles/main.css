@@ -65,11 +65,8 @@
 
   /* Signal colors */
   --color-signal-red: var(--color-signal-red);
-  --color-signal-orange: var(--color-signal-orange);
   --color-signal-yellow: var(--color-signal-yellow);
   --color-signal-cyan: var(--color-signal-cyan);
-  --color-signal-violet: var(--color-signal-violet);
-  --color-signal-magenta: var(--color-signal-magenta);
 
   /* Border colors */
   --color-border-subtle: var(--color-border-subtle);

@@ -23,15 +23,29 @@ Target: **WCAG 2.1 AA** across every module (the methodology's Module Standard).
 
 ## 2. Color is never the only signal
 
-Signal colors (red/orange/yellow/cyan/violet) **carry meaning** (red = critical/CTA, cyan = interactive,
-yellow = caution). Because they encode information, that information must **also** be available without
-color — text, icon, underline, or position. A link is not "cyan"; it is a link that is also cyan. Never
-rely on hue alone to distinguish state.
+The palette spends hue on three things only: the **brand gold** (links, focus, selection, CTAs, and
+caution), **red** (clinical critical), and one hue family split by job — **cyan** for the case viewer's
+instrument readouts, **teal** for editorial apparatus. Because these encode information, that
+information must **also** be available without color — text, icon, underline, or position. A link is not
+"the gold one"; it is a link that is also gold, and underlined. Never rely on hue alone to distinguish
+state.
+
+Reducing the palette *removed* an obligation rather than adding one: tags no longer carry their category
+in a hue at all, so a neutral chip satisfies this rule outright — its meaning is the word inside it.
+
+Red is the case that needs care, so it exists in two weights. The saturated `--color-signal-red` is
+**large-text-only** at 3.8:1 — use it for a rule, a border, a tint, or large type — and that limit is
+exactly why the trauma chip was retired instead of restyled. Anything at label or body size takes
+`--color-signal-red-text`, the same hue lifted to clear 4.5:1 on every ground it can land on. If you are
+about to set red on small text, you want the second one.
 
 ## 3. Focus visibility
 
-Every interactive element shows a visible focus indicator (2px outline, Signal Cyan per the tokens).
-Never remove focus outlines without an equivalent visible replacement. Focus order follows reading order.
+Every interactive element shows a visible focus indicator, drawn in the brand gold (`--color-focus` →
+`--color-primary`). Never remove focus outlines without an equivalent visible replacement; focus order
+follows reading order. The one deliberate exception is inside the case viewer, where controls sitting
+over imaging use a cyan ring (`--cv-ring`) so the cue reads against slice pixels rather than against
+chrome.
 
 ## 4. Targets and spacing
 

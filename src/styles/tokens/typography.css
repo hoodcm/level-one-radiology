@@ -367,34 +367,119 @@
   --ff-ui-ext: "Michroma", "Eurostile Next W1G", "Eurostile LT Std", "IBM Plex Mono", monospace;
   --ff-mono: "Chivo Mono", "IBM Plex Mono", "JetBrains Mono", monospace;
 
+  /* --- THE LEADING RAMP — every line-height on the site is one of these ---
+     Closed set, five rungs, named by value ×100 (the --gray-N convention).
+     The reference system runs 1/1.1/1.2/1.3/1.5/1.6/1.7 with body on 1.6;
+     ours keeps that rung discipline but tops at 1.5 — a deliberately tighter
+     ceiling, because the serif reading voice wants an editorial density
+     their sans never has. Rungs are spaced a meaningful step apart: an
+     0.01-class difference between two elements is not a design decision,
+     so it cannot be expressed. One element class = one rung, site-wide.
+     A component references a rung directly (the --space-N model) or a
+     semantic pairing below; a numeric line-height literal outside this file
+     is a lint violation. */
+  --lh-100: 1;      /* solid — titles, wordmark, chips, big numerals */
+  --lh-110: 1.1;    /* display serif */
+  --lh-120: 1.2;    /* headings, card titles */
+  --lh-140: 1.4;    /* dense — the serif reading column, decks, lists, captions, meta */
+  --lh-150: 1.5;    /* open — sans body, callouts, footnotes */
+
   /* Type Scale */
   --fz-base: 1rem;
-  --lh-base: 1.5;
+  --lh-base: var(--lh-150);
+
+  /* --- THE TRACKING RAMP — every letter-spacing is one of these ---------
+     Closed set, four voices (the reference runs three: 0 / .01 / .05-caps).
+     8 stray literal values collapsed onto them; the wordmark pair keeps its
+     stroke-tuned values (comment at the wordmark tokens below). */
+  --ls-tight: -0.01em;   /* sans tightening — body and headings (knob:
+                            toward 0 to loosen, more negative to tighten) */
+  --ls-display: -0.02em; /* BIG sans titles only — optical-size compensation:
+                            tracking that reads right at body size reads loose
+                            at 40px+, so display tightens a second step
+                            (classic pro-titling move: ~2% narrower, leading
+                            110–120%; the leading half lives on the --lh
+                            rungs). Knob: -0.03em is the tight end of taste. */
+  --ls-mono: 0.04em;     /* mono console voice — ordinals, meta, readouts */
+  --ls-ui: 0.06em;       /* uppercase UI labels in Michroma + plate fine print
+                            (the geometric face wants the air) */
+  --ls-caps-sans: -0.01em; /* uppercase labels in the BODY sans (nav) — DM Sans
+                             caps read loose at Michroma's tracking; the
+                             humanist face needs a third of it. Knob: 0 is the
+                             tight end, 0.04 drifts back toward loose. */
+
+  /* --- THE WEIGHT VOCABULARY --------------------------------------------
+     Three weights, site-wide. A numeric font-weight in a style rule is a
+     lint violation (@font-face descriptors are declarations of what a file
+     IS, not style choices — they stay numeric). */
+  --fw-regular: 400;
+  --fw-semibold: 600;
+  --fw-bold: 700;
 
   /* Body variants */
   --fz-body: 1rem;
-  --lh-body: 1.5;
-  /* Body sans tracking — DM Sans tightened slightly from default (knob: nudge
-     toward 0 to loosen, more negative to tighten). */
-  --ls-body: -0.01em;
+  --lh-body: var(--lh-150);
+  --ls-body: var(--ls-tight);
   --fz-body-s: 0.875rem;
-  --lh-body-s: 1.5;
+  --lh-body-s: var(--lh-150);
   --fz-body-xs: 0.6875rem;
-  --lh-body-xs: 1.45;
+  --lh-body-xs: var(--lh-140);
+
+  /* Reading-column rungs — the reference's body-1/2/3 ladder (19/17/15),
+     which our prose already matched as literals. The serif column and any
+     sans element on the same rung share the token: one rung, one size,
+     site-wide. */
+  --fz-lead: 1.1875rem;      /* 19px — lead paragraph */
+  --fz-reading: 1.0625rem;   /* 17px — the reading column; card titles share the rung */
+  --fz-list: 0.9375rem;      /* 15px — prose list items */
+
+  /* --- The editorial scale interpolates; everything else steps ---
+     Display, article title/deck, and prose headings clamp continuously over
+     a 320 → 1280px viewport. Endpoints are NOT new values: each is the
+     token's existing mobile literal and its existing widest-breakpoint
+     literal, so the interpolation replaces the jump without moving either
+     end. Max is reached at 1280 rather than 1440 so the common laptop range
+     is already at full size.
+
+     Deliberately NOT fluid: body reading size, --lh-reading (measure-driven),
+     the UI/meta/micro sizes, and the grid triple — see the note in
+     spacing.css. --fz-wordmark-hero (below) is the precedent for the
+     mechanism; it clamps on its own content-fit derivation.
+
+     CONSTRAINT: no JS may read a fluid token with getPropertyValue — it
+     returns the unresolved clamp() string, not a number. Measure a consumer's
+     resolved box instead (see spacing.css for the full note). */
 
   /* Display */
-  --fz-display-l: 2.25rem;
-  --lh-display-l: 1.1;
-  --fz-display: 1.75rem;
-  --lh-display: 1.15;
+  --fz-display-l: clamp(2.25rem, calc(2rem + 1.25vw), 3rem);            /* 36 → 48px */
+  --lh-display-l: var(--lh-110);
+  /* Display consolidated onto the 110 rung (was 1.15 — an off-ramp one-off;
+     the snap tightens, per the ramp's direction rule). */
+  --fz-display: clamp(1.75rem, calc(1.6667rem + 0.4167vw), 2rem);       /* 28 → 32px */
+  --lh-display: var(--lh-110);
 
-  /* Headlines */
+  /* Headlines — fixed. Its old 60em override set the SAME 1.5rem, so there
+     is no ramp to interpolate; inventing a second endpoint would be a taste
+     call, not a conversion. */
   --fz-headline: 1.5rem;
-  --lh-headline: 1.2;
+  --lh-headline: var(--lh-120);
+
+  /* Article header — tokenized out of prose.css, where they were raw
+     literals. A clamp() written inline in a component file is still a
+     literal by the single-source rule. */
+  --fz-article-title: clamp(2rem, calc(1.5833rem + 2.0833vw), 3.25rem);   /* 32 → 52px */
+  --fz-article-deck: clamp(1.375rem, calc(1.3125rem + 0.3125vw), 1.5625rem); /* 22 → 25px */
+
+  /* Prose headings — same story: literals in prose.css until now. h4 shares
+     h3's size and shares its token: a second token holding the identical
+     value would just be two places to retune. Give h4 its own the day it
+     actually diverges. */
+  --fz-prose-h2: clamp(1.25rem, calc(1.1458rem + 0.5208vw), 1.5625rem);  /* 20 → 25px */
+  --fz-prose-h3: clamp(1.0625rem, calc(1.0208rem + 0.2083vw), 1.1875rem); /* 17 → 19px */
 
   /* UI */
   --fz-ui: 0.6875rem;
-  --lh-ui: 1.5;
+  --lh-ui: var(--lh-150);
   --ls-ui: 0.06em;
 
   /* Console micro-numerals — the smallest mono voice (TOC/INDEX ordinals,
@@ -405,10 +490,13 @@
      below micro, the absolute floor of the scale. */
   --fz-plate: 0.5625rem;  /* 9px */
 
-  /* Long-form reading. Anthropic uses 155%, but Utopia (serif) has a taller
-     line box than Anthropic Sans, so it reads looser at the same multiplier.
-     Tightened to 1.36 for a denser, less airy serif column. */
-  --lh-reading: 1.36;
+  /* Long-form reading — the dense rung, at every viewport. Anthropic's body
+     runs 1.6, but the serif has a taller line box and reads looser at the
+     same multiplier — 1.4 is the deliberate editorial tightening. The old
+     mobile/desktop split (1.36/1.44) was an 0.08 difference no reader
+     perceives; one class, one rung. Knob: pick a different rung = the whole
+     reading column moves together. */
+  --lh-reading: var(--lh-140);
 
   /* Body reading optical size — Newsreader's `opsz` axis (6–72). Lower selects
      the sturdier, more open text-grade cut (a more substantial, slightly
@@ -417,6 +505,14 @@
      Font-supported — not a transform. Knob: lower = chunkier/sturdier. */
   --reading-opsz: 15;
 
+  /* Cap-height leading trim — display/titling only. Cuts the half-leading
+     above the cap line and below the baseline, so a title sits optically
+     flush against what borders it (the reference trims .39em/.38em by hand;
+     text-box is the native form). Titling only, NOT prose: the prose rhythm
+     tokens were tuned against untrimmed boxes, and trimming would silently
+     re-tune every gap. Knob: `none` disables site-wide in one line. */
+  --text-trim: trim-both cap alphabetic;
+
   /* Inline links — visible but controlled underline (Anthropic metrics) */
   --link-underline-offset: 0.18em;
   --link-underline-thickness: 0.08em;
@@ -424,6 +520,12 @@
   /* Nav */
   --fz-branding: 1.125rem;
   --fz-nav: 0.875rem;
+  /* Wordmark tracking — its own pair, deliberately off the --ls ramp: both
+     values are tuned against the synthesized stroke weight (tracking opens
+     to offset the stroke crowding Michroma's stems), so they move with the
+     stroke knobs below, not with the UI label voice. */
+  --ls-wordmark: 0.06em;        /* base / RADIOLOGY line */
+  --ls-wordmark-open: 0.16em;   /* LEVEL ONE pair under the heavy stroke */
   /* Michroma is single-weight; synthesize heavier states with text-stroke
      (knob: larger = bolder). Stroke is centered on the glyph edge, same color
      as fill, so it reads as added weight. Use only at display sizes. */
@@ -446,43 +548,41 @@
   --fz-hero-subtitle: 1.375rem;
   /* Homepage article-card title */
   --fz-card-title: 1.25rem;   /* 20px */
+  /* 404 plate numeral — the one display size above the fluid scale; a fixed
+     engineering-plate stamp, not editorial type, so it does not clamp. */
+  --fz-404: 6rem;
 }
 
-/* Desktop scale adjustments */
-@media (min-width: 60em) {
-  :root {
-    --fz-display-l: 3rem;
-    --fz-display: 2rem;
-    --fz-headline: 1.5rem;
-    /* Reading leading opens with the measure: the full 640px column runs
-       ~73 chars/line, and long lines need more lead for the return sweep.
-       Mobile (~40 cpl) keeps the denser 1.36. Knob: lower = denser. */
-    --lh-reading: 1.44;
-  }
-}
+/* Desktop scale adjustments are GONE, deliberately. The sizes clamp in
+   :root (a @media block still setting one would win above its breakpoint,
+   silently un-fluidizing it), and the reading leading no longer steps —
+   one class, one rung, every viewport. Only a genuinely stepped value may
+   reintroduce a block here. */
 
 /* Typography utility classes */
 .type-display-l {
   font-family: var(--ff-display);
   font-size: var(--fz-display-l);
   line-height: var(--lh-display-l);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ls-display);
   color: var(--color-text-ivory);
+  text-box: var(--text-trim);
 }
 
 .type-display {
   font-family: var(--ff-display);
   font-size: var(--fz-display);
   line-height: var(--lh-display);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ls-display);
   color: var(--color-text-ivory);
+  text-box: var(--text-trim);
 }
 
 .type-headline {
   font-family: var(--ff-body);
   font-size: var(--fz-headline);
   line-height: var(--lh-headline);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
   color: var(--color-text-primary);
 }
 
@@ -506,7 +606,7 @@
   line-height: var(--lh-ui);
   letter-spacing: var(--ls-ui);
   text-transform: uppercase;
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   color: var(--color-text-muted);
 }
 
@@ -514,6 +614,6 @@
   font-family: var(--ff-mono);
   font-size: var(--fz-body-xs);
   line-height: var(--lh-body-xs);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--ls-mono);
   color: var(--color-text-muted);
 }

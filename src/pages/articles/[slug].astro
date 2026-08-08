@@ -5,7 +5,7 @@ import Tag from '@/components/shared/Tag.astro';
 import TableOfContents from '@/components/article/TableOfContents.astro';
 import NewsletterSignup from '@/components/shared/NewsletterSignup.tsx';
 import { getArticles } from '@/lib/articles';
-import { tagVariant, contentTypeVariant, contentTypeLabel } from '@/lib/tags';
+import { contentTypeLabel } from '@/lib/tags';
 import { apparatus } from '@/lib/apparatus';
 import WireframeTunnel from '@/components/shared/WireframeTunnel.astro';
 
@@ -29,8 +29,9 @@ export async function getStaticPaths() {
 const { article, newer, older } = Astro.props;
 const { Content, headings, remarkPluginFrontmatter } = await render(article);
 
-// Stamped by remarkCaseViewer when the article embeds a ::case directive;
-// the element script loads only on pages that need it (like minutesRead).
+// Stamped by remarkCaseViewer when the article embeds a ::case directive, and
+// carried to the shell as data-has-case so the page's one hoisted script can
+// dynamic-import the element only on articles that need it (like minutesRead).
 const hasCaseViewer = remarkPluginFrontmatter.hasCaseViewer === true;
 
 const { title, description, publishDate, lastReviewed, primaryTag, contentType, keyPoints, ogImage } =
@@ -66,7 +67,7 @@ const moreArticles = [newer, older].filter((n): n is NonNullable<typeof newer> =
   <!-- Reading progress: scroll-driven, pure CSS; invisible where unsupported. -->
   <div class="article-progress" aria-hidden="true"></div>
 
-  <article class="article">
+  <article class="article" data-has-case={hasCaseViewer ? '' : undefined}>
     {apparatus.tunnelTitle && <WireframeTunnel class="wireframe-tunnel--band" />}
     <div class="container article__layout">
       <!-- Header: SANS title (structure) over a SERIF deck (editorial voice).
@@ -74,8 +75,8 @@ const moreArticles = [newer, older].filter((n): n is NonNullable<typeof newer> =
            top-aligned with the Key Points card. -->
       <header class="article__header reading-column">
         <div class="article__tags">
-          <Tag label={primaryTag.toUpperCase()} variant={tagVariant(primaryTag)} />
-          <Tag label={contentTypeLabel(contentType)} variant={contentTypeVariant(contentType)} />
+          <Tag label={primaryTag.toUpperCase()} />
+          <Tag label={contentTypeLabel(contentType)} />
         </div>
         <h1 class="article__title" style={`view-transition-name: ${vtName};`}>{title}</h1>
         <p class="article__deck">{description}</p>
@@ -141,16 +142,24 @@ const moreArticles = [newer, older].filter((n): n is NonNullable<typeof newer> =
     </div>
   </article>
 
-  {hasCaseViewer && <script>import '@/components/case/case-viewer';</script>}
-
   <script>
+    // ONE processed script for this page, deliberately — never wrap a second
+    // one in a template conditional. Astro 5 renders <script> as declared and
+    // no longer implicitly inlines a conditionally rendered one; the two here
+    // collided at build, emitting only the case-viewer chunk and dropping this
+    // block from every article. The documented escape is `is:inline`, which
+    // also opts out of import resolution — no good for an aliased import. So
+    // the element loads from here instead, gated at runtime on the flag the
+    // shell carries: still fetched only by articles that embed a case.
+    const shell = document.querySelector<HTMLElement>('.article');
+    if (shell && 'hasCase' in shell.dataset) import('@/components/case/case-viewer');
+
     // Wireframe-tunnel band: its bottom frame edge IS the thin rule before
     // "PUBLISHED" — the meta line — so the figure's four edges adapt to any
     // viewport and title length (the CSS --wt-band-h is only the no-JS
     // fallback). The header resize covers title rewrap and late font swaps.
     const band = document.querySelector<HTMLElement>('.wireframe-tunnel--band');
     const meta = document.querySelector<HTMLElement>('.article__meta');
-    const shell = document.querySelector<HTMLElement>('.article');
     if (band && meta && shell) {
       const size = () => {
         const h = meta.getBoundingClientRect().top - shell.getBoundingClientRect().top + 1;

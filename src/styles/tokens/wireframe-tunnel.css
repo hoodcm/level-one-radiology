@@ -5,10 +5,13 @@
    ============================================== */
 
 :root {
-  /* The figure sits between the site's hairline steps — subtle (4%) read
-     too light, default (8%) too present; 5% is the tuned midpoint. The base
-     line (the meta-rule surrogate) keeps the rule's original ink. */
-  --wt-ink: rgba(255, 255, 255, 0.05);
+  /* The figure sits between the site's hairline steps: subtle reads too
+     light, default too present. Now that the border roles are opaque ramp
+     steps rather than alphas, "between them" is a real step on that ramp —
+     subtle, since the tunnel is a backdrop that must never compete with the
+     content in front of it. The base line (the meta-rule surrogate) keeps
+     the rule's own ink. */
+  --wt-ink: var(--color-border-subtle);
   --wt-ink-base: var(--color-border-default);
   --wt-stroke: 1px;
 

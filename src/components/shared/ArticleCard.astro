@@ -1,8 +1,6 @@
 ---
 import Tag from '@/components/shared/Tag.astro';
 import {
-  tagVariant,
-  contentTypeVariant,
   contentTypeLabel,
   type PrimaryTag,
   type ContentType,
@@ -37,13 +35,36 @@ const vtName = `vt-${slug.replace(/[^a-zA-Z0-9-]/g, '-')}`;
 ---
 
 <a href={`/articles/${slug}/`} class:list={['article-card', { 'article-card--lead': featured }]}>
-  <div class="article-card__tags">
-    <Tag label={primaryTag.toUpperCase()} variant={tagVariant(primaryTag)} />
-    <Tag label={contentTypeLabel(contentType)} variant={contentTypeVariant(contentType)} />
-  </div>
-  <h3 class="article-card__title" style={`view-transition-name: ${vtName};`}>{title}</h3>
-  <p class="article-card__excerpt">{description}</p>
-  <div class="article-card__meta">
-    <span>{formattedDate}</span>
-  </div>
+  {featured ? (
+    <>
+      {/* Lead card: head/body wrappers let the desktop composition run the
+          editorial two-column split (tags+title left, excerpt+meta right —
+          the hero card's statement/support layout, one register down). */}
+      <div class="article-card__head">
+        <div class="article-card__tags">
+          <Tag label={primaryTag.toUpperCase()} />
+          <Tag label={contentTypeLabel(contentType)} />
+        </div>
+        <h3 class="article-card__title" style={`view-transition-name: ${vtName};`}>{title}</h3>
+      </div>
+      <div class="article-card__body">
+        <p class="article-card__excerpt">{description}</p>
+        <div class="article-card__meta">
+          <span>{formattedDate}</span>
+        </div>
+      </div>
+    </>
+  ) : (
+    <>
+      <div class="article-card__tags">
+        <Tag label={primaryTag.toUpperCase()} />
+        <Tag label={contentTypeLabel(contentType)} />
+      </div>
+      <h3 class="article-card__title" style={`view-transition-name: ${vtName};`}>{title}</h3>
+      <p class="article-card__excerpt">{description}</p>
+      <div class="article-card__meta">
+        <span>{formattedDate}</span>
+      </div>
+    </>
+  )}
 </a>

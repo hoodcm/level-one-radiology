@@ -23,10 +23,10 @@
   min-height: var(--tap-target);
   font-family: var(--ff-body);
   font-size: var(--fz-body);
-  line-height: 1.4;
+  line-height: var(--lh-140);
   color: var(--color-text-secondary);
   text-decoration: none;
-  border-top: 1px solid var(--color-border-subtle);
+  border-top: var(--border-w) solid var(--color-border-subtle);
 }
 .read-next__link:first-of-type { border-top: 0; }
 /* text-decoration pinned on both hovers: the global a:hover underline would

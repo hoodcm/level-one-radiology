@@ -52,6 +52,27 @@
   /* Minimum touch-target edge (module standard: 44×44px effective). */
   --tap-target: 2.75rem;   /* 44px */
 
+  /* Border widths — the hairline system's geometry (its colors live in
+     colors.css). One default weight site-wide; strong is the accent bar
+     (blockquote spine, active-link underline). */
+  --border-w: 1px;
+  --border-w-strong: 2px;
+
+  /* Focus ring — geometry of the :focus-visible outline (global.css);
+     color is --color-focus. Mirrors the reference's 2px ring. */
+  --focus-ring-w: 2px;
+  --focus-ring-offset: 2px;
+
+  /* Z ladder — the site's stacking order, one home. Local stacking inside an
+     isolated component (case-viewer's 1/2) is structural, not design, and
+     stays inline. */
+  --z-behind: -1;    /* decorative backdrops: wireframe tunnel, detector hero */
+  --z-rail: 30;      /* article TOC rail */
+  --z-menu: 40;      /* mobile overlay menu */
+  --z-header: 50;    /* sticky header */
+  --z-skip: 60;      /* skip link, above the header it jumps past */
+  --z-modal: 100;    /* fullscreen case viewer, CRT boot overlay */
+
   /* Radius scale — buttons/callouts anchor at 8px, cards and large media at 16px */
   --radius-xs: 0.25rem;   /* 4px  — chips, small controls */
   --radius-sm: 0.5rem;    /* 8px  — buttons, callouts */
@@ -75,39 +96,73 @@
   --fb-card-h: 42svh;
 
   /* Card padding (grows at breakpoints below) */
+  /* Card padding — md/lg interpolate over 320 → 1280px (endpoints are the
+     existing mobile and widest-breakpoint literals; see typography.css for
+     the full note on the fluid scale). sm stays fixed: it has no breakpoint
+     step today, and inventing a second endpoint would be a taste call. */
   --card-padding-sm: 1rem;     /* 16px — code, compact */
-  --card-padding-md: 1.5rem;   /* 24px — standard card */
-  --card-padding-lg: 2rem;     /* 32px — feature / lead card */
+  --card-padding-md: clamp(1.5rem, calc(1.3333rem + 0.8333vw), 2rem);  /* 24 → 32px */
+  --card-padding-lg: clamp(2rem, calc(1.6667rem + 1.6667vw), 3rem);    /* 32 → 48px */
 
-  /* Section rhythm — large vertical pauses between major blocks (grow at desktop) */
-  --section-spacer: var(--space-6);      /* 64px */
-  --section-spacer-sm: var(--space-4);   /* 32px */
+  /* Section rhythm — large vertical pauses between major blocks. Fluid over
+     320 → 1280px, with the endpoints kept as --space-* references so the
+     rhythm stays visibly linked to the scale rather than drifting into
+     free-floating numbers. */
+  --section-spacer: clamp(var(--space-6), calc(3.3333rem + 3.3333vw), var(--space-8));   /* 64 → 96px */
+  --section-spacer-sm: clamp(var(--space-4), calc(1.6667rem + 1.6667vw), var(--space-5)); /* 32 → 48px */
 
   /* Separation between in-article boxes (Key Points, callouts) and body text —
      one step below the section rhythm; sits between --space-4 (32) and -5 (48). */
   --callout-gap: 2.5rem;   /* 40px */
+
+  /* --- PROSE RHYTHM — the reading column's vertical grammar --------------
+     Every gap inside long-form prose is one of these; a margin literal in
+     prose.css is a defect. Tuned values stay tuned (the heading gap's
+     half-step endpoints were chosen against Anthropic's 24/32 as
+     deliberately less air); what was a breakpoint step is now fluid over
+     the same 320 → 1280px window as the type scale. */
+
+  /* Paragraph → next block. */
+  --prose-p-gap: var(--space-2);   /* 16px */
+
+  /* Body → heading (margin-top; collapses with the ¶ gap, larger wins).
+     Fluid 28 → 40px. Endpoints are the tuned half-step values: a full step
+     above Anthropic's 24/32 read as too much air on screen, so the rhythm
+     splits the difference — deliberately OFF the --space-* ramp. */
+  --prose-heading-gap: clamp(1.75rem, calc(1.5rem + 1.25vw), 2.5rem);
+
+  /* Heading → its own body — tight, so the heading binds to what it heads. */
+  --prose-heading-after: var(--space-1);   /* 8px */
+
+  /* Between list items. 12px mirrors the reference's measured bullet gap;
+     deliberately finer than --space-2 (¶ gap) so a list reads as one unit. */
+  --prose-li-gap: 0.75rem;   /* 12px */
+
+  /* List indent — marker gutter width. */
+  --prose-indent: var(--space-4);   /* 32px */
 
   /* Component gaps */
   --gap-md: var(--space-3);   /* 24px */
   --gap-lg: var(--space-4);   /* 32px */
 }
 
-/* Detector-hero desktop composition: the feature card is the tall Anthropic-
-   style panel again. Mirrors DESKTOP_MEDIA in src/lib/detector-hero.mjs
-   verbatim (single source), like the homepage.css composition blocks. */
-@media (min-width: 640px) and (min-aspect-ratio: 9/10) {
-  :root {
-    --fb-card-h: 68svh;
-  }
-}
+/* The desktop 68svh override is gone: the feature band renders only on the
+   mobile composition now (homepage.css hides it on the desktop predicate),
+   so the mobile content-fitted height above is the band's only height. */
 
 /* Token values change at shared breakpoints — components reference the
    tokens and never restate per-viewport measurements (Anthropic pattern). */
+/* Only genuinely STEPPED values may live in these blocks. A @media rule that
+   sets a token :root now clamps wins above its breakpoint, silently
+   un-fluidizing it in exactly the desktop range the fluid scale targets —
+   which is why the card-padding and section-spacer steps that used to sit
+   here are gone rather than merely redundant. The grid triple stays stepped
+   on purpose (a column-count jump is inherently discrete, and the three are
+   one coupled system), as do the chrome metrics. */
 @media (min-width: 37.5em) {
   :root {
     --grid-columns: 12;
     --grid-margin: 2.5rem;       /* 40px — page margin grows */
-    --card-padding-lg: 2.5rem;   /* 40px */
   }
 }
 
@@ -115,15 +170,24 @@
   :root {
     --grid-columns: 18;
     --grid-margin: 3.5rem;                 /* 56px */
-    --card-padding-md: 2rem;               /* 32px */
-    --card-padding-lg: 3rem;               /* 48px */
-    --section-spacer: var(--space-8);      /* 96px */
-    --section-spacer-sm: var(--space-5);   /* 48px */
     --gap-lg: var(--space-5);              /* 48px */
     --nav-height: 4.25rem;                 /* 68px — header bar grows */
     --logo-height: 1.75rem;                /* 28px */
   }
 }
+
+/* --- JS may not read a fluid token raw ---------------------------------
+   getPropertyValue('--card-padding-lg') returns the literal clamp(...)
+   STRING, not a resolved length — parseFloat on it yields NaN, and NaN
+   propagates silently into geometry. Any script needing one of these values
+   must measure a consumer's resolved box instead
+   (getBoundingClientRect / a resolved longhand like paddingLeft), never the
+   custom property.
+   Current readers, all safe: DetectorHero.astro's token() helper guards with
+   Number.isNaN and falls back; WireframeTunnel.astro reads the resolved
+   `paddingLeft` (a px longhand, not a custom property); DetectorHero.astro's
+   margin measurement deliberately measures a box rather than reading
+   --grid-margin, and says why at the call site. */
 
 /* Container utility — used by the article template ([slug].astro). Multi-column
    layout is owned by <Grid>/<Col>; there is no `.grid` utility (it would diverge

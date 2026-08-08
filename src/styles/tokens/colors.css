@@ -1,72 +1,234 @@
 /* ==============================================
    COLORS — Level One Radiology Design Tokens
-   Warmth formula: R = G + 1, B = G - 2
-   Luminance step: 8 units between levels
+
+   THE PALETTE IN ONE SENTENCE: one brand color (Level One Gold), a warm
+   neutral ramp running from near-black to warm white, and a short list of
+   accents — some of them shades of the gold, some deliberately not.
+
+   That is the whole model, and the file is ordered to say it:
+
+   1. THE BRAND COLOR — `--color-level-one-gold`. The prime. One hex, one
+      home. When something on this site needs to read as *Level One*, this
+      is the color it reads as.
+   2. THE WARM NEUTRAL RAMP — the `--gray-*` swatches. Everything that is
+      not an accent is a shade of warm dark or warm white from this ramp:
+      every surface, every border, every piece of text.
+   3. THE ACCENTS — two families. The GOLD FAMILY is derived from the prime
+      (gold-soft, caution) so it stays in tune when the brand hue moves. The
+      INDEPENDENT accents (cyan, teal, red) are their own hues on purpose:
+      they carry meanings the brand color must not be confused with —
+      instrument readouts, editorial apparatus, clinical severity.
+
+   Layer direction is one-way: swatch → role → consumer.
+   ROLES (`--color-*`) name the *job* (bg-raised, border-default, text-muted)
+   and point at a swatch or an accent. CONSUMERS reference roles ONLY —
+   never a `--gray-*` in a component, enforced by the swatch guard in
+   `npm run lint` (scripts/check-inline-colors.mjs).
+
+   Swatches are named by green-channel luminance, because green is the
+   formula's free variable — every other channel derives from it. Sparse by
+   design: a step exists only where a role consumes it.
+
+   Warmth formula, surfaces: R = G + 1, B = G − 1 (a ±1 spread).
+   Enough to kill clinical coldness; small enough that the darks read as
+   neutral rather than tinted.
+
+   Warmth formula, text: a deliberately WIDER spread, R − B ≈ 10–20, tuned
+   per step rather than derived — five hand-picked warm whites, not a line.
+   Warm whites need far more bias than warm blacks to read warm at all, so
+   the systemic warmth of the site lives here, in the text, not the surfaces.
+
+   Reasoning: docs/design/philosophy.md (canonical home of the formula).
    ============================================== */
 
 :root {
-  /* Surface Hierarchy (Backgrounds) */
-  --color-bg-deepest: #0B0A08;
-  --color-bg-primary: #131210;
-  --color-bg-secondary: #1B1A18;
-  --color-bg-raised: #232220;
-  --color-bg-active: #2B2A28;
-  --color-bg-elevated: #333230;
+  /* ============================================================
+     1. THE BRAND COLOR
+     ============================================================ */
 
-  /* Text Hierarchy — warm whites on dark, gentle consistent warm bias.
-     De-yellowed: the old `ivory` (#F5E6C2) carried a ~51-unit R−B spread
-     (visibly cream); this ramp holds a subtle ~10–16 spread so it reads
-     as warm white, scaling evenly like Anthropic's ivory family.
-     Peak luminance pulled down from near-white (#FAF6EE/#F4F0E9) to reduce
-     halation ("bloom") of bright text on the near-black ground; still ~15:1
-     contrast, well above AAA, but the high-contrast serif shimmers less. */
-  --color-text-primary: #E5E1DB;    /* warm white — body, UI */
-  --color-text-ivory: #EFEAE0;      /* bright warm white — headlines/display */
-  --color-text-secondary: #D7D1C7;  /* warm light gray — bylines, excerpts */
-  --color-text-muted: #9D9489;      /* warm gray — metadata, captions */
-  --color-text-disabled: #6D655B;   /* warm gray — disabled */
+  /* LEVEL ONE GOLD — the prime. Defined here, once, as itself: not as a
+     signal, not as a role, not derived from anything. Every other warm
+     accent on the site is a shade of this. Change this hex and the brand
+     changes; that is the point, and nothing else should have to move.
+     Retuned 2026-08 (was #d8a82c): lifted a half-step toward the reference
+     clay's luminance tier against the old value's mustard-flat read. The
+     full honey lift (#e0b13a) read too light — depth lost — so the shipped
+     value splits the difference, chosen on screen across two rounds. */
+  --color-level-one-gold: #dcac33;
 
-  /* Brand Primary — the accent identity color used for CTAs and brand accents.
-     Points at the gold. Distinct from the functional signal reds below, which
-     keep their clinical/error meaning (critical, trauma, validation errors).
+  /* ============================================================
+     2. THE WARM NEUTRAL RAMP — swatches; roles only may reference these
+     ============================================================ */
+
+  /* Warm darks — surfaces, spread +2 (R = G+1, B = G−1) */
+  --gray-10: #0b0a09;
+  --gray-18: #131211;
+  --gray-22: #171615;
+  --gray-26: #1b1a19;
+  --gray-34: #232221;
+  --gray-42: #2b2a29;
+
+  /* Warm darks — borders, same formula, spaced to read as a three-weight
+     hairline system against the surface steps above.
+     gray-30 is deliberately NOT a surface step. An alpha hairline used to
+     hold one perceptual weight on every ground (it composited against
+     whatever was beneath); an opaque one cannot, so the subtle step has to
+     be picked for the grounds it actually sits on — bg-primary and
+     bg-secondary — where it lands within a hundredth of the alpha border it
+     replaced. Sitting it ON a surface step is what made it vanish.
+
+     gray-48 (default) carries the weight the raised fill gave up. Lowering
+     raised from +16 to +8 was only half the "definition moves to the border"
+     trade, and the other half was silently going the wrong way: the old
+     alpha border composited against the CARD, so a lighter card had been
+     lending it brightness. Drop the card and the border dims with it. Held
+     at the old value, the card edge fell to 44% of its former weight — less
+     plane definition after the change than before it. This step restores it
+     and then some, which is what the trade was supposed to buy. */
+  --gray-30: #1f1e1d;
+  --gray-48: #31302f;
+  --gray-54: #373635;
+
+  /* Warm whites — text, wide spread (see header) */
+  --gray-101: #6d655b;
+  --gray-148: #9d9489;
+  --gray-209: #d7d1c7;
+  --gray-225: #e5e1db;
+  --gray-234: #efeae0;
+
+  /* --- The light end — consumed by the print role remap (tokens/print.css),
+     and the ready-made ground for any future light theme. The reference
+     system's structural idea: a second theme is a class-scoped remap of the
+     ROLES onto the same ramp, never a second palette. Print's old literals
+     already sat on our formulas without names (its text darks carry the
+     wide text spread, its surfaces the narrow one) — these are those values,
+     named. gray-255 is the paper clamp: pure white carries no spread. */
+
+  /* Light surfaces (paper) */
+  --gray-255: #ffffff;
+  --gray-243: #f4f3f2;
+  --gray-236: #edeceb;
+
+  /* Dark-on-light text (the two steps the dark end doesn't already hold) */
+  --gray-50: #333231;
+  --gray-133: #8a857d;
+
+  /* Light borders — opaque steps, same doctrine as the dark border ramp
+     (values match what the old black-alpha borders composited to on paper) */
+  --gray-235: #ecebea;
+  --gray-217: #dad9d8;
+  --gray-179: #b4b3b2;
+
+  /* ============================================================
+     3. THE ACCENTS
+     ============================================================ */
+
+  /* --- Gold family: shades of the prime, derived so they stay in tune --- */
+
+  /* THE GOLD RAMP — one hue, three rungs, stepped evenly: the prime mixed
+     toward ivory in 20% increments, named by their prime share (the --gray-N
+     / --lh-N convention). The reference steps clay the same way — one
+     lightness notch toward the text direction per job (clay →
+     clay-interactive; selection at half strength); on a dark ground the
+     text direction is UP, so our steps lift. Derivation is the rule: a new
+     gold weight is the next 20% rung, never a freehand hex. */
+  --gold-100: var(--color-level-one-gold);
+  --gold-80: color-mix(in srgb, var(--color-level-one-gold) 80%, var(--gray-234));
+  --gold-60: color-mix(in srgb, var(--color-level-one-gold) 60%, var(--gray-234));
+
+  /* Three rungs, three jobs — never share a rung across jobs, or the reader
+     can no longer tell "the site is speaking" from "I can act here" from
+     "this is highlighted".
+     gold-100, the BRAND voice — CTAs, the beam (via --color-primary).
+     gold-80, the ACTION voice — links, focus, progress: visibly distinct
+       from the CTA (brand ≠ action, decided 2026-08) and higher-contrast as
+       text (9.9:1 on bg-primary vs the prime's 8.9).
+     gold-60, the WASH — selection, band tints; large areas that carry the
+       brand without shouting. */
+  --color-gold-interactive: var(--gold-80);
+  --color-gold-soft: var(--gold-60);
+
+  /* Caution borrows the prime outright — one hue, two jobs, and they do not
+     conflict today (a caution callout and a CTA never sit adjacent). It has
+     its own name so the day they do conflict is a one-line change here, not
+     a hunt through consumers. */
+  --color-signal-yellow: var(--color-level-one-gold);
+
+  /* --- Independent accents: their own hues, on purpose --- */
+
+  /* Severity. Clinical/critical and validation errors — never decorative,
+     and deliberately not a shade of the brand, because "this is Level One"
+     and "this is critical" must never be the same signal.
+
+     Red comes in two weights because the saturated one is LARGE-TEXT-ONLY:
+     at 3.8:1 it is fine for a rule, a border, a tint, or big type, and fails
+     AA for anything at label or body size. Small red text — a callout label,
+     a form error — takes --color-signal-red-text, the same hue lifted until
+     it clears 4.5:1 on every ground it can land on (4.80 on the critical
+     callout's own tint, 5.07 on bg-secondary, 5.25 on bg-primary, 4.87 on
+     bg-raised). Reach for the saturated one and the contrast table in
+     docs/design/tokens.md will tell you why you cannot. */
+  --color-signal-red: #d03454;
+  --color-signal-red-text: #e05a75;
+
+  /* Cyan splits into two voices of one hue family. signal-cyan is the
+     INSTRUMENT — the case viewer's readouts and rings, and nothing else.
+     teal-apparatus is the EDITORIAL voice — key points, note callouts,
+     statuses, code strings. Same family, different job, and neither is
+     related to the gold: instrumentation reads as machine, not as brand. */
+  --color-signal-cyan: #2acec2;
+  --color-teal-apparatus: #58b7af;
+
+  /* ============================================================
+     ROLES — the job each color does
+     ============================================================ */
+
+  /* Brand Primary — the identity role: CTAs, brand accents.
      --color-on-primary is the legible foreground ON the gold (near-black —
      white on gold fails contrast). Re-point both to restyle the brand. */
-  --color-primary: var(--color-signal-yellow);
+  --color-primary: var(--color-level-one-gold);
   --color-on-primary: var(--color-bg-deepest);
 
-  /* Interaction semantics — THE opinionated split. GOLD is the action color:
-     everything you can click or that marks your place (links, focus,
-     selection, CTAs, reading progress) reads as the brand primary. CYAN is
-     informational apparatus (key points, note callouts, statuses) plus its
-     taxonomy role. The remaining signals are taxonomy/severity only. */
-  --color-link: var(--color-primary);
-  --color-focus: var(--color-primary);
-  --color-selection-bg: var(--color-primary);
+  /* Interaction semantics — THE opinionated split. GOLD is the site's hue,
+     in two voices: the PRIME where the site speaks (CTAs, the beam, brand
+     moments — via --color-primary) and the INTERACTIVE form where the
+     reader acts (links, focus, small action marks). TEAL is informational
+     apparatus. RED is severity. Nothing else means anything by hue —
+     taxonomy-as-color is retired (see src/lib/tags.ts). */
+  --color-link: var(--color-gold-interactive);
+  --color-focus: var(--color-gold-interactive);
+  --color-progress: var(--color-gold-interactive);   /* the reader's place = action voice */
+  --color-selection-bg: var(--color-gold-soft);
   --color-selection-fg: var(--color-on-primary);
 
-  /* Signal Colors (functional, not decorative) */
-  --color-signal-red: #D03454;
-  --color-signal-orange: #E85D2D;
-  --color-signal-yellow: #D8A82C;
-  --color-signal-cyan: #2ACEC2;
-  --color-signal-violet: #A98BFF;
-  --color-signal-magenta: #D91CC3;
+  /* Surface Hierarchy (Backgrounds).
+     Raised sits ONE notch (+8 green) above primary, not two: plane
+     definition is the borders' job, not the fill's. A fill doing
+     definition work is what read as "muddy" in the mid-dark zone. */
+  --color-bg-deepest: var(--gray-10);
+  --color-bg-primary: var(--gray-18);
+  --color-bg-secondary: var(--gray-22);
+  --color-bg-raised: var(--gray-26);
+  --color-bg-active: var(--gray-34);
+  --color-bg-elevated: var(--gray-42);
 
-  /* Borders (alpha transparency) */
-  --color-border-subtle: rgba(255, 255, 255, 0.04);
-  --color-border-default: rgba(255, 255, 255, 0.08);
-  --color-border-strong: rgba(255, 255, 255, 0.15);
-  --color-border-accent: #232220;
+  /* Text Hierarchy — warm whites on dark.
+     Peak luminance is deliberately below near-white to reduce halation
+     ("bloom") of bright text on the near-black ground; ~14.4:1 on
+     bg-primary, still far above AAA, but the serif shimmers less. */
+  --color-text-primary: var(--gray-225);    /* warm white — body, UI */
+  --color-text-ivory: var(--gray-234);      /* bright warm white — headlines/display */
+  --color-text-secondary: var(--gray-209);  /* warm light gray — apparatus, bylines */
+  --color-text-muted: var(--gray-148);      /* warm gray — metadata, captions */
+  --color-text-disabled: var(--gray-101);   /* warm gray — disabled */
 
-  /* Legacy (deprecated — use new tokens) */
-  --color-imaging-black: var(--color-bg-deepest);
-  --color-control-charcoal: var(--color-bg-secondary);
-  --color-console-white: var(--color-text-primary);
-  --color-textbook-ivory: var(--color-text-ivory);
-  --color-level-one-red: var(--color-signal-red);
-  --color-sunset-orange: var(--color-signal-orange);
-  --color-chroma-yellow: var(--color-signal-yellow);
-  --color-scanline-cyan: var(--color-signal-cyan);
-  --color-cosmic-violet: var(--color-signal-violet);
-  --color-burst-magenta: var(--color-signal-magenta);
+  /* Borders — opaque ramp steps, not alpha composites. An alpha border
+     inherits whatever is beneath it, so the same token read as a different
+     weight on every surface; opaque steps hold one weight everywhere and
+     let the border (not the fill) do the plane definition.
+     Carve-out: borders that composite over CT imaging pixels stay
+     component-local alpha — see src/styles/tokens/case-viewer.css. */
+  --color-border-subtle: var(--gray-30);
+  --color-border-default: var(--gray-48);
+  --color-border-strong: var(--gray-54);
 }

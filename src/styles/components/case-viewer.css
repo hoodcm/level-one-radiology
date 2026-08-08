@@ -168,11 +168,13 @@ case-viewer[data-cv-armed] .cv__stage::before {
   min-width: var(--cv-activate-h);
   min-height: var(--cv-activate-h);
   background: var(--cv-scrim);
-  border: 1px solid var(--color-border-default);
+  /* Overlay border — ACTIVATE sits on the scrim at the stage's centre, over
+     slice pixels (tokens/case-viewer.css §Borders over imaging). */
+  border: var(--border-w) solid var(--cv-border-overlay);
   border-radius: var(--radius-xs);
   color: var(--color-text-primary);
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: color var(--t-quick) ease, border-color var(--t-quick) ease, box-shadow var(--t-quick) ease;
 }
 .cv__activate svg {
   width: var(--cv-activate-icon);
@@ -184,7 +186,7 @@ case-viewer[data-cv-armed] .cv__activate {
 }
 .cv__activate:hover {
   color: var(--color-text-ivory);
-  border-color: var(--color-border-strong);
+  border-color: var(--cv-border-overlay-strong);
   background: var(--cv-scrim-hover);
 }
 
@@ -309,8 +311,8 @@ case-viewer.is-ready .cv__canvas {
   --cv-lock: 0px;
   translate: calc(var(--sx) * var(--cv-lock)) calc(var(--sy) * var(--cv-lock));
   transition:
-    opacity 0.15s ease,
-    border-color 0.15s ease;
+    opacity var(--t-quick) ease,
+    border-color var(--t-quick) ease;
 }
 .cv__brackets i:nth-child(1) { --sx: 1; --sy: 1; top: 0; left: 0; border-top-width: var(--cv-bracket-stroke); border-left-width: var(--cv-bracket-stroke); }
 .cv__brackets i:nth-child(2) { --sx: -1; --sy: 1; top: 0; right: 0; border-top-width: var(--cv-bracket-stroke); border-right-width: var(--cv-bracket-stroke); }
@@ -335,8 +337,8 @@ case-viewer[data-state='engaged'] .cv__brackets i {
 @media (prefers-reduced-motion: no-preference) {
   .cv__brackets i {
     transition:
-      opacity 0.15s ease,
-      border-color 0.15s ease,
+      opacity var(--t-quick) ease,
+      border-color var(--t-quick) ease,
       translate 0.2s var(--ease-out);
   }
   case-viewer[data-state='engaged'] .cv__brackets i {
@@ -539,11 +541,11 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   min-height: var(--cv-hit-area);
   font-family: var(--ff-mono);
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-default);
+  border: var(--border-w) solid var(--color-border-default);
   border-radius: var(--radius-xs);
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  transition: color var(--t-quick) ease, border-color var(--t-quick) ease, background-color var(--t-quick) ease;
 }
 .cv__fs:hover {
   color: var(--color-text-primary);
@@ -572,7 +574,7 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   margin-top: calc((var(--cv-thumb-h) - 2px) / -2);
   border-radius: var(--radius-xs);
   background: var(--color-text-ivory);
-  border: 1px solid var(--color-border-strong);
+  border: var(--border-w) solid var(--color-border-strong);
 }
 .cv__bar input[type='range']::-moz-range-track,
 .cv-fs__bar input[type='range']::-moz-range-track {
@@ -585,7 +587,7 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   height: var(--cv-thumb-h);
   border-radius: var(--radius-xs);
   background: var(--color-text-ivory);
-  border: 1px solid var(--color-border-strong);
+  border: var(--border-w) solid var(--color-border-strong);
 }
 /* --- Window chips / series tabs --- */
 .cv__chips,
@@ -605,10 +607,10 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   padding-inline: var(--space-2);
   background: var(--color-bg-secondary);
   color: var(--color-text-secondary);
-  border: 1px solid var(--color-border-default);
+  border: var(--border-w) solid var(--color-border-default);
   border-radius: var(--radius-xs);
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  transition: color var(--t-quick) ease, border-color var(--t-quick) ease, background-color var(--t-quick) ease;
 }
 .cv__chips button:hover,
 .cv__tabs button:hover,
@@ -649,10 +651,10 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   text-transform: uppercase;
   background: var(--color-bg-secondary);
   color: var(--color-text-secondary);
-  border: 1px solid var(--color-border-default);
+  border: var(--border-w) solid var(--color-border-default);
   border-radius: var(--radius-xs);
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  transition: color var(--t-quick) ease, border-color var(--t-quick) ease, background-color var(--t-quick) ease;
 }
 .cv__rail button:focus-visible {
   outline: none;
@@ -705,7 +707,7 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
 .cv__caption {
   font-family: var(--ff-body);
   font-size: var(--fz-body-s);
-  line-height: 1.4;
+  line-height: var(--lh-140);
   color: var(--color-text-muted);
   /* A step more air than the control rows above: the caption is prose,
      not another chrome row. */
@@ -714,14 +716,14 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
 
 /* --- Fullscreen overlay (M4) — fixed, visualViewport-sized (case-viewer.ts
    keeps width/height/offset in step with pinch-zoomed pages), dvh fallback,
-   safe-area padded. Same imaging-black field; chrome floats over it. --- */
+   safe-area padded. Same near-black field; chrome floats over it. --- */
 .cv-fs {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100dvh;
-  z-index: 100;
+  z-index: var(--z-modal);
   /* The scrim field behind the morphing rect (the beta overlay's backdrop):
      dims and visually freezes the page under the animation, and makes the
      root the input surface from the first frame. */
@@ -731,7 +733,7 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   touch-action: none;
   overscroll-behavior: contain;
 }
-/* The CRT rect — the imaging-black screen that morphs within the field. */
+/* The CRT rect — the near-black screen that morphs within the field. */
 .cv-fs__screen {
   width: 100%;
   height: 100%;
@@ -767,7 +769,7 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   /* The same replay-on-unhide behavior, used deliberately: each time the
      W/L pad unhides it plays a quick fade — present at once, never a pop. */
   .cv-fs__readout {
-    animation: cv-fade-in 0.2s ease;
+    animation: cv-fade-in var(--t-quick) ease;
   }
   /* The phosphor beam — the bright line the screen opens from and collapses
      back to (a black slit on a dark page was invisible). Unscaled (it rides
@@ -892,10 +894,10 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   padding-inline: var(--space-2);
   background: var(--color-bg-secondary);
   color: var(--color-text-secondary);
-  border: 1px solid var(--color-border-default);
+  border: var(--border-w) solid var(--color-border-default);
   border-radius: var(--radius-xs);
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  transition: color var(--t-quick) ease, border-color var(--t-quick) ease, background-color var(--t-quick) ease;
 }
 .cv-fs__chip:hover,
 .cv-fs__chip:active {
@@ -934,7 +936,8 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   width: var(--cv-wl-pad-w);
   height: var(--cv-wl-pad-h);
   background: var(--cv-scrim);
-  border: 1px solid var(--color-border-default);
+  /* Overlay border — the readout floats over the stage while adjusting. */
+  border: var(--border-w) solid var(--cv-border-overlay);
   border-radius: var(--radius-xs);
 }
 .cv-fs__wl line {

@@ -7,24 +7,51 @@
    ============================================== */
 
 @media print {
+  /* Print is a ROLE REMAP onto the same swatch ramp (the reference model:
+     a second theme re-points roles, it never mints a second palette). The
+     light-end swatches live in colors.css beside the dark end; text reuses
+     the dark end outright. Borders are opaque steps here too — the same
+     doctrine as on screen. */
   :root {
     color-scheme: light;
 
-    --color-bg-deepest: #ffffff;
-    --color-bg-primary: #ffffff;
-    --color-bg-secondary: #f4f3f1;
-    --color-bg-raised: #f4f3f1;
-    --color-bg-active: #ececea;
-    --color-bg-elevated: #ececea;
+    --color-bg-deepest: var(--gray-255);
+    --color-bg-primary: var(--gray-255);
+    --color-bg-secondary: var(--gray-243);
+    --color-bg-raised: var(--gray-243);
+    --color-bg-active: var(--gray-236);
+    --color-bg-elevated: var(--gray-236);
 
-    --color-text-primary: #1a1917;
-    --color-text-ivory: #000000;
-    --color-text-secondary: #333230;
-    --color-text-muted: #66625c;
-    --color-text-disabled: #8a857d;
+    --color-text-primary: var(--gray-26);
+    --color-text-ivory: var(--gray-10);
+    --color-text-secondary: var(--gray-50);
+    --color-text-muted: var(--gray-101);
+    --color-text-disabled: var(--gray-133);
 
-    --color-border-subtle: rgba(0, 0, 0, 0.08);
-    --color-border-default: rgba(0, 0, 0, 0.15);
-    --color-border-strong: rgba(0, 0, 0, 0.3);
+    --color-border-subtle: var(--gray-235);
+    --color-border-default: var(--gray-217);
+    --color-border-strong: var(--gray-179);
+
+    /* Pin every fluid token. `vw` in paged media resolves against the PAGE
+       box, not a viewport, so the editorial scale would otherwise interpolate
+       off the paper size — a Letter page lands mid-ramp and silently grows
+       the type and the section rhythm. Print gets the compact end of each
+       ramp, which is also what it got before the scale went fluid: the old
+       breakpoint step-ups sat above any page width, so print never reached
+       them. Keep these in step with the clamp minimums in typography.css and
+       spacing.css. */
+    --fz-display-l: 2.25rem;
+    --fz-display: 1.75rem;
+    --fz-article-title: 2rem;
+    --fz-article-deck: 1.375rem;
+    --fz-prose-h2: 1.25rem;
+    --fz-prose-h3: 1.0625rem;
+    --section-spacer: var(--space-6);
+    --section-spacer-sm: var(--space-4);
+    --card-padding-md: 1.5rem;
+    --card-padding-lg: 2rem;
+    --prose-heading-gap: 1.75rem;
+    /* --fz-wordmark-hero needs no pin: print hides the hero (base/print.css),
+       and its clamp derives from --grid-margin, not the editorial ramp. */
   }
 }

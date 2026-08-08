@@ -91,7 +91,7 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
   .detector-hero {
     position: absolute;
     inset: 0;
-    z-index: -1;
+    z-index: var(--z-behind);
     overflow: hidden;
     pointer-events: none;
   }
@@ -208,13 +208,50 @@ const yoffStyle = `transform: translateY(${SETTINGS.yoff}%)`;
   const container = document.querySelector<HTMLElement>('.detector-hero');
   const hero = container?.closest<HTMLElement>('.hero');
 
-  if (container && hero && !reduce) {
+  // Every motion knob is a token (detector-hero.css). If any of them fails to
+  // resolve to a number the live instance would build NaN geometry and render
+  // nothing, so check first and simply don't go live — the build-time static
+  // SVG is already on the page as the no-JS/reduced-motion baseline, and it
+  // stays visible because `is-live` (which hides it) is only added below.
+  // Deliberately NOT a per-token default: mirroring the token values here
+  // would give every knob a second home, which is the drift the token system
+  // exists to prevent.
+  const MOTION_TOKENS = [
+    '--dh-opacity',
+    '--dh-draw-dur',
+    '--dh-beam-every',
+    '--dh-beam-dur',
+    '--dh-beam-boost',
+    '--dh-touch-boost',
+    '--dh-touch-ramp-in',
+    '--dh-touch-ramp-out',
+  ];
+  const unresolved = container
+    ? MOTION_TOKENS.filter((n) =>
+        Number.isNaN(parseFloat(getComputedStyle(container).getPropertyValue(n))),
+      )
+    : [];
+  if (unresolved.length) {
+    console.warn(
+      `[detector-hero] keeping the static drawing; these tokens did not resolve to numbers: ${unresolved.join(', ')}`,
+    );
+  }
+
+  if (container && hero && !reduce && !unresolved.length) {
     const heroEl: HTMLElement = hero; // narrowed alias for the closures below
     const desktopMQ = window.matchMedia(DESKTOP_MEDIA);
 
     // Style knobs come from the tokens (detector-hero.css) — retunes there
     // reach the JS through this one read.
     const css = getComputedStyle(container);
+    // getPropertyValue returns a custom property's value UNRESOLVED. For the
+    // --dh-* knobs that is a plain number or a time, so parseFloat works —
+    // but a fluid token resolves to the literal string `clamp(...)`, and
+    // parseFloat of that is NaN, which then propagates silently into every
+    // downstream coordinate and renders nothing. Never point this helper at a
+    // fluid token (tokens/spacing.css §JS may not read a fluid token raw);
+    // measure a resolved box instead. The MOTION_TOKENS check above has
+    // already established that every name read here resolves to a number.
     const token = (name: string) => parseFloat(css.getPropertyValue(name));
     const INK_OPACITY = token('--dh-opacity');
     const DRAW_S = token('--dh-draw-dur');

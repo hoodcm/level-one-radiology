@@ -14,19 +14,27 @@
  * (positioned + isolated), never inside the hero.
  */
 import { tunnelSVG } from '@/lib/wireframe-tunnel.mjs';
+import { gridMarginWide } from '@/lib/grid-tokens.mjs';
 
 const { class: className, field = false } = Astro.props;
+
+// The grid owns the page margin. The fallback render has no computed style to
+// read, so it takes the widest breakpoint's value straight from the token —
+// the nominal 1200px figure below is a desktop-width figure. Stamped onto the
+// mount so the client has a grid-sourced value before it measures.
+const margin = gridMarginWide();
 
 // Field fallback proportions: figure ≈ the hero's share of the field
 // (~58%); the client script rebuilds at the live boxes.
 const fallback = field
-  ? tunnelSVG(1200, 700, { frame: false, base: false, extendH: 1200 })
-  : tunnelSVG(1200, 800);
+  ? tunnelSVG(1200, 700, { margin, field: true, frame: false, base: false, extendH: 1200 })
+  : tunnelSVG(1200, 800, { margin });
 ---
 
 <div
   class:list={['wireframe-tunnel', className]}
   data-field={field ? '' : undefined}
+  data-grid-margin={margin}
   aria-hidden="true"
   set:html={fallback}
 />
@@ -42,13 +50,16 @@ const fallback = field
       const mount = el.getBoundingClientRect();
       const { width, height } = mount;
       if (!(width > 0 && height > 0)) return;
-      // The grid governs the first ring: it sits 2/3 of the page-margin
-      // width in, read live off the container (px-resolved, breakpoint-aware).
-      const container = document.querySelector('.container');
-      const margin = container ? parseFloat(getComputedStyle(container).paddingLeft) : NaN;
-      const opts: Record<string, number | boolean> = Number.isNaN(margin)
-        ? {}
-        : { inset1: (margin * 2) / 3 };
+      // The grid governs the first ring: read the page margin live off the
+      // canonical container, px-resolved and breakpoint-aware. Match
+      // `.l1-container`, not `.container` — the latter exists only on article
+      // pages, so the field mount used to miss the grid entirely and sit on a
+      // fixed inset at every breakpoint. The build-time stamp is the same
+      // token, and covers the mount rendering before any container exists.
+      const container = document.querySelector('.l1-container');
+      const live = container ? parseFloat(getComputedStyle(container).paddingLeft) : NaN;
+      const margin = Number.isNaN(live) ? Number(el.dataset.gridMargin) : live;
+      const opts: Record<string, number | boolean> = { margin, field: isField };
       let figH = height;
       if (isField) {
         // Field mount: the figure is the sibling hero's box (the field's

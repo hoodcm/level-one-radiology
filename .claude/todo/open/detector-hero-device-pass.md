@@ -4,7 +4,7 @@ title: Judge detector-hero composition on iPhone + desktop (plan steps 7 + 10)
 band: now
 first_surfaced: 2026-07-11
 last_touched: 2026-08-07
-assessed: 2026-08-07
+assessed: 2026-08-08
 depends_on: []
 links: [src/styles/tokens/detector-hero.css, src/lib/detector-hero.mjs, src/components/shared/DetectorHero.astro, src/lib/wireframe-tunnel.mjs, src/components/shared/WireframeTunnel.astro, src/styles/components/homepage.css, docs/archive/plans/2026-07-11-detector-hero-plan.md]
 worktype: decide

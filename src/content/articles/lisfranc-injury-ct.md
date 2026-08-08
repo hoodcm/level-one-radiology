@@ -46,7 +46,7 @@ Each of these findings is subtle on its own, but together they describe an unsta
 
 ## Why the Radiographs Were Called Normal
 
-The overnight read wasn't lazy. A purely or mostly ligamentous Lisfranc injury can sit perfectly reduced on a non-weight-bearing radiograph: nothing is displaced at the moment of exposure because nothing is loading the arch. Roughly one in five Lisfranc injuries is missed at first presentation, and the missed ones come back later with arch collapse.
+The overnight reader was working with a genuinely normal-looking film. A purely or mostly ligamentous Lisfranc injury can sit perfectly reduced on a non-weight-bearing radiograph: nothing is displaced at the moment of exposure because nothing is loading the arch. Roughly one in five Lisfranc injuries is missed at first presentation, and the missed ones come back later with arch collapse.
 
 That being said, the films usually have a clue for the reader who checks the alignment lines deliberately:
 
@@ -68,7 +68,7 @@ Loading the arch does what the brake pedal did, gently: it stresses the one liga
 
 This patient went to fixation within the week, which is the point of catching it. The Lisfranc ligament doesn't heal itself back to competence, and an unstable midfoot left to collapse remodels into a flat, arthritic, chronically painful foot. The salvage operation at that stage is fusion. What usually separates the two outcomes is whether the first reader checked the joint.
 
-The decision to fix is the surgeon's. Your job is a report that's unambiguous about the instability, and a phone call if the report might sit unread until the clinic visit.
+The decision to fix belongs to the surgeon. Your job is a report that's unambiguous about the instability, and a phone call if the report might sit unread until the clinic visit.
 
 <div class="reference-card">
 <p class="reference-card__title">Lisfranc: the read</p>
@@ -77,7 +77,7 @@ The decision to fix is the surgeon's. Your job is a report that's unambiguous ab
 <ul>
 <li>Fleck of bone in the first intermetatarsal space</li>
 <li>Medial borders aligned: 2nd metatarsal with middle cuneiform (AP), 4th metatarsal with cuboid (oblique)</li>
-<li>Widening &gt;2 mm between medial cuneiform and 2nd metatarsal base</li>
+<li>Widening over 2 mm between medial cuneiform and 2nd metatarsal base</li>
 <li>Dorsal step-off at the tarsometatarsal joints (lateral or sagittal)</li>
 </ul>
 </div>

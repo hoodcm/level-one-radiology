@@ -8,7 +8,7 @@ depends_on: []
 links: [src/components/case/, docs/design/components.md, docs/archive/plans/2026-07-07-case-viewer-plan.md]
 worktype: build
 workstream: case-viewer
-assessed: 2026-08-07
+assessed: 2026-08-08
 ---
 Build the Case Viewer — the "showstopper module," a PACS-like image viewer for
 clinical cases embedded within articles. Light-DOM custom element

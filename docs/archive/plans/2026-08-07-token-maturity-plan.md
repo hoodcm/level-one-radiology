@@ -1,8 +1,47 @@
 # Token Maturity Audit — claude.com-Informed Redesign
 
-**Status**: plan — refined and fully specified, ready for `/implement-plan`. No open decisions:
-the chip-hue call was made 2026-08-07 (**Branch A — all chips neutral**).
-**Date**: 2026-08-07
+**Status**: **IMPLEMENTED 2026-08-08** — all 10 steps landed and verified; archived record.
+**Date**: 2026-08-07 (written) · 2026-08-08 (implemented)
+
+**What shipped.** All ten steps, in order, each verified against its own verify line. Gate at close:
+`npm run lint`, `npm run check`, `npm run build` all exit 0; vitest 186 passing across 10 files
+(baseline was 48 across 7 — this run added 3 contract-test files). The retired-token sweep returns
+**zero** hits in shipped `src/`, with the `docs/archive/` positive control at 32.
+
+**What the verification caught** (both real, both invisible to the build):
+- `.cv-fs__close`'s alpha overlay border silently lost to `.cv-fs__chip`'s `border` shorthand — equal
+  specificity, later source order. Found by measuring the element, not by reading the edit.
+- A left-behind `variant=` prop on the two `<Tag>` call sites in `[slug].astro`, caught by
+  `npm run check` exactly as step 3's verify line predicted.
+
+**Deviations**: four, recorded in full below — one user-directed (the brand-gold token split) and three
+mechanical.
+
+**Post-implementation review changed three plan decisions.** A deep review (2 scouts + a senior-read
+seat + one verifier) confirmed 23 findings; Michael took all four fix groups. Three of them revise
+what this plan specified, so the plan's design section above is no longer the shipped truth on:
+
+1. **`--color-border-subtle` is `--gray-30`, not `--gray-22`.** The plan had subtle share the
+   secondary swatch ("same step, two roles"). That makes a subtle border on a bg-secondary surface
+   1.00:1 — the mobile INDEX separators rendered invisible. An alpha hairline held one perceptual
+   weight on every ground; an opaque one cannot, so the step must be picked for the grounds it lands
+   on.
+2. **Red ships in two weights.** `--color-signal-red-text` (`#E05A75`, the value Branch B priced)
+   carries small red text; the saturated red is large-text-only. The plan retired the red *chip* for
+   failing AA at 11px but did not sweep the two surviving small-red-text sites, so it shipped
+   violating its own stated rule.
+3. **The imaging carve-out covers two elements, not three.** `.cv-fs__close` is absolutely positioned
+   over the stage but is a `.cv-fs__chip`, whose opaque background paints under its own border — so
+   its alpha never met slice pixels. Position was the wrong test; what sits *under* the border is the
+   right one.
+
+Also post-review: print pins every fluid token (vw resolves against the page box, so saved PDFs were
+silently growing), the lint gate and its hook no longer report clean on paths they did not check, and
+the token test dropped `fs.globSync` (Node 22 only; CI pins Node 20).
+
+**Still open — Michael's call, deliberately not self-approved**: step 10's on-screen sign-off that the
+raised-surface muddiness is resolved. Everything measurable was measured; the calibrated-display
+judgment is his. Screenshots in `~/Downloads/tm-final-*.png`.
 
 ## Context & why
 
@@ -524,6 +563,37 @@ colors.css (swatches → roles)              typography.css + spacing.css (clamp
 - Swatch guard live in `npm run lint`, scanning `.css` as well as markup; fails closed.
 - Both docs-sweep greps clean, and `--gray-*` is *documented* in tokens.md, not just enforced.
 - Michael confirms the raised-surface muddiness is resolved on the live site.
+
+## Implementation deviations
+
+- **2026-08-08 — brand gold gets its own token, `--color-level-one-gold`.** Michael, mid-run:
+  "I want the primary color to be clearly denoted as the brand color, level-one-gold, also not
+  signal yellow." The plan left `--color-primary: var(--color-signal-yellow)` untouched, which
+  denotes the brand identity in terms of a *functional signal*. Split: `--color-level-one-gold`
+  is now the sole definition of the brand hue (`#d8a82c`), `--color-primary` points at it, and
+  `--color-signal-yellow` — which independently carries the caution role (`.callout--caution`,
+  `--astro-code-token-constant`) — points at the brand gold with a comment noting the two jobs
+  may diverge. No rendered value changes; this is a naming/direction fix. It also partially
+  answers the standing TODO "Split primary-CTA gold from caution into distinct tokens if they
+  conflict" — the tokens are now distinct, the values still shared.
+
+- **2026-08-08 — `--color-gold-soft` is derived, not a restated hex.** Following the brand-gold split
+  above, gold-soft is written as `color-mix(in srgb, var(--color-level-one-gold) 60%, var(--gray-234))`
+  rather than the plan's literal `#E1C274`. Verified at runtime to resolve to exactly `#E1C274`, so the
+  locked value is honored; the change is mechanism only, and it makes "shades of the gold" structural
+  rather than a comment that can drift.
+
+- **2026-08-08 — step 10's retired-token grep excludes `*.test.*`.** The plan's sweep asserts zero
+  bare-name hits in `src/`, comments included. Step 1's contract test (written after the plan) legitimately
+  spells all fourteen retired names in the list it asserts are *absent* from the token layer. The sweep
+  therefore runs `--exclude='*.test.*'` and prints the excluded hits separately, so the exception is shown
+  rather than hidden. Shipped source is zero; the `docs/archive/` positive control returns 32.
+
+- **2026-08-08 — `.cv-fs__close`'s overlay border had to move below `.cv-fs__chip`.** Declared in the
+  positioning block (where the plan pointed), it silently lost: `.cv-fs__chip` sets the `border`
+  shorthand at equal specificity and later source order, resetting `border-color`. Caught by measuring
+  the element rather than trusting the edit. The override now sits after the chip rules with a comment
+  saying why it must.
 
 ## Open questions
 

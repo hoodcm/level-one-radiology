@@ -38,21 +38,40 @@ than re-specifying font/size/line-height per element — they bundle the family,
 letter-spacing, and color that belong together.
 
 - Establish hierarchy with **distinct steps**, not many near-equal sizes. Display, headline, body, UI is
-  enough levels for a content site.
-- Body anchors at `--fz-body` (16px). "Tight, Not Cramped" governs size: restrained, not shrunken —
-  don't drop body text to win density.
+  enough levels for a content site. (This is about how many *levels* the ladder has — not about how a
+  given level behaves across viewports, which is the next point.)
+- Body anchors at `--fz-body`. "Tight, Not Cramped" governs size: restrained, not shrunken — don't drop
+  body text to win density.
+
+**Which sizes interpolate, and which step.** The *editorial* scale is fluid: display sizes, the article
+title and deck, and the prose heading sizes clamp continuously across the viewport, so a heading is never
+one size at 1279px and a jarringly different one at 1281px. Everything a reader's eye calibrates against
+stays **stepped**: body reading size and the UI/meta/micro sizes, which are chrome and should not drift.
+When adding a size, ask which of those two it is — expressive display type interpolates, functional type
+steps. The token list and the mechanics are in [tokens.md](../tokens.md) → Typography.
 
 ---
 
-## 3. Line-height matches role
+## 3. Line-height is a rung, never a number
 
-| Role | Line-height | Why |
+Leading comes from the **closed five-rung ramp** (`--lh-100` … `--lh-150` in
+[typography.css](../../../src/styles/tokens/typography.css)); a numeric `line-height` in a component is a
+lint violation. The principle behind the closure: **one element class, one rung, site-wide.** If two
+elements of the same class carry different leading, that difference is either a design decision (then
+they are different classes and sit on different rungs) or an accident (then it may not exist). Rungs are
+spaced a meaningful step apart — a distinction smaller than a rung is not expressible, on purpose.
+
+| Role | Rung | Why |
 |---|---|---|
-| Body copy | ~1.5 (`--lh-body`) | Comfortable extended reading |
-| Headlines | ~1.2 (`--lh-headline`) | Large type needs tighter leading |
-| Display | ~1.1 (`--lh-display*`) | Tighter still; display is seen, not read line-by-line |
+| Solid display (titles, chips, numerals) | `--lh-100` | Single-line type has no return sweep |
+| Display serif | `--lh-110` | Tighter still; display is seen, not read line-by-line |
+| Headings, card titles | `--lh-120` | Large type needs tighter leading |
+| The serif reading voice (column, decks, lists, captions, meta) | `--lh-140` | Editorial density — the serif's taller line box reads looser than a sans at the same multiplier |
+| The open sans voice (callouts, footnotes, excerpts) | `--lh-150` | Comfortable extended reading in the sans |
 
-Never apply body line-height to large display type — it looks loose and unanchored.
+Never apply body line-height to large display type — it looks loose and unanchored. Tracking and weight
+follow the same closed-set rule: three tracking voices (`--ls-tight`/`--ls-mono`/`--ls-ui`, plus the
+stroke-tuned wordmark pair) and three weights (`--fw-regular`/`--fw-semibold`/`--fw-bold`).
 
 ---
 

@@ -15,6 +15,17 @@
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);     /* strong ease-out: the default for UI feedback */
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); /* movement / morphing on screen */
 
+  /* Hover/focus feedback beat — THE duration for color/opacity/border state
+     changes on interactive elements, site-wide (one class, one beat).
+     Choreographed timelines (mobile-menu clip, feature-band reveal,
+     case-viewer boot) are authored sequences, not this class, and keep
+     their own beats. */
+  --t-quick: 0.15s;
+
+  /* Mobile-menu clip reveal — paired with a visibility hand-off that must
+     share the same beat (clip transition + delayed visibility flip). */
+  --t-menu: 0.25s;
+
   /* Arrival wash (apparatus/arrival-wash.css) — how long the :target gold
      wash takes to fade out after a hash jump. */
   --wash-duration: 2s;

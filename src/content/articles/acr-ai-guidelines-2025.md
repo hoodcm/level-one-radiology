@@ -2,7 +2,7 @@
 title: "What the 2025 ACR AI Guidelines Mean for Emergency Radiology"
 publishDate: "2026-02-05"
 serial: "L1-0003"
-description: "The ACR's 2025 framework makes site-specific validation and continuous monitoring the price of deploying clinical AI. Why that is the right call, what it costs emergency departments, and what the guidelines leave open."
+description: "The ACR's 2025 framework makes site-specific validation and continuous monitoring the price of deploying clinical AI. Why that's right, and what it leaves open."
 tags: ["ai", "policy", "acr", "emergency"]
 primaryTag: "AI & Policy"
 contentType: "commentary"
@@ -17,13 +17,13 @@ keyPoints:
 
 The ACR updated its framework for deploying clinical AI, and the change with real teeth is site-specific validation. Vendor performance data is now explicitly insufficient for a deployment decision. Before a tool goes live, the site has to test it against its own patient population, its own scanners, and its own protocols. After it goes live, the site has to keep measuring sensitivity, specificity, and false positive rates over time.
 
-There is also a new documentation expectation when a radiologist overrides an AI recommendation. The stated purpose is quality improvement, though it's hard not to notice what else a documented trail of overrides could be used for.
+There's also a new documentation expectation when a radiologist overrides an AI recommendation. The stated purpose is quality improvement. A documented trail of overrides has other uses too, and anyone signing those studies should think about who reads that trail and why.
 
 ## They Got the Big One Right
 
 I think site-specific validation is the right call, and I say that knowing it lands hardest on departments like mine. Anyone who has trialed these tools has seen the gap between the vendor's numbers and deployed performance. A model reports 95 percent sensitivity on its curated test set, and then it meets an actual emergency department, with portable studies, motion artifact, polytrauma, and patients who look nothing like the training data. Emergency populations are underrepresented in nearly every training dataset, so if any setting needs local validation before trusting a tool, it's ours.
 
-That being said, the burden is real. Validation means a curated local test set, someone to run the analysis, and someone to keep watching performance after go-live. The guidelines define the expectation and say nothing about who does the work. At most academic sites the honest answer right now is nobody, and at most private practices it's nobody with protected time.
+That being said, the burden is real. Validation means a curated local test set, someone to run the analysis, and someone to keep watching performance after go-live. The framework defines the expectation and assigns the work to no one. At most academic sites the honest answer right now is nobody, and at most private practices it's nobody with protected time.
 
 ## What the Guidelines Leave Open
 
@@ -33,7 +33,7 @@ The first is workflow. The guidelines don't say how AI results should reach a si
 
 Liability is the second. If a validated tool misses a finding and the radiologist leaned on the negative result, the guidelines don't say who owns that miss.
 
-And the third is cost. Per-study licensing fees multiply badly at emergency volumes, and the framework addresses clinical validity without ever asking whether any of this is economically survivable.
+And the third is cost. Per-study licensing fees multiply badly at emergency volumes, and the framework treats clinical validity without ever asking whether any of this is economically survivable.
 
 ## What to Do With This
 

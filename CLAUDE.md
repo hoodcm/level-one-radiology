@@ -43,7 +43,7 @@ This is the project's expression of the global documentation-hygiene single-sour
 | Content | Markdown + YAML frontmatter (git-managed) |
 | Hosting | GitHub Pages |
 | Newsletter | Buttondown |
-| Analytics | Plausible |
+| Analytics | Cloudflare Web Analytics (cookieless; not yet installed) |
 | Search | Pagefind (deferred — add at 15+ articles) |
 
 ## Commands
@@ -54,7 +54,8 @@ This is the project's expression of the global documentation-hygiene single-sour
 | `npm run build` | Production build |
 | `npm run preview` | Preview production build |
 | `npm run check` | `astro check` — TypeScript/type diagnostics across `.astro`/`.ts`/`.tsx` (mirrors the IDE's Problems panel) |
-| `npm run lint` | Enforce design tokens (no hard-coded colors/grid) — `lint:css` (stylelint) + `lint:markup` (inline-color check). Runs in CI; a violation fails the deploy |
+| `npm run lint` | Enforce design tokens — `lint:css` (stylelint) + `lint:markup` (hard-coded colors in markup, plus `--gray-*` swatch leakage anywhere). Runs in CI; a violation fails the deploy |
+| `npm test` | `vitest run` — contract tests for the design tokens, tag taxonomy, lint gate, case viewer, and markdown plugins. **Not yet wired into CI**, so run it yourself before pushing |
 | `npx shadcn add [name]` | Add shadcn/ui component |
 
 **Keep the dev server running for the whole session.** Michael watches changes live at
@@ -68,6 +69,27 @@ When you need current API/usage docs for a library — **Astro 5, Tailwind v4, s
 
 - context7 is installed as a **user-scope plugin** (`context7@claude-plugins-official`) — available in every session, no per-project setup. Do **not** add it to a project `.mcp.json`; that just duplicates the plugin.
 - Flow: resolve the library id first (`resolve-library-id`), then fetch docs for the specific topic (`get-library-docs`). Prefer this over `WebSearch`/`WebFetch` for framework questions.
+
+### When a lookup is required
+
+The trigger is a property of the **edit**, never a feeling of confidence — self-assessed "I know this"
+is exactly what fails, silently. Look it up when the change touches **framework-owned behavior**, where
+Astro/Tailwind/Base UI/React decides what happens rather than our code:
+
+- A framework directive or attribute — `client:*`, `is:inline`, `set:html`, `define:vars`, `transition:*`, `server:defer`.
+- How `<script>` or `<style>` gets processed, bundled, scoped, deduped, or ordered.
+- Content collections, loaders, the schema, `render()`, `getStaticPaths`.
+- Config surfaces — `astro.config.mjs`, integrations, adapters, Vite plugins.
+- Anything whose default moved across a major version (Astro v4→v5, Tailwind v3→v4).
+- **Sharpest tripwire: you are about to write a sentence asserting how the framework behaves** — in a
+  code comment, a doc, or a message. Explaining the framework *is* quoting the docs; quote them from
+  the docs.
+
+No lookup needed for our own logic, token/CSS values, markup structure, prose, or renames.
+
+Reading the docs is not the last step — **verify the built output too.** The bug that produced this rule
+(a conditionally rendered `<script>` that evicted its sibling from every built page) was invisible in
+source and in `astro check`, and visible only in `dist/`.
 
 ## Architecture
 
@@ -84,7 +106,7 @@ src/
     ui/                   # shadcn/ui auto-generated components
   lib/
     utils.ts              # cn helper etc.
-    tags.ts               # Single source: tag/contentType taxonomy → signal variants
+    tags.ts               # Single source: tag/contentType taxonomy (keys feed the schema enums)
     articles.ts           # getArticles(): draft-filtered, date-sorted accessor
     apparatus.ts          # Article-apparatus kill-switch flags (markup-emitting elements + case-viewer behavior experiments)
     markdown-plugins.mjs  # remarkCallouts, remarkCaseViewer, rehypeTableScroll, remarkReadingTime, rehypeFootnotePopovers
@@ -145,15 +167,25 @@ the right guide when you touch the relevant files, and they *point* to the docs 
 
 Open the cited doc before making the change.
 
+**Design-quality passes** route through the **`/design-craft`** skill
+(`.claude/skills/design-craft/SKILL.md`): polish, critique, audit, spacing/rhythm judgment,
+quieter/bolder, motion, color, copy clarity. Its playbooks supply judgment only — values still come
+from the tokens, and its precedence section says so.
+
 ## Key Design Decisions
 
-The load-bearing design facts — palette and the warmth formula, the type families, density, the 6/12/18
-grid, signal-color meanings, the gold primary CTA, the keystone metric — live in the design system
+The load-bearing design facts — the palette model and the warmth formulas, the type families, density,
+the 6/12/18 grid, accent meanings, the brand gold, the keystone metric — live in the design system
 ([docs/design/README.md](docs/design/README.md) → philosophy + tokens) and the CSS tokens in
 `src/styles/tokens/`. They are **not** restated here, because a copy drifts; open those docs when the work
 touches them.
 
-One enforceable rule earns an always-on spot:
+Two enforceable rules earn an always-on spot:
+
+- **Consumers reference role tokens, never swatches.** `--gray-*` is the raw ramp and belongs to
+  `src/styles/tokens/colors.css` alone; a component reaches for a role (`--color-bg-raised`,
+  `--color-border-default`). Lint-enforced by `scripts/check-inline-colors.mjs`, which walks CSS as well
+  as markup because stylelint cannot express an off-limits custom-property name.
 
 - **Layout goes through the grid primitive** — page shells use `<Container>`, multi-column layouts use
   `<Grid>`/`<Col>`. Never hand-roll `grid-template-columns` or re-declare a `max-width + margin + padding`
@@ -170,10 +202,8 @@ One enforceable rule earns an always-on spot:
 
 ## Environment Variables
 
-| Variable | Purpose |
-|----------|---------|
-| `BUTTONDOWN_API_KEY` | Newsletter API |
-| `PUBLIC_PLAUSIBLE_DOMAIN` | Analytics domain (leveloneradiology.com) |
+None. The build consumes no secrets — the newsletter form POSTs to Buttondown's
+public embed endpoint, and the analytics beacon token is public.
 
 ## Project Files
 

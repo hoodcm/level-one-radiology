@@ -1,5 +1,7 @@
 {
-  "plugins": ["stylelint-declaration-strict-value"],
+  "plugins": [
+    "stylelint-declaration-strict-value"
+  ],
   "rules": {
     "scale-unlimited/declaration-strict-value": [
       [
@@ -14,29 +16,75 @@
         "border-bottom-color",
         "border-left-color",
         "outline-color",
-        "grid-template-columns"
+        "grid-template-columns",
+        "line-height",
+        "letter-spacing",
+        "font-weight",
+        "z-index"
       ],
       {
-        "ignoreValues": [
-          "/var\\(/",
-          "/color-mix\\(/",
-          "/repeat\\(\\s*var\\(/",
-          "transparent",
-          "currentColor",
-          "currentcolor",
-          "inherit",
-          "initial",
-          "unset",
-          "none"
-        ],
-        "message": "Hard-coded value for `${property}` — use a token from src/styles/tokens/ (e.g. var(--color-…) / var(--grid-…)). See CLAUDE.md and docs/principles/layout-principles.md."
+        "ignoreValues": {
+          "": [
+            "/var\\(/",
+            "/color-mix\\(/",
+            "/repeat\\(\\s*var\\(/",
+            "transparent",
+            "currentColor",
+            "currentcolor",
+            "inherit",
+            "initial",
+            "unset",
+            "none"
+          ],
+          "line-height": [
+            "/var\\(/",
+            "normal",
+            "inherit",
+            "initial",
+            "unset"
+          ],
+          "letter-spacing": [
+            "/var\\(/",
+            "0",
+            "normal",
+            "inherit",
+            "initial",
+            "unset"
+          ],
+          "font-weight": [
+            "/var\\(/",
+            "inherit",
+            "initial",
+            "unset"
+          ],
+          "z-index": [
+            "/var\\(/",
+            "1",
+            "2",
+            "auto",
+            "inherit",
+            "initial",
+            "unset"
+          ]
+        },
+        "message": "Hard-coded value for `${property}` \u2014 use a token from src/styles/tokens/ (leading: --lh-*, tracking: --ls-*, weight: --fw-*, stacking: --z-*, color: --color-*). See CLAUDE.md and docs/design/tokens.md."
       }
     ]
   },
   "overrides": [
     {
-      "files": ["src/styles/tokens/**/*.css"],
-      "rules": { "scale-unlimited/declaration-strict-value": null }
+      "files": [
+        "src/styles/tokens/**/*.css"
+      ],
+      "rules": {
+        "scale-unlimited/declaration-strict-value": null
+      }
+    },
+    {
+      "files": [
+        "**/*.astro"
+      ],
+      "customSyntax": "postcss-html"
     }
   ]
 }

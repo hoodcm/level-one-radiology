@@ -14,15 +14,15 @@ keyPoints:
   - "An unusually crisp heart border or hemidiaphragm means air is outlining it. Compare sides before calling the film clear."
 ---
 
-A supine AP chest goes up during the primary survey, and the question comes from the foot of the bed before the patient is anywhere near a scanner: any pneumothorax? You look, and both lungs seem expanded, with no pleural line at either apex. That apical check is the one erect films taught you, and on a supine patient it's looking in the wrong place.
+A supine AP chest goes up during the primary survey, and someone asks from the foot of the bed, before the patient is anywhere near a scanner: any pneumothorax? You look, and both lungs seem expanded, with no pleural line at either apex. That apical check is the one you learned on erect films, and on a supine patient you are looking in the wrong place.
 
-## Why the Apical Check Fails
+## Why the Apical Check Fails on a Supine Film
 
-Pleural air rises to the least dependent part of the chest, wherever that happens to be. Stand the patient up and the least dependent point is the apex, so air collects there and shows you a visceral pleural line in profile, which is the finding every textbook drew for you. Lay the patient flat, and every trauma activation is flat, and the geometry changes. The highest point of the pleural space is now anterior and inferior, along the front of the chest and in the anteromedial and subpulmonic recesses.
+Pleural air rises to the least dependent part of the chest, wherever that happens to be. Stand the patient up and the least dependent point is the apex, so air collects there, the beam catches the visceral pleural line in profile, and you get the picture every textbook drew. Lay the patient flat, and every trauma activation is flat, and the geometry changes. The highest point of the pleural space is now anterior and inferior, along the front of the chest and in the anteromedial and subpulmonic recesses.
 
-So the air slides forward and down, and instead of a cap at the apex it spreads out as a sheet in front of the lung. A sheet of air viewed face-on casts almost no edge, the beam no longer catches the pleural line in tangent, and the direct sign disappears. What's left are the indirect signs, the places where that anterior air outlines structures that used to blend into the lung around them. On the supine film you're rarely looking for a line. Mostly you're looking for what the air outlines.
+So the air slides forward and down, and instead of a cap at the apex it spreads out as a sheet in front of the lung. A sheet of air viewed face-on casts almost no edge, so the beam no longer catches the pleural line in tangent and the direct sign disappears. What's left are the indirect signs, the places where that anterior air outlines structures that used to blend into the lung around them. On the supine film you're rarely looking for a line, and mostly you're looking for what the air outlines.
 
-Because the film hides the sheet so well, a third to a half of pneumothoraces later proven on CT are invisible on the supine trauma radiograph,[^1] and the ones that do show up do it mostly through the signs below.
+A sheet that thin escapes detection often enough to matter: a third to a half of pneumothoraces later proven on CT are invisible on the supine trauma radiograph,[^1] and the ones that do appear announce themselves mostly through the signs below.
 
 ## The Signs, and What the Air Is Doing
 
@@ -55,10 +55,10 @@ Skin folds are the classic false positive: a fold casts an edge that fades at on
 The supine film usually leaves you with a maybe, and the tiebreakers are close at hand.
 
 :::note[The definitive answers are nearby]
-In the bay, the extended FAST already includes anterior pleural views, and absent lung sliding answers the question in seconds. The trauma CT that follows settles it completely, down to pneumothoraces of a few millimeters. While you're in that scan, the solid organs deserve the same systematic read: see [the approach to splenic trauma](/articles/approach-to-splenic-trauma).
+In the bay, the extended FAST already includes anterior pleural views, and you have your answer within seconds of finding no lung sliding. The trauma CT that follows resolves the question completely, down to pneumothoraces of a few millimeters. While you're in that scan, the solid organs deserve the same systematic read: see [the approach to splenic trauma](/articles/approach-to-splenic-trauma).
 :::
 
-An occult pneumothorax, one visible only on CT, is usually observed rather than drained.[^2] The read on the radiograph still matters because decisions sometimes have to be made before the patient gets to the scanner.
+An occult pneumothorax, one visible only on CT, is usually observed rather than drained.[^2] The read on the radiograph still matters, because the team sometimes has to decide before the patient reaches the scanner.
 
 :::critical[Before positive pressure]
 A small or occult pneumothorax under positive pressure ventilation can convert to a tension pneumothorax, because every delivered breath pumps a little more air through the same one-way defect. If the patient is headed for intubation, the OR, or a helicopter, a suspected pneumothorax changes what the team does next. Say it out loud before the tube goes in.
@@ -71,7 +71,7 @@ A small or occult pneumothorax under positive pressure ventilation can convert t
 3. Compare the upper abdominal quadrants for a lucent side.
 4. Check the apices anyway. Large pneumothoraces still show up there, and you'll feel silly explaining the one you skipped.
 
-Then report what you actually know. "No pneumothorax" is a claim the supine film can't fully back. "No visible pneumothorax on a supine radiograph, CT to follow" is what the film supports, and it tells the anesthesiologist exactly how much weight to put on it.
+Then report what you actually know. "No pneumothorax" is a claim the supine film can't fully back. Write "no visible pneumothorax on a supine radiograph, CT to follow" instead, and the anesthesiologist knows exactly how much weight to put on it.
 
 [^1]: CT-confirmed blunt trauma series put supine radiograph sensitivity for pneumothorax in the 30 to 50 percent range. The exact figure moves with detector and reader, and the series agree on the direction.
 

@@ -1,40 +1,31 @@
 /**
  * Single source of truth for the tag taxonomy.
  *
- * Canonical primary tags and content types, each mapped to its signal-color
- * Tag variant. The content schema (src/content.config.ts) derives its enums
- * from these keys, so a typo'd tag fails the build instead of silently
- * rendering the default gray. Adding a tag = one entry here.
+ * These names ARE the content schema's enums: src/content.config.ts builds
+ * `z.enum(PRIMARY_TAG_NAMES)` from them, so a typo'd tag in an article's
+ * frontmatter fails the build instead of rendering wrong. `z.enum()` needs a
+ * non-empty tuple, which `as const` gives it directly. Adding a tag = one
+ * entry here.
+ *
+ * Taxonomy-as-color is retired: chips carry no per-tag hue. Six hues spent on
+ * taxonomy bought a rainbow no reader was decoding, and the palette now spends
+ * color only where it means something (brand gold, apparatus teal, severity
+ * red). Every chip renders identically in muted text — a topic chip and a
+ * content-type chip sitting adjacent look the same, which is accepted: they
+ * read as text, and the text is the discriminator.
  */
-export type TagVariant =
-  | 'default'
-  | 'signal-red'
-  | 'signal-cyan'
-  | 'signal-violet'
-  | 'signal-yellow'
-  | 'signal-orange';
+export const PRIMARY_TAG_NAMES = [
+  'Trauma',
+  'Abdomen',
+  'Chest',
+  'Neuro',
+  'MSK',
+  'AI & Policy',
+] as const;
 
-export const PRIMARY_TAGS = {
-  'Trauma': 'signal-red',
-  'Abdomen': 'signal-cyan',
-  'Chest': 'signal-orange',
-  'Neuro': 'signal-violet',
-  'MSK': 'signal-yellow',
-  'AI & Policy': 'signal-violet',
-} as const satisfies Record<string, TagVariant>;
+export const CONTENT_TYPE_NAMES = ['educational', 'commentary', 'case-analysis'] as const;
 
-export const CONTENT_TYPES = {
-  'educational': 'signal-cyan',
-  'commentary': 'signal-violet',
-  'case-analysis': 'signal-orange',
-} as const satisfies Record<string, TagVariant>;
+export type PrimaryTag = (typeof PRIMARY_TAG_NAMES)[number];
+export type ContentType = (typeof CONTENT_TYPE_NAMES)[number];
 
-export type PrimaryTag = keyof typeof PRIMARY_TAGS;
-export type ContentType = keyof typeof CONTENT_TYPES;
-
-export const PRIMARY_TAG_NAMES = Object.keys(PRIMARY_TAGS) as [PrimaryTag, ...PrimaryTag[]];
-export const CONTENT_TYPE_NAMES = Object.keys(CONTENT_TYPES) as [ContentType, ...ContentType[]];
-
-export const tagVariant = (tag: PrimaryTag): TagVariant => PRIMARY_TAGS[tag];
-export const contentTypeVariant = (type: ContentType): TagVariant => CONTENT_TYPES[type];
 export const contentTypeLabel = (type: ContentType): string => type.replace('-', ' ').toUpperCase();

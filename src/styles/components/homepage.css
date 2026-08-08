@@ -8,7 +8,7 @@
   height: var(--nav-height);
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: var(--z-header);
   background: var(--color-bg-deepest);
 }
 
@@ -27,7 +27,7 @@
   align-items: center;
   color: var(--color-text-primary);
   text-decoration: none;
-  transition: color 0.15s ease;
+  transition: color var(--t-quick) ease;
 }
 
 .site-logo:hover {
@@ -50,20 +50,20 @@
   font-size: var(--fz-branding);
   /* Tracking mirrors the hero wordmark (its base / LEVEL ONE pair) so the
      two instances read as one mark at desktop widths. */
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ls-wordmark);
   text-transform: uppercase;
 }
 /* Michroma has one weight — synthesize bold/semibold via text-stroke
    (font-weight kept at 400 so the browser doesn't add inconsistent synthetic
    bold on top of the stroke). */
 .site-logo__level-one {
-  font-weight: 400;
+  font-weight: var(--fw-regular);
   /* Opened like the hero's — offsets the heavy stroke crowding the stems. */
-  letter-spacing: 0.16em;
+  letter-spacing: var(--ls-wordmark-open);
   -webkit-text-stroke: var(--wordmark-stroke-bold) currentColor;
 }
 .site-logo__radiology {
-  font-weight: 400;
+  font-weight: var(--fw-regular);
   -webkit-text-stroke: var(--wordmark-stroke-semi) currentColor;
 }
 
@@ -77,16 +77,16 @@
 }
 
 .site-nav__item {
-  font-family: var(--ff-ui);
+  font-family: var(--ff-body);
   font-size: var(--fz-nav);
-  font-weight: 700;
-  letter-spacing: var(--ls-ui);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-caps-sans);
   text-transform: uppercase;
   padding: 6px var(--nav-padding-h);
   border-radius: var(--radius-xs);
   color: var(--color-text-muted);
   text-decoration: none;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color var(--t-quick) ease, color var(--t-quick) ease;
 }
 
 .site-nav__item:hover {
@@ -102,12 +102,12 @@
 
 .site-nav__item--cta {
   background: var(--color-primary);
-  border: 1px solid var(--color-primary);
+  border: var(--border-w) solid var(--color-primary);
   color: var(--color-on-primary);
   border-radius: var(--radius-xs);
-  /* Bottom-biased: Michroma's caps ride low in the em box (measured 13px
-     above ink vs 9 below at even padding-equivalent) — this recenters. */
-  padding: 5px 12px 7px;
+  /* Even padding: the Michroma bottom-bias compensation went with the face
+     (the nav runs the body sans now, whose caps sit centered). */
+  padding: 6px 12px;
 }
 
 .site-nav__item--cta:hover {
@@ -150,9 +150,9 @@
   /* Two-step morph (Scrib3-style): on CLOSE, the bars un-rotate first (no
      delay), THEN slide back to their resting positions (delayed). */
   transition:
-    top 0.15s ease 0.15s,
-    width 0.15s ease 0.15s,
-    transform 0.15s ease 0s,
+    top var(--t-quick) ease var(--t-quick),
+    width var(--t-quick) ease var(--t-quick),
+    transform var(--t-quick) ease 0s,
     opacity 0.12s ease 0s;
 }
 .nav-toggle__line:nth-child(1) { top: 0; }
@@ -162,9 +162,9 @@
 /* Hamburger → X: slide the bars to center first, THEN rotate into the X. */
 :root.is-nav-open .nav-toggle__line {
   transition:
-    top 0.15s ease 0s,
-    width 0.15s ease 0s,
-    transform 0.15s ease 0.15s,
+    top var(--t-quick) ease 0s,
+    width var(--t-quick) ease 0s,
+    transform var(--t-quick) ease var(--t-quick),
     opacity 0.12s ease 0.04s;
 }
 :root.is-nav-open .nav-toggle__line:nth-child(1) {
@@ -182,7 +182,7 @@
 .mobile-menu {
   position: fixed;
   inset: 0;                    /* full viewport — the sticky header sits on top (z-50) */
-  z-index: 40;
+  z-index: var(--z-menu);
   background: var(--color-bg-deepest);
   padding: calc(var(--nav-height) + var(--space-2)) var(--grid-margin) var(--space-6);
   display: flex;
@@ -194,13 +194,13 @@
      close so the panel stays interactive/visible through the wipe-out. */
   clip-path: inset(0 0 100% 0);
   visibility: hidden;
-  transition: clip-path 0.25s ease-in-out, visibility 0s linear 0.25s;
+  transition: clip-path var(--t-menu) ease-in-out, visibility 0s linear var(--t-menu);
 }
 
 :root.is-nav-open .mobile-menu {
   clip-path: inset(0 0 0 0);
   visibility: visible;
-  transition: clip-path 0.25s ease-in-out, visibility 0s;
+  transition: clip-path var(--t-menu) ease-in-out, visibility 0s;
 }
 
 /* Reduced motion: no wipe, no hamburger morph timing — instant open/close. */
@@ -220,11 +220,11 @@
 .mobile-menu__item {
   display: block;
   padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--color-border-default);
+  border-bottom: var(--border-w) solid var(--color-border-default);
   font-family: var(--ff-body);
   font-size: var(--fz-display);
-  font-weight: 600;
-  line-height: 1.1;
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-110);
   color: var(--color-text-primary);
   text-decoration: none;
 }
@@ -241,7 +241,7 @@
   color: var(--color-on-primary);
   font-family: var(--ff-ui);
   font-size: var(--fz-nav);
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   letter-spacing: var(--ls-ui);
   text-transform: uppercase;
   border-radius: var(--radius-xs);
@@ -297,20 +297,20 @@
 .tag {
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   letter-spacing: var(--ls-ui);
   text-transform: uppercase;
-  line-height: 1;
+  line-height: var(--lh-100);
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
   padding: 2px 7px;
-  border: 1px solid currentColor;
+  border: var(--border-w) solid currentColor;
   border-radius: var(--radius-xs);
   color: var(--color-text-muted);
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: color var(--t-quick) ease, border-color var(--t-quick) ease;
   text-decoration: none;
 }
 
@@ -325,43 +325,24 @@
   background: currentColor;
 }
 
-.tag--signal-red {
-  color: var(--color-signal-red);
-  border-color: var(--color-signal-red);
-}
-
-.tag--signal-cyan {
-  color: var(--color-signal-cyan);
-  border-color: var(--color-signal-cyan);
-}
-
-.tag--signal-violet {
-  color: var(--color-signal-violet);
-  border-color: var(--color-signal-violet);
-}
-
-.tag--signal-yellow {
-  color: var(--color-signal-yellow);
-  border-color: var(--color-signal-yellow);
-}
-
-.tag--signal-orange {
-  color: var(--color-signal-orange);
-  border-color: var(--color-signal-orange);
-}
-
 /* --- Article Card --- */
 /* Cards are a raised surface sitting ON the section ground (Anthropic-style):
    the featured section is bg-primary, the cards lift to bg-raised so they read
    as distinct panels, not a flat list. */
+/* Every card is a full-height flex column with meta PINNED to the bottom
+   edge: grid rows stretch children, so all cards in a row share one height
+   and one meta baseline regardless of excerpt length — the grid reads as a
+   set, not a skyline. */
 .article-card {
   position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: var(--color-bg-raised);
-  border: 1px solid var(--color-border-default);
+  border: var(--border-w) solid var(--color-border-default);
   border-radius: var(--radius-lg);
   padding: var(--card-padding-md);
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color var(--t-quick) ease, border-color var(--t-quick) ease;
   text-decoration: none;
   color: inherit;
 }
@@ -372,6 +353,10 @@
   text-decoration: none;
 }
 
+/* Internal rhythm is DIFFERENTIATED, not uniform: the tag eyebrow stands
+   apart (space-2), the title binds tight to its excerpt (space-1), and the
+   largest pause sits before the bottom-pinned meta (space-3 minimum,
+   stretching with the row). Three visibly different gaps = hierarchy. */
 .article-card__tags {
   display: flex;
   gap: var(--space-1);
@@ -382,9 +367,10 @@
 .article-card__title {
   font-family: var(--ff-body);
   font-size: var(--fz-card-title);
-  font-weight: 600;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-120);
+  text-box: var(--text-trim);
+  letter-spacing: var(--ls-tight);
   color: var(--color-text-ivory);
   margin-bottom: var(--space-1);
   text-wrap: balance;
@@ -392,9 +378,9 @@
 
 .article-card__excerpt {
   font-size: var(--fz-body-s);
-  line-height: 1.5;
+  line-height: var(--lh-150);
   color: var(--color-text-secondary);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
 .article-card__meta {
@@ -403,15 +389,15 @@
   color: var(--color-text-muted);
   display: flex;
   gap: var(--space-2);
+  margin-top: auto;   /* pin to the card's bottom edge — one baseline per row */
 }
 
 /* Lead card — the featured slot reads as a feature, not a wide small card:
-   generous padding, headline-scale title, full-height so it stays flush with
-   the stacked column beside it (meta pinned to the bottom edge). */
+   full-width, generous padding, headline-scale title. On the desktop
+   composition it runs the editorial two-column split (head: tags+title /
+   body: excerpt+meta) so the wide card is FULL, not stretched — height is
+   bounded by its own content at every viewport. */
 .article-card--lead {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
   padding: var(--card-padding-lg);
 }
 
@@ -425,22 +411,30 @@
   max-width: 55ch;
 }
 
-.article-card--lead .article-card__meta {
-  margin-top: auto;
+.article-card--lead .article-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+@media (min-width: 60em) {
+  .article-card--lead {
+    flex-direction: row;
+    gap: var(--space-6);
+  }
+  .article-card--lead .article-card__head {
+    flex: 1;
+  }
+  .article-card--lead .article-card__title {
+    margin-bottom: 0;   /* the column split owns the rhythm now */
+  }
 }
 
 /* Card ornament (corner field arcs + edge tees) lives in
    components/ornament.css; values in tokens/ornament.css. */
 
 /* --- Featured Grid --- */
-/* Layout (columns 11/7 desktop, stacked mobile) is owned by <Grid>/<Col>;
-   these rules style only the cards inside each column. */
-.featured-grid__rest {
-  display: flex;
-  flex-direction: column;
-  /* Vertical gap between the stacked non-lead cards within this column. */
-  gap: var(--gap-md);
-}
+/* Featured layout (wide lead row + card row beneath) is owned by
+   <Grid>/<Col> in index.astro; only the cards themselves are styled here. */
 
 /* --- Newsletter Inline (hero) --- */
 .newsletter-inline {
@@ -465,25 +459,27 @@
 
 .newsletter-inline__status {
   font-size: var(--fz-body-s);
-  color: var(--color-signal-cyan);
+  /* A status message is editorial apparatus, not instrument readout. */
+  color: var(--color-teal-apparatus);
 }
 
 .newsletter-inline__error {
   font-size: var(--fz-body-xs);
-  color: var(--color-signal-red);
+  /* Small text — the saturated red fails AA at this size (see colors.css). */
+  color: var(--color-signal-red-text);
 }
 
 /* Gold CTA button (form submit) — same voice as the nav/mobile Subscribe. */
 .btn-gold {
   background: var(--color-primary);
-  border: 1px solid var(--color-primary);
+  border: var(--border-w) solid var(--color-primary);
   color: var(--color-on-primary);
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   letter-spacing: var(--ls-ui);
   text-transform: uppercase;
-  line-height: 1;
+  line-height: var(--lh-100);
 }
 .btn-gold:hover {
   background: var(--color-bg-deepest);
@@ -502,21 +498,21 @@
 .newsletter-cta__headline {
   font-family: var(--ff-body);
   font-size: var(--fz-headline);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
   line-height: var(--lh-headline);
   color: var(--color-text-primary);
 }
 
 .newsletter-cta__subhead {
   font-size: var(--fz-body-s);
-  line-height: 1.5;
+  line-height: var(--lh-150);
   color: var(--color-text-secondary);
 }
 
 /* --- Footer --- */
 .site-footer {
   background: var(--color-bg-primary);
-  border-top: 1px solid var(--color-border-subtle);
+  border-top: var(--border-w) solid var(--color-border-subtle);
   padding: var(--section-spacer) 0 var(--space-4);
 }
 
@@ -525,7 +521,7 @@
 .site-footer__section-title {
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   letter-spacing: var(--ls-ui);
   text-transform: uppercase;
   color: var(--color-text-muted);
@@ -545,7 +541,7 @@
   font-size: var(--fz-body-s);
   color: var(--color-text-secondary);
   text-decoration: none;
-  transition: color 0.15s ease;
+  transition: color var(--t-quick) ease;
 }
 
 .site-footer__link:hover {
@@ -556,7 +552,7 @@
 .site-footer__bottom {
   margin-top: var(--space-5);
   padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border-subtle);
+  border-top: var(--border-w) solid var(--color-border-subtle);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -567,15 +563,35 @@
 .site-footer__copyright {
   font-family: var(--ff-body);
   font-size: var(--fz-plate);
-  letter-spacing: 0.05em;
+  letter-spacing: var(--ls-ui);
   color: var(--color-text-disabled);
+}
+
+/* Legal links — same plate register as the copyright line. */
+.site-footer__legal {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.site-footer__legal-link {
+  font-family: var(--ff-body);
+  font-size: var(--fz-plate);
+  letter-spacing: var(--ls-ui);
+  color: var(--color-text-disabled);
+  text-decoration: none;
+  transition: color var(--t-quick) ease;
+}
+
+.site-footer__legal-link:hover {
+  color: var(--color-text-secondary);
+  text-decoration: none;
 }
 
 /* Data plate — version + build date, stamped at build (Footer.astro). */
 .site-footer__plate {
   font-family: var(--ff-body);
   font-size: var(--fz-plate);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--ls-ui);
   text-transform: uppercase;
   color: var(--color-text-disabled);
 }
@@ -622,8 +638,8 @@
   margin-bottom: var(--space-5);
   font-family: var(--ff-ui-ext);
   font-size: var(--fz-wordmark-hero);
-  line-height: 1.1;
-  letter-spacing: 0.06em;
+  line-height: var(--lh-110);
+  letter-spacing: var(--ls-wordmark);
   text-transform: uppercase;
   color: var(--color-text-ivory);
   text-decoration: none;
@@ -652,9 +668,9 @@
 /* Michroma is single-weight; bold "Level One" via text-stroke (font-weight 400
    so the browser adds no inconsistent synthetic bold on top). */
 .hero__wordmark-level {
-  font-weight: 400;
+  font-weight: var(--fw-regular);
   /* Tracking opened slightly to offset the heavy stroke crowding the stems. */
-  letter-spacing: 0.16em;
+  letter-spacing: var(--ls-wordmark-open);
   animation-delay: 0.12s;
   -webkit-text-stroke: var(--wordmark-stroke-hero) currentColor;
   /* Cancel the stroke's leftward bleed (stroke is centered on the outline, so
@@ -662,7 +678,7 @@
   padding-left: calc(var(--wordmark-stroke-hero) / 2);
 }
 .hero__wordmark-radiology {
-  font-weight: 400;
+  font-weight: var(--fw-regular);
   color: var(--color-text-secondary);
   animation-delay: 0.26s;
   -webkit-text-stroke: var(--wordmark-stroke-hero-semi) currentColor;
@@ -693,8 +709,8 @@
   max-width: 34ch;
   font-family: var(--ff-display);
   font-size: var(--fz-hero-subtitle);
-  line-height: 1.2;
-  font-weight: 400;
+  line-height: var(--lh-120);
+  font-weight: var(--fw-regular);
   color: var(--color-text-secondary);
 }
 
@@ -710,7 +726,8 @@
     max-width: 18ch;
     font-size: var(--fz-display-l);
     line-height: var(--lh-display-l);
-    letter-spacing: -0.01em;
+    letter-spacing: var(--ls-display);
+    text-box: var(--text-trim);
     color: var(--color-text-ivory);
     text-wrap: balance;
   }
@@ -719,7 +736,7 @@
     max-width: 34ch;
     margin-top: var(--space-3);
     font-size: var(--fz-hero-subtitle);
-    line-height: 1.4;
+    line-height: var(--lh-140);
     color: var(--color-text-secondary);
   }
 }
@@ -884,7 +901,7 @@
   padding: var(--space-5) var(--space-3);
   font-family: var(--ff-display);
   font-size: var(--fz-hero-subtitle);
-  font-weight: 400;
+  font-weight: var(--fw-regular);
   line-height: var(--lh-body-xs);
   text-align: center;
   color: var(--color-text-ivory);
@@ -907,11 +924,11 @@
   margin-top: var(--space-3);
   padding: var(--space-2) var(--space-4);
   background: var(--color-primary);
-  border: 1px solid var(--color-primary);
+  border: var(--border-w) solid var(--color-primary);
   color: var(--color-on-primary);
   font-family: var(--ff-ui);
   font-size: var(--fz-nav);
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   letter-spacing: var(--ls-ui);
   text-transform: uppercase;
   border-radius: var(--radius-xs);
@@ -939,10 +956,83 @@
   padding-bottom: var(--space-4);
   background: var(--color-bg-deepest);
 }
+/* Desktop composition: the band does not render. It is the MOBILE
+   composition's signature moment (it carries the page h1 + subscribe route
+   there); at desktop the hero card already delivers the statement, so the
+   band was an empty ~68svh panel doing decoration only. The page flows
+   hero → console strip → Featured (decided 2026-08). */
 @media (min-width: 640px) and (min-aspect-ratio: 9/10) {
   .feature-band {
-    padding-bottom: var(--section-spacer);
+    display: none;
   }
+}
+
+/* --- Console strip — the desktop hero → Featured seam ---------------------
+   A thin instrument line on the hero's ground: hairline top and bottom,
+   mono voice, the newest entry as its payload. Mobile (where the feature
+   band is the seam) never shows it — the two are the same slot, one per
+   composition. */
+.console-strip {
+  display: none;
+  /* The strip is a THRESHOLD — it belongs to neither the hero nor Featured,
+     so it gets a generous interval on BOTH sides. Below, the featured
+     section's own spacer provides it; above, this margin does: without it
+     the tunnel's vanishing lines ran straight into the strip's hairline and
+     the two unrelated elements blurred together. */
+  margin-top: var(--section-spacer);
+  background: var(--color-bg-deepest);
+  border-top: var(--border-w) solid var(--color-border-subtle);
+  border-bottom: var(--border-w) solid var(--color-border-subtle);
+  text-decoration: none;
+  transition: background-color var(--t-quick) ease;
+}
+.console-strip:hover {
+  background: var(--color-bg-primary);
+  text-decoration: none;
+}
+@media (min-width: 640px) and (min-aspect-ratio: 9/10) {
+  .console-strip {
+    display: block;
+  }
+}
+.console-strip__inner {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.console-strip__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--ff-mono);
+  font-size: var(--fz-ui);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  color: var(--color-text-disabled);
+  white-space: nowrap;
+}
+.console-strip__title {
+  font-family: var(--ff-body);
+  font-size: var(--fz-body-s);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color var(--t-quick) ease;
+}
+.console-strip:hover .console-strip__title {
+  color: var(--color-link);
+}
+.console-strip__date {
+  margin-left: auto;
+  font-family: var(--ff-mono);
+  font-size: var(--fz-micro);
+  letter-spacing: var(--ls-mono);
+  color: var(--color-text-muted);
+  white-space: nowrap;
 }
 
 /* Contained card that INFLATES to full-bleed as it scrolls up the viewport
@@ -959,9 +1049,15 @@
   max-width: calc(var(--grid-max-width) + (100% - var(--grid-max-width)) * var(--fb-progress));
   min-height: calc(var(--fb-card-h) - var(--grid-margin) * 2 * (1 - var(--fb-progress)));
   overflow: hidden;
-  /* --color-border-default faded toward transparent as the card widens —
-     identical alpha math to the old rgba literal, but riding the token. */
-  border: 1px solid
+  /* The card's hairline melts as it inflates: --color-border-default mixed
+     toward transparent on --fb-progress, so the border is fully present at
+     rest and fully gone at full-bleed. Note this DERIVES a fade from an
+     opaque role — it is not an alpha border token, and so not a second
+     carve-out beside the case viewer's. color-mix toward `transparent`
+     produces the same 0→100% ramp whichever base it starts from; with the
+     base now opaque, the rest state reads as a more definite hairline on the
+     bg-deepest band, which is the point of the change. */
+  border: var(--border-w) solid
     color-mix(in srgb, var(--color-border-default) calc(100% * (1 - var(--fb-progress))), transparent);
   border-radius: calc(var(--radius-lg) * (1 - var(--fb-progress)));
   background: var(--color-bg-primary);
@@ -1019,7 +1115,7 @@
   text-transform: uppercase;
   color: var(--color-text-muted);
   text-decoration: none;
-  transition: color 0.15s ease;
+  transition: color var(--t-quick) ease;
 }
 .latest-section__all:hover {
   color: var(--color-link);

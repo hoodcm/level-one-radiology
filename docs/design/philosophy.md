@@ -48,9 +48,12 @@ application: professional, efficient, comfortable without being sparse.
    philosophy holds on mobile — don't "loosen up" for small screens.
 4. **Warmth through color, type, and spacing** — warmth is systemic, not decorative (see
    [Color, type & spacing](#color-type--spacing) below).
-5. **Signal colors are functional** — colors mean something when they appear (red = critical/trauma,
-   cyan = links, gold = caution + primary CTA, violet = technical). Meanings and values:
-   [tokens.md](tokens.md) → `src/styles/tokens/colors.css`.
+5. **Color means something, or it isn't spent** — one brand color (Level One Gold: links, focus,
+   selection, CTAs, and caution), one severity color (red = clinical critical), and one hue family
+   split by job (cyan = the case viewer's instrument readouts; teal = editorial apparatus — key
+   points, note callouts, statuses). Nothing else carries meaning by hue: taxonomy-as-color is
+   retired, and tags are neutral chips. Meanings and values: [tokens.md](tokens.md) →
+   `src/styles/tokens/colors.css`.
 6. **Mobile-first density** — most traffic is mobile; apply the same tight spacing, 44×44px targets, and
    no hover-dependent interactions.
 7. **Technical ornament, earned** — HUD framing, registration marks, dimension lines, structured bylines.
@@ -64,11 +67,41 @@ The reasoning behind the system. **Values are not here** — they live in the CS
 ([tokens.md](tokens.md) is the map). How to *choose* among them lives in [reasoning/](reasoning/).
 
 **Color — the warmth formula.** Professional dark interfaces achieve warmth by biasing RGB channels off
-neutral. Level One uses a **minimal warm bias** — `R = G + 1`, `B = G − 2` — imperceptible as a tint but
+neutral. Level One biases in two registers, because warm blacks and warm whites need very different
+amounts of it.
+
+*Surfaces and borders* carry a **minimal** bias — `R = G + 1`, `B = G − 1` — imperceptible as a tint but
 enough to avoid the harshness of pure neutrals on backlit screens (vintage monitor, not candlelight).
 Surfaces step in consistent luminance increments (human vision is logarithmic, so small even steps read
-smooth). This is the canonical explanation of the warmth formula; the resulting hex values live in
-`src/styles/tokens/colors.css`.
+smooth), and the swatches are named for their green channel, since green is the formula's free variable.
+
+*Text* carries a deliberately **wider** bias, `R − B ≈ 10–20`, tuned per step rather than derived. A warm
+white needs far more separation than a warm black to read warm at all, so the systemic warmth of the site
+actually lives in the text ramp, not the surfaces. Peak luminance is held below near-white on purpose:
+bright serif text on a near-black ground halates, and lowering the peak costs nothing at 14–16:1.
+
+This is the canonical explanation of the warmth formula — [tokens.md](tokens.md) points here rather than
+repeating it, and the resulting hex values live in `src/styles/tokens/colors.css`.
+
+**Definition is the border's job, not the fill's.** A raised surface is lifted one small step off its
+ground and given a real hairline, rather than lifted far enough to separate on fill alone. Fills doing
+definition work is what made the mid-dark surfaces read muddy; borders are opaque ramp steps so a
+hairline holds one weight on every surface instead of inheriting whatever sits beneath it. The one
+exception is a border over CT pixels, which has no fixed ground and stays alpha.
+
+**One gold, three weights — brand is not action.** The gold family is a single hue in three forms
+with non-overlapping jobs: the saturated **prime** where the *site* speaks (CTA, detector beam, brand
+moments), the ivory-lifted **interactive** form where the *reader* acts (links, focus), and the
+**soft** wash for large areas (selection, bands). The reader can tell "the site is speaking" from
+"I can act here" from "this is highlighted" by weight alone; sharing a weight across two of those
+jobs is a defect. (This is the reference system's clay → clay-interactive split, mirrored for a dark
+ground: their interactive form darkens under light, ours lifts over dark.)
+
+**Accent restraint — two gold voices above the fold, and no more.** The reference system shows its
+accent exactly once above the fold; Level One's ceiling is two, decided deliberately (2026-08): the
+one action (the subscribe CTA — gold is the action color) and the one brand signature (the detector
+beam). A third gold element above the fold is a defect, not a style choice — new gold goes below the
+fold or replaces one of these two.
 
 **Typography — a tech-editorial hybrid.** Three roles: a **display serif** for editorial authority in
 headlines, a **humanist body sans** for warm clarity at small sizes, and a **tech UI face** for PACS-like

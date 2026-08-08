@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-08-08
+
+### Added
+- **Legal pages** — `/privacy`, `/disclaimer`, `/terms` (plain-language, drafted against what the site actually does: one email field, cookieless analytics, no cookies), linked from a new footer legal nav whose disclaimer link doubles as the persistent "Not medical advice" line. Copy joins the Claude-drafted-copy review; three facts flagged there for Michael's confirmation (MGB non-affiliation wording, teaching-reuse policy, the `privacy@` forwarder).
+- **Design-token layer completed to a closed-ramp discipline throughout** — leading (5 rungs), tracking, font weight, prose vertical rhythm, border width, focus ring, z-index, and motion-beat tokens, each with a semantic name and no legal path to a raw literal outside `tokens/`. The stylelint gate now covers all of them (fail-closed, contract-tested), and the reasoning docs (`docs/design/`) explain the one-rung-per-class rule.
+- **Gold restructured into a three-rung family** — brand (CTA, the detector beam), action (links, focus, reading progress), and wash (selection, band tints) — so the reader can tell "the site is speaking" from "you can act here" by color alone.
+- **`/design-craft`** — a project-owned design-critique skill (12 playbooks: craft-floor, layout, polish, critique, audit, quieter, bolder, animate, delight, colorize, clarify, distill), adapted from an open-source design skill with branding and external tooling stripped and its precedence re-anchored to this project's token system.
+- **Console strip** — a desktop-only instrument line seaming the hero into Featured, carrying the newest article's title and date.
+
+### Changed
+- CLAUDE.md corrected: analytics row Plausible → Cloudflare Web Analytics (decided 2026-07-13), and the Environment Variables table emptied — nothing consumes `BUTTONDOWN_API_KEY` or `PUBLIC_PLAUSIBLE_DOMAIN`.
+- **Cloudflare migration plan re-premised: the site is live on GitHub Pages.** The plan had assumed not-yet-live and specified a first-go-live DNS path; verification (200 from `server: GitHub.com`, GH Pages A records, verified domain + approved cert) makes it a zero-downtime cutover instead. Registrar facts resolved by `whois` (GoDaddy, created 2024-10-02, expiry 2026-10-02, past the ICANN transfer lock), closing the `is-domain-dns-configured` question and giving the registrar transfer a mid-September window. Recorded the private-repo ordering constraint: GitHub Pages needs Pro to publish from a private repo, so the Cloudflare cutover must precede taking the repo private.
+- **"Orbital Floor Fracture Entrapment" published** — `draft: false`; ninth article, and the fourth carrying a case viewer.
+- **Wireframe-tunnel ring geometry is grid-derived, and the first ring's inset no longer sets the depth step.** The two were one number (`s1 = 1 - 2·inset/W` fed `dz`), so pulling ring 1 toward the edge packed the whole stack behind it. `TUNNEL.ring` now carries per-variant `{inset, step}` as fractions of `--grid-margin` — no px literal — with the band keeping `step: null` (step follows inset, article geometry unchanged) and the field taking a near-edge inset with its own looser step. The margin is resolved rather than restated: live off `.l1-container` in the browser, and out of `tokens/spacing.css` via `src/lib/grid-tokens.mjs` for the build-time fallback. Fixes a latent miss where the client read `.container`, which exists only on article pages, so the homepage field mount never saw the grid and sat on a fixed inset at every breakpoint.
+- **Brand gold retuned** to `#dcac33`, split between the reference clay's luminance tier and the original mustard-flat value, on two rounds of on-screen comparison.
+- **`print.css` rebased onto the swatch ramp as a role remap** rather than its own literal palette, matching the same swatch→role architecture the screen theme uses and leaving a light theme's surfaces already defined.
+- **Homepage "Latest" grid equalized** to full-height cards with a pinned meta baseline, and "Featured" rebuilt as a wide lead card plus a three-up row; the empty expanding hero card is retired on desktop (mobile keeps it as its own composition's signature moment).
+- **Top nav switched to the body sans face**, with its own tighter tracking rung for caps-in-a-humanist-face.
+- **Footer reorganized** (Navigate + Connect merged into one Index column, copyright now credits Michael Hood, MD alongside Level One Radiology, the build-version plate replaced with an engineering-plate stamp); About page's Mass General Brigham affiliation language removed; Privacy and Terms rewritten in standard policy register.
+
+### Fixed
+- **The wireframe-tunnel band never sized itself in any built article** — its bottom edge sat at the `55svh` CSS fallback instead of landing on the meta rule, and the TOC scroll-spy never ran either. Cause: the article template rendered a second `<script>` behind a `{hasCaseViewer && …}` conditional. Astro 5 renders `<script>` as declared and no longer implicitly inlines a conditionally rendered one, so the two collided — every built page emitted only the case-viewer chunk and dropped the sizing script entirely (dev degraded differently, sparing the four case articles, which is why it read as "wrong on some articles"). The documented escape, `is:inline`, also opts out of import resolution and so cannot carry an aliased import; the page now has one processed script that dynamic-imports the case viewer, gated on a `data-has-case` flag. Verified against `dist/`: 9 articles × 2 viewports all land at 1.00px, and the 25K case-viewer chunk is fetched only by the four articles that embed a case.
+
 ## [0.11.0] - 2026-08-07
 
 ### Added

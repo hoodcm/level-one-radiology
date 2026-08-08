@@ -1,8 +1,7 @@
 ---
 name: seo-grade
 run-log: required
-description: Grade one article, a set, or the whole corpus against the Google Search Central probes via an external Codex reviewer — the pre-publish gate for search-facing copy, also usable as a periodic corpus screen.
-disable-model-invocation: true
+description: Grade one article, a set, or the whole corpus against the Google Search Central probes via an external Codex reviewer — the pre-publish gate for search-facing copy, also usable as a periodic corpus screen. Read-only over article prose; it reports findings and never edits.
 ---
 
 # /seo-grade [slug ...]
@@ -38,9 +37,13 @@ Per article, invoke `/codex-second-opinion` with:
     structured-data lifecycle, Search Console evidence, crawl/index mechanics — are **n/a**
     unless the article copy itself proposes something in that domain
     (build-side ownership: `.claude/rules/seo-structure.md`).
-  - Context the grader needs: this is YMYL medical-education content on a single-author
-    physician site; the byline/author apparatus is template-emitted, so judge authorship by
-    what the copy claims, not by the absence of a byline in the markdown.
+  - Context the grader needs: this is **educational and commentary content in a medical
+    domain, written for clinicians — not consumer health guidance**. Say so explicitly, and
+    tell the grader not to apply a YMYL consumer-health bar (Michael, 2026-08-08). Left
+    unsaid, graders read "radiology" and reach for the YMYL probe, which inflates every
+    sourcing finding into a trust violation. The site is single-author and the byline
+    apparatus is template-emitted, so judge authorship by what the copy claims, not by the
+    absence of a byline in the markdown.
   - Findings in the probes' mandatory format: verbatim quote + principle + one-line fix.
     No quote, no finding.
 

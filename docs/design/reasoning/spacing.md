@@ -53,10 +53,15 @@ cramped layouts.
 
 ## 3. Vertical spacing
 
-- **Heading → its paragraph** binds tighter than the block above it: the heading owns its bottom margin
-  (use a `--space-*` token; `--space-4`/32px is the workhorse), and that gap stays **looser than
-  paragraph→paragraph** but **tighter than section→section**.
-- **Paragraph → paragraph** ≈ one body line (`--space-2`).
+**Inside the reading column, every gap is a `--prose-*` rhythm token** (tokens/spacing.css §PROSE
+RHYTHM): paragraph → next block, body → heading (fluid across the viewport), heading → its own body,
+between list items, and the list indent. One relationship, one token — tuning a gap propagates through
+every article. A margin literal in prose.css is a defect.
+
+- **Heading → its paragraph** binds tighter than the block above it: the heading owns both of its
+  margins (`--prose-heading-gap` above, `--prose-heading-after` below), and the gap above stays
+  **looser than paragraph→paragraph** but **tighter than section→section**.
+- **Paragraph → paragraph** — `--prose-p-gap` in the column; ≈ one body line (`--space-2`) elsewhere.
 - **Content block → content block** — default/medium (`--space-3`/`--space-4`).
 - **Section → section** — `--section-spacer` (large) / `--section-spacer-sm`. Keep section vertical
   padding **symmetric** (top = bottom); never compress one edge "to save space."

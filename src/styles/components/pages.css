@@ -17,8 +17,9 @@
   font-family: var(--ff-body);
   font-size: var(--fz-display);
   line-height: var(--lh-display);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-display);
+  text-box: var(--text-trim);
   color: var(--color-text-ivory);
   margin-top: var(--space-1);
   text-wrap: balance;
@@ -40,8 +41,9 @@
 
 .not-found__code {
   font-family: var(--ff-ui-ext);
-  font-size: 6rem;
-  line-height: 1;
+  font-size: var(--fz-404);
+  line-height: var(--lh-100);
+  text-box: var(--text-trim);
   color: var(--color-text-ivory);
   margin: var(--space-2) 0 var(--space-3);
 }
@@ -50,7 +52,7 @@
   max-width: 38ch;
   font-family: var(--ff-display);
   font-size: var(--fz-hero-subtitle);
-  line-height: 1.4;
+  line-height: var(--lh-140);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-4);
 }

@@ -1,0 +1,69 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Container from '@/components/layout/Container.astro';
+
+// NOTE: the employer non-affiliation paragraph is drafted with standard
+// language. Michael reviews the exact MGB wording before launch (it is his
+// name on it) — flagged in the Claude-drafted-copy review TODO.
+const description =
+  'Level One Radiology is educational material for clinicians. It is not medical advice, and reading it creates no physician-patient relationship.';
+---
+
+<Layout title="Disclaimer | Level One Radiology" description={description}>
+  <section class="page">
+    <Container width="reading">
+      <header class="page-header">
+        <p class="type-ui">Disclaimer</p>
+        <h1 class="page-header__title">Medical Disclaimer</h1>
+      </header>
+      <div class="prose">
+        <p class="lead">
+          Everything on this site is educational. None of it is medical advice.
+        </p>
+
+        <h2>Who this is for</h2>
+        <p>
+          This site is written for radiologists, trainees, and other clinicians. It teaches how to
+          interpret emergency imaging in general. It does not, and cannot, address the care of any
+          specific patient.
+        </p>
+
+        <h2>Not medical advice</h2>
+        <p>
+          Reading this site, subscribing to the newsletter, or emailing me does not create a
+          physician-patient relationship. Nothing here is a substitute for the judgment of a
+          clinician who has the whole picture: the patient, the history, the labs, and the complete
+          imaging study. Diagnostic and treatment decisions belong to the treating team. If you are
+          a patient looking for answers about your own imaging, talk to your physicians. They know
+          your case. I do not.
+        </p>
+
+        <h2>About the cases</h2>
+        <p>
+          Imaging cases on this site are de-identified teaching material, prepared and reviewed
+          before publication. Images may be cropped, windowed, or annotated to make a teaching point.
+          The discussion around a case is teaching, not a diagnostic report, and it deliberately
+          emphasizes some findings over others.
+        </p>
+
+        <h2>Accuracy</h2>
+        <p>
+          I work to make everything here correct at the time it is published. Medicine moves, and
+          evidence, guidelines, and practice change. Older articles may not reflect current
+          standards, and despite care, errors are possible. If you find one, I want to know:
+          <a href="mailto:privacy@leveloneradiology.com">email me</a>.
+        </p>
+
+        <h2>Independence</h2>
+        <p>
+          This site is written and edited by me alone. The views expressed are mine and do not
+          represent the views, positions, or policies of Mass General Brigham or any other
+          institution I am affiliated with. No sponsor, advertiser, or employer reviews or approves
+          this content.
+        </p>
+
+        <p><em>Last updated August 8, 2026.</em></p>
+      </div>
+    </Container>
+  </section>
+</Layout>

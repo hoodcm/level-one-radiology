@@ -18,16 +18,32 @@
 export const TUNNEL = {
   rows: 12, // subdivisions down each side; columns derive from aspect
   sMin: 0.14, // vanishing-rect scale (smaller = deeper)
-  // First ring's horizontal inset from the side edges, px. The grid governs
-  // this: callers pass 2/3 of the live --grid-margin (the component script
-  // reads it from the container); this default only covers the no-JS
-  // fallback. Ring COUNT is derived — the first ring fixes the tunnel's
-  // depth step and rings repeat at that spacing until the vanishing rect.
-  inset1: 21,
+  // Ring geometry per mount variant, as FRACTIONS of the page grid margin
+  // (--grid-margin, tokens/spacing.css). No px lives here: the grid owns the
+  // measurement, this owns only the proportions, and every caller passes the
+  // margin it resolved (live computed style in the browser, the token itself
+  // at build time).
+  //
+  //   inset — where ring 1 lands, in from the side edges.
+  //   step  — the depth step repeated from ring 1 to the vanishing rect, which
+  //           sets how dense the stack reads. `null` means "same as inset".
+  //
+  // These are two knobs because they are two decisions. The band ties them
+  // together (one number, the article title spacing) — but on the field, tying
+  // them means pulling ring 1 toward the edge also packs every ring behind it,
+  // so the field sets its own looser step and ring 1 stays near the edge.
+  // Ring COUNT is derived from the step, never set directly.
+  ring: {
+    field: { inset: 1 / 3, step: 1 },
+    band: { inset: 2 / 3, step: null },
+  },
 };
 
 /** Full SVG markup for a W×H figure.
  *  opts beyond the TUNNEL knobs:
+ *    margin  — the live page grid margin in px (--grid-margin); the `ring`
+ *              ratios scale it into the first ring's inset and the depth step
+ *    field   — use the field mount's ring ratios instead of the band's
  *    frame   — draw the outer border rect (default true)
  *    base    — draw the bottom base line / meta-rule surrogate (default true)
  *    extendH — total mount height (default H). When taller than the figure,
@@ -40,7 +56,13 @@ export const TUNNEL = {
  *              it on the wordmark container's center, which sits above the
  *              hero's midpoint on the desktop composition. */
 export function tunnelSVG(W, H, opts = {}) {
-  const { rows, sMin, inset1, frame = true, base = true, extendH = H, cy = H / 2 } = { ...TUNNEL, ...opts };
+  const {
+    rows, sMin, ring: ringRatio, margin, field = false,
+    frame = true, base = true, extendH = H, cy = H / 2,
+  } = { ...TUNNEL, ...opts };
+  const r = field ? ringRatio.field : ringRatio.band;
+  const inset1 = margin * r.inset;
+  const stepInset = margin * (r.step ?? r.inset);
   const cols = Math.max(6, Math.round(rows * (W / H)));
   const cx = W / 2;
   const f = (n) => +n.toFixed(2);
@@ -72,21 +94,22 @@ export function tunnelSVG(W, H, opts = {}) {
     ray(W, (H * j) / rows);
   }
 
-  // depth rings: physically EQUAL spacing down the tunnel (constant Δz), the
-  // step set by the grid — the first ring sits half the page margin inside
-  // the frame, and that same depth step repeats to the vanishing rect. So the
-  // frame→ring1 gap is the LARGEST projected gap and every later gap shrinks
-  // monotonically, bunching into the dense halo around the mouth (ring count
-  // is derived, not a knob).
+  // depth rings: physically EQUAL spacing down the tunnel (constant Δz). Ring
+  // 1 lands at its own inset from the frame; Δz then comes from the STEP
+  // inset, so density is set independently of how close ring 1 sits to the
+  // edge (they coincide on the band, where step falls back to inset). Every
+  // later projected gap shrinks monotonically, bunching into the dense halo
+  // around the mouth (ring count is derived, not a knob).
   const s1 = Math.max(sMin, 1 - (2 * inset1) / W);
-  const dz = Math.max(1 / s1 - 1, 0.01);
+  const sStep = Math.max(sMin, 1 - (2 * stepInset) / W);
+  const dz = Math.max(1 / sStep - 1, 0.01);
   let ringsD = '';
   const ring = (s) => {
     const [x0, y0] = toS(0, 0, s);
     const [x1, y1] = toS(W, H, s);
     ringsD += `M${x0} ${y0}H${x1}V${y1}H${x0}Z`;
   };
-  for (let z = 1 + dz; z < 1 / sMin; z += dz) ring(1 / z);
+  for (let z = 1 / s1; z < 1 / sMin; z += dz) ring(1 / z);
   // extended-mount continuation: the same equal-Δz steps IN FRONT of the
   // figure (z < 1) — only their bottom edges land in the mount (the rest
   // overflows the viewBox), reading as the floor grid running on toward the

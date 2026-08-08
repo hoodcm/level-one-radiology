@@ -23,7 +23,7 @@
   border: 0;
   font-family: var(--ff-mono);
   font-size: 0.8em;
-  line-height: 1;
+  line-height: var(--lh-100);
   color: var(--color-link);
   cursor: pointer;
   /* Padded hit area that doesn't disturb the line box. */
@@ -37,11 +37,11 @@
   max-width: min(24rem, calc(100vw - 2 * var(--grid-margin)));
   padding: var(--card-padding-sm);
   background: var(--color-bg-raised);
-  border: 1px solid var(--color-border-strong);
+  border: var(--border-w) solid var(--color-border-strong);
   border-radius: var(--radius-sm);
   font-family: var(--ff-body);
   font-size: var(--fz-body-s);
-  line-height: 1.5;
+  line-height: var(--lh-150);
   color: var(--color-text-secondary);
 }
 .footnote-card p { margin: 0 0 var(--space-1); }
@@ -62,10 +62,10 @@
 .prose .footnotes {
   margin-top: var(--section-spacer-sm);
   padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border-default);
+  border-top: var(--border-w) solid var(--color-border-default);
   font-family: var(--ff-body);
   font-size: var(--fz-body-s);
-  line-height: 1.5;
+  line-height: var(--lh-150);
   color: var(--color-text-secondary);
 }
 .prose .footnotes__label {
@@ -82,7 +82,7 @@
 }
 .prose .footnotes li {
   font-size: var(--fz-body-s);
-  line-height: 1.5;
+  line-height: var(--lh-150);
 }
 .prose .footnotes li::marker {
   font-family: var(--ff-mono);
