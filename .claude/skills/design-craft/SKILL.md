@@ -43,7 +43,7 @@ generic values or scales, this project's own system wins:
 
 Every applied pass ends the way this project always verifies visual work:
 render the real page (dev server at localhost:4321, headless CfT screenshot
-to `~/Downloads/`), measure computed styles where a claim is measurable, and
+to `~/Downloads/`, at 390 by 844 first and then desktop), measure computed styles where a claim is measurable, and
 run `npm run lint` + `npm test` with real exit codes. Judgment calls the
 render can't settle go to Michael with the screenshot.
 

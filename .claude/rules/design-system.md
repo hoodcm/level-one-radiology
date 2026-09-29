@@ -36,6 +36,4 @@ governs colors, grid, and the rhythm properties in `.css` AND `.astro` `<style>`
 the ramp contracts (closed rung sets, fluid clamp endpoints, print pins, dangling references) and
 re-fires the stylelint gate with a planted probe each run.
 
-**Mobile first.** When Michael comments on a size, layout, spacing, or animation, he means the mobile viewport unless he says otherwise. Tune and screenshot at a mobile width such as 390 by 844 first, then confirm desktop. The hero wordmark (`.hero__wordmark`) shows only below 48em, where the header doesn't carry the brand.
-
 User-facing copy in a component follows the voice in `docs/writing.md`.
