@@ -629,8 +629,9 @@
   isolation: isolate;
 }
 
-/* Brand wordmark in the hero — shown only on mobile, where the header
-   carries just the icon mark. Hidden ≥ 48em (header wordmark takes over). */
+/* Brand wordmark in the hero. The original hero shows it only on mobile,
+   where the header carries just the icon mark, and hides it ≥ 48em (header
+   wordmark takes over). The detector hero keeps it at every width. */
 .hero__wordmark {
   display: flex;
   flex-direction: column;
