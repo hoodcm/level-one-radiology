@@ -9,7 +9,8 @@ Prose for the site — article copy, headlines, CTAs, metadata — is written to
 brand. Consult the source-of-truth docs before and while writing; don't work from memory:
 
 - Voice and structure (the human layer + content organization) → `docs/writing.md`
-- Prose style → the global `/voice` skill (invoke it; teaching overlay for educational articles)
+- Prose style → the global `/voice` skill. For educational articles, also load the global `teaching` skill, whose
+  article node and register govern teaching prose
 - Strategy, audience, content types, conversion → `docs/brand.md`
 - Search-facing copy (titles, meta descriptions, page plans, anything meant to rank) → the voice
   skill's `google-search-central-seo` lens (offer it; structural/build requirements live in
