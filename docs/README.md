@@ -5,6 +5,7 @@ The map of this project's docs — start here.
 | Doc | What it covers |
 |---|---|
 | [brand.md](brand.md) | Strategy, audience, keystone metrics, conversion flow, content types, navigation |
+| [identity.md](identity.md) | The identity's faces outside the site: the house face per print role, the web lookalikes, and the venue faces, read by design-tools' generator |
 | [design/](design/README.md) | The design system — philosophy, tokens, components, and the reasoning layer |
 | [engineering.md](engineering.md) | Stack, architecture, performance, publishing workflow, SEO, security |
 | [writing.md](writing.md) | Prose voice — the human layer and content organization |
