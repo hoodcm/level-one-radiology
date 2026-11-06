@@ -8,7 +8,7 @@
   padding: var(--section-spacer-sm) 0 var(--section-spacer);
 }
 
-/* Page header — eyebrow (type-ui, in markup) over a sans title. */
+/* Page header: a sans title, with no eyebrow above it. */
 .page-header {
   margin-bottom: var(--section-spacer-sm);
 }

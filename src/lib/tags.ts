@@ -28,4 +28,7 @@ export const CONTENT_TYPE_NAMES = ['educational', 'commentary', 'case-analysis']
 export type PrimaryTag = (typeof PRIMARY_TAG_NAMES)[number];
 export type ContentType = (typeof CONTENT_TYPE_NAMES)[number];
 
-export const contentTypeLabel = (type: ContentType): string => type.replace('-', ' ').toUpperCase();
+export const contentTypeLabel = (type: ContentType): string => {
+  const words = type.replace('-', ' ');
+  return words.charAt(0).toUpperCase() + words.slice(1);
+};

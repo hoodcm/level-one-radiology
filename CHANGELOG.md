@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.12.1] - 2026-11-06
+
+### Added
+- Build-time color reader `src/lib/color-tokens.mjs`, which resolves a color token from `src/styles/tokens/colors.css` for consumers that can't use a CSS var, such as the `theme-color` meta tag, and `src/lib/repo-file.mjs`, which finds a repo file from any working directory (2026-11-06).
+
+### Changed
+- Uppercase labels and eyebrows are removed from the site, and content-type labels render in sentence case (2026-11-06).
+- The design, SEO, and brand docs are merged and split by subject, the teaching method moved out of the repo, and the rules and docs are unwrapped and cleared of hygiene findings (2026-11-06).
+- README typography now points to `docs/identity.md` instead of restating the faces (2026-11-06).
+- The project's `design-craft` skill is retired in favor of design-tools' `design-craft` lens, and `CLAUDE.md` points there (2026-11-06).
+
+### Fixed
+- The lockfile no longer carries optional peer entries that the Mac Mini's npm pruned and the MacBook Air's npm re-added (2026-11-06).
+
 ## [0.12.0] - 2026-08-08
 
 ### Added

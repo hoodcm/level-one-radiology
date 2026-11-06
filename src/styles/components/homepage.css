@@ -80,8 +80,6 @@
   font-family: var(--ff-body);
   font-size: var(--fz-nav);
   font-weight: var(--fw-bold);
-  letter-spacing: var(--ls-caps-sans);
-  text-transform: uppercase;
   padding: 6px var(--nav-padding-h);
   border-radius: var(--radius-xs);
   color: var(--color-text-muted);
@@ -242,8 +240,6 @@
   font-family: var(--ff-ui);
   font-size: var(--fz-nav);
   font-weight: var(--fw-bold);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   border-radius: var(--radius-xs);
   text-decoration: none;
 }
@@ -298,8 +294,6 @@
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
   font-weight: var(--fw-bold);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   line-height: var(--lh-100);
   white-space: nowrap;
   display: inline-flex;
@@ -477,8 +471,6 @@
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
   font-weight: var(--fw-bold);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   line-height: var(--lh-100);
 }
 .btn-gold:hover {
@@ -522,8 +514,6 @@
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
   font-weight: var(--fw-bold);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   color: var(--color-text-muted);
   margin-bottom: var(--space-2);
 }
@@ -563,7 +553,6 @@
 .site-footer__copyright {
   font-family: var(--ff-body);
   font-size: var(--fz-plate);
-  letter-spacing: var(--ls-ui);
   color: var(--color-text-disabled);
 }
 
@@ -576,7 +565,6 @@
 .site-footer__legal-link {
   font-family: var(--ff-body);
   font-size: var(--fz-plate);
-  letter-spacing: var(--ls-ui);
   color: var(--color-text-disabled);
   text-decoration: none;
   transition: color var(--t-quick) ease;
@@ -591,8 +579,6 @@
 .site-footer__plate {
   font-family: var(--ff-body);
   font-size: var(--fz-plate);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   color: var(--color-text-disabled);
 }
 
@@ -930,8 +916,6 @@
   font-family: var(--ff-ui);
   font-size: var(--fz-nav);
   font-weight: var(--fw-bold);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   border-radius: var(--radius-xs);
   text-decoration: none;
 }
@@ -1009,8 +993,6 @@
   gap: var(--space-1);
   font-family: var(--ff-mono);
   font-size: var(--fz-ui);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   color: var(--color-text-disabled);
   white-space: nowrap;
 }
@@ -1112,8 +1094,6 @@
 .latest-section__all {
   font-family: var(--ff-mono);
   font-size: var(--fz-ui);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   color: var(--color-text-muted);
   text-decoration: none;
   transition: color var(--t-quick) ease;

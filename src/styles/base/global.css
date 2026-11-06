@@ -42,8 +42,6 @@ body {
   color: var(--color-text-primary);
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   transform: translateY(calc(-100% - var(--space-2)));
 }
 

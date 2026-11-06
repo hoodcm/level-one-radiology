@@ -125,10 +125,10 @@ describe('hard-coded colors', () => {
     expect(code).toBe(0);
   });
 
-  it('blesses the theme-color meta, which cannot reference a var', () => {
+  it('flags a literal in the theme-color meta, which reads its token at build time', () => {
     const f = fixture('layouts/Meta.astro', '---\n---\n<meta name="theme-color" content="#0B0A09" />\n');
     const { code } = run({ args: [f] });
-    expect(code).toBe(0);
+    expect(code).toBe(1);
   });
 });
 

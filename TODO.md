@@ -5,7 +5,7 @@ Actionable tasks and open questions. Check at session start, update frequently.
 <!-- todo:worklist:start -->
 
 ## Start here
-_as of 2026-08-08 · 4 streams startable · 0 now/next items untyped_
+_as of 2026-11-06 · 4 streams startable · 0 now/next items untyped_
 
 **Decisions waiting (⚖): 11** — Judge detector-hero composition on iPhone + desktop (plan steps 7 + 10) (→ enables 1) · Judge this session's visual tuning on screen · Explore radiograph imagery in/near the homepage hero · Wire a site-wide SEO sweep into /push for meaningful diffs · Reconsider display/body serif if text halation persists · Remove or gate the unused data-reveal motion system · +5 more
 
@@ -14,6 +14,20 @@ _as of 2026-08-08 · 4 streams startable · 0 now/next items untyped_
 - fonts — next: Retire legacy font payload (Utopia/Eurostile/Lab Grotesque) and re-subset Newsreader (decide)
 - newsletter — next: Replace the React newsletter island with a static form + vanilla JS (build)
 - standalone: Judge detector-hero composition on iPhone + desktop (plan steps 7 + 10) (decide)
+
+## Dependency map
+
+```mermaid
+flowchart LR
+  n_detector-hero-device-pass{"detector-hero-device-pass<br/>Judge detector-hero composition on iPho…"}
+  n_hero-radiograph-imagery{"hero-radiograph-imagery<br/>Explore radiograph imagery in/near the …"}
+  n_detector-hero-device-pass --> n_hero-radiograph-imagery
+  classDef startable fill:#e6f2e6,stroke:#2e7d32
+  classDef question stroke-dasharray: 5 5
+  class n_detector-hero-device-pass startable
+```
+
+_25 open items carry no edge and are not drawn._
 
 ## Now
 
@@ -69,6 +83,7 @@ _as of 2026-08-08 · 4 streams startable · 0 now/next items untyped_
 - **Remove or gate the unused data-reveal motion system**
 - **Give the TOC scroll-spy an initial / deep-link active state**
 - **Explore radiograph imagery in/near the homepage hero** — after Judge detector-hero composition on iPhone + desktop (plan steps 7 + 10)
+- **Rework the site's design elements that read as generic AI design, and settle each label's case as it is reworked**
 
 ## Someday
 
@@ -76,6 +91,7 @@ _as of 2026-08-08 · 4 streams startable · 0 now/next items untyped_
 - **Consider thin Scrib3-style gutters for full-bleed image spans**
 - **Repair ~/.npm cache permissions (EACCES)**
 - **Add size-adjust metric-compatible fallbacks for OFL fonts**
+- **Build the case viewer's unknown-case reveal block**
 
 ## Open questions
 
@@ -122,6 +138,6 @@ _Last session: 2026-08-08_
 1. See `TODO.md`'s `## Start here` digest and `## Now` band — `confirm-gold-shade-onscreen` now also carries this session's still-unseen homepage composition (equalized grid, wide-lead Featured, the console strip) as part of its on-screen judgment scope.
 
 **Unverified assumptions:**
-- The 12 vendored `design-craft` playbooks (`.claude/skills/design-craft/references/`) were mechanically stripped of branding/external tooling and spot-checked on 2 of 12 files (`craft-floor.md`, `layout.md`) for coherence — the other 10 were verified only for absence of dangling links/branding, not read end-to-end. Confirm by skimming the rest before leaning on them for a critique pass.
+- None open.
 
 <!-- todo:continuation:end -->

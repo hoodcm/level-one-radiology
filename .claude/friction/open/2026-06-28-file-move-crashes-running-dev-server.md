@@ -13,4 +13,4 @@ assessed: 2026-08-07
 A bulk `git mv` of `docs/design-references/` out from under a running `npm run dev` crashed the dev server with `ENOENT … illustration-4.svg`. The codebase had no broken reference — a clean `astro build` passed and grep found zero source refs — the running Vite dev server was just holding the pre-move absolute path.
 
 ## Notes
-2026-06-28 — After a large file/folder move (especially `git mv` of anything a dev server watches or serves), restart `npm run dev` rather than chasing it as a code bug. Confirm health with a clean `npm run build` (the ground truth), not the dev-server error overlay.
+- 2026-06-28 After a large file/folder move (especially `git mv` of anything a dev server watches or serves), restart `npm run dev` rather than chasing it as a code bug. Confirm health with a clean `npm run build` (the ground truth), not the dev-server error overlay.

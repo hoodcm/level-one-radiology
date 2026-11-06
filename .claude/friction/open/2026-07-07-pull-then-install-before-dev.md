@@ -15,4 +15,4 @@ After pulling the other machine's work (which added @astrojs/sitemap to package.
 
 ## Notes
 
-2026-07-07 — Pattern for the two-Mac workflow: after any cross-machine pull that touches package.json, run npm install before starting the dev server.
+- 2026-07-07 Pattern for the two-Mac workflow: after any cross-machine pull that touches package.json, run npm install before starting the dev server.

@@ -30,7 +30,7 @@ export function remarkReadingTime() {
  *   :::
  *
  * Kinds: note (cyan, default) · caution (yellow) · critical (red).
- * The [label] is optional and becomes the callout's uppercase label line.
+ * The [label] is optional and becomes the callout's label line.
  */
 const CALLOUT_KINDS = new Set(['note', 'caution', 'critical']);
 

@@ -103,15 +103,13 @@ for (const file of files) {
 
   text.split('\n').forEach((line, i) => {
     if (checkHex) {
-      // Sole blessed literal: <meta name="theme-color"> — HTML meta can't
-      // reference a CSS var. Its value must mirror --color-bg-deepest.
-      if (!line.includes('theme-color')) {
-        const m = line.match(HEX);
-        if (m) {
-          violations.push(
-            `${file}:${i + 1}: hard-coded color "${m[0]}" — use a var(--color-…) token`,
-          );
-        }
+      // No blessed literals: a consumer that can't reference a CSS var, such
+      // as the theme-color meta, reads the token through src/lib/color-tokens.mjs.
+      const m = line.match(HEX);
+      if (m) {
+        violations.push(
+          `${file}:${i + 1}: hard-coded color "${m[0]}" — use a var(--color-…) token`,
+        );
       }
     }
     if (checkSwatch) {

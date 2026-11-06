@@ -213,7 +213,7 @@ Tokens are organized in three layers:
 
 ### Content Maintenance
 
-For the review cadence (quarterly and annual audits), see [design/philosophy.md](design/philosophy.md).
+For the review cadence (quarterly and annual audits), see [brand.md](brand.md#review-cadence).
 
 ---
 
@@ -319,28 +319,7 @@ For the review cadence (quarterly and annual audits), see [design/philosophy.md]
 
 ## SEO Technical Requirements
 
-### Per-Page
-
-- Unique, descriptive `<title>`
-- Meta description (150-160 characters)
-- Open Graph tags for social sharing
-- Canonical URL
-- Structured data (Article schema)
-
-### Site-Wide
-
-- XML sitemap
-- robots.txt
-- Fast load times
-- Mobile-friendly
-- HTTPS
-
-### URLs
-
-- Descriptive paths (`/articles/approach-to-splenic-trauma`)
-- Lowercase, hyphenated
-- No file extensions
-- No query parameters for content
+The site's SEO requirements, per page, site-wide, and for URLs, are the site checklist in `.claude/rules/seo-structure.md`.
 
 ---
 

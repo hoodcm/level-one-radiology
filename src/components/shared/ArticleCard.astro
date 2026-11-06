@@ -42,7 +42,7 @@ const vtName = `vt-${slug.replace(/[^a-zA-Z0-9-]/g, '-')}`;
           the hero card's statement/support layout, one register down). */}
       <div class="article-card__head">
         <div class="article-card__tags">
-          <Tag label={primaryTag.toUpperCase()} />
+          <Tag label={primaryTag} />
           <Tag label={contentTypeLabel(contentType)} />
         </div>
         <h3 class="article-card__title" style={`view-transition-name: ${vtName};`}>{title}</h3>
@@ -57,7 +57,7 @@ const vtName = `vt-${slug.replace(/[^a-zA-Z0-9-]/g, '-')}`;
   ) : (
     <>
       <div class="article-card__tags">
-        <Tag label={primaryTag.toUpperCase()} />
+        <Tag label={primaryTag} />
         <Tag label={contentTypeLabel(contentType)} />
       </div>
       <h3 class="article-card__title" style={`view-transition-name: ${vtName};`}>{title}</h3>

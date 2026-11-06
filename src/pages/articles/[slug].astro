@@ -75,7 +75,7 @@ const moreArticles = [newer, older].filter((n): n is NonNullable<typeof newer> =
            top-aligned with the Key Points card. -->
       <header class="article__header reading-column">
         <div class="article__tags">
-          <Tag label={primaryTag.toUpperCase()} />
+          <Tag label={primaryTag} />
           <Tag label={contentTypeLabel(contentType)} />
         </div>
         <h1 class="article__title" style={`view-transition-name: ${vtName};`}>{title}</h1>

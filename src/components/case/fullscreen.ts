@@ -20,7 +20,7 @@
  * W/L adjust (the contrast chip): drag maps to CSS filters (order pinned
  * contrast() brightness(), floors keep the image from ever reading as a dead
  * uniform field). The readout is a live W/L pad — a dot on an X-Y plane that
- * mirrors the drag (right = wider window, up = brighter), no numbers. RESET
+ * mirrors the drag (right = wider window, up = brighter), no numbers. Reset
  * chip when non-neutral, double-tap resets while adjusting, resets on close.
  */
 import { iconSvg } from '../../lib/case-icons.mjs';
@@ -262,7 +262,7 @@ export class CaseFullscreen {
 <button type="button" class="cv-fs__chip cv-fs__close" data-fs-close aria-label="Close fullscreen viewer">${iconSvg('x')}</button>
 <div class="cv-fs__bar">
 ${scrubber}
-<button type="button" class="cv-fs__chip" data-fs-reset hidden>RESET</button>
+<button type="button" class="cv-fs__chip" data-fs-reset hidden>Reset</button>
 <button type="button" class="cv-fs__chip" data-fs-tune aria-pressed="false" aria-label="Adjust window and level">${iconSvg('contrast')}</button>
 </div>
 <div class="cv-fs__readout" data-fs-readout role="img" hidden>

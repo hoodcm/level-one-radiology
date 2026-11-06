@@ -11,8 +11,6 @@
 .read-next__label {
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   color: var(--color-text-muted);
   margin: 0 0 var(--space-1);
 }
@@ -40,8 +38,6 @@
   margin-top: var(--space-0);
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   color: var(--color-text-muted);
   text-decoration: none;
 }

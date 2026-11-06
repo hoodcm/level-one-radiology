@@ -70,7 +70,7 @@ spaced a meaningful step apart — a distinction smaller than a rung is not expr
 | The open sans voice (callouts, footnotes, excerpts) | `--lh-150` | Comfortable extended reading in the sans |
 
 Never apply body line-height to large display type — it looks loose and unanchored. Tracking and weight
-follow the same closed-set rule: three tracking voices (`--ls-tight`/`--ls-mono`/`--ls-ui`, plus the
+follow the same closed-set rule: two tracking voices (`--ls-tight`/`--ls-mono`, plus the
 stroke-tuned wordmark pair) and three weights (`--fw-regular`/`--fw-semibold`/`--fw-bold`).
 
 ---

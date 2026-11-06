@@ -20,7 +20,7 @@ conventions) live in **[CLAUDE.md](CLAUDE.md)**.
 
 - **Keystone metric:** email subscribers
 - **Design:** tight, not cramped · dark-first · minimal warm bias, six-level surface hierarchy (formula: [docs/design/philosophy.md](docs/design/philosophy.md))
-- **Typography:** Newsreader (display) · DM Sans (body) · Michroma (UI/brand) · Chivo Mono (mono)
+- **Typography:** the identity's house and web faces, defined in [docs/identity.md](docs/identity.md)
 - **Stack:** Astro + React islands · shadcn/ui over Base UI (Mira) · GitHub Pages
 
 ## Development

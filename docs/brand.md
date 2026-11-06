@@ -71,13 +71,15 @@ Consider these in content design:
 
 ### Default Writing Level
 
-Practicing radiologist. Trainees learn from this; non-radiologists self-filter.
+Practicing radiologist. Trainees learn from this, and non-radiologists self-filter.
+
+Write for Sarah: a practicing emergency radiologist, seven years out, reading body CT at 2 a.m., who wants to stay sharp and has no time for textbook prose.
 
 ---
 
 ## Keystone Metrics
 
-*Based on Fictive Kin principle: One keystone metric, maximum two. Everything else is diagnostic. See [philosophy](design/philosophy.md).*
+*Based on Fictive Kin principle: One keystone metric, maximum two. Everything else is diagnostic. See [Operating principles](#operating-principles-how-we-build).*
 
 ### Primary Keystone: Email Subscribers
 
@@ -130,12 +132,7 @@ Written with search intent in mind. What would a resident type into Google at 2a
 
 **Metric:** % who subscribe or click to another article after reading.
 
-**SEO requirements:**
-- Visible Table of Contents for articles over 1500 words
-- Meta description (150-160 characters) for every article
-- Consider visible "Key Points" block at top
-- Descriptive URLs (`/articles/approach-to-splenic-trauma`)
-- Internal linking between related articles
+**SEO requirements:** the site checklist in `.claude/rules/seo-structure.md`.
 
 #### Attractors (timely, shareable, shorter shelf life)
 
@@ -148,7 +145,7 @@ These are LinkedIn fuel. They drive traffic spikes. The article itself doesn't n
 **Job:** Generate social sharing, drive traffic spikes, convert percentage to subscribers.
 
 **Requirements:**
-- Strong Open Graph metadata (compelling preview when shared)
+- Open Graph metadata, which the site checklist in `.claude/rules/seo-structure.md` requires on every page
 - Speed to publish (respond to news within days, not weeks)
 - Shareable structure (quotable insights, clear takeaways)
 
@@ -281,6 +278,39 @@ Include:
 
 ---
 
+## Operating Method
+
+How Level One builds and decides, adapted from Fictive Kin's web-systems methodology. The aesthetic principles stay in [design/philosophy.md](design/philosophy.md).
+
+### Operating principles (how we build)
+
+1. **Systems, not sites**: the platform compounds value over time. Design for iteration, since content is an appreciating asset.
+2. **Facts, not feelings**: decisions are driven by conversion data, not pure aesthetics. Beautiful design that doesn't convert is failed design.
+3. **Modules, not pages**: reusable, branded components are the unit of publishing. New content reuses existing modules, and new modules are rare. (See [The module system](design/philosophy.md#the-module-system).)
+4. **Beginning, not ending**: launch is permission to learn. Ship lean, iterate on data.
+5. **One keystone metric**: email subscribers. Maximum two, and everything else is diagnostic. The metric tree is under Keystone Metrics.
+6. **Minimum viable system**: features earn their place through demonstrated need, not anticipation.
+
+### How we decide
+
+For any design or content decision, in order:
+
+1. Does it serve the keystone metric (subscriber conversion)?
+2. Does it follow the operating principles above and the aesthetic principles in [design/philosophy.md](design/philosophy.md)?
+3. Does it meet the module standards?
+4. Does it avoid known problem patterns: CTAs that look like buttons (solid, not ghost), readability over ornament, simple nav, mobile-first, no layout shift?
+
+When principles conflict: **keystone metric → facts over feelings → long-term system value → tight over trend → context.**
+
+### Review cadence
+
+The methodology has built-in reflection ([engineering.md](engineering.md) points here).
+
+- **Quarterly**: review analytics (subscribers, traffic, top content), update outdated articles, check broken links and stale content, and plan the next quarter.
+- **Annually**: full methodology review: do the principles still serve the goals?
+
+---
+
 ## Future Expansion
 
 This document will grow to include:
@@ -293,5 +323,4 @@ These additions will complement the design system documents with the verbal and 
 
 ---
 
-*Document created: December 2024*
-*Last updated: December 2024*
+Last updated: 2026-11-06

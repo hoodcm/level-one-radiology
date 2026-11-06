@@ -8,24 +8,19 @@
 
 ## About this document
 
-The catalog of modules and their specs. **The CSS shown here is illustrative** — the authoritative styles live in `src/styles/` (`components/*.css` + `tokens/*.css`); where a snippet here disagrees with the stylesheet, the stylesheet wins. The module *system* (tiers, standards, showstopper discipline) is defined in [philosophy.md](philosophy.md); token values in [tokens.md](tokens.md).
+The catalog of modules and their specs. **The CSS shown here is illustrative** — the authoritative styles live in `src/styles/` (`components/*.css` + `tokens/*.css`); where a snippet here disagrees with the stylesheet, the stylesheet wins. The module system (tiers, standards, showstopper discipline) is defined in [philosophy.md](philosophy.md); token values in [tokens.md](tokens.md).
 
 ---
 
 ## Primitive library
 
-Level One uses **shadcn/ui** as a styling/abstraction layer over **Base UI** primitives, with Radix
-and custom code available where needed. The full primitive-layer architecture — what primitives
-provide, when to use shadcn vs. direct imports, and how to mix them — lives in
-[engineering.md](../engineering.md).
+Level One uses **shadcn/ui** as a styling/abstraction layer over **Base UI** primitives, with Radix and custom code available where needed. The full primitive-layer architecture — what primitives provide, when to use shadcn vs. direct imports, and how to mix them — lives in [engineering.md](../engineering.md).
 
 ## Modules by tier
 
-Tier definitions, module standards, and showstopper discipline live in
-[philosophy.md](philosophy.md#the-module-system). The modules themselves:
+Tier definitions, module standards, and showstopper discipline live in [philosophy.md](philosophy.md#the-module-system). The modules themselves:
 
-- **Workhorse** — Article Header, Body Text, Inline Figure, Callout Block, Block Quote, Reference Section,
-  Author Block, Newsletter CTA, Related Content, Article Index Card.
+- **Workhorse** — Article Header, Body Text, Inline Figure, Callout Block, Block Quote, Reference Section, Author Block, Newsletter CTA, Related Content, Article Index Card.
 - **High-touch** — Comparison Slider, Timeline/Sequence, Data Visualization.
 - **Showstopper** — Case Viewer.
 
@@ -35,23 +30,14 @@ Tier definitions, module standards, and showstopper discipline live in
 
 ### Detector-plate framing
 
-The signature container ornament, modeled on a DR detector plate's registration
-fiducials. Two marks: quarter **field arcs** (a curve plus straight arms) in each
-inner corner, and **edge tees** (a segment parallel to the edge with a stem
-pointing at the container's center) at each edge midpoint. Ink is `text-muted`
-at low opacity, brightening on card hover.
+The signature container ornament, modeled on a DR detector plate's registration fiducials. Two marks: quarter **field arcs** (a curve plus straight arms) in each inner corner, and **edge tees** (a segment parallel to the edge with a stem pointing at the container's center) at each edge midpoint. Ink is `text-muted` at low opacity, brightening on card hover.
 
-It renders as a single masked `::before` per surface — mask layers carve the
-line-work out of one ink layer, so no ornament markup is needed and hover
-restyles one `background-color`. Geometry (insets, radii, arm/line lengths, stem)
-is entirely token-driven; a callout variant reuses the same arcs at half scale.
+It renders as a single masked `::before` per surface — mask layers carve the line-work out of one ink layer, so no ornament markup is needed and hover restyles one `background-color`. Geometry (insets, radii, arm/line lengths, stem) is entirely token-driven; a callout variant reuses the same arcs at half scale.
 
 - **Values** → `src/styles/tokens/ornament.css`
 - **Rendering** → `src/styles/components/ornament.css` (kill-switch: drop its import from `main.css`)
 
-**Where it applies:** article cards (arcs + edge tees), article callouts and Key
-Points (corner arcs only, half scale). The Case Viewer keeps its own lighter
-corner brackets (`tokens/case-viewer.css`), a separate treatment.
+**Where it applies:** article cards (arcs + edge tees), article callouts and Key Points (corner arcs only, half scale). The Case Viewer keeps its own lighter corner brackets (`tokens/case-viewer.css`), a separate treatment.
 
 **When NOT to use:** body text, navigation, form inputs, inline elements.
 
@@ -90,7 +76,6 @@ Technical ornament inspired by print production and vintage electronics.
   font-family: var(--ff-mono);
   font-size: 7px;
   letter-spacing: 0.15em;
-  text-transform: uppercase;
   color: var(--color-text-disabled);
   white-space: nowrap;
 }
@@ -116,15 +101,6 @@ Technical ornament inspired by print production and vintage electronics.
 
 ### Editorial Typography Patterns
 
-#### Small Caps
-
-```css
-.small-caps {
-  font-variant: small-caps;
-  letter-spacing: 0.05em;
-}
-```
-
 #### Bylines
 
 ```css
@@ -148,7 +124,6 @@ Technical ornament inspired by print production and vintage electronics.
   font-family: var(--ff-mono);
   font-size: 10px;
   letter-spacing: 0.05em;
-  text-transform: uppercase;
 }
 ```
 
@@ -156,7 +131,7 @@ Technical ornament inspired by print production and vintage electronics.
 
 ## Workhorse Modules
 
-### 1. Article Header
+### Article Header
 
 **Fields:**
 - Title (required)
@@ -210,13 +185,9 @@ Technical ornament inspired by print production and vintage electronics.
 }
 ```
 
-### 2. Body Text
+### Body Text
 
-**Specifications:**
-- Line length: 65ch maximum
-- Line height: 1.5
-- Paragraph spacing: 1em
-- Font: Sans-serif at 16px
+**Specifications:** the reading measure, leading, paragraph gap, face, and size are tokens: `--reading-column`, `--lh-reading`, `--prose-p-gap`, `--ff-body`, and `--fz-reading`, mapped in [tokens.md](tokens.md). The sketch that follows shows the structure, and the stylesheet wins wherever its values differ.
 
 ```css
 .prose {
@@ -263,7 +234,7 @@ Technical ornament inspired by print production and vintage electronics.
 }
 ```
 
-### 3. Inline Figure
+### Inline Figure
 
 **Fields:**
 - Image (required)
@@ -273,10 +244,9 @@ Technical ornament inspired by print production and vintage electronics.
 
 **Behavior:** Click/tap to expand. Full-width on mobile. Clinical images at appropriate window settings.
 
-### 4. Callout Block
+### Callout Block
 
-**Types** (note is the *default* — there is no `.callout--note` class; see
-`src/lib/markdown-plugins.mjs`):
+**Types** (note is the default — there is no `.callout--note` class; see `src/lib/markdown-plugins.mjs`):
 - Note / Key Point — apparatus teal
 - Caution — brand gold
 - Critical — signal red
@@ -294,8 +264,6 @@ Technical ornament inspired by print production and vintage electronics.
 .callout__label {
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   color: var(--color-teal-apparatus);
 }
 
@@ -306,27 +274,25 @@ Technical ornament inspired by print production and vintage electronics.
 .callout--critical { /* red tint + red label */ }
 ```
 
-The live rules are in `../../src/styles/components/prose.css`; read those before
-adding a variant. There is no `--callout-color` custom property — a variant sets
-its own `background` and `.callout__label { color }`.
+The live rules are in `../../src/styles/components/prose.css`; read those before adding a variant. There is no `--callout-color` custom property — a variant sets its own `background` and `.callout__label { color }`.
 
-### 5. Block Quote
+### Block Quote
 
 **Design:** Serif font, italic, larger than body. Left border in ivory. Attribution in muted text.
 
-### 6. Reference Section
+### Reference Section
 
 **Format:** Numbered citations, linked to PubMed/DOI.
 
 **Design:** 14px text, muted color. Scannable.
 
-### 7. Author Block
+### Author Block
 
 **Fields:** Photo, name, one-line credential, link to About.
 
 **Design:** Small, minimal. Circular photo, 48px. Not a biography.
 
-### 8. Newsletter CTA
+### Newsletter CTA
 
 **Fields:**
 - Headline
@@ -344,7 +310,7 @@ its own `background` and `.callout__label { color }`.
 
 **Implementation:** shadcn/ui `Button` + `Input`. See `src/components/shared/NewsletterSignup.tsx`.
 
-### 9. Related Content
+### Related Content
 
 **Display:** 2-3 related articles at article end.
 
@@ -352,7 +318,7 @@ its own `background` and `.callout__label { color }`.
 
 **Design:** Cards with title, tags, minimal metadata. No thumbnails initially.
 
-### 10. Article Index Card
+### Article Index Card
 
 For listing pages. Title, date, tag(s), excerpt. Uses monospace tag styling with the detector-plate framing (see Design Language).
 
@@ -426,8 +392,6 @@ For listing pages. Title, date, tag(s), excerpt. Uses monospace tag styling with
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
   font-weight: 700;
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   padding: 6px var(--nav-padding-h);
   border-radius: 4px;
   color: var(--color-text-muted);
@@ -449,7 +413,6 @@ For listing pages. Title, date, tag(s), excerpt. Uses monospace tag styling with
   font-size: var(--fz-ui);
   font-weight: 700;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--color-text-ivory);
 }
 ```
@@ -461,8 +424,6 @@ For listing pages. Title, date, tag(s), excerpt. Uses monospace tag styling with
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
   font-weight: 700;
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   
   display: inline-flex;
   align-items: center;
@@ -489,10 +450,9 @@ For listing pages. Title, date, tag(s), excerpt. Uses monospace tag styling with
    See src/lib/tags.ts. */
 ```
 
-**What a chip can say.** The taxonomy is the single source in `src/lib/tags.ts`, and
-its keys are what the content schema validates against — there is no modality axis:
-- Topic (`primaryTag`): `TRAUMA`, `ABDOMEN`, `CHEST`, `NEURO`, `MSK`, `AI & POLICY`
-- Content type: `EDUCATIONAL`, `COMMENTARY`, `CASE ANALYSIS`
+**What a chip can say.** The taxonomy is the single source in `src/lib/tags.ts`, and its keys are what the content schema validates against — there is no modality axis:
+- Topic (`primaryTag`): `Trauma`, `Abdomen`, `Chest`, `Neuro`, `MSK`, `AI & Policy`
+- Content type: `Educational`, `Commentary`, `Case analysis`
 
 ### Button Component
 
@@ -503,8 +463,6 @@ Uses shadcn/ui `Button` as base. Custom styling applied via Tailwind classes and
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
   font-weight: 700;
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   
   display: inline-flex;
   align-items: center;
@@ -562,10 +520,7 @@ Uses shadcn/ui `Button` as base. Custom styling applied via Tailwind classes and
 
 ## Article apparatus
 
-Recurring in-article delight elements — instrument-grade, CSS + platform primitives, zero new
-client-side JS islands. Each element disables in exactly one labeled place: CSS-only elements by
-commenting out their import line in `src/styles/main.css` ("Article apparatus" block); elements that
-emit markup by a boolean in `src/lib/apparatus.ts` (so disabling never leaves orphaned markup).
+Recurring in-article delight elements — instrument-grade, CSS + platform primitives, zero new client-side JS islands. Each element disables in exactly one labeled place: CSS-only elements by commenting out their import line in `src/styles/main.css` ("Article apparatus" block); elements that emit markup by a boolean in `src/lib/apparatus.ts` (so disabling never leaves orphaned markup).
 
 | Element | What it does | Files | Disable |
 |---------|--------------|-------|---------|
@@ -577,6 +532,8 @@ emit markup by a boolean in `src/lib/apparatus.ts` (so disabling never leaves or
 | Figure accession | Figures with a console strip get a `FIG NN` cell (CSS counter; decorative images stay unnumbered). In-text refs are authored: `Fig. N` + `#fig-n` anchors (convention in the style gallery) | `src/styles/components/apparatus/figure-accession.css` (counter reset owned by `prose.css`) | comment out import in `main.css` |
 | Readout chips | Inline measurement values (`W80 L40`, `65 HU`) as muted mono hairline chips via `<span class="readout">` — a quieter tier than inline code, which now reads at bright neutral | `src/styles/components/apparatus/readout.css` | comment out import in `main.css` |
 | Ordinal tick-in | Section ordinals tick in on scroll via a pure-CSS `view()` timeline; behind `@supports` + reduced-motion guards. A deliberate second motion grammar beside `[data-reveal]`, kept on live judgment | `src/styles/components/apparatus/ordinal-tick.css` | comment out import in `main.css` |
+
+The section ordinals in the mobile INDEX and the ordinal tick-in are a site primitive Michael kept on live judgment, so the `design-craft` lens's refusal of section numbers doesn't reach them.
 
 ---
 
@@ -597,83 +554,33 @@ For cases that evolve or multi-step workflow explanations.
 
 ### Data Visualization
 
-Charts/graphs for trend analysis or literature data. Clean, on-brand, accessible. Series colors come from the surviving palette — apparatus teal and the brand gold — with signal red reserved for a genuinely critical series, never as a third neutral hue.
+Charts and graphs for trend analysis or literature data follow design-tools' chart method, which owns chart form and colour by job, so the site's palette mapping implements it rather than setting its own series colours.
 
 ---
 
 ## Showstopper: Case Viewer
 
-The signature differentiator, shipped: scrollable CT/MR stacks embedded inline in articles, scrubbed
-the way radiologists scrub. A framework-free light-DOM custom element `<case-viewer>` — no React on
-article pages, and the design tokens cascade straight into it.
+The signature differentiator, shipped: scrollable CT/MR stacks embedded inline in articles, scrubbed the way radiologists scrub. A framework-free light-DOM custom element `<case-viewer>` — no React on article pages, and the design tokens cascade straight into it.
 
 ### How it works
 
-- **Authoring**: `::case[Caption text.]{id="case-id"}` in article markdown. The authoring guide
-  (frame export, `npm run case:build`, caption conventions) lives in
-  [../writing.md](../writing.md) → Case viewer authoring.
-- **Build**: `remarkCaseViewer` (`src/lib/markdown-plugins.mjs`) expands the directive via
-  `src/lib/case-shell.mjs` into the full static shell — poster, meta strip, counter, native range
-  slider, window chips, boot-HUD SVG — so the article ships zero-CLS, no-runtime-JSON HTML and a
-  no-JS reader still gets poster + meta + caption. A missing manifest or frame file fails the
-  build (render-time check + `astro:build:start` integration in `astro.config.mjs`);
-  `src/lib/case-loader.ts` re-renders embedding articles when a case's manifest `rev` moves.
-- **Runtime**: `src/components/case/case-viewer.ts` upgrades the shell in place. Pure logic lives
-  in DOM-free, vitest-covered modules: `mapping.ts` (px→frame) and
-  `frame-store.ts` (ImageBitmap LRU with explicit `close()`, generation tokens,
-  direction-weighted decode-ahead). `fullscreen.ts` owns the overlay: visualViewport sizing,
-  popstate as the single close authority, pinch zoom, TUNE filter drag.
+- **Authoring**: `::case[Caption text.]{id="case-id"}` in article markdown. The authoring guide (frame export, `npm run case:build`, caption conventions) lives in [../writing.md](../writing.md) → Case viewer authoring.
+- **Build**: `remarkCaseViewer` (`src/lib/markdown-plugins.mjs`) expands the directive via `src/lib/case-shell.mjs` into the full static shell — poster, meta strip, counter, native range slider, window chips, boot-HUD SVG — so the article ships zero-CLS, no-runtime-JSON HTML and a no-JS reader still gets poster + meta + caption. A missing manifest or frame file fails the build (render-time check + `astro:build:start` integration in `astro.config.mjs`); `src/lib/case-loader.ts` re-renders embedding articles when a case's manifest `rev` moves.
+- **Runtime**: `src/components/case/case-viewer.ts` upgrades the shell in place. Pure logic lives in DOM-free, vitest-covered modules: `mapping.ts` (px→frame) and `frame-store.ts` (ImageBitmap LRU with explicit `close()`, generation tokens, direction-weighted decode-ahead). `fullscreen.ts` owns the overlay: visualViewport sizing, popstate as the single close authority, pinch zoom, TUNE filter drag.
 
 ### Interaction model (locked by the 2026-07 plan)
 
-Progressive engage: at rest the image scrolls with the page (`touch-action: pan-y`) and a
-horizontal drag scrubs; a tap engages PACS mode (page held, either axis scrubs; brackets, counter,
-and slider thumb go signal cyan; the brackets strike a locked inward inset, recoil subtly, and
-settle back in — 0→100→70→100 — holding the lock until release); a second finger
-or the ⛶ button promotes to fullscreen. **Tap-to-activate** (`apparatus.caseTapToActivate`,
-default on — an experiment, flip the flag to revert): the rest-state drag-scrub is disabled, so
-the viewer is inert until the engage tap; a quiet `TAP TO SCRUB` chip over the imaging field
-carries the affordance once the boot settles and retires on first engagement. **Tap-to-boot**
-(`apparatus.caseTapToBoot`, default on — likewise an experiment): before any of that, the viewer
-holds inert and semi-greyed behind a centered `ACTIVATE` button — no frame decode, no network, no
-boot HUD — until the reader taps it; the tap clears the veil and drives the boot (warming the first
-frame), then the tap-to-activate flow above takes over. Direct
-1:1 mapping, integer snap, zero momentum; the scrub position follows the finger exactly — the canvas
-holds the last decoded frame (stall glyph on the counter) while decode catches up, never the reverse
-(the original decoded-frontier clamp read as a laggy scrubber on iPhone and was retired 2026-07-11);
-arriving at IM 1/N ticks the brackets inward once — the end-of-stack stop. Window chips switch pre-baked window exports **preserving the slice index
-exactly** (that index is the pedagogy) and carry the full radio keyboard pattern (roving tabindex,
-arrows); series tabs reset to the series' start frame. TUNE (fullscreen only) is an honest render
-adjustment — CSS filters with floors, reset on close — never labeled W/L. Desktop parity: wheel
-scrubs engaged/fullscreen (rAF-coalesced, ≤3 frames/beat), double-click toggles fullscreen zoom,
-PageUp/Down = ±5 on both sliders. Full rationale and rejected alternatives: the archived plan
-(`docs/archive/plans/2026-07-07-case-viewer-plan.md`).
+Progressive engage: at rest the image scrolls with the page (`touch-action: pan-y`) and a horizontal drag scrubs; a tap engages PACS mode (page held, either axis scrubs; brackets, counter, and slider thumb go signal cyan; the brackets strike a locked inward inset, recoil subtly, and settle back in — 0→100→70→100 — holding the lock until release); a second finger or the ⛶ button promotes to fullscreen. **Tap-to-activate** (`apparatus.caseTapToActivate`, default on — an experiment, flip the flag to revert): the rest-state drag-scrub is disabled, so the viewer is inert until the engage tap; a quiet `TAP TO SCRUB` chip over the imaging field carries the affordance once the boot settles and retires on first engagement. **Tap-to-boot** (`apparatus.caseTapToBoot`, default on — likewise an experiment): before any of that, the viewer holds inert and semi-greyed behind a centered `ACTIVATE` button — no frame decode, no network, no boot HUD — until the reader taps it; the tap clears the veil and drives the boot (warming the first frame), then the tap-to-activate flow above takes over. Direct 1:1 mapping, integer snap, zero momentum; the scrub position follows the finger exactly — the canvas holds the last decoded frame (stall glyph on the counter) while decode catches up, never the reverse (the original decoded-frontier clamp read as a laggy scrubber on iPhone and was retired 2026-07-11); arriving at IM 1/N ticks the brackets inward once — the end-of-stack stop. Window chips switch pre-baked window exports **preserving the slice index exactly** (that index is the pedagogy) and carry the full radio keyboard pattern (roving tabindex, arrows); series tabs reset to the series' start frame. TUNE (fullscreen only) is an honest render adjustment — CSS filters with floors, reset on close — never labeled W/L. Desktop parity: wheel scrubs engaged/fullscreen (rAF-coalesced, ≤3 frames/beat), double-click toggles fullscreen zoom, PageUp/Down = ±5 on both sliders. Full rationale and rejected alternatives: the archived plan (`docs/archive/plans/2026-07-07-case-viewer-plan.md`).
 
 ### Chrome
 
-Meta strip in the `.figure-meta` console voice; corner brackets are the HUD framing (no border —
-dark-on-dark needs none); boot choreography ported verbatim from
-`design-assets/prototypes/case-viewer-loading-hud.html`; reduced motion collapses to a fade.
-Button glyphs are **Lucide outline icons** (`lucide-react` is the source package — the project's
-icon library): the viewer is React-free, so `src/lib/case-icons.mjs` inlines the SVG node data
-verbatim, imported by both the build-time shell and the fullscreen overlay (square-power = activate,
-minimize = disengage/close, scan-eye = fullscreen, contrast = TUNE). Glyphs run large in their hit
-areas (`--cv-icon-size`; the activate power at `--cv-activate-icon`) over the buttons' plain 1px
-border; on hover-capable pointers each springs up a touch (`transform: scale(1.05)`, reduced-motion
-opt-out).
-Fullscreen switches on and off like a CRT — the beta site's power-on grammar
-(`design-assets/references/beta-crt-boot.md`: hairline dwell → spring → overshoot → settle; off at
-half the on-duration), retargeted to the full screen, content arriving on the hard-ease slide once
-the rect lands; close is deferred until the collapse beat lands. All
-values are tokens — component tokens in `src/styles/tokens/case-viewer.css`, styles in
-`src/styles/components/case-viewer.css`.
+The series, window, and modality labels show the DICOM series descriptions in their own capitals, such as `AXIAL` and `CT FACE WITHOUT CONTRAST`, by Michael's ruling, so `case:build` never recases them. This is the one place on the site besides the wordmark where labels read in capitals, and it comes from the data, not from a `text-transform`.
+
+Meta strip in the `.figure-meta` console voice; corner brackets are the HUD framing (no border — dark-on-dark needs none); boot choreography ported verbatim from `design-assets/prototypes/case-viewer-loading-hud.html`; reduced motion collapses to a fade. Button glyphs are **Lucide outline icons** (`lucide-react` is the source package — the project's icon library): the viewer is React-free, so `src/lib/case-icons.mjs` inlines the SVG node data verbatim, imported by both the build-time shell and the fullscreen overlay (square-power = activate, minimize = disengage/close, scan-eye = fullscreen, contrast = TUNE). Glyphs run large in their hit areas (`--cv-icon-size`; the activate power at `--cv-activate-icon`) over the buttons' plain 1px border; on hover-capable pointers each springs up a touch (`transform: scale(1.05)`, reduced-motion opt-out). Fullscreen switches on and off like a CRT — the beta site's power-on grammar (`design-assets/references/beta-crt-boot.md`: hairline dwell → spring → overshoot → settle; off at half the on-duration), retargeted to the full screen, content arriving on the hard-ease slide once the rect lands; close is deferred until the collapse beat lands. All values are tokens — component tokens in `src/styles/tokens/case-viewer.css`, styles in `src/styles/components/case-viewer.css`.
 
 ### Deferred by explicit choice (v2 candidates)
 
-Annotations/measurement, comparison pairs with synced scrolling, unknown-case reveal block, pinned
-scroll-showcase, text→image deep links, cine export. Don't build a second showstopper until the
-criteria in [philosophy.md](philosophy.md#the-module-system) are met (20+ articles, engagement
-data, a clear need).
+Annotations/measurement, comparison pairs with synced scrolling, unknown-case reveal block, pinned scroll-showcase, text→image deep links, cine export. Don't build a second showstopper until the criteria in [philosophy.md](philosophy.md#the-module-system) are met (20+ articles, engagement data, a clear need).
 
 ---
 

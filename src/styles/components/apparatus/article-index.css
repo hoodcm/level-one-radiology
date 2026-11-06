@@ -25,8 +25,6 @@
   padding: var(--space-1) var(--card-padding-sm);
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   color: var(--color-text-muted);
   cursor: pointer;
   list-style: none;   /* custom disclosure glyph below */

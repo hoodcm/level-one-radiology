@@ -167,10 +167,7 @@ the right guide when you touch the relevant files, and they *point* to the docs 
 
 Open the cited doc before making the change.
 
-**Design-quality passes** route through the **`/design-craft`** skill
-(`.claude/skills/design-craft/SKILL.md`): polish, critique, audit, spacing/rhythm judgment,
-quieter/bolder, motion, color, copy clarity. Its playbooks supply judgment only — values still come
-from the tokens, and its precedence section says so.
+**Design-quality passes**, such as polish, critique, audit, spacing and rhythm judgment, motion, color, and copy clarity, run through design-tools' `design-craft` lens. `.claude/rules/design-system.md` states how the site's tokens and docs outrank its playbooks.
 
 ## Key Design Decisions
 

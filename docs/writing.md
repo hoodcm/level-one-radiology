@@ -8,304 +8,17 @@
 
 ## Core Philosophy
 
-Writing style follows the same "tight, not cramped" principle as design. Professional density with human warmth—not sparse, not padded, not performed.
+Writing style follows the same "tight, not cramped" principle as design. Professional density with human warmth: not sparse, not padded, not performed.
 
 Structure organizes the piece. The human layer provides the voice. Structure without voice feels like a textbook. Voice without structure wastes the reader's time. You need both.
+
+Write like a colleague at the next workstation talking the reader, Sarah in [brand.md](brand.md), through it, not a textbook and not a marketer. Warmth in this register is directness: short sentences that respect her time, first person where it's natural, and no performed authority. She can hear a sales voice instantly, and it costs the piece her trust.
 
 ---
 
 ## Part One: The Human Layer
 
-These principles define how Level One sounds. They're drawn from how an experienced radiologist actually teaches—not how textbooks are written or how medical educators perform expertise.
-
-### Ground the Learner First
-
-Before teaching a concept, orient the learner. Start with what they've experienced, name their confusion, and frame the problem before solving it.
-
-#### 1. Start with shared experience
-
-Don't open with the concept—open with the confusion or observation that makes the concept necessary. Put the reader in a situation they recognize.
-
-| Abstract opening | Grounded opening |
-|------------------|------------------|
-| "Window width and window level control how CT densities are displayed." | "I'm sure you've sat next to a radiologist and watched them jerk the mouse around with small movements that alter the image. You might be wondering what they're doing." |
-| "Closed-loop obstruction is characterized by..." | "You've probably seen SBOs where you can't find a single transition point. That's often a closed-loop." |
-| "The Lisfranc joint complex consists of..." | "You're reading a foot CT after an MVC, and something looks off at the midfoot, but you're not sure what you're looking at." |
-
-This validates the learner's existing uncertainty rather than jumping straight to explanation. They feel seen before they feel taught.
-
-#### 2. Name the disorientation
-
-Acknowledge the general feeling of being lost, not just specific confusions. This builds trust because it's accurate.
-
-- "These controls are especially difficult when you first start looking at CTs yourself, and it's understandably easiest to default to the preset windows."
-- "You might open one of these studies and wonder why there are so many sequences. Which one do I look at?"
-- "This is one of those diagnoses that's obvious once you know what you're looking for, but completely invisible until then."
-
-#### 3. State the problem before the solution
-
-Technical concepts feel arbitrary unless learners understand what problem they solve. State the problem explicitly, let it sit for a moment, then introduce the solution as inevitable.
-
-> "Since there's such a big range of densities to represent, we have a problem. Your monitor can only display a few hundred shades of gray. And even more, your eye can only distinguish a few dozen shades. So, how do we represent all these values? The answer is, we can't—at least not all at once."
-
-The solution (windowing) now feels like *the obvious answer to an obvious problem* rather than an arbitrary technical feature someone invented.
-
-#### 4. Ground teaching points in physical reality
-
-Ensure learners build their understanding on a clear foundation of physics, anatomy, and pathophysiology—not just pattern recognition. Don't use measurements or concepts as given. Explain what they capture physically.
-
-| Ungrounded | Grounded |
-|------------|----------|
-| "CT scanners measure density in Hounsfield units." | "When we describe something as dense in x-ray or CT terms, we're saying how effectively that material reduces the intensity of a radiation beam—the linear attenuation coefficient. Hounsfield units are the standardized scale for this." |
-| "Look for a T2 hyperintense lesion." | "T2 signal reflects how quickly protons lose their transverse magnetization. Fluid loses it slowly, so it stays bright. This lesion is holding onto signal like fluid does." |
-| "The AAST grade determines management." | "The grading system is really asking: how much of the spleen is devascularized? That's what predicts whether it will heal or keep bleeding." |
-
-This makes findings *findable* rather than just *recognizable*. When learners understand the physics or pathophysiology, they can reason through cases they haven't seen before.
-
----
-
-### Teaching Structure
-
-#### 5. Build the framework first
-
-Explain what the thing *is* before listing what to look for. Once the mental model is clear, the findings follow logically.
-
-**Don't do this:**
-> Look for the double beak sign, mesenteric swirl, and hub-and-spoke edema pattern.
-
-**Do this:**
-> A closed-loop obstruction means a segment of bowel where both the afferent and efferent ends are obstructed—often at the same point, usually from an adhesive band. The bowel can't decompress in either direction.
-
-The framework does the heavy lifting. Once someone understands the anatomy, the signs make sense as manifestations of it.
-
-#### 6. Explain what signs represent
-
-Don't just describe appearances—teach the underlying mechanism. This makes findings *findable* rather than just *recognizable*.
-
-| Sign | What to write |
-|------|---------------|
-| Hub-and-spoke mesenteric edema | "This represents venous congestion—the mesenteric veins are obstructed before the arteries, so fluid backs up into the mesentery." |
-| Double beak sign | "What this actually represents is the single point where the segment is being pinched off." |
-| Thick sections less grainy | "We take the geometric average of multiple thin sections, which improves the signal-to-noise ratio." |
-
-#### 7. Use physical analogies
-
-If someone can imagine holding it or doing it, the concept sticks. These aren't literary metaphors—they're mental models with physical logic.
-
-- "Think of twisting a balloon animal—you create one twist, but it obstructs the balloon on both sides of it."
-- "Think of the foot as an arched tic-tac-toe board—two longitudinal arches and two struts supporting them."
-- "The patient goes through the donut, gets scanned, and the raw output is converted into thin-sliced sections."
-
-#### 8. Give concrete scenarios
-
-Specific situations are more memorable than categories.
-
-| Abstract | Concrete |
-|----------|----------|
-| High-energy mechanism | Foot pressing against the footboard in a head-on MVC |
-| Axial loading injury | Falling from a height and landing directly on your midfoot |
-| Incidental finding | You're reading a trauma CT and there's a tiny focus of free fluid in the pelvis—no solid organ injury, no other findings |
-
-#### 9. Technical terms come second
-
-Build intuitive understanding first, then name it. The term becomes a label for something they already grasp, not a concept they have to decode.
-
-**Don't do this:**
-> The spatial resolution is higher on thin sections, but contrast resolution suffers due to increased noise.
-
-**Do this:**
-> When we scroll on the thin sections, we get great spatial resolution, but they are grainy. On the thicks, it's much easier to see the difference between structures—the signal-to-noise ratio is better.
-
-#### 10. Show tradeoffs unfolding
-
-Don't just state that a choice has consequences—demonstrate the consequence by showing what happens when you make the choice.
-
-> "Now see the trade-off that we accept with this window. We can differentiate the very similarly dense tissues here, but look at the calvarium. We can't make out any detail in it at all. It's all pure white. Now watch as I widen the window and the brain parenchyma converges on a single shade of gray, but more cortical and trabecular detail come into view."
-
-This teaches *why* the tradeoff exists, not just *that* it exists.
-
----
-
-### Engaging the Learner
-
-#### 11. Name the learner's confusion
-
-Acknowledge what the reader is probably experiencing. This isn't performative empathy—it's accurate, and naming it builds trust.
-
-- "You might open one of these studies and wonder why there are so many sequences. Which one do I look at?"
-- "A common question is: Is this hyperdense pixel on this head CT actually subarachnoid hemorrhage?"
-
-#### 12. Invite observation
-
-Shift the reader from passive to active. This works even in written form.
-
-- "Let me put the thin sections next to the thick sections, and you tell me what the visual difference is."
-- "Look at this image. What stands out?"
-
-#### 13. Use demonstration language
-
-Even in text without images, write as if you're showing something happening. This shifts the reader from passive to active.
-
-- "Now watch as I widen the window..."
-- "See what happens when we scroll inferiorly..."
-- "Look at the relationship between these two structures..."
-- "...as I demonstrate here."
-
-This language works in articles with images, but also primes readers to visualize when images aren't present.
-
-#### 14. Acknowledge when visuals are needed
-
-Don't pretend prose can do everything. Say when a picture would help.
-
-- "I would show a picture here."
-- "This is easier to understand with a diagram."
-- "See the accompanying image for the classic appearance."
-
----
-
-### Voice and Stance
-
-#### 15. State importance plainly
-
-"This is important because it's a surgical emergency." That's it. No "miss this and you're calling the family" energy. No performed urgency.
-
-| Performative | Plain |
-|--------------|-------|
-| "This is the finding that keeps me up at night." | "This is an important diagnosis because it's a surgical emergency." |
-| "Miss this and you'll regret it." | "The Lisfranc joint is especially important for midfoot stability." |
-| "Call the surgeon. Now." | "Your report needs to be unambiguous." |
-
-#### 16. Be blunt when warranted
-
-Some questions don't need elaboration. Don't perform fairness by giving a longer answer than the situation deserves.
-
-> **Q:** Why do emergency radiologists get paid less than subspecialists when we read more studies and have worse hours?
->
-> **A:** They don't. I'll just say that.
-
-#### 17. Plant your flag
-
-On uncertain topics, take a stance based on your best judgment. Readers can disagree, but they know where you stand.
-
-> "I think in this setting you present the evidence and your best informed opinion. Plant your flag and take a stance on it."
-
-> "I honestly feel that the 10 Hounsfield unit cut-off is too strict for the more nitpicky among us."
-
-#### 18. Challenge orthodoxy if you believe it
-
-Say the unfashionable thing if you think it's true. Not for controversy's sake, but because it serves the reader.
-
-> "Even the best radiologists don't read CXRs very well. There are just so many different ways that the chest and mediastinum can appear."
-
-> "We perform way too many unnecessary follow-up exams nowadays, and it clogs the system."
-
----
-
-### Argumentation
-
-#### 19. Flip the frame
-
-Don't argue on critics' terms. Shift to the terms that actually matter.
-
-| Critic says | Flip to |
-|-------------|---------|
-| "Radiologists are overpaid image describers." | "What would happen if we stopped?" |
-| "AI will replace radiologists in two years." | "Who's legally liable? Who integrates it into workflow?" |
-| "This guideline is too conservative." | "What's the actual harm of the current approach?" |
-
-#### 20. Concede partial truth
-
-Acknowledging where critics have a point makes your actual argument stronger. Don't get defensive.
-
-> "You could partially get by. We see in many parts of the country that EDs interpret their own x-rays, and final reads don't come until maybe a day later. Surgeons interpret their own imaging."
-
-> "I do agree with you on the importance of adding clinical value."
-
-#### 21. Preempt counterarguments
-
-Name objections before others raise them. This shows intellectual honesty and disarms bad-faith critics.
-
-> "Haters will whip out every potential counterargument here and many definitely exist (diaphragm injury, anyone?), but we all know this is mostly true."
-
-#### 22. Use rhetorical questions that work
-
-Not empty rhetoric—these should carry argumentative weight. They invite the reader to answer honestly, and the honest answer supports your point.
-
-- "Does that really make you less certain that it's a benign adenoma?"
-- "Do you really want to be responsible for the really complicated case?"
-- "What if they are a cirrhotic, or they have heart failure, or they have CKD?"
-
----
-
-### Practical Realism
-
-#### 23. Describe how systems actually work
-
-Not how they're supposed to work. Operational honesty helps learners navigate real situations.
-
-> "Nowadays, the surgical services are so busy that unless the patient has active bleeding or obvious signs of injury, they will not take the patient to the OR unless the clinical exam dictates it to be so."
-
-> "Companies really are not in the practice of selling a medical device that is legally liable for failure. They'd rather sell you a subscription triage device that removes the legal liability from themselves."
-
-#### 24. Clarify role and responsibility
-
-Help learners understand not just what to see, but what's theirs to decide—and what isn't.
-
-> "Remember that the decision to take a patient to the OR is entirely the surgeon's, not yours. You may make findings on an exam that necessitate going to the OR because the surgeon has performed a clinical exam and agrees. But if they disagree with you, they are not going to."
-
-#### 25. Find the useful kernel
-
-Extract what's actually valuable from hyped or flawed ideas. Don't dismiss wholesale; don't embrace wholesale.
-
-> "What I do think is helpful are the algorithms that can tell us when a chest X-ray is normal, i.e. they have a high negative predictive value. I can see use in that."
-
----
-
-### Humanity
-
-#### 26. Appeal to shared experience
-
-"We all know this is mostly true"—but only when you've earned it by showing you understand the nuance first.
-
-> "Practically, you should be able to tell when there's a real bleed. If you're having to equivocate on a pixel, then perhaps it's not real enough to matter, if you know what I mean."
-
-#### 27. Be a person
-
-Dry humor, casual asides, internet-native references. You're not performing authority.
-
-- "!RemindMe in two years."
-- "Of course, we all remember the prediction by that famous AI scientist in 2016."
-- "Anyway."
-
-#### 28. Land on something actionable
-
-Every section should end with what to actually do or look for. The reader should never finish a section wondering "so what do I do with this?"
-
-- "Look for widening between the medial cuneiform and the second metatarsal base."
-- "For most purposes, the thick sections are the ones you scroll on, and you can treat the thin sections as problem-solving."
-- "Your report needs to be unambiguous. Then actually call."
-
----
-
-### Prose, Not Copy
-
-Every technique in this guide can be over-applied until the writing reads as copy: polished, punchy, and constantly aware of its own quotability. That register is inauthentic and turns readers off. The grounded examples above are near-verbatim transcript of actual teaching; that register, imperfections included, is the target.
-
-#### 29. Prefer the spoken version
-
-When a revision makes a sentence more vivid but less like something you'd say out loud at the workstation, revert it. "Watched them jerk the mouse around with small movements" beats "watched them make small, twitchy drags while the image flickers through a dozen versions of itself." The second is better copy and worse voice. The test for any sentence: would you say it to the resident sitting next to you?
-
-#### 30. One crafted closer per piece
-
-A landing line—short, declarative, quotable—is a budget of about one per article, two in a long one, spent where the thesis lands. Everywhere else, a paragraph ends when its information does. The actionable ending (#28) is content stated plainly; it does not need kicker styling. A closer per paragraph is performed punchiness, the same failure as performed urgency (#15) in a different register.
-
-#### 31. Let plain sentences exist
-
-Spoken explanation has slack: connective sentences, mild redundancy, asymmetric polish. "So let's build the whole mechanism from the ground up" carries no image and no argument, and that is exactly what makes it sound like a person. Uniform maximal density—every sentence load-bearing, every noun carrying a metaphor—is the uncanny tell of generated prose. Don't edit the slack out.
-
-#### 32. Break the symmetry
-
-Parallel constructions compound into rhythm theater: the one-word topic triad ("Workflow. ... Liability. ... Cost. ..."), negation-then-assertion ("you are not looking for a line, you are looking for what the air outlines"), echo chains ("congestion becomes edema, edema becomes ischemia"), fragments for drama ("Now the constraint."). Any one of these can be earned. A piece full of them was generated, and reads that way. Budget one deliberate contrast per piece and state the rest directly, in complete sentences.
+How a Level One teaching article teaches and sounds lives in the global `teaching` skill, in its register, `references/register.md`, and its article node, `references/article.md`, with the voice skill holding every sentence. `.claude/rules/content.md` loads them for article prose.
 
 ---
 
@@ -315,20 +28,22 @@ These are formatting tools, not templates. Use them to organize your human voice
 
 ### The Core Structure
 
-Every piece of Level One content can use this architecture—but hold it loosely.
+Every piece of Level One content can use this architecture, but hold it loosely.
 
 | Component | Specification |
 |-----------|---------------|
-| **Headline** | ≤6 words. Strong, specific. |
+| **Headline** | ≤6 words. Strong verb, specific topic. A headline states the take, so no question heads, curiosity-gap teasers, listicle framing such as "5 things," or colon-subtitle heads. |
 | **Lede** | One or two sentences. Tell me something useful immediately. |
 | **Why it matters** | Connect finding to clinical action or consequence. |
 | **Go deeper** | Optional expansion. The reader's choice. |
 
 **The 200-word test:** If a reader stops after 200 words, did they get the essential teaching point? Structure so the answer is yes.
 
+**Endings:** End a piece on what the reader does with it where the topic has an action. A section ends when its information does.
+
 ### Axiom Labels
 
-Use these as signposts when they help—not as mandatory headers.
+Use these as signposts when they help, not as mandatory headers.
 
 | Label | Use when... |
 |-------|-------------|
@@ -340,7 +55,9 @@ Use these as signposts when they help—not as mandatory headers.
 | **The bottom line** | Summarizing a takeaway |
 | **Go deeper** | Linking to sources or related content |
 
-These are tools. If a natural paragraph break works better than a labeled section, use the paragraph break. And a label never substitutes for arrangement: if the prose hasn't already made the reader feel why it matters, a bold header announcing it is performance.
+These are tools. If a natural paragraph break works better than a labeled section, use the paragraph break. And a label never substitutes for arrangement: if the prose hasn't already made the reader feel the stakes, a bold header announcing them is performance.
+
+Axiom labels are the licensed exception to the voice core's Performative emphasis entry. The license holds only while the prose beneath a label still arranges its own case. The moment a label carries the claim itself, the exception is void and the core ban applies.
 
 ### When to Use Bullets
 
@@ -358,17 +75,22 @@ Bullets are for genuinely parallel items that benefit from visual separation. No
 
 ### Bold for Scanning
 
-Bold the phrases a skimmer needs to catch. Not every key term—just the ones that orient the reader. Bold an orienting phrase, not a crafted aphorism: styling a kicker in bold spends the piece's one landing line (#30) on typography.
+Bold the phrases a skimmer needs to catch. Not every key term, only the ones that orient the reader. Bold an orienting phrase, not a crafted aphorism: styling a kicker in bold spends a landing line from the voice core's Earned emphasis budget on typography.
 
 > **Reduced wall enhancement** is the most specific finding for nonviable bowel. Judge it against adjacent normal loops on the portal venous phase.
+
+### Paragraphs, headers, and images
+
+- Short paragraphs: two or three sentences, one idea each.
+- Headers describe content, such as "AAST Grading Criteria," never a generic label such as "Discussion."
+- Emojis go in headers and navigation only, never in body text.
+- Images teach, never decorate.
 
 ---
 
 ## Part Three: Content Types
 
 ### Collectors (Educational Articles)
-
-These are the SEO workhorses. Written with search intent in mind.
 
 **Voice:** Teaching attending. Ground the learner first. Framework before findings. Physical reality before pattern recognition. Explain what signs represent.
 
@@ -384,9 +106,9 @@ These are the SEO workhorses. Written with search intent in mind.
 
 ### Attractors (Commentary)
 
-These are LinkedIn fuel. Timely response to guidelines, papers, field trends.
-
 **Voice:** Informed peer. Plant your flag. Flip the frame. Concede partial truth. Be blunt when warranted.
+
+Flipping the frame is a bounded permission: at most one frame-flip per piece, at the thesis, earned by the evidence already arranged. It is the same dosage as the voice core's binary-contrast exception, and the slick tells the core catalogs, such as pull-quote closers, staged reversals, and "What X was Y" pseudo-clefts, stay tells here.
 
 **Structure:**
 - Headline that signals the take
@@ -394,45 +116,45 @@ These are LinkedIn fuel. Timely response to guidelines, papers, field trends.
 - 2-3 paragraphs of argument
 - Actionable implication
 
-**Length:** 600–1,200 words. Speed matters—respond within days, not weeks.
+**Length:** 600–1,200 words. Speed matters. Respond within days, not weeks.
 
 ### Newsletter
 
 **Format:**
 ```
-LEVEL ONE WEEKLY
+Level One weekly
 
-THE BIG THING
-[Most important item—2-3 paragraphs max]
+The big thing
+[Most important item, 2-3 paragraphs max]
 
-ALSO THIS WEEK
+Also this week
 [1-2 shorter items]
 
-QUICK PEARLS
+Quick pearls
 • [Pearl 1]
 • [Pearl 2]
 • [Pearl 3]
 
-ONE MORE THING
-[Humanizing closer—casual, personal, or funny]
+One more thing
+[Humanizing closer: casual, personal, or funny]
 ```
 
 **Voice:** Slightly more casual than articles. First person. Conversational transitions.
 
-**Length:** 600–900 words total. Respect the inbox.
+**Length:** 600–900 words total, 5 to 10 items at most. Respect the inbox.
 
 ### Social (LinkedIn)
 
 **Format:**
 ```
-[One-line hook—the take, not a teaser]
+[One-line hook: the take, not a teaser]
 
 [2-3 sentences of context or argument]
 
 [Link or call to action]
 ```
 
-**Voice:** Direct. No preamble. Plant the flag immediately.
+**Voice:** Direct. No preamble. Plant the flag immediately. The core message lands before "see more."
 
 **Example:**
 > New ACR guidelines: most adrenal incidentalomas don't need follow-up.
@@ -457,6 +179,14 @@ These phrases add nothing. Delete them.
 | "Suggestive of" | Suggests / Indicates / Consistent with |
 | "Attention is directed to..." | [Just direct attention] |
 
+### Shorter Words
+
+Prefer one syllable over two, and two over three.
+
+### Manufactured Urgency
+
+Manufactured urgency, such as "Your report macros need an update," tells instead of showing. State the implication, and let the evidence carry the urgency. `docs/register-bans.json` holds the emphasis crutches, such as "Full stop." and "Let that sink in," that `voice-lint --register-file docs/register-bans.json` flags in site copy.
+
 ### Active Voice
 
 The finding did something. Say so.
@@ -465,11 +195,13 @@ The finding did something. Say so.
 |---------|--------|
 | "A laceration was identified extending to the hilum" | "The laceration extends to the hilum" |
 | "Enhancement is noted within the lesion" | "The lesion enhances" |
-| "The examination was performed" | [Delete—we know it was performed] |
+| "The examination was performed" | [Delete, since we know it was performed] |
 
 ---
 
 ## Part Five: Examples
+
+Never take register exemplars from the site's published articles: they were AI-generated, so they show the failure mode, not the register. Exemplars come from prose Michael wrote or approves.
 
 ### Educational Article Opening
 
@@ -477,7 +209,7 @@ The finding did something. Say so.
 > Closed-loop small bowel obstruction is a surgical emergency characterized by obstruction of both the afferent and efferent limbs of a bowel segment, resulting in a closed system that cannot decompress. This entity is associated with rapid progression to strangulation and requires prompt recognition. The following imaging findings should be sought...
 
 **After (human voice):**
-> This is an important diagnosis because it's a surgical emergency. A closed-loop obstruction means a segment of bowel where both the afferent and efferent ends are obstructed—often at the same point, usually from an adhesive band. The bowel can't decompress in either direction, so it strangulates faster than a simple obstruction.
+> Closed-loop obstruction is a surgical emergency. A closed-loop obstruction means a segment of bowel where both the afferent and efferent ends are obstructed, often at the same point, usually from an adhesive band. The bowel can't decompress in either direction, so it strangulates faster than a simple obstruction.
 >
 > Here are some concrete things to look for.
 
@@ -509,15 +241,13 @@ The finding did something. Say so.
 **After (operational honesty):**
 > I'd say "not unless *you* think they do." There are so many reasons a trauma activation patient could have fluid. What if they are a cirrhotic, or they have heart failure, or they have CKD?
 >
-> Nowadays, the surgical services are so busy that unless the patient has active bleeding or obvious signs of injury, they will not take the patient to the OR unless the clinical exam dictates it to be so. And in the end, remember that the decision to take a patient to the OR is entirely the surgeon's, not yours.
+> Nowadays, the surgical services are so busy that unless the patient has active bleeding or clear signs of injury, they will not take the patient to the OR unless the clinical exam dictates it to be so. And in the end, remember that the decision to take a patient to the OR is entirely the surgeon's, not yours.
 
 ---
 
 ## Case Viewer Authoring
 
-Embedding a scrollable stack in an article. The build mechanics and interaction model live in
-[design/components.md](design/components.md#showstopper-case-viewer); this section is the author's
-side.
+Embedding a scrollable stack in an article. The build mechanics and interaction model live in [design/components.md](design/components.md#showstopper-case-viewer); this section is the author's side.
 
 ### Directive syntax
 
@@ -525,29 +255,15 @@ side.
 ::case[Scroll through the exam. Portal venous phase at the transition point.]{id="ct-abd-001"}
 ```
 
-The `[caption]` renders as the figcaption; the `id` names a case under `public/cases/<id>/`,
-assembled from a prepared case folder in the private `prepare-radiology-content` repo:
-`npm run case:build -- --id <id> --in ../prepare-radiology-content/cases/<id>` (see the header of
-`scripts/build-case.mjs` for the full flags). A build fails loudly if the case's manifest or any
-referenced frame is missing.
-
-### Caption micro-copy
-
-Open with the affordance, then the teaching point: "Scroll through the exam…" tells a first-time
-reader the figure moves. Keep it to one or two sentences in the figure-caption voice.
+The `[caption]` renders as the figcaption; the `id` names a case under `public/cases/<id>/`, assembled from a prepared case folder in the private `prepare-radiology-content` repo: `npm run case:build -- --id <id> --in ../prepare-radiology-content/cases/<id>` (see the header of `scripts/build-case.mjs` for the full flags). A build fails loudly if the case's manifest or any referenced frame is missing.
 
 ### Curation
 
-Short, hand-picked runs beat whole exams. Trim the stack to the slices that carry the finding plus
-enough approach for context (30–90 frames), and set `--start` to the key image — that's the frame
-the reader lands on, and the slice index is preserved when they switch windows. Curation itself
-(which images, order, labels, crops) happens in the private pipeline's review tool, not here.
+`--start` sets the frame the reader lands on, and the slice index is preserved when they switch windows. Which slices to keep, and whether a case is a worked example or an unknown, is teaching guidance in the `teaching` skill's article node. Curation itself, the images, order, labels, and crops, happens in the private pipeline's review tool, not here.
 
 ### De-identification
 
-Handled entirely upstream in the private `prepare-radiology-content` pipeline — anonymized export,
-human redaction gate, metadata strip. Prepared images arrive clean by construction; this repo's
-assembler only downscales them (see CLAUDE.md → Case Images).
+Handled entirely upstream in the private `prepare-radiology-content` pipeline: anonymized export, human redaction gate, metadata strip. Prepared images arrive clean by construction; this repo's assembler only downscales them (see CLAUDE.md → Case Images).
 
 ---
 
@@ -555,40 +271,16 @@ assembler only downscales them (see CLAUDE.md → Case Images).
 
 Before publishing, verify:
 
-- [ ] **Grounded opening:** Did I start with shared experience or name the learner's confusion?
-- [ ] **Problem stated:** Did I frame the problem before solving it?
-- [ ] **Physical reality:** Did I ground the concept in physics, anatomy, or pathophysiology?
-- [ ] **Framework first:** Did I explain what the thing *is* before listing findings?
-- [ ] **Signs explained:** Did I say what findings *represent*, not just what they look like?
-- [ ] **Tradeoffs shown:** Did I demonstrate consequences, not just state them?
-- [ ] **Concrete:** Did I use physical analogies and specific scenarios?
-- [ ] **Technical terms second:** Did I build intuition before labeling?
-- [ ] **Flag planted:** On opinion pieces, did I take a clear stance?
-- [ ] **Operational honesty:** Did I describe how things actually work?
-- [ ] **Actionable ending:** Does the reader know what to do?
 - [ ] **200-word test:** Does the opening deliver value immediately?
-- [ ] **No performed urgency:** Did I state importance plainly, without drama?
-- [ ] **Human:** Does this sound like a person talking, not a textbook?
-- [ ] **Spoken test:** Would I say these sentences out loud to the resident next to me?
-- [ ] **One closer:** At most one crafted landing line, spent on the thesis?
-- [ ] **Symmetry purge:** No triads, negation-reversals, echo chains, or drama fragments beyond the one earned contrast?
-- [ ] **Slack intact:** Did plain connective sentences survive, or did every line get polished?
+- [ ] **Endings:** Where the topic has an action, does the reader know what to do?
+- [ ] **Teaching and voice:** Did the article pass the `teaching` register and the voice skill's checks?
 
 ---
 
-## Relationship to Design System
+## Register corrections fold back here
 
-Writing style extends the design philosophy:
-
-| Design Principle | Writing Application |
-|------------------|---------------------|
-| Tight, not cramped | Dense prose, no padding |
-| Bespoke warmth | Confident but human voice |
-| Signal colors are functional | Axiom labels signal meaning, used sparingly |
-| Mobile-first density | Content delivers value on first scroll |
+Generalize a register-quality correction that surfaces during site writing into this guide in the session it lands, as a failure mode with its licensing condition, never a bare instance.
 
 ---
 
-*Document created: December 2024*
-*Last updated: July 2026*
-*Based on original voice analysis*
+Last updated: 2026-11-06

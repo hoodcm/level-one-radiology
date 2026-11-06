@@ -29,8 +29,6 @@ case-viewer {
   margin-bottom: var(--space-1);
   font-family: var(--ff-mono);
   font-size: var(--cv-meta-size);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   color: var(--color-text-muted);
 }
 /* Console chrome is instrumentation, not copy: an iOS long-press must never
@@ -114,7 +112,6 @@ case-viewer[data-state='engaged'] .cv__stage::after {
   border-radius: var(--radius-xs);
   font-family: var(--ff-mono);
   font-size: var(--cv-meta-size);
-  letter-spacing: var(--ls-ui);
   color: var(--color-signal-cyan);
   pointer-events: none;
 }
@@ -601,8 +598,6 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
 .cv__tabs button {
   font-family: var(--ff-mono);
   font-size: var(--fz-ui);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   min-height: var(--cv-hit-area);
   padding-inline: var(--space-2);
   background: var(--color-bg-secondary);
@@ -647,8 +642,6 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   padding: var(--space-0);
   font-family: var(--ff-mono);
   font-size: var(--cv-meta-size);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   background: var(--color-bg-secondary);
   color: var(--color-text-secondary);
   border: var(--border-w) solid var(--color-border-default);
@@ -697,8 +690,6 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
 .cv__fallback figcaption {
   font-family: var(--ff-mono);
   font-size: var(--cv-meta-size);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   color: var(--color-text-muted);
   margin-top: var(--space-0);
 }
@@ -842,8 +833,6 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   padding-right: calc(var(--space-2) + env(safe-area-inset-right, 0px));
   font-family: var(--ff-mono);
   font-size: var(--cv-meta-size);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   color: var(--color-text-muted);
 }
 .cv-fs__stage {
@@ -889,7 +878,6 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
 .cv-fs__chip {
   font-family: var(--ff-mono);
   font-size: var(--fz-ui);
-  letter-spacing: var(--ls-ui);
   min-height: var(--cv-hit-area);
   padding-inline: var(--space-2);
   background: var(--color-bg-secondary);
@@ -924,7 +912,6 @@ case-viewer.is-edge .cv__brackets i { animation: cv-edge 0.2s var(--ease-out); }
   gap: var(--space-1);
   font-family: var(--ff-mono);
   font-size: var(--cv-meta-size);
-  letter-spacing: var(--ls-ui);
   color: var(--color-text-muted);
   pointer-events: none;
 }

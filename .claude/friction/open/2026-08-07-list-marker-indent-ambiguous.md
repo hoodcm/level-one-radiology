@@ -15,4 +15,4 @@ Fixing callout/key-points bullet indentation took three iterations because 'remo
 
 ## Notes
 
-2026-08-07 — An AskUserQuestion with rendered previews resolved it on the third round. For future indent/list-marker requests, reach for the preview-comparison card earlier rather than iterating blind.
+- 2026-08-07 An AskUserQuestion with rendered previews resolved it on the third round. For future indent/list-marker requests, reach for the preview-comparison card earlier rather than iterating blind.

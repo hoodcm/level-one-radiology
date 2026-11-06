@@ -267,14 +267,14 @@
 
 /* --- Eurostile Next LT Pro (normal-width UI/tech labels) --- */
 @font-face {
-  font-family: "Eurostile LT Std";
+  font-family: "Eurostile Next LT Pro";
   src: url("/fonts/eurostile/eurostile-regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Eurostile LT Std";
+  font-family: "Eurostile Next LT Pro";
   src: url("/fonts/eurostile/eurostile-semibold.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
@@ -357,14 +357,14 @@
 }
 
 :root {
-  /* Font Families — TRIAL swap: new face first, original kept as fallback. */
+  /* Font Families: the identity's web face first, its house face as the fallback (docs/identity.md). */
   --ff-display: "Newsreader", "Utopia Std", Georgia, serif;
   --ff-display-optical: "Newsreader", "Utopia Std Display", "Utopia Std", Georgia, serif;
   --ff-subhead: "Newsreader", "Utopia Std Subhead", "Utopia Std", Georgia, serif;
   --ff-caption: "Newsreader", "Utopia Std Caption", "Utopia Std", Georgia, serif;
   --ff-body: "DM Sans", "Lab Grotesque", system-ui, sans-serif;
-  --ff-ui: "Michroma", "Eurostile LT Std", "IBM Plex Mono", monospace;
-  --ff-ui-ext: "Michroma", "Eurostile Next W1G", "Eurostile LT Std", "IBM Plex Mono", monospace;
+  --ff-ui: "Michroma", "Eurostile Next LT Pro", "IBM Plex Mono", monospace;
+  --ff-ui-ext: "Michroma", "Eurostile Next W1G", "Eurostile Next LT Pro", "IBM Plex Mono", monospace;
   --ff-mono: "Chivo Mono", "IBM Plex Mono", "JetBrains Mono", monospace;
 
   /* --- THE LEADING RAMP — every line-height on the site is one of these ---
@@ -401,12 +401,6 @@
                             110–120%; the leading half lives on the --lh
                             rungs). Knob: -0.03em is the tight end of taste. */
   --ls-mono: 0.04em;     /* mono console voice — ordinals, meta, readouts */
-  --ls-ui: 0.06em;       /* uppercase UI labels in Michroma + plate fine print
-                            (the geometric face wants the air) */
-  --ls-caps-sans: -0.01em; /* uppercase labels in the BODY sans (nav) — DM Sans
-                             caps read loose at Michroma's tracking; the
-                             humanist face needs a third of it. Knob: 0 is the
-                             tight end, 0.04 drifts back toward loose. */
 
   /* --- THE WEIGHT VOCABULARY --------------------------------------------
      Three weights, site-wide. A numeric font-weight in a style rule is a
@@ -480,7 +474,6 @@
   /* UI */
   --fz-ui: 0.6875rem;
   --lh-ui: var(--lh-150);
-  --ls-ui: 0.06em;
 
   /* Console micro-numerals — the smallest mono voice (TOC/INDEX ordinals,
      figure-meta strip). */
@@ -604,8 +597,6 @@
   font-family: var(--ff-ui);
   font-size: var(--fz-ui);
   line-height: var(--lh-ui);
-  letter-spacing: var(--ls-ui);
-  text-transform: uppercase;
   font-weight: var(--fw-bold);
   color: var(--color-text-muted);
 }

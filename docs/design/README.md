@@ -23,7 +23,7 @@ How to pick the right token when philosophy and tokens leave a gap.
 | [reasoning/layout.md](reasoning/layout.md) | Margin vs gutter vs column; the 6/12/18 grid; `<Container>`/`<Grid>`/`<Col>` usage |
 | [reasoning/spacing.md](reasoning/spacing.md) | Proximity grouping, inner vs outer gaps, vertical rhythm, the spacing tiers |
 | [reasoning/typography.md](reasoning/typography.md) | Scale, measure, heading rhythm, the type families' roles |
-| [reasoning/motion.md](reasoning/motion.md) | Whether/when to animate, easing & duration, enter/exit, performance |
+| [reasoning/motion.md](reasoning/motion.md) | The site's motion tokens and CSS-first implementation, over design-tools' `emil-design-eng` lens |
 | [reasoning/accessibility.md](reasoning/accessibility.md) | Contrast, focus, targets, reduced motion, semantics (the non-negotiable floor) |
 
 ## Application order

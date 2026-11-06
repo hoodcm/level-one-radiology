@@ -15,4 +15,4 @@ A background dev-server shell launched earlier was reported 'stopped' with no co
 
 ## Notes
 
-2026-08-07 — Consider: a background dev-server convenience wrapper that checks liveness (a real HTTP probe, not just task-handle presence) before assuming continuity across a session handoff.
+- 2026-08-07 Consider: a background dev-server convenience wrapper that checks liveness (a real HTTP probe, not just task-handle presence) before assuming continuity across a session handoff.

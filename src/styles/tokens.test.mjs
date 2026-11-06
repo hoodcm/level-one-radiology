@@ -410,7 +410,9 @@ describe('closed ramps: leading, tracking, weight', () => {
   it('the tracking set and weight vocabulary exist with their documented values', () => {
     expect(typo.get('--ls-tight')).toBe('-0.01em');
     expect(typo.get('--ls-mono')).toBe('0.04em');
-    expect(typo.get('--ls-ui')).toBe('0.06em');
+    // Labels are sentence case by Michael's uppercase-label ban, so no caps-tracking voice exists.
+    expect(typo.has('--ls-ui')).toBe(false);
+    expect(typo.has('--ls-caps-sans')).toBe(false);
     expect(typo.get('--fw-regular')).toBe('400');
     expect(typo.get('--fw-semibold')).toBe('600');
     expect(typo.get('--fw-bold')).toBe('700');

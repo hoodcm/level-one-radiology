@@ -86,11 +86,13 @@ describe('the corpus validates against the taxonomy', () => {
 });
 
 describe('contentTypeLabel', () => {
-  // The chip is the only place a content type is shown to a reader, and it is
-  // uppercase with no punctuation left over from the slug form.
-  it.each(CONTENT_TYPE_NAMES)('renders %s as an uppercase chip label', (type) => {
+  // The chip is the only place a content type is shown to a reader. Labels
+  // are sentence case by Michael's uppercase-label ban, with no punctuation
+  // left over from the slug form.
+  it.each(CONTENT_TYPE_NAMES)('renders %s as a sentence-case chip label', (type) => {
     const label = contentTypeLabel(type as ContentType);
-    expect(label).toBe(label.toUpperCase());
+    expect(label.charAt(0)).toBe(label.charAt(0).toUpperCase());
+    expect(label.slice(1)).toBe(label.slice(1).toLowerCase());
     expect(label).not.toMatch(/-/);
     expect(label.trim()).toBe(label);
     expect(label.length).toBeGreaterThan(0);

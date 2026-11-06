@@ -10,9 +10,9 @@
  * picks up node:fs. (case-shell.mjs sets the same build-time-read precedent.)
  */
 import { readFileSync } from 'node:fs';
-import path from 'node:path';
+import { repoFile } from './repo-file.mjs';
 
-const SPACING = path.resolve('src/styles/tokens/spacing.css');
+const SPACING = repoFile('src/styles/tokens/spacing.css');
 
 // rem → px at the CSS-spec initial root font size. A unit conversion, not a
 // design value: nothing in src/styles overrides html { font-size }.
