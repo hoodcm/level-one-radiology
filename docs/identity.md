@@ -20,7 +20,7 @@ The house set is Michael's licensed faces, installed by hand on each Mac. The we
 
 Utopia Std ships one family name over four optical cuts, so a renderer asked for "Utopia Std" sets whichever cut it met first. The Text and Subhead cuts are therefore installed under their own family names, `Utopia Std Text` for running text and `Utopia Std Subhead` for titles, and a role names the cut drawn for its size.
 
-A lecture uses the house set when Michael presents from his own Mac. On a venue machine, which has none of the house faces, it uses Georgia for the serif and Franklin Gothic Medium for the sans.
+A lecture uses the house set when Michael presents from his own Mac. On a venue machine, which has none of the house faces, it uses Georgia for the serif, Franklin Gothic Medium for the sans, and Consolas for any mono.
 
 Every role names a font-stack token in an instance, never a family, so swapping a face is one change to the token.
 
@@ -32,6 +32,10 @@ The generator reads the one JSON block in this section. Each house cut is the fa
 {
   "name": "Level One Radiology",
   "id": "level-one",
+  "css": {
+    "typography": "../src/styles/tokens/typography.css",
+    "colors": "../src/styles/tokens/colors.css"
+  },
   "house": {
     "serif": {"text": "Utopia Std Text", "subhead": "Utopia Std Subhead"},
     "sans": {"regular": "Lab Grotesque", "medium": "Lab Grotesque Med"},
@@ -46,9 +50,10 @@ The generator reads the one JSON block in this section. Each house cut is the fa
   },
   "venue": {
     "serif": "Georgia",
-    "sans": "Franklin Gothic Medium"
+    "sans": "Franklin Gothic Medium",
+    "mono": "Consolas"
   }
 }
 ```
 
-The `web` entries name site tokens, and the generator reads each lookalike as the first family in that token's stack in `typography.css`.
+The `css` entries are the site's token files, relative to this file. The `web` entries name site tokens, and the generator reads each lookalike as the first family in that token's stack in `typography.css`. An instance's palette names `colors.css` tokens directly.
