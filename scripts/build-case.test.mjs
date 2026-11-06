@@ -1,5 +1,5 @@
 // Contract tests for the case:build CLI: a prepared case folder (from the
-// private prepare-radiology-cases repo — case.json + de-identified images)
+// private prepare-radiology-content repo — case.json + de-identified images)
 // → the public/cases/<id>/ viewer payload. Exercised at the level the
 // contract is exposed: a real child-process invocation against tiny
 // generated fixtures, cwd inside a temp root so public/cases/ resolves

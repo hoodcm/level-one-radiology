@@ -1,7 +1,7 @@
 ---
 name: case-article
 run-log: required
-description: Turn a prepared case from ../prepare-radiology-cases into a started article — build + validate the viewer payload, teaching-angle interview, scaffolded draft live in dev, optional voice-loaded first draft.
+description: Turn a prepared case from ../prepare-radiology-content into a started article — build + validate the viewer payload, teaching-angle interview, scaffolded draft live in dev, optional voice-loaded first draft.
 disable-model-invocation: true
 ---
 
@@ -10,7 +10,7 @@ disable-model-invocation: true
 Take a prepared, de-identified case from the sibling repo and start the article that teaches
 it: assemble the viewer payload, interview Michael for the teaching angle, scaffold a
 schema-valid draft, and leave it rendering in dev. The pixels were curated and redacted
-upstream in prepare-radiology-cases — that gate is the last authority over image content, so
+upstream in prepare-radiology-content — that gate is the last authority over image content, so
 never re-audit images here (site CLAUDE.md); this skill's job is everything *after* the images
 are trusted.
 
@@ -21,12 +21,12 @@ pass, /push) remains Michael's manual checklist.
 ## 0 — Preflight
 
 - **No argument, or no such case?** List what's startable: prepared cases are the directories
-  in `../prepare-radiology-cases/cases/`; cases already embedded in an article are the ids
+  in `../prepare-radiology-content/cases/`; cases already embedded in an article are the ids
   matched by `CASE_DIRECTIVE_RE` (src/lib/case-shell.mjs) across `src/content/articles/*.md`.
   Present the difference and let Michael pick.
 - **Integrity sentinel** — the prepared case must have passed its human gate:
-  `../prepare-radiology-cases/cases-src/<id>/selection.json` has `confirmed: true` and its
-  `builtRev` equals `../prepare-radiology-cases/cases/<id>/case.json` `rev`. These two revs
+  `../prepare-radiology-content/cases-src/<id>/selection.json` has `confirmed: true` and its
+  `builtRev` equals `../prepare-radiology-content/cases/<id>/case.json` `rev`. These two revs
   live in the same repo and are the *only* comparable pair (the site manifest's `rev` is a
   local build counter — never compare it to the prepared rev). If the sentinel fails, stop and
   point at the annotator gate: `npm run case:review` in the prepare repo.
@@ -48,7 +48,7 @@ article.
   embeds, pass `--kind views|stack`.
 
 ```bash
-npm run case:build -- --id <id> --in ../prepare-radiology-cases/cases/<id> [--kind views|stack]
+npm run case:build -- --id <id> --in ../prepare-radiology-content/cases/<id> [--kind views|stack]
 npm test
 node -e "import('./src/lib/case-shell.mjs').then(m => m.validateCaseAssets('<id>'))"
 ```

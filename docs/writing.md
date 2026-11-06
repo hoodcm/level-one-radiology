@@ -526,8 +526,8 @@ side.
 ```
 
 The `[caption]` renders as the figcaption; the `id` names a case under `public/cases/<id>/`,
-assembled from a prepared case folder in the private `prepare-radiology-cases` repo:
-`npm run case:build -- --id <id> --in ../prepare-radiology-cases/cases/<id>` (see the header of
+assembled from a prepared case folder in the private `prepare-radiology-content` repo:
+`npm run case:build -- --id <id> --in ../prepare-radiology-content/cases/<id>` (see the header of
 `scripts/build-case.mjs` for the full flags). A build fails loudly if the case's manifest or any
 referenced frame is missing.
 
@@ -545,7 +545,7 @@ the reader lands on, and the slice index is preserved when they switch windows. 
 
 ### De-identification
 
-Handled entirely upstream in the private `prepare-radiology-cases` pipeline — anonymized export,
+Handled entirely upstream in the private `prepare-radiology-content` pipeline — anonymized export,
 human redaction gate, metadata strip. Prepared images arrive clean by construction; this repo's
 assembler only downscales them (see CLAUDE.md → Case Images).
 

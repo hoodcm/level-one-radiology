@@ -12,7 +12,7 @@
  *                           thumbnail are cut from this frame.
  *
  * The input is a prepared case folder from the private
- * prepare-radiology-cases repo (typically ../prepare-radiology-cases/
+ * prepare-radiology-content repo (typically ../prepare-radiology-content/
  * cases/<id>/): already de-identified, redacted, and curated there, with a
  * case.json sidecar describing views and/or stacks. This script only
  * downscales (≤1200px long edge), renumbers, generates thumbs + poster, and
@@ -71,7 +71,7 @@ try {
 } catch (e) {
   die(
     `cannot read ${path.join(inDir, 'case.json')} (${e.message}) — the input must be a ` +
-      `prepared case folder (see the private prepare-radiology-cases repo)`
+      `prepared case folder (see the private prepare-radiology-content repo)`
   );
 }
 
