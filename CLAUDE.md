@@ -1,5 +1,7 @@
 # Level One Radiology
 
+This repository is protected: it holds Michael's thought work. A session from another project changes nothing here except a mechanical drift fix, and may file and commit TODO and friction items, as the global `coding-philosophy.md` rule describes.
+
 ## Overview
 
 Website for leveloneradiology.com — an independent emergency radiology publication combining the timeliness of Radiology Business with the educational rigor of RadioGraphics. Dark-first, content-driven platform with a singular authorial voice.
