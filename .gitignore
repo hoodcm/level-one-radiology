@@ -28,3 +28,5 @@ CLAUDE.local.md
 .DS_Store
 Thumbs.db
 .claude/.end-session-audit.json
+/TODO.md
+/.claude/todo/.watermark.prev.json
